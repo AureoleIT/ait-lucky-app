@@ -1,114 +1,70 @@
-import React from "react";
-import Link from "next/link";
-
 // layout for page
-
 import Auth from "layouts/Auth.js";
+import React, { useState } from "react";
+import { Link } from "next/link";
+import { useForm } from "react-hook-form";
+import AuthContext from "../../src/context/AuthContext";
+// Components
+import Input from "../../src/components/Auth/Input";
 
 export default function Login() {
+  const { register, handleSubmit } = useForm()
+  const [err, setErr] = useState("")
+  const [loading, setLoading] = useState(false)
+  const { logIn, signInWithGoogle } = AuthContext()
+
+  const loginButton = {
+    width: "290px",
+    height: "50px",
+    backgroundColor: "#D0CACA",
+    borderRadius: "20px",
+    alignSelf: "center",
+    fontWeight: "bold",
+    margin: "35px 0"
+  },
+  inputsContainer = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    alginItems: "center",
+    alignSelf: "center"
+  },
+  forgerPassword = {
+    alignSelf: "flex-end",
+    marginRight: "25px"
+  }
+
+  const onSubmit = async(data) => {
+    setLoading(true)
+    try {
+      setErr("")
+      await logIn(data.email, data.password)
+      // navigate("/", {replace: true})
+    }
+    catch {
+      setErr("Log in failed!")
+    }
+    setLoading(false)
+  }
+
   return (
     <>
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-4/12 px-4">
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
-              <div className="rounded-t mb-0 px-6 py-6">
-                <div className="text-center mb-3">
-                  <h6 className="text-blueGray-500 text-sm font-bold">
-                    Sign in with
-                  </h6>
+            <div className="relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-lg bg-white border-0">
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
+                <div className="text-center text-black mb-8 mt-4">
+                  <h1 className="font-bold text-xl leading-[24.2px]">Welcome to AIT</h1>
+                  <p className="text-red-400 text-2xl">Glad to see you!</p>
                 </div>
-                <div className="btn-wrapper text-center">
-                  <button
-                    className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-2 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                    type="button"
-                  >
-                    <img alt="..." className="w-5 mr-1" src="/img/github.svg" />
-                    Github
-                  </button>
-                  <button
-                    className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                    type="button"
-                  >
-                    <img alt="..." className="w-5 mr-1" src="/img/google.svg" />
-                    Google
-                  </button>
+                <div style={inputsContainer}>
+                  <Input placeholder="Email" type="email" />
+                  <Input placeholder="Password" type="password" />
                 </div>
-                <hr className="mt-6 border-b-1 border-blueGray-300" />
-              </div>
-              <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                <div className="text-blueGray-400 text-center mb-3 font-bold">
-                  <small>Or sign in with credentials</small>
-                </div>
-                <form>
-                  <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Email"
-                    />
-                  </div>
-
-                  <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Password"
-                    />
-                  </div>
-                  <div>
-                    <label className="inline-flex items-center cursor-pointer">
-                      <input
-                        id="customCheckLogin"
-                        type="checkbox"
-                        className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
-                      />
-                      <span className="ml-2 text-sm font-semibold text-blueGray-600">
-                        Remember me
-                      </span>
-                    </label>
-                  </div>
-
-                  <div className="text-center mt-6">
-                    <button
-                      className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                      type="button"
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div className="flex flex-wrap mt-6 relative">
-              <div className="w-1/2">
-                <a
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  className="text-blueGray-200"
-                >
-                  <small>Forgot password?</small>
-                </a>
-              </div>
-              <div className="w-1/2 text-right">
-                <Link href="/auth/register">
-                  <a href="#pablo" className="text-blueGray-200">
-                    <small>Create new account</small>
-                  </a>
-                </Link>
-              </div>
+                <Link to="#" style={forgerPassword} className="mt-4 text-md font-semibold">Forget Password?</Link>
+                <button style={loginButton} type="submit">LOGIN</button>
+              </form>
             </div>
           </div>
         </div>
