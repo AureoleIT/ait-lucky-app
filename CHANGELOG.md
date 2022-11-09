@@ -18,6 +18,8 @@
   - For the colors, the only change that we made, is the fact that we've added all Tailwind CSS colors to our `tailwind.config.js` files, and inside our product, all `{type}-blue-{number}` classes were renamed to `{type}-lightBlue-{number}`
   - For the colors, the only change that we made, is the fact that we've added all Tailwind CSS colors to our `tailwind.config.js` files, and inside our product, all `{type}-green-{number}` classes were renamed to `{type}-emerald-{number}`
 - `lg:bg-transparent` is not working anymore, so we've changed it with `lg:bg-opacity-0`
+- Since we've dropped the usage of custom CSS, and reverted to `Built-In CSS Support` from `NextJS`, we had to move our images inside the `public` folder, and our styles inside the `styles` folder
+  - All the `require` images have been replaced by simple `/img/` strings
 - https://github.com/creativetimofficial/notus-angular/issues/4
 - https://github.com/creativetimofficial/notus-js/issues/4
 - https://github.com/creativetimofficial/notus-js/pull/5
@@ -35,13 +37,24 @@
   - https://tailwindcss.com/
   - https://tailwindcss.com/docs/upgrading-to-v2
 ### Deleted components
+- `next.config.js` (we do not need it anymore since we now use `Built-In CSS Support` from `NextJS`)
+  - for the absolute imports, we've used the `jsconfig.json` file
 ### Added components
+- `jsconfig.json` (to keep our absolute imports)
 ### Deleted dependencies
 - `@tailwindcss/custom-forms`
 - `react-google-maps` (replaced by simple Google Maps API)
 - `@types/googlemaps` (dependencies of `react-google-maps`)
 - `@types/markerclustererplus` (dependencies of `react-google-maps`)
 - `@types/react` (dependencies of `react-google-maps`)
+- `@zeit/next-css` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `@zeit/next-sass` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `node-sass` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `next-images` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `next-fonts` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `next-compose-plugins` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `path` (we'll use the default `Built-In CSS Support` from `NextJS`)
+- `webpack` (we'll use the default `Built-In CSS Support` from `NextJS`)
 ### Added dependencies
 - `@tailwindcss/forms` (replaces `@tailwindcss/custom-forms`)
 - `autoprefixer`
@@ -51,7 +64,9 @@
 @fortawesome/fontawesome-free    5.14.0   →   5.15.3
 @popperjs/core                    2.5.1   →    2.9.1
 chart.js                          2.9.3   →    2.9.4
+next                              9.5.3   →   10.0.9
 react                           16.13.1   →   17.0.1
+@types/react                    16.9.49   →   17.0.3
 react-dom                       16.13.1   →   17.0.1
 react-scripts                     3.4.3   →    4.0.3
 tailwindcss                      1.8.10   →    2.0.4
@@ -62,5 +77,5 @@ _On a clean install there may be some warnings from request, chokidar, fsevents 
 
 ## [1.0.0] 2020-09-29
 ### Original Release
-- Started project from [Tailwind Starter Kit by Creative Tim](https://www.creative-tim.com/learning-lab/tailwind-starter-kit/presentation?ref=nr-changelog)
+- Started project from [Tailwind Starter Kit by Creative Tim](https://www.creative-tim.com/learning-lab/tailwind-starter-kit/presentation?ref=nnjs-changelog)
 - Added design from Tailwind Starter Kit by Creative Tim
