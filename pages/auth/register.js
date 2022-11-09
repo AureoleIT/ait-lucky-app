@@ -1,10 +1,12 @@
-import React from "react";
-
-// layout for page
-
+import { React, useState } from "react";
 import Auth from "layouts/Auth.js";
-
+import TextInput from "public/shared/TextInput";
+import ConfirmButton from "public/shared/ConfirmButton";
+import SocialButton from "public/shared/SocialButton";
 export default function Register() {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [mail, setMail] = useState("");
   return (
     <>
       <div className="container mx-auto px-4 h-full">
@@ -18,20 +20,8 @@ export default function Register() {
                   </h6>
                 </div>
                 <div className="btn-wrapper text-center">
-                  <button
-                    className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-2 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                    type="button"
-                  >
-                    <img alt="..." className="w-5 mr-1" src="/img/github.svg" />
-                    Github
-                  </button>
-                  <button
-                    className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                    type="button"
-                  >
-                    <img alt="..." className="w-5 mr-1" src="/img/google.svg" />
-                    Google
-                  </button>
+                  <SocialButton text="Github" src="/img/github.svg" />
+                  <SocialButton text="Google" src="/img/google.svg" />
                 </div>
                 <hr className="mt-6 border-b-1 border-blueGray-300" />
               </div>
@@ -40,45 +30,36 @@ export default function Register() {
                   <small>Or sign up with credentials</small>
                 </div>
                 <form>
-                  <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="email"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Name"
+                  <div className="relative w-full mb-3 flex flex-col">
+                    <TextInput
+                      container="mb-2"
+                      type="text"
+                      id="idName"
+                      fadeText="Họ tên"
+                      label="Họ tên"
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </div>
 
                   <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Email"
+                    <TextInput
+                      container="mb-2"
+                      type="text"
+                      id="idMail"
+                      fadeText="Mail"
+                      label="Mail"
+                      onChange={(e) => setMail(e.target.value)}
                     />
                   </div>
 
                   <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Password
-                    </label>
-                    <input
+                    <TextInput
+                      container="mb-2"
                       type="password"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Password"
+                      id="idPass"
+                      fadeText="Password"
+                      label="Password"
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
 
@@ -102,14 +83,7 @@ export default function Register() {
                     </label>
                   </div>
 
-                  <div className="text-center mt-6">
-                    <button
-                      className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                      type="button"
-                    >
-                      Create Account
-                    </button>
-                  </div>
+                  <ConfirmButton text="Tạo tài khoản"/>
                 </form>
               </div>
             </div>
