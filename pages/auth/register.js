@@ -20,10 +20,8 @@ export default function Register() {
                   </h6>
                 </div>
                 <div className="btn-wrapper text-center">
-                  <SocialButton text="Github" src="/img/github.svg" />
                   <SocialButton text="Google" src="/img/google.svg" />
                 </div>
-                <hr className="mt-6 border-b-1 border-blueGray-300" />
               </div>
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <div className="text-blueGray-400 text-center mb-3 font-bold">
@@ -37,7 +35,7 @@ export default function Register() {
                       id="idName"
                       fadeText="Họ tên"
                       label="Họ tên"
-                      onChange={(e) => setName(e.target.value)}
+                      // onChange={(e) => setName(e.target.value)}
                     />
                   </div>
 
@@ -48,7 +46,7 @@ export default function Register() {
                       id="idMail"
                       fadeText="Mail"
                       label="Mail"
-                      onChange={(e) => setMail(e.target.value)}
+                      // onChange={(e) => setMail(e.target.value)}
                     />
                   </div>
 
@@ -59,7 +57,7 @@ export default function Register() {
                       id="idPass"
                       fadeText="Password"
                       label="Password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      // onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
 
