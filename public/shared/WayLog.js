@@ -1,15 +1,12 @@
 import React from "react";
-
-export default function WayLog({title, action, path}) {
+import { TEXT } from "public/colors";
+export default function WayLog({ title, action, path }) {
   return (
-    <p className="text-sm font-normal mt-2 pt-1">
-      {title}
-      <a
-        href={path}
-        className="font-bold transition duration-200 ease-in-out"
-      >
+    <div className="flex-row w-full flex items-center justify-center">
+      <a href={path} className={`text-[${TEXT}] underline font-semibold`}>
         {action}
       </a>
-    </p>
+      <p className={`text-[${TEXT}] ml-1`}>{`${title}`}</p>
+    </div>
   );
 }
