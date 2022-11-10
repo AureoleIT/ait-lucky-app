@@ -19,9 +19,13 @@ export default function Login() {
 
   return (
     <>
-      <section className="h-screen px-5 py-5 flex justify-center items-center">
+      <section className="h-screen max-w-[360px] px-5 py-5 mx-auto flex justify-center items-center">
         <div className="flex flex-col justify-center items-center w-full h-full">
-          <AuthInput />
+          <Logotic  
+            title="AIT LUCKY GIFTS"
+            src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
+          />
+          <AuthInput content={"Tên đăng nhập/E-mail"} />
         </div>
       </section>
     </>

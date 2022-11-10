@@ -15,7 +15,7 @@ class MyDocument extends Document {
             href="/img/logo.png"
           />
         </Head>
-        <body className="text-blueGray-700 antialiased">
+        <body className="text-slate-700 antialiased">
           <div id="page-transition"></div>
           <Main />
           <NextScript />
