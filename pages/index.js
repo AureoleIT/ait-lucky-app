@@ -24,7 +24,7 @@ export default function Index() {
             title="AIT LUCKY GIFTS"
             src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
           />
-          <BigText text="Mã pin sự kiện"/>
+          <BigText text="Mã pin sự kiện" font="text-2xl"/>
           <TextNoLabel
             container="mb-6 w-1/2 max-w-sm"
             type="text"
