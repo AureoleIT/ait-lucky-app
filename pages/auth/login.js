@@ -15,9 +15,9 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm()
-  const [err, setErr] = useState("")
-  const [loading, setLoading] = useState(false)
+  const { register, handleSubmit } = useForm();
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
   // const { logIn, signInWithGoogle } = AuthContext()
 
   return (
@@ -41,7 +41,11 @@ export default function Login() {
           <GradientLine color1="#003B93" color2="#00F0FF" content="" />
         </div>
       </section>
-      <AuthFooter normalContent="Chưa có tài khoản?" boldContent="Đăng kí ngay!!!" href="#" />
+      <AuthFooter
+        normalContent="Chưa có tài khoản?"
+        boldContent="Đăng kí ngay!!!"
+        href="#"
+      />
     </>
   );
 }
