@@ -8,7 +8,7 @@ export default function AuthInput({content, type}) {
     }
 
     return (
-        <div className="bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] outline-none relative">
+        <div className="bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative">
             <div className="h-full">
                 <input type={type} className="h-full w-full rounded-lg px-2 outline-none border-none" />
                 <div className="bg-white absolute w-full top-0">
