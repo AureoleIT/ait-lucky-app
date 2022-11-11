@@ -33,6 +33,7 @@ export default function userList() {
       <div className="mt-[17px]">
         <p className="text-[#004599] font-extrabold">Trực tuyến</p>
       </div>
+      <div className="list-user"></div>
     </section>
   );
 }
