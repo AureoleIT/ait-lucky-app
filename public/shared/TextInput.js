@@ -20,7 +20,7 @@ export default function TextInput({
         </label>
         <input
           type={type}
-          className="placeholder-slate-300 text-sm w-full form-control px-4 py-2 items-center flex-1 font-normal text-black bg-white bg-clip-padding border border-solid border-gray-300  transition  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none rounded-full"
+          className="placeholder-slate-500 text-lg w-full px-4 py-2 font-normal text-black bg-white border-2 bg-transparent rounded-lg"
           id={id}
           placeholder={fadeText}
           onChange={onChange}
