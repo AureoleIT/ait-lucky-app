@@ -13,6 +13,7 @@ import BgWhiteButton from "public/shared/BgWhiteButton";
 import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
+import Header from "public/shared/Header";
 
 export default function Login() {
   const { register, handleSubmit } = useForm()
@@ -22,7 +23,8 @@ export default function Login() {
 
   return (
     <>
-      <section className="h-screen max-w-[360px] px-5 py-5 mx-auto flex justify-center items-center">
+      <section className="h-screen max-w-[360px] py-5 mx-auto flex flex-col justify-center items-center">
+        <Header />
         <div className="flex flex-col justify-center items-center w-full h-full">
           <Title title="ĐĂNG NHẬP" />
           <div className="flex flex-col gap-y-[20px] w-full mt-[30px] mb-[70px]">
