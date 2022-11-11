@@ -14,9 +14,8 @@ import WayLog from "public/shared/WayLog";
 import Privacy from "public/shared/Privacy";
 import LineGradient from "public/shared/LineGradient";
 import ButtonWithIcon from "public/shared/ButtonWithIcon";
-import Navbar from "components/Navbars/AdminNavbar";
-import AuthNavbar from "components/Navbars/AuthNavbar";
-import IndexNavbar from "components/Navbars/IndexNavbar";
+import Title from "public/shared/Title";
+import AuthInput from "public/shared/AuthInput";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -28,12 +27,9 @@ export default function Register() {
         <div
           className={`flex flex-col justify-center items-center w-full h-full ${BG_WHITE}`}
         >
-          <BigText text="Đăng ký" font="text-4xl" />
-          <div className="relative w-1/2 max-w-sm h-auto">
-            <span className="ml-3 bg-white px-2 absolute -bottom-3 font-semibold text-sm">
-              Tên đăng nhập
-            </span>
-            <input className="transition duration-500 border-2 h-14 rounded-lg w-full text-lg px-4 mb-4" />
+          <Title title="ĐĂNG KÝ" />
+          <div className="w-1/2 max-w-sm">
+            <AuthInput content={"Tên đăng nhập/Email"} type={"email"} />
           </div>
           <Privacy />
           <ConfirmButton text="Đăng ký" />
