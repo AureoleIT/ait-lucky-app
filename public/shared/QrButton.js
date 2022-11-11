@@ -1,11 +1,11 @@
 import React from "react";
 import { TEXT } from "../colors";
-export default function QrButton() {
+export default function QrButton({onClick}) {
   return (
     <button
       type="button"
       className="w-1/2 max-w-sm flex-col items-center flex mb-5"
-      // onClick
+      onClick={onClick}
     >
       <img
         src={require("../img/qrCode.png")}

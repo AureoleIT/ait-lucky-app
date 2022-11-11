@@ -10,10 +10,8 @@ import LineWithText from "public/shared/LineWithText";
 import QrButton from "public/shared/QrButton";
 import BigText from "public/shared/BigText";
 export default function Index() {
-  const [id, setId] = useState("");
-  const [pass, setPass] = useState("");
-  // Got ID vs password from text input to handle logic
-  // ( check whether id exists in database ) -> ( check whether the password is true )
+  const [pin, setPin] = useState("");
+  // Got pin input
   return (
     <>
       <section className="h-screen px-5 py-5 ">
@@ -24,12 +22,15 @@ export default function Index() {
             title="AIT LUCKY GIFTS"
             src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
           />
-          <BigText text="Mã pin sự kiện" font="text-2xl"/>
+          <BigText text="Mã pin sự kiện" />
           <TextNoLabel
             container="mb-6 w-1/2 max-w-sm"
             type="text"
             id="idRoom"
             fadeText="Mã pin"
+            onChange={(e) => {
+              setPin(e.target.value);
+            }}
           />
           <ConfirmButton text="Tham gia" />
           <LineWithText
@@ -37,7 +38,7 @@ export default function Index() {
             rightColor={RIGHT_GRADIENT}
             text="hoặc"
           />
-          <QrButton />
+          <QrButton onClick/> {/* Handle logic todo: go direct to open device's camera */}
           <WayLog
             action="Đăng nhập"
             title="để quản lý sự kiện?"
