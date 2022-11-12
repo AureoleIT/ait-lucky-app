@@ -4,8 +4,8 @@ export default function TextNoLabel({type, placeholder, onChange, id}) {
 
   return (
     <div className="bg-gradient-to-r from-[#003B93] to-[#00F0FF] 
-      p-[2px] rounded-lg  w-1/2 mb-8 max-w-sm
-      h-[60px] py-[2px] my-4
+      p-[2px] rounded-lg  w-1/2 max-w-sm
+      h-[60px] py-[2px] my-2
       ">
       <div className="h-full">
         <input

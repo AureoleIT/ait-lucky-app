@@ -5,7 +5,7 @@ export default function ButtonWithIcon({src,text}) {
     <button
       type="button"
       className={` py-2 bg-white font-bold rounded-full uppercase items-center justify-center flex hover:shadow-lg 
-                    mb-6 transition duration-1000 w-1/2 max-w-sm flex-row border-2 border-black`}
+                     transition duration-1000 w-1/2 max-w-sm flex-row border-2 border-black`}
       // onPress={}
     >
       <h1
