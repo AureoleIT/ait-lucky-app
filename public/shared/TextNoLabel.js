@@ -1,24 +1,23 @@
-/*eslint-disable*/
-import { React, useState } from "react";
+import React from "react";
 
-export default function TextNoLabel({
-  container,
-  type,
-  id,
-  fadeText,
-  onChange,
-}) {
+export default function TextNoLabel({type, placeholder, onChange, id}) {
+
   return (
-    <>
-      <div className={container}>
+    <div className="bg-gradient-to-r from-[#003B93] to-[#00F0FF] 
+      p-[2px] rounded-lg  w-1/2 max-w-sm
+      h-[60px] py-[2px] my-2
+      ">
+      <div className="h-full">
         <input
           type={type}
-          className="placeholder-[#656565] text-center text-xl w-full px-4 py-4 font-normal text-black bg-white border-2 bg-transparent rounded-lg"
           id={id}
-          placeholder={fadeText}
+          placeholder={placeholder}
           onChange={onChange}
+          className="
+          placeholder-[#656565] text-center text-xl font-normal text-black bg-white
+          h-full w-full rounded-lg outline-none border-none"
         />
       </div>
-    </>
+    </div>
   );
 }
