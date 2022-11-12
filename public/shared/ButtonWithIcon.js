@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function BgBlueButton({content, onClick, classIcon}) {
+export default function ButtonWithIcon({content, onClick, classIcon}) {
 
     const iconStyle = {
         color:"white",
