@@ -9,7 +9,7 @@ export default function ButtonWithIcon({src,text}) {
       // onPress={}
     >
       <h1
-        className={`text-2xl text-transparent bg-clip-text ${BUTTON_GRADIENT} `}
+        className={`font-[900] text-[24px] text-transparent bg-clip-text ${BUTTON_GRADIENT} `}
       >
         {text}
       </h1>

@@ -16,6 +16,8 @@ import LineGradient from "public/shared/LineGradient";
 import ButtonWithIcon from "public/shared/ButtonWithIcon";
 import Title from "public/shared/Title";
 import AuthInput from "public/shared/AuthInput";
+import GradientLine from "public/shared/GradientLine";
+import AuthFooter from "public/shared/AuthFooter";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -29,24 +31,22 @@ export default function Register() {
         >
           <Title title="ĐĂNG KÝ" />
           <div className="w-1/2 max-w-sm">
-            <AuthInput content={"Tên đăng nhập/Email"} type={"email"} />
+            <AuthInput content={"Tên đăng nhập"} type={"text"} onChange={(e) => setName(e.target.value)}/>
+            <AuthInput content={"Email"} type={"email"} onChange={(e) => setMail(e.target.value)}/>
+            <AuthInput content={"Mật khẩu"} type={"password"} onChange={(e) => setPassword(e.target.value)}/>
           </div>
           <Privacy />
           <ConfirmButton text="Đăng ký" />
-          <LineWithText
-            leftColor={LEFT_GRADIENT}
-            rightColor={RIGHT_GRADIENT}
-            text="hoặc"
-          />
+          <div className="w-1/2 max-w-sm">
+            <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+          </div>
           <ButtonWithIcon src="/img/Google.svg" text="đăng ký với" />
-          <LineGradient color={BUTTON_GRADIENT} />
-          <WayLog
-            action="Đăng nhập"
-            title="nếu bạn có tài khoản."
-            path="/auth/login"
-          />
+          <div className="w-1/2 max-w-sm">
+            <GradientLine color1="#003B93" color2="#00F0FF"/>
+          </div>
         </div>
       </section>
+      <AuthFooter normalContent="Đã có tài khoản?" boldContent="Đăng nhập luôn!" href="/auth/login" />
     </>
   );
 }
