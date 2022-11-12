@@ -13,7 +13,7 @@ import LineWithText from "public/shared/LineWithText";
 export default function Index() {
   const [pin, setPin] = useState("");
   // Got pin input
-  const BG_COLOR = BG;
+  const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   return (
     <section className="h-screen px-5 py-5 ">
       <div
