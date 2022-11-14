@@ -1,5 +1,5 @@
 import React from "react";
-import { TEXT } from "public/colors";
+import { TEXT } from "public/util/colors";
 export default function WayLog({ title, action, path }) {
   return (
     <div className="flex-row w-full flex items-center justify-center">
