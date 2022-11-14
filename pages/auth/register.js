@@ -12,12 +12,12 @@ import BigText from "public/shared/BigText";
 import LineWithText from "public/shared/LineWithText";
 import WayLog from "public/shared/WayLog";
 import Privacy from "public/shared/Privacy";
-import LineGradient from "public/shared/LineGradient";
 import ButtonWithIcon from "public/shared/ButtonWithIcon";
 import Title from "public/shared/Title";
 import AuthInput from "public/shared/AuthInput";
 import GradientLine from "public/shared/GradientLine";
 import AuthFooter from "public/shared/AuthFooter";
+import BgWhiteButton from "public/shared/BgWhiteButton";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -31,22 +31,39 @@ export default function Register() {
         >
           <Title title="ĐĂNG KÝ" />
           <div className="w-1/2 max-w-sm">
-            <AuthInput content={"Tên đăng nhập"} type={"text"} onChange={(e) => setName(e.target.value)}/>
-            <AuthInput content={"Email"} type={"email"} onChange={(e) => setMail(e.target.value)}/>
-            <AuthInput content={"Mật khẩu"} type={"password"} onChange={(e) => setPassword(e.target.value)}/>
+            <AuthInput
+              content={"Tên đăng nhập"}
+              type={"text"}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <AuthInput
+              content={"Email"}
+              type={"email"}
+              onChange={(e) => setMail(e.target.value)}
+            />
+            <AuthInput
+              content={"Mật khẩu"}
+              type={"password"}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <Privacy />
           <ConfirmButton text="Đăng ký" />
           <div className="w-1/2 max-w-sm">
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+
+            <BgWhiteButton content="ĐĂNG KÝ VỚI" onClick={""} />
           </div>
-          <ButtonWithIcon src="/img/Google.svg" text="đăng ký với" />
           <div className="w-1/2 max-w-sm">
-            <GradientLine color1="#003B93" color2="#00F0FF"/>
+            <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
         </div>
       </section>
-      <AuthFooter normalContent="Đã có tài khoản?" boldContent="Đăng nhập luôn!" href="/auth/login" />
+      <AuthFooter
+        normalContent="Đã có tài khoản?"
+        boldContent="Đăng nhập luôn!"
+        href="/auth/login"
+      />
     </>
   );
 }
