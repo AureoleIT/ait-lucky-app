@@ -32,7 +32,7 @@ export default function Index() {
             setPin(e.target.value);
           }}
         />
-        <div className="w-1/2 max-w-sm mb-4">
+        <div className="w-3/4 max-w-md mb-4">
           <BgBlueButton
             content="Tham gia"
             onClick={() => alert("check valid pin")}
@@ -53,7 +53,7 @@ export default function Index() {
           />
           <WayLog
             action="Đăng ký"
-            title="để tạo tài khoản chứ chi"
+            title="để tạo tài khoản."
             path="/auth/register"
           />
         </div>
