@@ -14,7 +14,7 @@ export default function EventRegister() {
     }
 
   return (
-    <div className="flex flex-col items-center justify-between h-screen w-screen">
+    <div className="flex flex-col items-center justify-evenly h-screen w-screen">
         <div className="flex flex-col items-center justify-center w-full">
             <h1 className="uppercase text-4xl py-3 font-bold" style={contentCSS}>đăng ký</h1>
             <h1 className="uppercase text-xl py-3 font-bold"  style={contentCSS}>thông tin sự kiện</h1>

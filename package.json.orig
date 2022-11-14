@@ -23,7 +23,12 @@
   "scripts": {
     "start": "next start",
     "build": "next build",
+<<<<<<< HEAD
     "dev": "next dev",
+=======
+    "d": "next dev",
+    "build-static": "next build && next export -o _static",
+>>>>>>> bc2e26f (Build and config firebase + debug)
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm run dev",
     "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css",
     "build-css": "tailwind -i styles/index.css -o styles/tailwind.css --watch"
