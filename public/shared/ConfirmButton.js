@@ -1,5 +1,5 @@
 import React from "react";
-import { BUTTON_GRADIENT} from "../colors";
+import { BUTTON_GRADIENT} from "../util/colors";
 export default function ConfirmButton({ onPress, text }) {
   return (
     <button

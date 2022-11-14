@@ -1,5 +1,5 @@
 import React from "react";
-import { TEXT } from "../colors";
+import { TEXT } from "../util/colors";
 export default function LineWithText({ text, leftColor, rightColor }) {
   return (
     <div className="w-3/4 max-w-md justify-center items-center flex mb-5 flex-row">

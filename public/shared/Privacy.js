@@ -1,4 +1,4 @@
-import { TEXT } from "public/colors";
+import { TEXT } from "public/util/colors";
 import React from "react";
 
 export default function Privacy() {

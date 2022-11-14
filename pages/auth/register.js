@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { React, useState } from "react";
 import Auth from "layouts/Auth.js";
 import ConfirmButton from "public/shared/ConfirmButton";
@@ -7,7 +8,7 @@ import {
   LEFT_GRADIENT,
   RIGHT_GRADIENT,
   BUTTON_GRADIENT,
-} from "public/colors";
+} from "public/util/colors";
 import BigText from "public/shared/BigText";
 import LineWithText from "public/shared/LineWithText";
 import WayLog from "public/shared/WayLog";

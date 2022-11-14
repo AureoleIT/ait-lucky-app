@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // layout for page
 import Auth from "layouts/Auth.js";
 import React, { useState } from "react";

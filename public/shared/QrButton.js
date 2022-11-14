@@ -1,5 +1,5 @@
 import React from "react";
-import { TEXT } from "../colors";
+import { TEXT } from "../util/colors";
 export default function QrButton({onClick}) {
   return (
     <button

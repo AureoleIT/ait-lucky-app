@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
 import { React, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
-import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/colors";
+import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/util/colors";
 import TextNoLabel from "public/shared/TextNoLabel";
 import QrButton from "public/shared/QrButton";
 import BgBlueButton from "public/shared/BgBlueButton";
