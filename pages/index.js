@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
 import { React, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
-import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/colors";
+import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/util/colors";
 import TextNoLabel from "public/shared/TextNoLabel";
 import QrButton from "public/shared/QrButton";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -32,7 +33,7 @@ export default function Index() {
             setPin(e.target.value);
           }}
         />
-        <div className="w-1/2 max-w-sm mb-4">
+        <div className="w-3/4 max-w-md mb-4">
           <BgBlueButton
             content="Tham gia"
             onClick={() => alert("check valid pin")}
@@ -53,7 +54,7 @@ export default function Index() {
           />
           <WayLog
             action="Đăng ký"
-            title="để tạo tài khoản chứ chi"
+            title="để tạo tài khoản."
             path="/auth/register"
           />
         </div>
