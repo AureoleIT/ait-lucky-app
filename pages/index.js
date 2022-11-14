@@ -1,51 +1,63 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
 import { React, useState } from "react";
-import Link from "next/link";
-
-import TextInput from "public/shared/TextInput";
 import ConfirmButton from "public/shared/ConfirmButton";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
-
+import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/colors";
+import TextNoLabel from "public/shared/TextNoLabel";
+import QrButton from "public/shared/QrButton";
+import BgBlueButton from "public/shared/BgBlueButton";
+import BigText from "public/shared/BigText";
+import LineWithText from "public/shared/LineWithText";
 export default function Index() {
-  const [id, setId] = useState("");
-  const [pass, setPass] = useState("");
-  // Got ID vs password from text input to handle logic
-  // ( check whether id exists in database ) -> ( check whether the password is true )
+  const [pin, setPin] = useState("");
+  // Got pin input
+  const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   return (
-    <>
-      <section className="h-screen px-5 py-5">
-        <div className="flex flex-col justify-center items-center w-full h-full bg-green-300">
-          <Logotic
-            title="AIT LUCKY GIFTS"
-            src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
+    <section className="h-screen px-5 py-5 ">
+      <div
+        className={`flex flex-col justify-center items-center w-full h-full ${BG_COLOR}`}
+      >
+        <Logotic
+          title="AIT LUCKY GIFTS"
+          src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
+        />
+        <BigText font=" text-2xl" text="Mã pin sự kiện" />
+        <TextNoLabel
+          type="text"
+          id="idRoom"
+          placeholder="Mã pin"
+          onChange={(e) => {
+            setPin(e.target.value);
+          }}
+        />
+        <div className="w-1/2 max-w-sm mb-4">
+          <BgBlueButton
+            content="Tham gia"
+            onClick={() => alert("check valid pin")}
           />
-          <TextInput
-            container="mb-6 w-1/2 max-w-sm"
-            type="text"
-            id="idRoom"
-            label="ID"
-            fadeText="Id sự kiện"
-            // onChange={(e) => setId(e.target.value)}
-          />
-          <TextInput
-            container="mb-2 w-1/2 max-w-sm"
-            type="password"
-            label="Password"
-            id="passRoom"
-            fadeText="Mật khẩu sự kiện"
-            // onChange={(e) => setPass(e.target.value)}
-          />
-          <ConfirmButton text="Xác nhận" />
-          <WayLog title="Bạn là Admin?" action="Đăng nhập" path="/auth/login" />
+        </div>
+        <LineWithText
+          text="hoặc"
+          leftColor={LEFT_GRADIENT}
+          rightColor={RIGHT_GRADIENT}
+        />
+        <QrButton onClick={() => alert("direct to device's camera")} />
+        {/* Handle logic todo: go direct to open device's camera */}
+        <div className="mt-10">
           <WayLog
-            title="Bạn chưa có tài khoản?"
-            action="Đăng ký luôn"
+            action="Đăng nhập"
+            title="để quản lý sự kiện?"
+            path="/auth/login"
+          />
+          <WayLog
+            action="Đăng ký"
+            title="để tạo tài khoản chứ chi"
             path="/auth/register"
           />
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

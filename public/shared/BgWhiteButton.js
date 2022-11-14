@@ -1,5 +1,4 @@
 import React from "react";
-// import googleSVG from "../img/google.svg"
 
 export default function BgWhiteButton({content, onClick}) {
     const gradientText = {

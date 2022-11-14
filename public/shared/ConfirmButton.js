@@ -1,11 +1,11 @@
 import React from "react";
-
-export default function ConfirmButton({onPress, text}) {
+import { BUTTON_GRADIENT} from "../colors";
+export default function ConfirmButton({ onPress, text }) {
   return (
     <button
       type="button"
-      className=" py-3 px-4 bg-black text-white font-bold border-black text-base rounded-full shadow-md uppercase text items-center justify-center flex hover:shadow-lg focus:bg-blue-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg 
-                    my-6 transition duration-1000 ease-in-out w-1/2 max-w-sm"
+      className={` py-2 text-white font-[900] text-[24px] rounded-full uppercase items-center justify-center flex hover:shadow-lg 
+                    mb-4 transition duration-1000 w-1/2 max-w-sm ${BUTTON_GRADIENT}`}
       onPress={onPress}
     >
       {text}
