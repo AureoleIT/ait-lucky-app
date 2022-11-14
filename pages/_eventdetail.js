@@ -1,8 +1,10 @@
+
 /* eslint-disable no-unused-vars */
 import { useState } from 'react'
 
 import BgBlueButton from "public/shared/BgBlueButton"
 import SpecialRewardInfo from "public/shared/SpecialRewardInfo"
+import SingleColorButton from "public/shared/SingleColorButton"
 import Line from "public/shared/Line"
 
 function EventDetail () {
