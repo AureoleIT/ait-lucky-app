@@ -4,8 +4,8 @@ import { MoreGift } from "components/JoinEvent/MoreGift";
 import AuthInput from "public/shared/AuthInput";
 import TextArea from "public/shared/TextArea";
 import BgBlueButton from "public/shared/BgBlueButton";
-import BgRedButton from "public/shared/BgRedButton";
 import ButtonAndIcon from "public/shared/ButtonAndIcon";
+import Line from "public/shared/Line";
 
 
 function EventRewardRegister () {
@@ -26,22 +26,7 @@ function EventRewardRegister () {
         margin:"0 12px",
         "border-image-source" : "linear-gradient(to right, #003B93, #00F0FF)"
     }
-    // label absolute
-    const label = {
-        transform: "translateY(-50%)",
-        background: "white",
-        padding:"0 10px",
-        margin: "0 20px",
-    }
-    // div border top relative
-    const border = {
-        "border-top":"1px solid rgb(37, 99, 235)",
-    }
-    // hr style
-    const hrStyle =
-    {
-        border: "1px solid rgb(37, 99, 235)"
-    }
+
     // logic
     const handleAddGift = () =>
     {
@@ -63,8 +48,8 @@ function EventRewardRegister () {
                     <AuthInput content={"Tên giải thưởng"} type={"text"} />
 
                     <div className="flex justify-evenly w-full my-2 lg:justify-center">
-                        <label style={contentCSS}>Số lượng</label>
-                        <div className="flex justify-between items-center text-lg" style={contentCSS}>
+                        <label className="font-bold" style={contentCSS}>Số lượng</label>
+                        <div className="flex justify-between items-center text-lg font-bold" style={contentCSS}>
                             <i className="fas fa-minus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setGiftCount(giftCount - 1)}></i>
                             <label>{giftCount}</label>
                             <i className="fas fa-plus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setGiftCount(giftCount + 1)}></i>
@@ -73,9 +58,7 @@ function EventRewardRegister () {
                     {/* gift detail */}
                         {/* line */}
                     <div class="w-[90%] max-w-sm">
-                        <div class="w-full h-[2px] my-4 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex">
-                            <p class="absolute top-[-50%] transform translate-y-[-50%] mx-[10px] px-[10px] text-[#003B93] font-semibold bg-white">Phần quà</p>
-                        </div>
+                        <Line content={"Phần quà"}/>
                     </div>
 
                     <div className="overflow-x-hidden overflow-y-auto flex flex-col h-[190px] w-full max-w-[300px]">
@@ -96,9 +79,7 @@ function EventRewardRegister () {
                     {/* gift event */}
                         {/* line */}
                     <div class="w-[90%] max-w-sm">
-                        <div class="w-full h-[2px] my-4 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex">
-                            <p class="absolute top-[-50%] transform translate-y-[-50%] mx-[10px] px-[10px] text-[#003B93] font-semibold bg-white"></p>
-                        </div>
+                       <Line />
                     </div>
 
                     <div className="flex justify-center items-center my-2 w-[300px] cursor-pointer" onClick={handleAddGift}>
@@ -109,9 +90,7 @@ function EventRewardRegister () {
                     </div>
                         {/* line */}
                     <div class="w-[90%] max-w-sm">
-                        <div class="w-full h-[2px] my-4 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex">
-                            <p class="absolute top-[-50%] transform translate-y-[-50%] mx-[10px] px-[10px] text-[#003B93] font-semibold bg-white"></p>
-                        </div>
+                        <Line />
                     </div>
 
                     <div className="flex justify-center items-center my-2 w-[300px] cursor-pointer">
