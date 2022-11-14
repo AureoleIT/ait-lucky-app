@@ -1,6 +1,7 @@
 import BgBlueButton from "public/shared/BgBlueButton"
 import ButtonWithIcon from "public/shared/ButtonWithIcon"
 import SpecialRewardInfo from "public/shared/SpecialRewardInfo"
+import SingleColorButton from "public/shared/SingleColorButton"
 
 function EventDetail () {
 
@@ -16,8 +17,8 @@ function EventDetail () {
 
     return (
         <div className="flex flex-col justify-center items-center h-screen w-screen">
-            <h1 className="uppercase text-4xl py-2 font-bold" style={contentCSS}>tiệc cuối năm</h1>
-            <h1 className="uppercase text-xl py-2 mb-2 font-bold"  style={contentCSS}>mã pin sự kiện</h1> 
+            <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
+            <h1 className="uppercase text-xl py-2 mb-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
 
             {/* id room */}
 
@@ -35,13 +36,17 @@ function EventDetail () {
             {/* qr code */}
 
             <div className="w-[90%] flex mb-5">
-                <ButtonWithIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"}/>
+                <SingleColorButton content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"}/>
             </div>
 
             {/* rewards information */}
 
-            <h1 className="uppercase text-[#004599] font-bold mb-2">thông tin giải thưởng</h1>
-            <hr className="w-[100%] h-[3px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]"/>
+            <h1 className="uppercase text-[#004599] font-bold mb-2 text-[20px]">thông tin giải thưởng</h1>
+            <div class="w-[90%] max-w-sm">
+                <div class="w-full h-[2px] my-4 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex justify-center">
+                    <p class="absolute top-[-50%] transform translate-y-[-50%] px-[10px] text-[#003B93] font-semibold bg-white"></p>
+                </div>
+            </div>
             <div className="flex flex-col overflow-x-hidden overflow-y-auto justify-center items-center w-[90%] my-2">
                 <div className="my-2 w-full h-[300px] flex flex-col max-h-[300px]">
                     <SpecialRewardInfo  rewardName={"giải đặc biệt"} amount="1" giftName="Phần quà số 1"/>
@@ -51,11 +56,21 @@ function EventDetail () {
                     <SpecialRewardInfo  rewardName={"giải nhất"} amount="1" giftName="Phần quà số 1"/>
                 </div>
             </div>
-            <hr className="w-[100%] h-[3px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]"/>
 
-            <h1 className="uppercase text-[#004599] font-bold">số người tham gia: 100</h1>
-            <div className="w-[90%]">
-                <BgBlueButton content={"BẮT ĐẦU SỰ KIỆN"}/>
+            <div class="w-[90%] max-w-sm">
+                <div class="w-full h-[2px] my-4 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex justify-center">
+                    <p class="absolute top-[-50%] transform translate-y-[-50%] px-[10px] text-[#003B93] font-semibold bg-white"></p>
+                </div>
+            </div>
+
+            <h1 className="uppercase text-[#004599] font-bold mb-1">số người tham gia: 100</h1>
+            <div className="w-[90%] flex">
+                <div className="w-[90%] mr-1">
+                    <BgBlueButton content={"BẮT ĐẦU SỰ KIỆN"}/>
+                </div>
+                <div className="w-[50px] h-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] rounded-[50px] ml-1">
+                    <i className="fas fa-pen text-white flex justify-center items-center w-full h-full"></i>
+                </div>
             </div>
         </div>
     )
