@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Link from 'next/link'
+import React from "react";
 
 import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
@@ -7,17 +6,11 @@ import BgBlueButton from "public/shared/BgBlueButton";
 
 export default function EventRegister() {
 
-    const contentCSS = {
-        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-        "-webkit-background-clip": "text",
-        "-webkit-text-fill-color": "transparent",
-    }
-
   return (
     <div className="flex flex-col items-center justify-evenly h-screen w-screen">
         <div className="flex flex-col items-center justify-center w-full">
-            <h1 className="uppercase text-4xl py-3 font-bold" style={contentCSS}>đăng ký</h1>
-            <h1 className="uppercase text-xl py-3 font-bold"  style={contentCSS}>thông tin sự kiện</h1>
+            <h1 className="uppercase text-4xl py-3 font-bold text-[#004599]">đăng ký</h1>
+            <h1 className="uppercase text-xl py-3 font-bold text-[#004599] mb-2">thông tin sự kiện</h1>
             
             <div className="w-[300px]">
                 <TextArea content={"Tên sự kiện"} />
