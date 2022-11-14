@@ -645,17 +645,6 @@ video {
   top: -50%;
 }
 
-<<<<<<< Updated upstream
-=======
-.right-2 {
-  right: 0.5rem;
-}
-
-.top-2 {
-  top: 0.5rem;
-}
-
->>>>>>> Stashed changes
 .left-\[-10px\] {
   left: -10px;
 }
@@ -793,8 +782,6 @@ video {
   margin-top: 8rem;
 }
 
-<<<<<<< Updated upstream
-=======
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -803,7 +790,6 @@ video {
   margin-bottom: 0.5rem;
 }
 
->>>>>>> Stashed changes
 .mt-0 {
   margin-top: 0px;
 }
@@ -876,7 +862,6 @@ video {
   margin-right: 0.5rem;
 }
 
-<<<<<<< Updated upstream
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -893,8 +878,6 @@ video {
   margin-bottom: 70px;
 }
 
-=======
->>>>>>> Stashed changes
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -917,13 +900,10 @@ video {
 
 .ml-3 {
   margin-left: 0.75rem;
-<<<<<<< Updated upstream
-=======
 }
 
 .-ml-4 {
   margin-left: -1rem;
->>>>>>> Stashed changes
 }
 
 .-ml-4 {
@@ -934,13 +914,8 @@ video {
   margin-right: 0px;
 }
 
-<<<<<<< Updated upstream
-.box-border {
-  box-sizing: border-box;
-=======
 .mt-\[35px\] {
   margin-top: 35px;
->>>>>>> Stashed changes
 }
 
 .ml-1 {
@@ -1003,17 +978,12 @@ video {
   height: auto;
 }
 
-<<<<<<< Updated upstream
 .h-10 {
   height: 2.5rem;
 }
 
-.h-5 {
-  height: 1.25rem;
-=======
 .h-2 {
   height: 0.5rem;
->>>>>>> Stashed changes
 }
 
 .h-2 {
@@ -1044,7 +1014,6 @@ video {
   height: 33.333333%;
 }
 
-<<<<<<< Updated upstream
 .h-\[200px\] {
   height: 200px;
 }
@@ -1083,10 +1052,9 @@ video {
 
 .max-h-\[50px\] {
   max-height: 50px;
-=======
+}
 .h-\[65px\] {
   height: 65px;
->>>>>>> Stashed changes
 }
 
 .max-h-\[150px\] {
@@ -1141,7 +1109,6 @@ video {
   width: 1.25rem;
 }
 
-<<<<<<< Updated upstream
 .w-auto {
   width: auto;
 }
@@ -1152,10 +1119,9 @@ video {
 
 .w-7 {
   width: 1.75rem;
-=======
+}
 .w-\[65px\] {
   width: 65px;
->>>>>>> Stashed changes
 }
 
 .w-\[\] {
@@ -1198,7 +1164,6 @@ video {
   max-width: 100%;
 }
 
-<<<<<<< Updated upstream
 .max-w-\[360px\] {
   max-width: 360px;
 }
@@ -1217,10 +1182,9 @@ video {
 
 .max-w-\[300px\] {
   max-width: 300px;
-=======
+}
 .max-w-\[250px\] {
   max-width: 250px;
->>>>>>> Stashed changes
 }
 
 .flex-auto {
@@ -1325,7 +1289,6 @@ video {
   justify-content: space-evenly;
 }
 
-<<<<<<< Updated upstream
 .gap-\[10px\] {
   gap: 10px;
 }
@@ -1344,7 +1307,7 @@ video {
 
 .overflow-auto {
   overflow: auto;
-=======
+}
 .gap-x-4 {
   -webkit-column-gap: 1rem;
           column-gap: 1rem;
@@ -1352,7 +1315,6 @@ video {
 
 .gap-y-4 {
   row-gap: 1rem;
->>>>>>> Stashed changes
 }
 
 .gap-y-6 {
@@ -1697,7 +1659,6 @@ video {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-<<<<<<< Updated upstream
 .from-\[\#FF6262\] {
   --tw-gradient-from: #FF6262;
   --tw-gradient-to: rgb(255 98 98 / 0);
@@ -1708,7 +1669,7 @@ video {
   --tw-gradient-from: #ff0026;
   --tw-gradient-to: rgb(255 0 38 / 0);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-=======
+}
 .via-\[\#B3D2E9\] {
   --tw-gradient-to: rgb(179 210 233 / 0);
   --tw-gradient-stops: var(--tw-gradient-from), #B3D2E9, var(--tw-gradient-to);
@@ -1716,7 +1677,6 @@ video {
 
 .to-\[\#B9E4A7\] {
   --tw-gradient-to: #B9E4A7;
->>>>>>> Stashed changes
 }
 
 .to-\[\#00F0FF\] {
@@ -2070,17 +2030,16 @@ video {
   font-size: 18px;
 }
 
-<<<<<<< Updated upstream
 .text-\[36px\] {
   font-size: 36px;
-=======
+  }
+
 .text-\[14px\] {
   font-size: 14px;
 }
 
 .text-\[12px\] {
   font-size: 12px;
->>>>>>> Stashed changes
 }
 
 .font-semibold {
@@ -2235,16 +2194,12 @@ video {
   color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
-<<<<<<< Updated upstream
-.text-red-600 {
-=======
 .text-\[\#656565\] {
   --tw-text-opacity: 1;
   color: rgb(101 101 101 / var(--tw-text-opacity));
 }
 
 .text-\[\#004599\] {
->>>>>>> Stashed changes
   --tw-text-opacity: 1;
   color: rgb(0 69 153 / var(--tw-text-opacity));
 }
