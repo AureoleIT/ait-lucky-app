@@ -1,19 +1,21 @@
 import React from "react";
-import { BUTTON_GRADIENT } from "public/colors";
-export default function ButtonWithIcon({src,text}) {
-  return (
-    <button
-      type="button"
-      className={` py-2 bg-white font-bold rounded-full uppercase items-center justify-center flex hover:shadow-lg 
-                     transition duration-1000 w-1/2 max-w-sm flex-row border-2 border-black`}
-      // onPress={}
-    >
-      <h1
-        className={`font-[900] text-[24px] text-transparent bg-clip-text ${BUTTON_GRADIENT} `}
-      >
-        {text}
-      </h1>
-      <img src={src} className="w-5.5 ml-2" alt="Google"></img>
-    </button>
-  );
+
+export default function ButtonWithIcon({content, onClick, classIcon}) {
+
+    const iconStyle = {
+        color:"white",
+        "font-size":"24px"
+    }
+
+    return (
+        <>
+            <button className="flex justify-evenly items-center w-full h-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] rounded-[50px]"
+            onClick={onClick}>
+                <div className="font-[900] text-[24px] text-white">
+                    {content}
+                </div>
+                <i className={classIcon} style={iconStyle}></i>
+            </button>
+        </>
+    )
 }

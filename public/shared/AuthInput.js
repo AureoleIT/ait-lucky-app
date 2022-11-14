@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function AuthInput({ content, type, onChange }) {
   const contentCSS = {
