@@ -7,7 +7,7 @@ function SingleColorButton ({ content, onClick, colorHex })
 
     return (
         <button className="w-full h-[50px] rounded-[5px] flex justify-center items-center" onClick={onClick} style={buttonColor}>
-            <div className="font-[900] text-[24px] text-white">
+            <div className="font-[900] text-[24px] w-full text-white flex justify-center items-center">
                 {content}
             </div>
         </button>
