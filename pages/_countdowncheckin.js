@@ -20,7 +20,7 @@ function CountDownCheckIn ()
 
              {/* id room */}
 
-             <div className="w-[340px] h-[70px] flex justify-center items-center rounded-[10px] mb-5" style={wrapperBorder}>
+             <div className="w-[90%] lg:w-4/12 max-w-xl h-[70px] flex justify-center items-center rounded-[10px] mb-5" style={wrapperBorder}>
                 <div className="flex justify-between px-5 w-full text-3xl text-[#40BEE5]">
                     <span>1</span>
                     <span>2</span>
@@ -33,7 +33,7 @@ function CountDownCheckIn ()
 
             {/* qr code */}
 
-            <div className="w-[340px] flex mb-5 drop-shadow-lg">
+            <div className="w-[90%] lg:w-4/12 max-w-xl flex mb-5 drop-shadow-lg">
                 <ButtonAndIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"}/>
             </div>
 
@@ -57,7 +57,7 @@ function CountDownCheckIn ()
 
             </div>
 
-            <div className="w-3/4 flex justify-between mb-2">
+            <div className="w-3/4 lg:w-3/12 flex justify-between mb-2">
                 <div className="">
                     <p className="text-[#004599] font-bold">Số người tham gia</p>
                 </div>
@@ -73,7 +73,7 @@ function CountDownCheckIn ()
 
             <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">người chơi</h1> 
 
-            <div class="w-[90%] max-w-sm">
+            <div className="w-[90%] lg:w-4/12 max-w-xl">
                 <Line />
             </div>
 
@@ -84,12 +84,12 @@ function CountDownCheckIn ()
                 <h1 className="text-xl py-2 font-bold text-[#004599]">Nguyen Van D</h1> 
             </div>
 
-            <div class="w-[90%] max-w-sm">
+            <div className="w-[90%] lg:w-4/12 max-w-xl mb-4">
                 <Line />
             </div>
 
-            <div className="w-[90%] flex justify-center">
-                <div className="w-[340px] mr-1 drop-shadow-lg">
+            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center">
+                <div className="w-[90%] mr-1 drop-shadow-lg">
                     <BgBlueButton content={"BẮT ĐẦU"} islink={true} href={"_countdowncheckin"}/>
                 </div>
                 <div className="w-[50px] h-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] rounded-[50px] ml-1 cursor-pointer drop-shadow-lg">
