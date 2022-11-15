@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { React, useState } from "react";
 import Auth from "layouts/Auth.js";
 import ConfirmButton from "public/shared/ConfirmButton";
@@ -7,16 +8,17 @@ import {
   LEFT_GRADIENT,
   RIGHT_GRADIENT,
   BUTTON_GRADIENT,
-} from "public/colors";
+} from "public/util/colors";
 import BigText from "public/shared/BigText";
 import LineWithText from "public/shared/LineWithText";
 import WayLog from "public/shared/WayLog";
 import Privacy from "public/shared/Privacy";
-import LineGradient from "public/shared/LineGradient";
 import ButtonWithIcon from "public/shared/ButtonWithIcon";
-import Navbar from "components/Navbars/AdminNavbar";
-import AuthNavbar from "components/Navbars/AuthNavbar";
-import IndexNavbar from "components/Navbars/IndexNavbar";
+import Title from "public/shared/Title";
+import AuthInput from "public/shared/AuthInput";
+import GradientLine from "public/shared/GradientLine";
+import AuthFooter from "public/shared/AuthFooter";
+import BgWhiteButton from "public/shared/BgWhiteButton";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -28,29 +30,38 @@ export default function Register() {
         <div
           className={`flex flex-col justify-center items-center w-full h-full ${BG_WHITE}`}
         >
-          <BigText text="Đăng ký" font="text-4xl" />
-          <div className="relative w-1/2 max-w-sm h-auto">
-            <span className="ml-3 bg-white px-2 absolute -bottom-3 font-semibold text-sm">
-              Tên đăng nhập
-            </span>
-            <input className="transition duration-500 border-2 h-14 rounded-lg w-full text-lg px-4 mb-4" />
+          <Title title="ĐĂNG KÝ" />
+          <div className="w-3/4 max-w-md">
+            <AuthInput
+              content={"Tên đăng nhập"}
+              type={"text"}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <AuthInput
+              content={"Email"}
+              type={"email"}
+              onChange={(e) => setMail(e.target.value)}
+            />
+            <AuthInput
+              content={"Mật khẩu"}
+              type={"password"}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <Privacy />
           <ConfirmButton text="Đăng ký" />
-          <LineWithText
-            leftColor={LEFT_GRADIENT}
-            rightColor={RIGHT_GRADIENT}
-            text="hoặc"
-          />
-          <ButtonWithIcon src="/img/Google.svg" text="đăng ký với" />
-          <LineGradient color={BUTTON_GRADIENT} />
-          <WayLog
-            action="Đăng nhập"
-            title="nếu bạn có tài khoản."
-            path="/auth/login"
-          />
+          <div className="w-3/4 max-w-md">
+            <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+            <BgWhiteButton content="ĐĂNG KÝ VỚI" onClick={""} />
+            <GradientLine color1="#003B93" color2="#00F0FF" />
+          </div>
         </div>
       </section>
+      <AuthFooter
+        normalContent="Đã có tài khoản?"
+        boldContent="Đăng nhập luôn!"
+        href="/auth/login"
+      />
     </>
   );
 }

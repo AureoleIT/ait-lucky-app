@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // layout for page
 import Auth from "layouts/Auth.js";
 import React, { useState } from "react";
@@ -14,37 +15,41 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import Header from "public/shared/Header";
+import { useMemo } from "react/cjs/react.development";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm()
-  const [err, setErr] = useState("")
-  const [loading, setLoading] = useState(false)
-  // const { logIn, signInWithGoogle } = AuthContext()
-
+  const { register, handleSubmit } = useForm();
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [pass, setPass] = useState("")
   return (
-    <div className="w-full">
-      <section className="h-screen mx-auto flex flex-col justify-center items-center">
-        <Header />
-        <div className="max-w-[380px] flex flex-col justify-center items-center w-full h-full">
-          <Title title="ĐĂNG NHẬP" fontSize="56px" />
-          <div className="flex flex-col gap-y-[20px] w-full mt-[30px] mb-[70px]">
-            <div className="flex flex-col gap-y-[32px] w-full">
-              <AuthInput content={"Tên đăng nhập/Email"} type={"email"} />
-              <AuthInput content={"Mật khẩu"} type={"password"} />
-            </div>
-            <div className="flex items-center justify-between px-4 w-full">
-              <TickBox content="Ghi nhớ đăng nhập" htmlFor="remberLogin" />
-              <TickBox content="Admin" htmlFor="isAdmin" />
-            </div>
+    <>
+      <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
+        <div className="flex flex-col justify-center items-center w-full h-full">
+          <Title title="ĐĂNG NHẬP" />
+          <div className="w-3/4 max-w-md">
+            <AuthInput content={"Tên đăng nhập/Email"} type={"email"} onChange={(e) => setName(e.target.value)} />
+            <AuthInput content={"Mật khẩu"} type={"password"} onChange={(e) => setPass(e.target.value)}/>
+          </div>
+          <div className="flex items-center justify-between w-3/4 max-w-md">
+            <TickBox content="Ghi nhớ đăng nhập" htmlFor="remberLogin" />
+            <TickBox content="Admin" htmlFor="isAdmin" />
+          </div>
+          <div className="w-3/4 max-w-md">
             <BgBlueButton content="ĐĂNG NHẬP" onClick={""} />
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
             <BgWhiteButton content="ĐĂNG NHẬP BẰNG" onClick={""} />
+            <GradientLine color1="#003B93" color2="#00F0FF" content="" />
           </div>
-          <GradientLine color1="#003B93" color2="#00F0FF" content="" />
         </div>
       </section>
-      <AuthFooter normalContent="Chưa có tài khoản?" boldContent="Đăng kí ngay!!!" href="#" />
-    </div>
+      <AuthFooter
+        normalContent="Chưa có tài khoản?"
+        boldContent="Đăng kí ngay!!!"
+        href="/auth/register"
+      />
+    </>
   );
 }
 
