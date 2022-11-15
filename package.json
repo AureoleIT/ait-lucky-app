@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@popperjs/core": "2.9.1",
     "chart.js": "2.9.4",
     "firebase": "^9.13.0",
@@ -27,7 +28,7 @@
     "dev": "next dev",
     "build-static": "next build && next export -o _static",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm run dev",
-    "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css",
+    "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css --watch",
     "build-css": "tailwind -i styles/index.css -o styles/tailwind.css --watch"
   },
   "eslintConfig": {
