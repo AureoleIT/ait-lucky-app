@@ -1057,6 +1057,22 @@ video {
   max-width: 360px;
 }
 
+.max-w-\[380px\] {
+  max-width: 380px;
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+
 .flex-auto {
   flex: 1 1 auto;
 }
@@ -1367,6 +1383,11 @@ video {
 .bg-slate-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+}
+
+.bg-gray-light {
+  --tw-bg-opacity: 1;
+  background-color: rgb(211 220 230 / var(--tw-bg-opacity));
 }
 
 .bg-transparent {
