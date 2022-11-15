@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Title({title, fontSize = "36", fontWeight = "black"}) {
+export default function Title({title, fontSize = "36", fontWeight = "[900]"}) {
 // font size (px) (default: 36px)
 
     return (
