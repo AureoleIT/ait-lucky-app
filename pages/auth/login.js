@@ -22,11 +22,11 @@ export default function Login() {
   // const { logIn, signInWithGoogle } = AuthContext()
 
   return (
-    <>
-      <section className="h-screen max-w-[360px] py-5 mx-auto flex flex-col justify-center items-center">
+    <div className="w-full">
+      <section className="h-screen mx-auto flex flex-col justify-center items-center">
         <Header />
-        <div className="flex flex-col justify-center items-center w-full h-full">
-          <Title title="ĐĂNG NHẬP" />
+        <div className="max-w-[380px] flex flex-col justify-center items-center w-full h-full">
+          <Title title="ĐĂNG NHẬP" fontSize="56px" />
           <div className="flex flex-col gap-y-[20px] w-full mt-[30px] mb-[70px]">
             <div className="flex flex-col gap-y-[32px] w-full">
               <AuthInput content={"Tên đăng nhập/Email"} type={"email"} />
@@ -44,7 +44,7 @@ export default function Login() {
         </div>
       </section>
       <AuthFooter normalContent="Chưa có tài khoản?" boldContent="Đăng kí ngay!!!" href="#" />
-    </>
+    </div>
   );
 }
 
