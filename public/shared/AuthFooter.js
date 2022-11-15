@@ -1,5 +1,6 @@
 import React from "react";
 import { TEXT } from "../util/colors";
+
 export default function AuthFooter({ normalContent, boldContent, href }) {
   return (
     <p
