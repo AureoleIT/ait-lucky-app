@@ -13,20 +13,20 @@ export default function EventRegister() {
             <h1 className="uppercase text-4xl py-3 font-bold text-[#004599]">đăng ký</h1>
             <h1 className="uppercase text-xl py-3 font-bold text-[#004599] mb-4">thông tin sự kiện</h1>
             
-            <div className="w-[300px]">
+            <div className="w-3/4 lg:w-4/12">
                 <TextArea content={"Tên sự kiện"} />
             </div>
 
-            <div className="pb-[1rem]  pt-[2rem] w-[300px]">
+            <div className="pb-[1rem]  pt-[2rem] w-3/4 lg:w-4/12">
                 <TextArea content={"Mô tả sự kiện"} row={5} />
             </div>
 
-            <div className="w-[300px]">
+            <div className="w-3/4 lg:w-4/12">
                 <AuthInput content={"Giới hạn người tham gia"} type={"number"}/>
             </div>
         </div>
 
-        <div className="py-3 w-[300px]">
+        <div className="py-3 w-3/4 lg:w-4/12">
             <BgBlueButton content={"TIẾP TỤC"} islink={true} href={"_registergift"} />
         </div>
 
