@@ -1,7 +1,9 @@
 import React from "react";
 
-export default function Title({title}) {
+export default function Title({title, fontSize = "36", fontWeight = "black"}) {
+// font size (px) (default: 36px)
+
     return (
-        <h1 className=" font-[900] uppercase text-[#004599] text-4xl text-center mb-6">{title}</h1>
+        <h1 className={`font-${fontWeight} uppercase text-[#004599] text-[${fontSize}px] text-center mb-5`}>{title}</h1>
     )
 }

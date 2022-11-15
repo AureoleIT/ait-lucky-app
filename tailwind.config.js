@@ -22,5 +22,8 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    'text-[16px]', 'text-[20px]', 'text-[24px]', 'text-[32px]', 'text-[36px]',
+  ],
   plugins: [],
 }
