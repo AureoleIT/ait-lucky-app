@@ -21,15 +21,23 @@ export default function Login() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
-  const [pass, setPass] = useState("")
+  const [pass, setPass] = useState("");
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
         <div className="flex flex-col justify-center items-center w-full h-full">
           <Title title="ĐĂNG NHẬP" />
           <div className="w-3/4 max-w-md">
-            <AuthInput content={"Tên đăng nhập/Email"} type={"email"} onChange={(e) => setName(e.target.value)} />
-            <AuthInput content={"Mật khẩu"} type={"password"} onChange={(e) => setPass(e.target.value)}/>
+            <AuthInput
+              content={"Tên đăng nhập/Email"}
+              type={"email"}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <AuthInput
+              content={"Mật khẩu"}
+              type={"password"}
+              onChange={(e) => setPass(e.target.value)}
+            />
           </div>
           <div className="flex items-center justify-between w-3/4 max-w-md">
             <TickBox content="Ghi nhớ đăng nhập" htmlFor="remberLogin" />
