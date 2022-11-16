@@ -8,8 +8,8 @@ export default function EventList() {
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
         <div className="flex flex-col w-full h-full items-center">
-          <h1 className="font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
-            DANH SÁCH SỰ KIỆN
+          <h1 className="uppercase font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
+            danh sách sự kiện
           </h1>
           <div className="max-w-md flex flex-col w-full gap-y-[19px] mt-[19px]">
             <div className="flex flex-col w-full">
@@ -17,23 +17,23 @@ export default function EventList() {
             </div>
             <div className="flex flex-col gap-y-[7px] w-full font-[Nunito Sans] font-bold">
               <EventListButton
-                name={"TIỆC CUỐI NĂM"}
-                time={eventID}
+                name={"tiệc cuối năm"}
+                time={"EV20221011"}
                 numberOfPeople={"20"}
               />
               <EventListButton
                 name={"Tiệc năm mới"}
-                time={eventID}
+                time={"EV20221011"}
                 numberOfPeople={"20"}
               />
               <EventListButton
                 name={"TIỆC THÀNH LẬP..."}
-                time={eventID}
+                time={"EV20221011"}
                 numberOfPeople={"20"}
               />
               <EventListButton
                 name={"TIỆC CUỐI NĂM"}
-                time={eventID}
+                time={"EV20221011"}
                 numberOfPeople={"20"}
               />
             </div>
