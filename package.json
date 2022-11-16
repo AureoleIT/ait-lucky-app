@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@popperjs/core": "2.9.1",
     "chart.js": "2.9.4",
     "firebase": "^9.13.0",
@@ -14,6 +15,7 @@
     "gulp-append-prepend": "1.0.8",
     "next": "10.0.9",
     "next-images": "^1.8.4",
+    "qrcode.react": "^3.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-hook-form": "^7.39.1",
@@ -23,10 +25,10 @@
   "scripts": {
     "start": "next start",
     "build": "next build",
-    "d": "next dev",
+    "dev": "next dev",
     "build-static": "next build && next export -o _static",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm run dev",
-    "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css",
+    "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css --watch",
     "build-css": "tailwind -i styles/index.css -o styles/tailwind.css --watch"
   },
   "eslintConfig": {
