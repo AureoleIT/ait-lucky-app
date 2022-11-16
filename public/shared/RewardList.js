@@ -15,26 +15,8 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 
-export default function RewardList() {
-    const listReward = [
-        {
-            name: "Giải Đặc Biệt",
-            color: "#F5F92E",
-            amount: 1,
-            gifts: [
-                {
-                    desc: "Xe hơi Mẹc",
-                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
-                }, {
-                    desc: "Xe hơi Mẹc 2",
-                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
-                }, {
-                    desc: "Xe hơi Mẹc 3",
-                    img: ""
-                }
-            ]
-        }
-    ];
+export default function RewardList({listReward}) {
+    listReward = [].concat(listReward);
 
     const getGiftsFromReward = (reward) => {
         return (
@@ -45,7 +27,7 @@ export default function RewardList() {
                         return (
                             <div key={idx} className="ml-8 gap-4 flex">
                                 <img className="object-cover h-16 w-16 rounded-lg" src={gift.img} alt={gift.desc}/>
-                                <p className="grow">{gift.desc}</p>
+                                <p className="grow font-semibold text-[#004599]">{gift.desc}</p>
                             </div>
                         )
                     })
@@ -59,7 +41,7 @@ export default function RewardList() {
             {
                 listReward.map((reward, idx) => {
                     return (
-                        <div key={idx}>
+                        <div key={idx} className="mb-6 last:mb-0">
                             <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2" style={{backgroundColor: reward.color}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold">{reward.name}</p>
                                 <p className="items-center text-left text-[#004599] text-[16px] font-normal">Số lượng: {reward.amount}</p>
