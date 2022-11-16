@@ -57,7 +57,7 @@ function EventDetail () {
                 </div>
             </div>
             <div className="w-11/12 lg:w-4/12 max-w-xl flex justify-center">
-                    <BgBlueButton content={"CHUẨN BỊ"} islink={true} href={"_countdowncheckin"}/>
+                    <BgBlueButton content={"CHUẨN BỊ"} islink={true} href={"countdowncheckin"}/>
             </div>
         </div>
     )
