@@ -1,15 +1,17 @@
-import React from "react";
-
-export default function ButtonWithIcon({content, onClick, classIcon}) {
-
+function ButtonAndIconSmall ({ content, onClick, classIcon, colorHex }) 
+{
     const iconStyle = {
         color:"white",
         "font-size":"24px"
     }
 
+    const buttonColor = {
+        background:`${colorHex}`
+    }
+
     return (
         <>
-            <button className="flex justify-evenly items-center w-full h-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] rounded-[50px]"
+            <button className="flex justify-evenly items-center w-full h-[40px] rounded-[5px]" style={buttonColor}
             onClick={onClick}>
                 <div className="font-[900] text-[24px] text-white">
                     {content}
@@ -19,3 +21,5 @@ export default function ButtonWithIcon({content, onClick, classIcon}) {
         </>
     )
 }
+
+export default ButtonAndIconSmall

@@ -1,5 +1,4 @@
 import React from "react";
-// import googleSVG from "../img/google.svg"
 
 export default function BgWhiteButton({content, onClick}) {
     const gradientText = {
@@ -12,7 +11,7 @@ export default function BgWhiteButton({content, onClick}) {
         <>
             <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px]">
                 <button className="w-full h-full rounded-[48px] bg-white flex items-center justify-center gap-[10px]" onClick={onClick}>
-                    <p className="font-[900] text-[18px] text-white" style={gradientText}>{content}</p>
+                    <p className="font-[900] text-[22px] text-white" style={gradientText}>{content}</p>
                     <img src="../img/google.svg" className="h-7 w-7" alt="" />
                 </button>  
             </div>
