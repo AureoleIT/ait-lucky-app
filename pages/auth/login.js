@@ -14,6 +14,7 @@ import BgWhiteButton from "public/shared/BgWhiteButton";
 import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
+import Header from "public/shared/Header";
 import { useMemo } from "react/cjs/react.development";
 
 export default function Login() {
