@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function AuthInput({ content, type, onChange }) {
+export default function AuthInput({ content, type, onChange, value }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
     "-webkit-background-clip": "text",
@@ -14,6 +14,8 @@ export default function AuthInput({ content, type, onChange }) {
           type={type}
           className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
           onChange={onChange}
+          value={value}
+          required
         />
         <div className="bg-white absolute w-full top-0">
           <label
