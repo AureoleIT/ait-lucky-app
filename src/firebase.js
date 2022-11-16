@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { initializeApp } from "firebase/app";
+import firebase from "firebase/compat/app"
+import "firebase/compat/auth";
 import { getFirestore } from "firebase/firestore"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,4 +20,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app)
+const db = getFirestore(app);
+const auth = app.auth();
+export {app, db, auth};

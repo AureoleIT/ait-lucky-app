@@ -8,12 +8,13 @@ export default function Privacy() {
         <input
           id="checkbox"
           type="checkbox"
+          on
           className={`form-checkbox border-0 rounded border-[${TEXT}] w-5 h-5 ease-linear transition-all duration-150`}
         />
         <span className={`ml-2 text-sm font-semibold text-[${TEXT}]`}>
           Tôi đã đọc và đồng ý với các{" "}
           <a
-            href="#pablo"
+            href="#pablo" 
             className={`text-[${TEXT}] font-bold`}
             // onClick={(e) => e.preventDefault()} --handle logic open privavy display
           >
