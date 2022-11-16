@@ -1,22 +1,19 @@
-import TextArea from "public/shared/TextArea";
-import ButtonAndIcon from "public/shared/ButtonAndIcon";
+import AuthInput from "public/shared/TextArea";
+import ButtonUploadImage from "public/shared/button/ButtonUploadImage";
 
-const MoreGift = () =>
+const MoreGift = ({value, onChange, onClick}) =>
 {  
-    const handleDeleteGift = () =>
-    {
-
-    }
-
     return (
-        <div className="flex flex-col justify-center items-center max-h-[250px] w-full max-w-[300px]">
-
-            <div className="flex py-3 justify-between items-center relative w-full h-full">
-                <TextArea  content={"Mô tả phần quà"} row={"3"}/>
-                <i className="fas fa-trash text-red-600 cursor-pointer px-[1rem]" onClick={handleDeleteGift}></i>
+        <div className="w-full h-full">
+            <div className="w-full h-full flex items-center">
+                <div className="flex flex-col justify-between items-center relative w-full h-[90%] mt-3">
+                    <AuthInput value={value} onChange={onChange} content={"Mô tả phần quà"} />
+                    <div className="mt-1 mb-2 w-full">
+                        <ButtonUploadImage content={"Thêm hình ảnh"} classIcon={"fas fa-image"} colorHex={"#40BEE5"}/>
+                    </div>
+                </div>
+                <i className="fas fa-trash text-red-600 cursor-pointer px-[1rem]" onClick={onClick}></i>
             </div>
-            <ButtonAndIcon content={"Thêm hình ảnh"} classIcon={"fas fa-image"} colorHex={"#40BEE5"}/>
-
         </div>
     )
 }
