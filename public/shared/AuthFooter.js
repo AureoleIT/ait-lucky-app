@@ -4,7 +4,7 @@ import { TEXT } from "../util/colors";
 export default function AuthFooter({ normalContent, boldContent, href }) {
   return (
     <p
-      className={`text-[16px] text-[${TEXT}] w-full absolute bottom-[35px] text-center`}
+      className={`text-[16px] text-[${TEXT}] w-full absolute bottom-[35px] text-center z-1`}
     >
       <span>{normalContent + " "}</span>
       <a href={href} className="font-bold">
