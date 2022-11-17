@@ -8,6 +8,7 @@ import Award from "components/EventResult/Award";
 
 export default function EventResult() {
 
+    const [countPlayer, setCountPlayer] = useState(55);
     const [listWinner, setListWinner] = useState([{
         id: 1,
         title: 'Nguyen Van B',
@@ -47,19 +48,26 @@ export default function EventResult() {
     }]);
 
     return (
-        <section className="flex flex-col justify-evenly h-screen w-screen">
-            <div className="flex flex-col items-center justify-center w-full px-5">
+        <section className="flex flex-col justify-evenly h-screen">
+            <div className="flex flex-col items-center justify-center h-full px-5 mt-5">
+
                 <h1 className="uppercase text-4xl py-0 font-bold text-[#004599]" >tiệc cuối năm</h1>
                 <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]" >thông tin giải thưởng</h1>
-                <GradientLine color1="#003B93" color2="#00F0FF" />
-                <div>
-                    <Award name="Giải đặc biệt" count={1} listAward={listAward} listWinner={listWinner}></Award>
-                    
+                <div className="w-full max-w-md">
+                    <GradientLine color1="#003B93" color2="#00F0FF" />
                 </div>
+
+                <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto min-h-max">
+                    <Award name="Giải đặc biệt" count={1} listAward={listAward} listWinner={listWinner}></Award>
+                </div>
+
                 <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]" >danh sách người chơi</h1>
-                <h1 className="uppercase text-xl pt-2 font-semibold text-[#004599]">số người tham gia: 55/100</h1>
-                <GradientLine color1="#003B93" color2="#00F0FF" className="px-3" />
-                <div>
+                <h1 className="uppercase text-xl pt-2 font-semibold text-[#004599]">số người tham gia: {countPlayer}/100</h1>
+                <div className="w-full max-w-md">
+                    <GradientLine color1="#003B93" color2="#00F0FF" />
+                </div>
+
+                <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto">
                     {
                         listPlayer.map((item) =>
 
@@ -67,11 +75,13 @@ export default function EventResult() {
                         )
                     }
                 </div>
-            </div>
-            <div className="py-3 w-[100%] px-5">
-                <BgBlueButton content={"Thoát"} islink={true} href={"/"} />
+                
+                <div className="content-end py-3 w-full max-w-md px-5">
+                    <BgBlueButton content={"Thoát"} islink={true} href={"/"} />
+                </div>
             </div>
 
         </section>
+
     );
 }

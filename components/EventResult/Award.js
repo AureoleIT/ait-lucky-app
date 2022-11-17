@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { TEXT } from "public/colors";
+import { TEXT } from "public/util/colors";
 
 export default function Award({ color, name, count, listWinner, listAward }) {
   const Awards = listAward;
@@ -9,7 +9,7 @@ export default function Award({ color, name, count, listWinner, listAward }) {
     console.log(Winners);
   }, [])
   return (
-    <div className="w-screen px-5">
+    <div className="w-full h-full px-5">
       <div className="flow-root w-[100%] bg-[#F5F92E] rounded-[50px] m-1">
         <p className={`float-left text-[${TEXT}] text-[18px] font-bold ml-3 ...`}>{name}</p>
         <p className={`float-right text-[${TEXT}] text-[18px] font-semibold mr-3 text-right ...`}>Số lượng: {count}</p>

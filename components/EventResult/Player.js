@@ -1,9 +1,9 @@
 import React from "react";
-import { TEXT } from "public/colors";
+import { TEXT } from "public/util/colors";
 
 export default function Player({ Player }) {
     return (
-        <div className="w-screen px-5">
+        <div className="w-full px-5">
             <div className="flex flex-row w-[100%] pt-2 px-2">
                 {
                     Player.win ? (
