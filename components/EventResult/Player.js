@@ -15,7 +15,7 @@ export default function Player({ Player }) {
                 <div>
                     <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50] rounded-full object-cover ml-2"></img>
                 </div>
-                <p className={`text-[${TEXT}] text-[20px] ml-3 font-semibold`}>{Player.title}</p>
+                <p className={`text-[${TEXT}] text-[18px] ml-3 font-semibold`}>{Player.title}</p>
             </div>
         </div>
     );
