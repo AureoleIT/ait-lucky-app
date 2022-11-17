@@ -6,6 +6,8 @@ module.exports = withImages({
     return config;
   },
   // comment below when building on localhost
+  // trailingSlash: true,
+  // exportTrailingSlash: true,
   // exportPathMap: async function (
   //   defaultPathMap,
   //   { dev, dir, outDir, distDir, buildId }
@@ -13,13 +15,15 @@ module.exports = withImages({
   //   return {
   //     "/": { page: "/" },
   //     "/auth/login": { page: "/auth/login" },
-  //     "/auth/register": { page: "/auth/login" },
+  //     "/auth/register": { page: "/auth/register" },
   //   };
   // },
-  // distDir: "../../dist/client",
-  // output: "standalone",
-  // false for dev, true for product
-  // reactStrictMode: false,
+
+  // // distDir: "../../dist/client",
+  // // output: "standalone",
+
+  // // false for dev, true for product
+  // reactStrictMode: true,
 
   // images: {
   //   domains: ["s120-ava-talk.zadn.vn", "blob"],
@@ -34,4 +38,3 @@ module.exports = withImages({
   //   },
   // },
 });
-
