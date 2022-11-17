@@ -11,7 +11,7 @@ import {
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/styles/tailwind.css";
 import Index from "pages";
-import Register from "views/auth/register";
+import Register from "pages/auth/register";
 import AuthProvider from "./context/AuthContext";
 import Login from "pages/auth/login";
 import EventDetail from "pages/_eventdetail";

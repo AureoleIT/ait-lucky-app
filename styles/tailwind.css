@@ -883,6 +883,9 @@ video {
 .mr-\[10px\] {
   margin-right: 10px;
 }
+.ml-1 {
+  margin-left: 0.25rem;
+}
 
 .mt-\[10px\] {
   margin-top: 10px;
@@ -998,6 +1001,14 @@ video {
 
 .h-\[24px\] {
   height: 24px;
+}
+
+.h-\[300px\] {
+  height: 300px;
+}
+
+.h-10 {
+  height: 2.5rem;
 }
 
 .h-\[50px\] {
@@ -1150,6 +1161,10 @@ video {
 
 .w-1\/2 {
   width: 50%;
+}
+
+.w-\[65px\] {
+  width: 65px;
 }
 
 .w-6 {
@@ -2205,6 +2220,11 @@ video {
 
 .underline {
   text-decoration-line: underline;
+}
+
+.text-\[\#004599\] {
+  --tw-text-opacity: 1;
+  color: rgb(0 69 153 / var(--tw-text-opacity));
 }
 
 .no-underline {
