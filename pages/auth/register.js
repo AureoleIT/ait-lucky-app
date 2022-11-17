@@ -9,21 +9,60 @@ import {
   RIGHT_GRADIENT,
   BUTTON_GRADIENT,
 } from "public/util/colors";
-import BigText from "public/shared/BigText";
-import LineWithText from "public/shared/LineWithText";
-import WayLog from "public/shared/WayLog";
-import Privacy from "public/shared/Privacy";
-import ButtonWithIcon from "public/shared/ButtonWithIcon";
 import Title from "public/shared/Title";
 import AuthInput from "public/shared/AuthInput";
 import GradientLine from "public/shared/GradientLine";
 import AuthFooter from "public/shared/AuthFooter";
 import BgWhiteButton from "public/shared/BgWhiteButton";
+import { useAuth } from "../../src/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, set, child, get } from "firebase/database";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+const uuid = require("uuid");
 
 export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [mail, setMail] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const db = getDatabase();
+  const auth = getAuth();
+
+  function submit(name, email, password) {
+    var id = uuid.v4();
+    const dbRef = ref(db);
+
+    get(child(dbRef, "users/")).then((snapshot) => {
+      if (snapshot.val() === null) {
+        set(ref(db, `users/${id}/`), {
+          name: name,
+          email: email,
+          password: password,
+          pic: null,
+          create_at: new Date().valueOf(),
+        }).then(alert("Register success<3"));
+      } else {
+        const record = snapshot.val();
+        console.log(record);
+        // recordArr.forEach((val) => {
+        if (record.Object.email === email || record.Object.name === name) {
+          alert("Email or username already exists!!!");
+        } else {
+          set(ref(db, `users/${id}/`), {
+            name: name,
+            email: email,
+            password: password,
+            pic: null,
+            create_at: new Date().valueOf(),
+          }).then(alert("Register success<3"));
+        }
+        // });
+      }
+    });
+  }
+
   //Check if email input is valid
   function isEmail(email) {
     var regexp =
@@ -48,7 +87,7 @@ export default function Register() {
             <AuthInput
               content={"Email"}
               type={"email"}
-              onChange={(e) => setMail(e.target.value.replaceAll(" ", ""))}
+              onChange={(e) => setEmail(e.target.value.replaceAll(" ", ""))}
             />
             <AuthInput
               content={"Mật khẩu"}
@@ -57,7 +96,13 @@ export default function Register() {
             />
           </div>
           {/* <Privacy /> */}
-          <ConfirmButton text="Đăng ký" />
+          <ConfirmButton
+            text="Đăng ký"
+            onClick={() => {
+              console.log("press");
+              submit(name, email, password);
+            }}
+          />
           {/* onPress={() => {if (isEmail(mail) && checkDb(name)) {}} */}
           <div className="w-3/4 max-w-md">
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
