@@ -48,7 +48,7 @@ export default function EventResult() {
     }]);
 
     return (
-        <section className="flex flex-col justify-evenly h-screen">
+        <section className="overflow-hidden flex flex-col justify-evenly h-screen">
             <div className="flex flex-col items-center justify-center h-full px-5 mt-5">
 
                 <h1 className="uppercase text-4xl py-0 font-bold text-[#004599]" >tiệc cuối năm</h1>
@@ -75,7 +75,7 @@ export default function EventResult() {
                         )
                     }
                 </div>
-                
+
                 <div className="content-end py-3 w-full max-w-md px-5">
                     <BgBlueButton content={"Thoát"} islink={true} href={"/"} />
                 </div>

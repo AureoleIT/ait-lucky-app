@@ -16,10 +16,10 @@ export default function Award({ color, name, count, listWinner, listAward }) {
       </div>
       {
         Awards.map((award) =>
-          <div className="flex flex-row w-[100%] pt-2 px-2">
-            <span className="bg-[#F5F92E] w-[5px] h-[50px] mr-2"></span>
+          <div className="flex flex-row w-[100%]  px-2">
+            <span className="bg-[#F5F92E] w-[5px] mr-2"></span>
             <div>
-              <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50] rounded object-cover ml-2"></img>
+              <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50px] rounded object-cover ml-2 my-1"></img>
             </div>
             <p className={`text-[${TEXT}] text-[18px] ml-3 font-semibold`}>{award.title}</p>
           </div>)
@@ -28,10 +28,10 @@ export default function Award({ color, name, count, listWinner, listAward }) {
       <p className={`text-[${TEXT}] text-[18px] font-bold ml-3 `}>Người chiến thắng</p>
       {
         Winners.map((winner) => 
-          <div className="flex flex-row w-[100%] pt-2 px-2">
+          <div className="flex flex-row w-[100%] px-2">
             <span className="bg-[#F5F92E] w-[5px] h-[50px] mr-2"></span>
             <div>
-              <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50] rounded-full object-cover ml-2"></img>
+              <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50px] rounded-full object-cover ml-2"></img>
             </div>
             <p className={`text-[${TEXT}] text-[18px] ml-3 font-semibold`}>{winner.title}</p>
           </div>
