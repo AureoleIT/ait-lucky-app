@@ -4,7 +4,7 @@ import React from "react";
 import UserAvatar from "./UserAvatar";
 
 // Icons
-import MenuIcon from "public/Icons/menu";
+import MenuIcon from "public/icons/menu";
 
 // Fonts
 
