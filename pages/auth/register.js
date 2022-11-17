@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { React, useState } from "react";
 import Auth from "layouts/Auth.js";
 import ConfirmButton from "public/shared/ConfirmButton";
@@ -7,7 +8,7 @@ import {
   LEFT_GRADIENT,
   RIGHT_GRADIENT,
   BUTTON_GRADIENT,
-} from "public/colors";
+} from "public/util/colors";
 import BigText from "public/shared/BigText";
 import LineWithText from "public/shared/LineWithText";
 import WayLog from "public/shared/WayLog";
@@ -23,6 +24,12 @@ export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [mail, setMail] = useState("");
+  //Check if email input is valid
+  function isEmail(email) {
+    var regexp =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regexp.test(String(email).toLowerCase());
+  }
   return (
     <>
       <section className="h-screen">
@@ -30,16 +37,18 @@ export default function Register() {
           className={`flex flex-col justify-center items-center w-full h-full ${BG_WHITE}`}
         >
           <Title title="ĐĂNG KÝ" />
-          <div className="w-1/2 max-w-sm">
+          <div className="w-3/4 max-w-md">
             <AuthInput
               content={"Tên đăng nhập"}
               type={"text"}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value.replaceAll(" ", ""));
+              }}
             />
             <AuthInput
               content={"Email"}
               type={"email"}
-              onChange={(e) => setMail(e.target.value)}
+              onChange={(e) => setMail(e.target.value.replaceAll(" ", ""))}
             />
             <AuthInput
               content={"Mật khẩu"}
@@ -47,14 +56,12 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Privacy />
+          {/* <Privacy /> */}
           <ConfirmButton text="Đăng ký" />
-          <div className="w-1/2 max-w-sm">
+          {/* onPress={() => {if (isEmail(mail) && checkDb(name)) {}} */}
+          <div className="w-3/4 max-w-md">
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
-
             <BgWhiteButton content="ĐĂNG KÝ VỚI" onClick={""} />
-          </div>
-          <div className="w-1/2 max-w-sm">
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
         </div>

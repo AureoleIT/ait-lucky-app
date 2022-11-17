@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { app, db } from "../firebase"
+import { app, db, auth } from "../firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const AuthContext = createContext();
-export { AuthContext }
+export { AuthContext };
 
-export const useAuth = () => {      
+export const useAuth = () => {
   return useContext(AuthContext);
 };
 
