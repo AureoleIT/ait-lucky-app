@@ -18,11 +18,11 @@ import Header from "public/shared/Header";
 import { useMemo } from "react/cjs/react.development";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm();
-  const [err, setErr] = useState("");
-  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
+
+  
+
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
