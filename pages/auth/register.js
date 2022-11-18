@@ -17,6 +17,9 @@ import AuthFooter from "public/shared/AuthFooter";
 import BgWhiteButton from "public/shared/BgWhiteButton";
 import { useAuth } from "../../src/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Privacy from "public/shared/Privacy";
+import router, { useRouter } from "next/router";
+import { isEmail, hasWhiteSpace } from "public/util/functions";
 import {
   getDatabase,
   ref,
@@ -35,25 +38,24 @@ export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [href, setHref] = useState("");
-
+  const [check, setCheck] = useState(false);
   const db = getDatabase();
   const auth = getAuth();
 
-  //Check if email input is valid
-  function isEmail(email) {
-    var regexp =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return regexp.test(String(email).toLowerCase());
-  }
-
-  function hasWhiteSpace(s) {
-    return s.indexOf(" ") >= 0;
-  }
+  //Check if email input is valid"
+  // function isEmail(email) {
+  //   var regexp =
+  //     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //   return regexp.test(String(email).toLowerCase());
+  // }
 
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     const dbRef = ref(db);
+    if (!check) {
+      alert("You did not agree with privacy!!!");
+      return;
+    }
     if (name === "" || email === "" || password === "") {
       alert("Please fill all the cells below");
       return;
@@ -94,11 +96,11 @@ export default function Register() {
         password,
         pic: "",
         create_at: new Date().getTime(),
-      }).then(alert("Register successfully<3"));
-      //This step is to navigate to /auth/login in case success
-      setHref("/auth/login");
+      }).then(alert("Register successfully <3 \nPlease login ~"));
+      router.push("/auth/login");
     });
   }
+  function signUpAuth(name, email, password) {}
   return (
     <>
       <section className="h-screen">
@@ -123,18 +125,21 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {/* <Privacy /> */}
+          <Privacy onChange={(e) => setCheck(!check)} />
           <ConfirmButton
             text="Đăng ký"
             onClick={() => {
-              console.log("press");
               signUpSubmit(name, email, password);
             }}
           />
-          {/* onPress={() => {if (isEmail(mail) && checkDb(name)) {}} */}
           <div className="w-3/4 max-w-md">
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
-            <BgWhiteButton content="ĐĂNG KÝ VỚI" onClick={""} />
+            <BgWhiteButton
+              content="ĐĂNG KÝ VỚI"
+              onClick={() => {
+                signUpAuth(name, email, password);
+              }}
+            />
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
         </div>
