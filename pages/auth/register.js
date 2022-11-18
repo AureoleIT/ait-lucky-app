@@ -1,24 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { React, useState } from "react";
-import Auth from "layouts/Auth.js";
 import ConfirmButton from "public/shared/ConfirmButton";
-import {
-  BG_WHITE,
-  TEXT,
-  LEFT_GRADIENT,
-  RIGHT_GRADIENT,
-  BUTTON_GRADIENT,
-} from "public/util/colors";
+import { BG_WHITE } from "public/util/colors";
 import Title from "public/shared/Title";
-import firebase from "firebase";
 import AuthInput from "public/shared/AuthInput";
 import GradientLine from "public/shared/GradientLine";
 import AuthFooter from "public/shared/AuthFooter";
 import BgWhiteButton from "public/shared/BgWhiteButton";
-import { useAuth } from "../../src/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Privacy from "public/shared/Privacy";
-import router, { useRouter } from "next/router";
+import Auth from "layouts/Auth.js";
+import { useAuth, GoogleAuthProvider } from "../../src/context/AuthContext";
+import router from "next/router";
 import { isEmail, hasWhiteSpace } from "public/util/functions";
 import {
   getDatabase,
@@ -27,7 +19,6 @@ import {
   child,
   get,
   orderByKey,
-  orderByValue,
   query,
   orderByChild,
 } from "firebase/database";
@@ -41,13 +32,6 @@ export default function Register() {
   const [check, setCheck] = useState(false);
   const db = getDatabase();
   const auth = getAuth();
-
-  //Check if email input is valid"
-  // function isEmail(email) {
-  //   var regexp =
-  //     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  //   return regexp.test(String(email).toLowerCase());
-  // }
 
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
