@@ -1,6 +1,10 @@
 import React from "react";
 
 export default function EventButton(props) {
+  const colorStatus = {
+    background: `${setColor(props.status)}`,
+  };
+
   return (
     <a href={`${setLink(props.status)}`} className="flex flex-col w-full">
       <button className={`rounded-[5px] mx-2 ${setColor(props.status)}`}>
