@@ -2,15 +2,20 @@ import React from "react";
 import Link from "next/link";
 
 export default function EventButton(props) {
+  const colorStatus = {
+    background: `${setColor(props.status)}`,
+  };
+
   return (
     <>
       {props.islink ? (
         <Link href={props.href}>
           <button
-            className={`rounded-[5px] bg-[${setColor(props.status)}]`}
+            className="rounded-[5px] mx-2"
+            style={colorStatus}
             onClick={props.onClick}
           >
-            <div className="flex flex-row justify-between items-center mx-6  text-white h-10 font-[Nunito Sans]">
+            <div className="flex flex-row justify-between items-center mx-4 text-white h-10 font-[Nunito Sans] ">
               <div className="justify-center items-center font-bold text-sm uppercase">
                 {props.title}
               </div>
@@ -23,10 +28,11 @@ export default function EventButton(props) {
         </Link>
       ) : (
         <button
-          className={`rounded-[5px] bg-[${setColor(props.status)}]`}
+          className={`rounded-[5px] mx-2 bg-[${setColor(props.status)}]`}
           onClick={props.onClick}
+          style={colorStatus}
         >
-          <div className="flex flex-row justify-between items-center mx-6  text-white h-10 font-[Nunito Sans]">
+          <div className="flex flex-row justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
             <div className="justify-center items-center font-bold text-sm uppercase">
               {props.title}
             </div>
