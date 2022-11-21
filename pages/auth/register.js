@@ -21,7 +21,13 @@ import {
   query,
   orderByChild,
 } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { db, auth } from "src/firebase";
+import {
+  GoogleAuthProvider,
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 const uuid = require("uuid");
 
 export default function Register() {
@@ -29,8 +35,6 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
-  const db = getDatabase();
-  const auth = getAuth();
 
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
@@ -90,30 +94,41 @@ export default function Register() {
       router.push("/auth/login");
     });
   }
-  function signUpAuth(name, email, password) {
+  function signUpAuth() {
     var id = uuid.v4();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        set(ref(db, "users/" + user.uid), {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const newUser = {
           id,
-          name,
-          email,
-          password,
-          pic: "",
+          name: result._tokenResponse.email.slice(
+            0,
+            result._tokenResponse.email.lastIndexOf("@")
+          ),
+          email: result._tokenResponse.email,
+          password: "123456",
+          pic: result._tokenResponse.photoUrl,
           create_at: new Date().getTime(),
-        })
-          .then(() => {
-            alert("User created successfully");
-          })
-          .catch((error) => {
-            alert(error);
-          });
+        };
+        get(child(ref(db), "users/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          const isUserExisting = values.some(
+            (item) => item.email === newUser.email
+          );
+          if (isUserExisting) {
+            alert("This email existed on database!");
+            return;
+          }
+          set(ref(db, `users/${id}/`), newUser).then(
+            alert("Register by google successfully <3 \nPlease login ~")
+          );
+          router.push("/auth/login");
+        });
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage);
+        console.log(error.message);
+        alert("Something went wrong!");
       });
   }
   return (

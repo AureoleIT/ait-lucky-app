@@ -1,20 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "@firebase/database";
-import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/auth";
 import "firebase/storage";
 import "firebase/analytics";
 import "firebase/performance";
-import {
-  getAuth,
-  connectAuthEmulator,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA8-_ktKoGnG87bJksBu06_o489Xj8V6tU" || process.env.API_KEY,
@@ -34,5 +26,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-export const firebaseProviders = firebase.auth;
 export { app, auth, db };
