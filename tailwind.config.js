@@ -6,6 +6,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./public/shared/*.{js,ts,jsx,tsx}",
+    "./public/Icons/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
