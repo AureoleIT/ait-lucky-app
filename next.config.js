@@ -6,6 +6,7 @@ module.exports = withImages({
     return config;
   },
   // comment below when building on localhost
+  
   // trailingSlash: true,
   // exportTrailingSlash: true,
   // exportPathMap: async function (
@@ -24,17 +25,9 @@ module.exports = withImages({
 
   // // false for dev, true for product
   // reactStrictMode: true,
-
+  // swcMinify: true,
   // images: {
   //   domains: ["s120-ava-talk.zadn.vn", "blob"],
-  // },
-
-  // swcMinify: true,
-  // assetPrefix: "./",
-
-  // experimental: {
-  //   images: {
-  //     unoptimized: true,
   //   },
   // },
 });
