@@ -5,6 +5,7 @@ import Player from "components/EventResult/Player";
 import BgBlueButton from "public/shared/BgBlueButton";
 import GradientLine from "public/shared/GradientLine";
 import Award from "components/EventResult/Award";
+import BackGround from "public/shared/BackGround";
 
 export default function EventResult() {
 
@@ -13,22 +14,59 @@ export default function EventResult() {
         id: 1,
         title: 'Nguyen Van B',
     }]);
-    const [listAward, setListAward] = useState([{
-        id: 1,
-        title: 'Yellow Pail',
-    },
-    {
-        id: 2,
-        title: 'Green Pail',
-    }]);
+    const listReward = [
+        {
+            name: "Giải Đặc Biệt",
+            color: "#F5F92E",
+            amount: 1,
+            gifts: [
+                {
+                    desc: "Xe hơi Mẹc",
+                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
+                }, {
+                    desc: "Xe hơi Mẹc 2",
+                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
+                }, {
+                    desc: "Xe hơi Mẹc 3",
+                    img: ""
+                }
+            ]
+        }, {
+            name: "Giải Nhất",
+            color: "#FFCE1F",
+            amount: 1,
+            gifts: [
+                {
+                    desc: "Xe hơi Mẹc",
+                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
+                }, {
+                    desc: "Xe hơi Mẹc 2",
+                    img: "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI="
+                }, {
+                    desc: "Xe hơi Mẹc 3",
+                    img: ""
+                }
+            ]
+        }
+    ];
     const [listPlayer, setListPlayer] = useState([{
         id: 1,
         title: 'Nguyen Van B',
-        win: true,
+        win: false,
     },
     {
         id: 2,
         title: 'Nguyen Vawn C',
+        win: true,
+    },
+    {
+        id: 3,
+        title: 'Tran Thi be',
+        win: false,
+    },
+    {
+        id: 3,
+        title: 'Tran Thi be',
         win: false,
     },
     {
@@ -50,7 +88,6 @@ export default function EventResult() {
     return (
         <section className="overflow-hidden flex flex-col justify-evenly h-screen">
             <div className="flex flex-col items-center justify-center h-full px-5 mt-5">
-
                 <h1 className="uppercase text-4xl py-0 font-bold text-[#004599]" >tiệc cuối năm</h1>
                 <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]" >thông tin giải thưởng</h1>
                 <div className="w-full max-w-md">
@@ -58,7 +95,7 @@ export default function EventResult() {
                 </div>
 
                 <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto min-h-max">
-                    <Award name="Giải đặc biệt" count={1} listAward={listAward} listWinner={listWinner}></Award>
+                    <Award name="Giải đặc biệt" count={1} listReward={listReward} listWinner={listWinner}></Award>
                 </div>
 
                 <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]" >danh sách người chơi</h1>
@@ -67,13 +104,8 @@ export default function EventResult() {
                     <GradientLine color1="#003B93" color2="#00F0FF" />
                 </div>
 
-                <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto">
-                    {
-                        listPlayer.map((item) =>
-
-                            <Player Player={item}></Player>
-                        )
-                    }
+                <div className="w-full max-w-md  overflow-y-auto">
+                    <Player listPlayer={listPlayer} />
                 </div>
 
                 <div className="content-end py-3 w-full max-w-md px-5">
