@@ -9,7 +9,6 @@ import AuthFooter from "public/shared/AuthFooter";
 import BgWhiteButton from "public/shared/BgWhiteButton";
 import Privacy from "public/shared/Privacy";
 import Auth from "layouts/Auth.js";
-import { useAuth, GoogleAuthProvider } from "../../src/context/AuthContext";
 import router from "next/router";
 import { isEmail, hasWhiteSpace } from "public/util/functions";
 import {
@@ -36,10 +35,6 @@ export default function Register() {
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     const dbRef = ref(db);
-    if (!check) {
-      alert("You did not agree with privacy!!!");
-      return;
-    }
     if (name === "" || email === "" || password === "") {
       alert("Please fill all the cells below");
       return;
@@ -52,13 +47,24 @@ export default function Register() {
       alert("Your username contain space, please refill");
       return;
     }
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    if (!check) {
+      alert("You did not agree with privacy!!!");
+      return;
+    }
 
     //Use this type of query for big data -> fast
 
     // const emailSet = query(ref(db, "users"), orderByKey("email"));
     // get(emailSet).then((snap) => {
     //   snap.forEach((item) => {
-    //     console.log(item.val());
+    //     var mailItem = item.val().email;
+    //     var nameItem = item.val().name;
+    //     console.log(mailItem);
+    //     console.log(nameItem);
     //   });
     // });
 
@@ -84,7 +90,32 @@ export default function Register() {
       router.push("/auth/login");
     });
   }
-  function signUpAuth(name, email, password) {}
+  function signUpAuth(name, email, password) {
+    var id = uuid.v4();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        set(ref(db, "users/" + user.uid), {
+          id,
+          name,
+          email,
+          password,
+          pic: "",
+          create_at: new Date().getTime(),
+        })
+          .then(() => {
+            alert("User created successfully");
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
+  }
   return (
     <>
       <section className="h-screen">

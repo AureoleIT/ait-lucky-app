@@ -34,6 +34,10 @@ export default function AuthProvider({ children }) {
     const provider = new GoogleAuthProvider();
     return auth.signInWithPopup(provider);
   };
+  const signUpWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    return auth.signUpWithGoogle(provider);
+  };
 
   const updateEmail = (email) => {
     return currentUser.updateEmail(email);
@@ -59,6 +63,7 @@ export default function AuthProvider({ children }) {
     logIn,
     resetPassword,
     signInWithGoogle,
+    signUpWithGoogle,
     updateEmail,
     updatePassword,
   };
