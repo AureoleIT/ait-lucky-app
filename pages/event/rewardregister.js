@@ -6,15 +6,13 @@ import AuthInput from "public/shared/AuthInput";
 import Line from "public/shared/Line";
 import BgBlueButton from "public/shared/BgBlueButton";
 import SingleColorButton from "public/shared/SingleColorButton";
-import ButtonUploadImage from "public/shared/button/ButtonUploadImage"
-
 
 function EventRewardRegister () {
     
     const [giftCount, setGiftCount] = useState(1)
     const [giftName, setGiftName] = useState("")
     const [giftDetail, setGiftDetail] = useState("")
-    const [giftList, setGiftList] = useState([])
+    const [giftList, setGiftList] = useState([<MoreGift />])
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -27,7 +25,6 @@ function EventRewardRegister () {
         height:"32px",
         margin:"0 12px",
     }
-
     // logic
 
     // handle register button
@@ -42,20 +39,27 @@ function EventRewardRegister () {
             alert("Vui lòng nhập đủ thông tin !!!")
         }
     }
-
     // handle add gift
     const handleAddGift = () =>
     {
         // add gift
-        setGiftList([...giftList, <MoreGift />])
+        setGiftList(prev => {
+            const newList = [...giftList, <MoreGift />]
+            return newList
+        })
     }
-
     // handle delete gift
-    const handleDeleteGift = () =>
+    const handleDeleteGift = (id) =>
     {
-        // delete gift
+        const newGiftList = giftList.filter((item,index) => (index !== id))
+        setGiftList(newGiftList)
+        console.log("delete");
     }
-
+    // handle delete reward
+    const handleDeleteReward = () =>
+    {
+        
+    }
     // handle add reward
     const handleAddReward = () =>
     {
@@ -87,22 +91,24 @@ function EventRewardRegister () {
                         <Line content={"Phần quà"}/>
                     </div>
 
-                    <div className="flex flex-col w-[90%] max-w-xl my-1 h-[220px] max-h-[250px]">
+                    <div className="flex flex-col w-[90%] max-w-xl my-1 h-[210px] max-h-[210px]">
                         <div className="h-full w-full flex justify-evenly">
                             <div className="flex flex-col w-[10%] lg:w-[20%] h-full justify-between items-center text-[24px] leading-[3rem] text-[#003B93]">
                                 <i className="fas fa-angle-up cursor-pointer"></i>
                                 <i className="fas fa-angle-down cursor-pointer"></i>
                             </div>
                             <div className="ml-3 w-[90%] lg:w-[80%] h-full overflow-auto">
-                                <MoreGift value={giftDetail} onChange={(e) => setGiftDetail(e.target.value)}/>
-                                {giftList.map((item) =>
+                                {giftList.map((item, index) =>
                                 {
-                                    return item
+                                    return (
+                                        <div className="w-full h-full flex items-center" key={index}>
+                                            {item}
+                                            <i className="fas fa-trash text-red-600 cursor-pointer px-[1rem]" onClick={() => handleDeleteGift(index)}></i>
+                                        </div>
+                                    )
                                 })}
                             </div>
                         </div>
-
-                        {/* handleDelete using Real-time database and remove with todo have unique key uid(npm i uid) */}
 
                     </div>
                     {/* gift event */}
@@ -115,7 +121,7 @@ function EventRewardRegister () {
                         <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAddGift} />
                     </div>
                     <div className="flex justify-center items-center my-2 w-[90%] lg:w-4/12 max-w-xl text-white cursor-pointer drop-shadow-lg">
-                        <SingleColorButton content={"Hủy giải thưởng"} colorHex={"#FF6262"} onClick={handleDeleteGift}/>
+                        <SingleColorButton content={"Hủy giải thưởng"} colorHex={"#FF6262"} onClick={handleDeleteReward}/>
                     </div>
                         {/* line */}
                     <div className="w-[90%] lg:w-4/12 max-w-xl">
@@ -128,7 +134,6 @@ function EventRewardRegister () {
                 </div>
 
                 <div className="pb-4 w-11/12 lg:w-4/12 drop-shadow-lg max-w-xl" onClick={handleRegisterButton}>
-                    {/* <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} islink={true} href={"eventdetail"} /> */}
                     {
                         (giftName !== "" && giftDetail !== "") ? (
                             <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} islink={true} href={"eventdetail"} />
@@ -142,3 +147,4 @@ function EventRewardRegister () {
     )
 }
 export default EventRewardRegister
+
