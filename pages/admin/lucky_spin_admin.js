@@ -130,7 +130,9 @@ export default function LuckySpin() {
 
         const timeoutPhase1 = setTimeout(() => {
             clearInterval(phase1);
+            // bug
             setPlayerShowList(playerShowList.slice(awaredNumber, awaredNumber + 9))
+            // 
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
             }, 100);
