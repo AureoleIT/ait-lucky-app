@@ -73,12 +73,12 @@ export default function Setting() {
                                 type={"email"}
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email} />
-                            <BgBlueButton content={"LƯU"} islink={true} href={"/"} onClick={handleSaveInfo} />
+                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
                         </div>
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
                             <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px]">
-                                <Link href={"/changepassword"}>
+                                <Link href={"/auth/changepassword"}>
 
                                     <button className="w-full h-full rounded-[48px] bg-white flex items-center justify-center gap-[10px]">
                                         <p className="font-[900] text-[22px] text-white" style={gradientText}>ĐỔI MẬT KHẨU</p>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function EventResult() {
+export default function Background() {
     const backgroundStyle = {
         backgroundImage: `radial-gradient(ellipse at 100% 0%, #B9E4A7 5%, #B3D2E9 40%, #C8EFF1 )`
     }

@@ -17,7 +17,7 @@ import Login from "pages/auth/login";
 import EventDetail from "pages/_eventdetail";
 import EventRewardRegister from "pages/_registergift";
 import EventRegister from "pages/_joinevent";
-import Setting from "pages/setting"
+import Setting from "pages/auth/setting"
 import ForgotPassword from "pages/auth/forgotpassword";
 
 ReactDOM.render(

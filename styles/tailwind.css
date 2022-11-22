@@ -1039,6 +1039,18 @@ video {
   margin-right: -1.25rem;
 }
 
+.ml-10 {
+  margin-left: 2.5rem;
+}
+
+.ml-\[20px\] {
+  margin-left: 20px;
+}
+
+.ml-\[10px\] {
+  margin-left: 10px;
+}
+
 .block {
   display: block;
 }
@@ -1235,6 +1247,10 @@ video {
 
 .h-32 {
   height: 8rem;
+}
+
+.h-\[40\%\] {
+  height: 40%;
 }
 
 .max-h-28 {

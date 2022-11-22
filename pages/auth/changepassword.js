@@ -51,7 +51,7 @@ export default function ChangePassword() {
                                 onChange={(e) => setNew(e.target.value)} />
                             <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
                                 onChange={(e) => setRepeat(e.target.value)} />
-                            <BgBlueButton content={"LƯU"} islink={true} href={"/setting"} onClick={handleSaveInfo}/>
+                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo}/>
                         </div>
                     </div>
                 </div>
