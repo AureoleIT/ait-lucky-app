@@ -15,13 +15,14 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 
-export default function Spin({listPlayer}) {
-    const [chosingPlayer, setChosingPlayer] = useState(4);
+export default function Spin({listPlayer, animationOn = false, getRewardPlayer = 4}) {
+    const [chosingPlayer, setChosingPlayer] = useState(getRewardPlayer);
+    const [playerShowList, setPlayerShowList] = useState(listPlayer.slice(0, 8));
 
     const listPlayerShowcase = (
         <>
             {
-                listPlayer.map((player, idx) => {
+                playerShowList.slice(chosingPlayer-4, chosingPlayer+4).map((player, idx) => {
                     return (
                         <div key={idx} className="h-0" style={{
                                 transform: "translateY(" + (chosingPlayer - idx)*60*(1 - Math.abs((chosingPlayer - idx)/8)) + "px) scale(" + (1 - Math.abs((chosingPlayer - idx)/20)) + ")",

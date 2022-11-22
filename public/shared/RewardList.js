@@ -15,19 +15,24 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 
-export default function RewardList({listReward}) {
+export default function RewardList({listReward, showRemain = false}) {
     listReward = [].concat(listReward);
 
     const getGiftsFromReward = (reward) => {
         return (
-            <div className="relative h-full flex flex-col gap-2">
-                <div className="w-1 left-4 absolute h-full" style={{backgroundColor: reward.color}} />
+            <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                 {
-                    reward.gifts.map((gift, idx) => {
+                    reward.img_url.slice(0, 3).map((url, idx) => {
                         return (
-                            <div key={idx} className="ml-8 gap-4 flex">
-                                <img className="object-cover h-16 w-16 rounded-lg" src={gift.img} alt={gift.desc}/>
-                                <p className="grow font-semibold text-[#004599]">{gift.desc}</p>
+                            <div key={idx} className="relative h-24 w-full flex">
+                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg" src={url} alt={reward.description + idx}/>
+                                {
+                                    (reward.img_url.length > 3 && idx===2)?
+                                    <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] items-center rounded-lg">
+                                        <p className="w-full text-center font-bold text-white text-4xl">+{reward.img_url.length -3}</p>
+                                    </div>:
+                                    <></>
+                                }
                             </div>
                         )
                     })
@@ -41,10 +46,10 @@ export default function RewardList({listReward}) {
             {
                 listReward.map((reward, idx) => {
                     return (
-                        <div key={idx} className="mb-6 last:mb-0">
-                            <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2" style={{backgroundColor: reward.color}}>
-                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold">{reward.name}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal">Số lượng: {reward.amount}</p>
+                        <div key={idx} className="mb-4 last:mb-0">
+                            <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}>
+                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold">{reward.description}</p>
+                                <p className="items-center text-left text-[#004599] text-[16px] font-normal">Số lượng: {showRemain?reward.quantity_remain: reward.quantity}</p>
                             </div>
                             {getGiftsFromReward(reward)}
                         </div>
