@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { React, useState } from "react";
+import { React, useCallback, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
 import { BG_WHITE } from "public/util/colors";
 import Title from "public/shared/Title";
@@ -27,6 +27,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signOut,
 } from "firebase/auth";
 const uuid = require("uuid");
 
@@ -94,43 +95,52 @@ export default function Register() {
       router.push("/auth/login");
     });
   }
-  function signUpAuth() {
-    var id = uuid.v4();
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const newUser = {
-          id,
-          name: result._tokenResponse.email.slice(
-            0,
-            result._tokenResponse.email.lastIndexOf("@")
-          ),
-          email: result._tokenResponse.email,
-          password: "123456",
-          pic: result._tokenResponse.photoUrl,
-          create_at: new Date().getTime(),
-        };
-        get(child(ref(db), "users/")).then((snapshot) => {
-          const record = snapshot.val() ?? [];
-          const values = Object.values(record);
-          const isUserExisting = values.some(
-            (item) => item.email === newUser.email
-          );
-          if (isUserExisting) {
-            alert("This email existed on database!");
-            return;
-          }
-          set(ref(db, `users/${id}/`), newUser).then(
-            alert("Register by google successfully <3 \nPlease login ~")
-          );
-          router.push("/auth/login");
-        });
-      })
-      .catch((error) => {
-        console.log(error.message);
-        alert("Something went wrong!");
-      });
+  async function signUpAuth() {
+    signOut(getAuth()).then((val) => {
+      alert("signed out success")
+      console.log(val)
+    }).catch((error) => {
+      alert(error.message)
+    });
+    // var id = uuid.v4();
+    // const provider = new GoogleAuthProvider();
+    // signInWithPopup(auth, provider)
+    //   .then((result) => {
+    //     const newUser = {
+    //       id,
+    //       name: result._tokenResponse.email.slice(
+    //         0,
+    //         result._tokenResponse.email.lastIndexOf("@")
+    //       ),
+    //       email: result._tokenResponse.email,
+    //       password: "123456",
+    //       pic: result._tokenResponse.photoUrl,
+    //       create_at: new Date().getTime(),
+    //     };
+    //     get(child(ref(db), "users/")).then((snapshot) => {
+    //       const record = snapshot.val() ?? [];
+    //       const values = Object.values(record);
+    //       const isUserExisting = values.some(
+    //         (item) => item.email === newUser.email
+    //       );
+    //       if (isUserExisting) {
+    //         alert("This email existed on database!");
+    //         return;
+    //       }
+    //       set(ref(db, `users/${id}/`), newUser).then(
+    //         alert("Register by google successfully <3 \nPlease login ~")
+    //       );
+    //       router.push("/auth/login");
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.message);
+    //     alert("Something went wrong!");
+    //   });
   }
+  const setEmailData = useCallback((e)=>{
+    setEmail(e?.target?.value)
+  }, [setEmail])
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
@@ -147,7 +157,7 @@ export default function Register() {
             <AuthInput
               content={"Email"}
               type={"email"}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={setEmailData}
             />
             <AuthInput
               content={"Mật khẩu"}
@@ -167,7 +177,7 @@ export default function Register() {
             <BgWhiteButton
               content="ĐĂNG KÝ VỚI"
               onClick={() => {
-                signUpAuth(name, email, password);
+                signUpAuth();
               }}
             />
             <GradientLine color1="#003B93" color2="#00F0FF" />
