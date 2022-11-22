@@ -1,6 +1,6 @@
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
@@ -14,29 +14,61 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
+import { popper } from "@popperjs/core";
 
-export default function Spin({listPlayer, animationOn = false, getRewardPlayer = 4}) {
-    const [chosingPlayer, setChosingPlayer] = useState(getRewardPlayer);
-    const [playerShowList, setPlayerShowList] = useState(listPlayer.slice(0, 8));
+const cssSet = [
+    {
+        transform: "translateY(-120px) scale(0.8)",
+        zIndex: 6
+    }, {
+        transform: "translateY(-110px) scale(0.85)",
+        zIndex: 7
+    }, {
+        transform: "translateY(-90px) scale(0.9)",
+        zIndex: 8
+    }, {
+        transform: "translateY(-55px) scale(0.95)",
+        zIndex: 9
+    }, {
+        transform: "translateY(0px) scale(1)",
+        zIndex: 10
+    }, {
+        transform: "translateY(55px) scale(0.95)",
+        zIndex: 9
+    }, {
+        transform: "translateY(90px) scale(0.9)",
+        zIndex: 8
+    }, {
+        transform: "translateY(110px) scale(0.85)",
+        zIndex: 7
+    }, {
+        transform: "translateY(120px) scale(0.8)",
+        zIndex: 6
+    }
+]
 
+export default function Spin({listPlayer}) {
+    
     const listPlayerShowcase = (
-        <>
+        <div className="flex flex-col h-full justify-center w-full z-0 relative overflow-hidden">
+            <div className="animate-move-down-0 animate-move-down-1 animate-move-down-2 animate-move-down-3 animate-move-down-4 animate-move-down-5 animate-move-down-6 animate-move-down-7" />
+            <div className="animate-slow-move-down-0 animate-slow-move-down-1 animate-slow-move-down-2 animate-slow-move-down-3 animate-slow-move-down-4 animate-slow-move-down-5 animate-slow-move-down-6 animate-slow-move-down-7" />
             {
-                playerShowList.slice(chosingPlayer-4, chosingPlayer+4).map((player, idx) => {
+                Array.from({length: (listPlayer.length>=9 ? 9 : listPlayer.length)}, (_, index) => index).map(idx => {
+
                     return (
-                        <div key={idx} className="h-0" style={{
-                                transform: "translateY(" + (chosingPlayer - idx)*60*(1 - Math.abs((chosingPlayer - idx)/8)) + "px) scale(" + (1 - Math.abs((chosingPlayer - idx)/20)) + ")",
-                                zIndex: 10 - Math.abs(chosingPlayer - idx),
-                            }}>
+                        <div key={idx} className="h-0" style={cssSet[idx]} id={"spin-idx-"+idx}>
                             <div className="bg-[#E9E9E9] h-28 -translate-y-[50%] flex items-center rounded-lg shadow-[0_0_10px_0_rgba(0,0,0,0.25)] py-4 px-6 gap-2">
-                                <img className="h-20 w-20 object-cover rounded-full border-1" src={player.playerAvt} alt={player.playerName} />
-                                <p className="text-center grow font-bold text-[20px]">{player.playerName}</p>
+                                <img className="h-20 w-20 object-cover rounded-full border-1"
+                                    src={listPlayer[idx].playerAvt}
+                                    alt={listPlayer[idx].playerName} />
+                                <p className="text-center grow font-bold text-[20px]">{listPlayer[idx].playerName}</p>
                             </div>
                         </div>
                     )
                 })
             }
-        </>
+        </div>
     )
 
     return (
