@@ -87,12 +87,12 @@ export default function Register() {
   function signUpAuth(name, email, password) {}
   return (
     <>
-      <section className="h-screen">
+      <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
         <div
-          className={`flex flex-col justify-center items-center w-full h-full ${BG_WHITE}`}
+          className={`flex flex-col justify-center max-w-md w-full h-full ${BG_WHITE}`}
         >
           <Title title="ĐĂNG KÝ" />
-          <div className="w-3/4 max-w-md">
+          <div className="">
             <AuthInput
               content={"Tên đăng nhập"}
               type={"text"}
@@ -116,7 +116,7 @@ export default function Register() {
               signUpSubmit(name, email, password);
             }}
           />
-          <div className="w-3/4 max-w-md">
+          <div className="">
             <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
             <BgWhiteButton
               content="ĐĂNG KÝ VỚI"
@@ -126,13 +126,13 @@ export default function Register() {
             />
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
+          <AuthFooter
+            normalContent="Đã có tài khoản?"
+            boldContent="Đăng nhập luôn!"
+            href="/auth/login"
+          />
         </div>
       </section>
-      <AuthFooter
-        normalContent="Đã có tài khoản?"
-        boldContent="Đăng nhập luôn!"
-        href="/auth/login"
-      />
     </>
   );
 }

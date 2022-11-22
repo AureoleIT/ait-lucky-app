@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Privacy({onChange}) {
   return (
-    <div className="w-3/4 max-w-md items-center flex mb-3">
+    <div className="items-center flex mb-3">
       <label className="inline-flex items-center cursor-pointer">
         <input
           id="checkbox"
