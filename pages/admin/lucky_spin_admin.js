@@ -1,6 +1,6 @@
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
@@ -101,8 +101,51 @@ const listReward = [
 ];
 
 export default function LuckySpin() {
-    const [playerAmount, setPlayerAmount] = useState(listPlayer.length);
     const [rewardChosing, setRewardChosing] = useState(0);
+    const [playerShowList, setPlayerShowList] = useState(listPlayer.slice(0, 9));
+    const [spinClicked, setSpinClicked] = useState(false);
+
+    useEffect(() => {
+        while (playerShowList.length < 9) {
+            setPlayerShowList((list) => [...list, ...list])
+        }
+        const beforeman = [...listPlayer.slice(-4)]
+        const afterman = [...listPlayer.slice(0, 4)]
+        setPlayerShowList((list) => [...beforeman, ...list, ...afterman]);
+    }, [])
+    
+    const spining = () => {
+        const awaredNumber = Math.floor(Math.random() * (playerShowList.length - 9));
+        console.log(awaredNumber);
+
+        Array.from({length: 9}, (_, index) => index).forEach(idx => {
+            document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
+            // document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
+        })
+        
+
+        const phase1 = setInterval(() => {
+            setPlayerShowList((list) => [list.pop(), ...list]);
+        }, 100);
+
+        const timeoutPhase1 = setTimeout(() => {
+            clearInterval(phase1);
+            setPlayerShowList(playerShowList.slice(awaredNumber, awaredNumber + 9))
+            const phase2 = setInterval(() => {
+                setPlayerShowList((list) => [list.pop(), ...list]);
+            }, 100);
+
+            const timeoutPhase2 = setTimeout(() => {
+                clearInterval(phase2);
+                Array.from({length: 9}, (_, index) => index).forEach(idx => {
+                    document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
+                    // document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
+                })
+            }, 1000)
+
+        }, 1000)
+    }
+
 
     const toggleSelectMenu = () => {
         document.getElementById("selectRewardPopUp").classList.toggle("hidden");
@@ -118,21 +161,21 @@ export default function LuckySpin() {
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(playerAmount/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerAmount%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerAmount%100)%10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(listPlayer.length/100)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((listPlayer.length%100)/10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((listPlayer.length%100)%10)}</p>
                             </span>
                         </div>
                         <div className="flex w-full justify-between">
-                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người hợp lệ</p>
+                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
                             <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(playerAmount/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerAmount%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerAmount%100)%10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(listPlayer.length/100)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((listPlayer.length%100)/10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((listPlayer.length%100)%10)}</p>
                             </span>
                         </div>
                     </div>
-                    <Spin listPlayer={listPlayer} />
+                    <Spin listPlayer={playerShowList} />
                     <div className="w-full mb-12">
                         <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                         <div className="h-44 px-4 py-2 relative">
@@ -154,6 +197,7 @@ export default function LuckySpin() {
                                             listReward.map((reward, idx) => {
                                                 return (
                                                     <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-"+idx} role="option"
+                                                        style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
                                                         onClick={() => {setRewardChosing(idx), toggleSelectMenu()}} onBlur={toggleSelectMenu}>
                                                         <span className="ml-3 block truncate">{reward.description}</span>
                                                         <span className="ml-3 block truncate">Số lượng: {reward.quantity_remain}</span>
@@ -165,7 +209,7 @@ export default function LuckySpin() {
                                 </div>
                             </div>
                             <p className="w-full font-bold text-[#004599] text-center mt-2">Số lượng: {listReward[rewardChosing].quantity_remain}</p>
-                            <BgBlueButton content={"QUAY THƯỞNG"} />
+                            <BgBlueButton content={"QUAY THƯỞNG"} onClick={spining} />
                         </div>
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1">
