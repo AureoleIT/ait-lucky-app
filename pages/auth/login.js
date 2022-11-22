@@ -65,9 +65,9 @@ export default function Login() {
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
-        <div className="flex flex-col justify-center items-center w-full h-full">
+        <div className="flex flex-col justify-center max-w-md w-full h-full">
           <Title title="ĐĂNG NHẬP" />
-          <div className="w-3/4 max-w-md">
+          <div className="">
             <AuthInput
               content={"Tên đăng nhập/Email"}
               type={"email"}
@@ -79,14 +79,14 @@ export default function Login() {
               onChange={(e) => setPass(e.target.value)}
             />
           </div>
-          <div className="flex flex-row w-3/4 max-w-md">
+          <div className="flex flex-row">
             <TickBox
               content="Ghi nhớ đăng nhập"
               htmlFor="remberLogin"
               onChange={() => setCheck(!check)}
             />
           </div>
-          <div className="w-3/4 max-w-md">
+          <div className="">
             <BgBlueButton
               content="ĐĂNG NHẬP"
               onClick={() => {
