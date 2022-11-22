@@ -77,4 +77,3 @@ function EventRewardRegister () {
     )
 }
 export default EventRewardRegister
-
