@@ -1,13 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-const closeIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-red-600">
-<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-</svg>
-
-function closeMenu() {
-
-}
+import CloseIcon from "public/icons/close";
 
 function MenuItem(props) {
     return (
@@ -22,26 +16,38 @@ function MenuItem(props) {
 
 
 export default function Menu(props, {user}) {
+    const [showMenu, setShowMenu] = [props.showMenu, props.setShowMenu]
+    
     const RenderMenu = MenuList.map((item, index) => {
         return (
             <MenuItem key={index} icon={item.icon} name={item.name} href={item.href} />
         )
     }) 
 
+    function handleCloseMenu() {
+        setShowMenu(!showMenu)
+    }
+
+    if(!showMenu) {
+        return <></>
+    }
+
     return (
-        <div className="bg-white h-screen max-w-[250px] px-[20px] py-[30px] relative">
-            <button className="absolute right-2 top-2" onClick={closeMenu}>
-                {closeIcon}
-            </button>
-            <div className="flex items-center justify-between mt-6">
-                <img src={!user ? "http://www.gravatar.com/avatar/?d=retro&s=32" : user} alt="" className="w-[65px] h-[65px] rounded-full object-cover" />
-                <div className="font-[900]">
-                    <h3 className="text-[14px]">Tran Van C</h3>
-                    <p className="text-[#656565] text-[12px]">tranvanc@gmail.com</p>
+        <div className="bg-slate-100/60 h-screen w-full absolute z-9 left-0 flex justify-between">
+            <div className="bg-white h-screen w-[250px] px-[20px] py-[30px] absolute z-10 left-0">
+                <button className="absolute right-2 top-2" onClick={handleCloseMenu}>
+                    <CloseIcon />
+                </button>
+                <div className="flex items-center mt-6 gap-x-2">
+                    <img src={!user ? "http://www.gravatar.com/avatar/?d=retro&s=32" : user} alt="" className="w-[65px] h-[65px] rounded-full object-cover" />
+                    <div className="font-[900]">
+                        <h3 className="text-[14px]">Tran Van C</h3>
+                        <p className="text-[#656565] text-[12px]">tranvanc@gmail.com</p>
+                    </div>
                 </div>
-            </div>
-            <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
-                {RenderMenu}
+                <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
+                    {RenderMenu}
+                </div>
             </div>
         </div>
     )
