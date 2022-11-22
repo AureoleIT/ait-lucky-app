@@ -97,13 +97,13 @@ export default function Login() {
             <BgWhiteButton content="ĐĂNG NHẬP BẰNG" onClick={""} />
             <GradientLine color1="#003B93" color2="#00F0FF" content="" />
           </div>
+          <AuthFooter
+            normalContent="Chưa có tài khoản?"
+            boldContent="Đăng kí ngay!!!"
+            href="/auth/register"
+          />
         </div>
       </section>
-      <AuthFooter
-        normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!!!"
-        href="/auth/register"
-      />
     </>
   );
 }

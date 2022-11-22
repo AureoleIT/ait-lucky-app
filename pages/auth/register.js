@@ -126,13 +126,13 @@ export default function Register() {
             />
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
+          <AuthFooter
+            normalContent="Đã có tài khoản?"
+            boldContent="Đăng nhập luôn!"
+            href="/auth/login"
+          />
         </div>
       </section>
-      <AuthFooter
-        normalContent="Đã có tài khoản?"
-        boldContent="Đăng nhập luôn!"
-        href="/auth/login"
-      />
     </>
   );
 }
