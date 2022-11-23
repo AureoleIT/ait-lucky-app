@@ -22,22 +22,23 @@ module.exports = {
         accent: '#FE214B',
       },
       animation: {
-        "move-down-0": 'movefrom0to1 0.2s linear 10',
-        "move-down-1": 'movefrom1to2 0.2s linear 10',
-        "move-down-2": 'movefrom2to3 0.2s linear 10',
-        "move-down-3": 'movefrom3to4 0.2s linear 10',
-        "move-down-4": 'movefrom4to5 0.2s linear 10',
-        "move-down-5": 'movefrom5to6 0.2s linear 10',
-        "move-down-6": 'movefrom6to7 0.2s linear 10',
-        "move-down-7": 'movefrom7to8 0.2s linear 10',
-        "slow-move-down-0": 'movefrom0to1 2s linear 5s',
-        "slow-move-down-1": 'movefrom1to2 2s linear 5s',
-        "slow-move-down-2": 'movefrom2to3 2s linear 5s',
-        "slow-move-down-3": 'movefrom3to4 2s linear 5s',
-        "slow-move-down-4": 'movefrom4to5 2s linear 5s',
-        "slow-move-down-5": 'movefrom5to6 2s linear 5s',
-        "slow-move-down-6": 'movefrom6to7 2s linear 5s',
-        "slow-move-down-7": 'movefrom7to8 2s linear 5s',
+        "move-down-0": 'movefrom0to1 0.2s linear infinite',
+        "move-down-1": 'movefrom1to2 0.2s linear infinite',
+        "move-down-2": 'movefrom2to3 0.2s linear infinite',
+        "move-down-3": 'movefrom3to4 0.2s linear infinite',
+        "move-down-4": 'movefrom4to5 0.2s linear infinite',
+        "move-down-5": 'movefrom5to6 0.2s linear infinite',
+        "move-down-6": 'movefrom6to7 0.2s linear infinite',
+        "move-down-7": 'movefrom7to8 0.2s linear infinite',
+        "slow-move-down-0": 'movefrom0to1 0.5s linear infinite',
+        "slow-move-down-1": 'movefrom1to2 0.5s linear infinite',
+        "slow-move-down-2": 'movefrom2to3 0.5s linear infinite',
+        "slow-move-down-3": 'movefrom3to4 0.5s linear infinite',
+        "slow-move-down-4": 'movefrom4to5 0.5s linear infinite',
+        "slow-move-down-5": 'movefrom5to6 0.5s linear infinite',
+        "slow-move-down-6": 'movefrom6to7 0.5s linear infinite',
+        "slow-move-down-7": 'movefrom7to8 0.5s linear infinite',
+        "gradient-btn": "gradientColor 2s linear infinite"
       },
       keyframes: {
         movefrom0to1: {
@@ -64,6 +65,10 @@ module.exports = {
         }, movefrom7to8: {
           '0%': { zIndex: 7 },
           '100%': { zIndex: 6, transform: "translateY(120px) scale(0.8)" }
+        },
+        gradientColor: {
+          '0%, 100%': {backgroundImage: "linear-gradient(to right, #003B93, #00F0FF)"},
+          '50%': {backgroundImage: "linear-gradient(to right, #00F0FF 0%, #003B93 100%)"},
         }
       }
     },

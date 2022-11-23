@@ -31,7 +31,7 @@ export default function PlayerDetail({player, reward}) {
                 <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2 bg-[#D9D9D9]">
                     <p className="w-full items-center text-center text-[#004599] text-[18px] font-extrabold">KHÔNG CÓ</p>
                 </div>}
-                <CloseButton popUpType={false} />
+                <CloseButton />
             </div>
         </>
     )

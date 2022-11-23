@@ -21,13 +21,16 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
     const [playerChosing, setPlayerChosing] = useState(0);
 
     const PlayerList_List = (
-        <div className="flex flex-col">
+        <div className="flex flex-col divide-y divide-white/50">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
-                        <div key={idx} className="h-20 flex py-2 px-6 gap-4" onClick={() => openPlayerDetailByIndex(idx)}>
-                            <img className="h-16 w-16 object-cover rounded-full border-1" src={player.playerAvt} />
-                            <p className="text-left grow uppercase font-bold my-2 text-[#004599]">{player.playerName}</p>
+                        <div key={idx} className="group h-fit flex py-2 px-6 gap-4 text-[#004599] text-base hover:text-lg" onClick={() => openPlayerDetailByIndex(idx)}>
+                            <img className="transition-all h-16 w-16 object-cover rounded-full border-1 group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.playerAvt} />
+                            <div className="flex flex-col justify-center">
+                                <p className="h-fit text-left grow uppercase font-bold mt-2 group-hover:mt-4">{player.playerName}</p>
+                                <p className="h-fit text-left grow font-semibold">{player.playerName}</p>
+                            </div>
                         </div>
                     )
                 }):<></>
@@ -38,16 +41,16 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
     const openPlayerDetailByIndex = (idx) => {
         document.getElementById("playerDetail").classList.toggle("hidden");
         document.getElementById("popUpBG").classList.toggle("hidden");
-        setPlayer(listPlayer[idx]);
+        setPlayerChosing(idx);
     }
 
     const PlayerList_Menu = (
-        <div className="grid grid-flow-row grid-cols-4">
+        <div className="grid grid-flow-row grid-cols-4 mt-2">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
                         <div key={idx} className="h-20 w-full py-2 flex" onClick={() => openPlayerDetailByIndex(idx)}>
-                            <img className="mx-auto h-16 w-16 object-cover rounded-full border-1" src={player.playerAvt} alt={player.playerName} />
+                            <img className="transition-all mx-auto h-16 w-16 object-cover rounded-full border-1 hover:h-20 hover:w-20 hover:-mt-2 hover:shadow-lg" src={player.playerAvt} alt={player.playerName} />
                         </div>
                     )
                 }):<></>

@@ -17,7 +17,7 @@ import { useMemo } from "react/cjs/react.development";
 import PlayerList from "./PlayerList";
 
 export default function RewardList({listReward, showRemain = false, eventPaticipant, showAwardedPaticipant = false}) {
-    listReward = [].concat(listReward);
+    const rewardList = [].concat(listReward);
 
     const getGiftsFromReward = (reward) => {
         return (
@@ -26,10 +26,10 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                     reward.img_url.slice(0, 3).map((url, idx) => {
                         return (
                             <div key={idx} className="relative h-24 w-full flex">
-                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg" src={url} alt={reward.description + idx}/>
+                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.description + idx}/>
                                 {
                                     (reward.img_url.length > 3 && idx===2)?
-                                    <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] items-center rounded-lg">
+                                    <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
                                         <p className="w-full text-center font-bold text-white text-4xl">+{reward.img_url.length -3}</p>
                                     </div>:
                                     <></>
@@ -45,12 +45,18 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
     const listRewardShowcase = (
         <>
             {
-                listReward.map((reward, idx) => {
+                rewardList.map((reward, idx) => {
                     return (
-                        <div key={idx} className="mb-3 last:mb-0">
-                            <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}>
-                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold">{reward.description}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal">Số lượng: {showRemain?reward.quantity_remain: reward.quantity}</p>
+                        <div key={idx} className="relative mb-3 last:mb-0">
+                            <div className="absolute left-3 top-2 origin-center z-10 rotate-90 pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 fill-[#004599]">
+                                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}
+                                onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
+                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none">{reward.description}</p>
+                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">Số lượng: {showRemain?reward.quantity_remain: reward.quantity}</p>
                             </div>
                             {getGiftsFromReward(reward)}
                         </div>
@@ -70,7 +76,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                 {showcaseList.length > 0?
                     <>
                         <p className="ml-4 items-center text-left text-[#004599] text-4 font-extrabold">Người trúng thưởng</p>
-                        <PlayerList listType="List" changeButton={false} />
+                        <PlayerList listType="List" changeButton={false} listPlayer={showcaseList} />
                     </>:
                 <></>}
             </>
