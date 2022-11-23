@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { QRCodeCanvas } from "qrcode.react/lib"
+import { useRouter } from "next/router"
 
 import BgBlueButton from "public/shared/BgBlueButton"
 import ButtonAndIcon from "public/shared/ButtonAndIcon"
@@ -10,6 +11,9 @@ import testCoundown from "public/util/testCountdown"
 
 function CountDownCheckIn () 
 {
+    // router
+    const router = useRouter()
+
     // state
     const [pinCode, setPinCode] = useState(0)
     const [minutes, setMinutes] = useState(testCoundown.wait_time)
@@ -34,6 +38,7 @@ function CountDownCheckIn ()
             if(nowMinutes == 0 && nowSeconds == 0)
             {
                 clearInterval(countdown)
+                router.push("/event/lucky_spin")
             }
             else {
                 setMinutes(nowMinutes)
