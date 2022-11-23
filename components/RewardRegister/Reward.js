@@ -66,7 +66,7 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
 
     return (
         <div className="w-full flex flex-col items-center justify-center">
-            <div className="flex w-[90%] lg:w-4/12 max-w-xl">
+            <div className="flex w-3/4 lg:w-4/12 max-w-xl">
                 <div className="flex flex-col justify-evenly mr-4">
                     <i className="fas fa-angle-up cursor-pointer"></i>
                     <i className="fas fa-angle-down cursor-pointer"></i>
@@ -85,11 +85,11 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
                 </div>
             </div>
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl flex mb-2">
+            <div className="w-3/4 lg:w-4/12 max-w-xl flex mb-2">
                 <Line content={"Hình ảnh giải thưởng"}/>
             </div>
 
-            <div className="flex w-[90%] lg:w-4/12 max-w-xl mb-2 overflow-x-auto overflow-y-hidden ">
+            <div className="flex w-3/4 lg:w-4/12 max-w-xl mb-2 overflow-x-auto overflow-y-hidden ">
                 <div className="w-full mb-2 hidden" id="toggleIMG">
                     {
                         imgList.map((item,index) =>
@@ -104,7 +104,7 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
                 </div>
             </div>
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl">
+            <div className="w-3/4 lg:w-4/12 max-w-xl">
                 <button className="flex justify-evenly items-center w-full h-[35px] rounded-[5px]" style={buttonColor} onClick={getImage}>
                     <div className="font-[900] text-[24px] text-white">Thêm hình ảnh</div>
                     <i className="fas fa-image" style={iconStyle}></i>
@@ -112,7 +112,7 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
                 <input type={"file"} id={"getFile"} onChange={handleChangeFile} style={{display:"none"}}/>
             </div>
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl flex mb-2">
+            <div className="w-3/4 lg:w-4/12 max-w-xl flex mb-2">
                 <Line />
             </div>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/router"
 import BgBlueButton from "public/shared/BgBlueButton";
 import Reward from "components/RewardRegister/Reward";
 import SingleColorButton from "public/shared/SingleColorButton";
+import Header from "public/shared/Header";
 
 
 function EventRewardRegister () {
@@ -41,36 +42,40 @@ function EventRewardRegister () {
 
     return (
             <div className="flex flex-col items-center justify-between w-screen h-screen py-2">
-                <div className="flex flex-col items-center justify-center w-full">
+                <div className="w-full flex flex-col items-center justify-center">
+                    <Header />
                     <h1 className="uppercase text-xl py-2 mb-2 font-bold text-[#004599]">thông tin giải thưởng</h1>
-                    <div className="overflow-y-auto overflow-x-hidden w-full max-h-[400px]">
-                        <Reward
-                            name={"field1"}
-                            valueRewardName={giftName.field1}
-                            onChangeRewardName={onChangeHandlerRewardName}
-                            valueGiftCount={giftCount}
-                            onChangeGiftCountMinus={(e) => setGiftCount(Math.max(giftCount - 1, 1))}
-                            onChangeGiftCountPlus={(e) => setGiftCount(giftCount + 1)}
-                        />
-                        <Reward
-                            name={"field2"}
-                            valueRewardName={giftName.field2}
-                            onChangeRewardName={onChangeHandlerRewardName}
-                            valueGiftCount={giftCount}
-                            onChangeGiftCountMinus={(e) => setGiftCount(Math.max(giftCount - 1, 1))}
-                            onChangeGiftCountPlus={(e) => setGiftCount(giftCount + 1)}
-                        />
-                        
-                        
+                    <div className="flex flex-col items-center justify-center w-full">
+                        <div className="overflow-y-auto overflow-x-hidden w-full max-h-[400px]">
+                            <Reward
+                                name={"field1"}
+                                valueRewardName={giftName.field1}
+                                onChangeRewardName={onChangeHandlerRewardName}
+                                valueGiftCount={giftCount}
+                                onChangeGiftCountMinus={(e) => setGiftCount(Math.max(giftCount - 1, 1))}
+                                onChangeGiftCountPlus={(e) => setGiftCount(giftCount + 1)}
+                            />
+                            <Reward
+                                name={"field2"}
+                                valueRewardName={giftName.field2}
+                                onChangeRewardName={onChangeHandlerRewardName}
+                                valueGiftCount={giftCount}
+                                onChangeGiftCountMinus={(e) => setGiftCount(Math.max(giftCount - 1, 1))}
+                                onChangeGiftCountPlus={(e) => setGiftCount(giftCount + 1)}
+                            />
+                            
+                            
+                        </div>
+
+                        <div className="flex justify-center items-center mb-2 mt-1 w-3/4 lg:w-4/12 max-w-xl cursor-pointer drop-shadow-lg">
+                            <SingleColorButton content={"Thêm giải thưởng"} colorHex={"#40BEE5"} onClick={hanldeAddReward}/>
+                        </div> 
+
                     </div>
-
-                    <div className="flex justify-center items-center mb-2 mt-1 w-[90%] lg:w-4/12 max-w-xl cursor-pointer drop-shadow-lg">
-                        <SingleColorButton content={"Thêm giải thưởng"} colorHex={"#40BEE5"} onClick={hanldeAddReward}/>
-                    </div> 
-
                 </div>
 
-                <div className="pb-4 w-11/12 lg:w-4/12 drop-shadow-lg max-w-xl">
+
+                <div className="pb-4 w-3/4 lg:w-4/12 drop-shadow-lg max-w-xl">
                     <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} onClick={handleNavigate}/>
                 </div>
             </div>
