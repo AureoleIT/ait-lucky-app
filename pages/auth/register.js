@@ -10,18 +10,10 @@ import BgWhiteButton from "public/shared/BgWhiteButton";
 import Privacy from "public/shared/Privacy";
 import Auth from "layouts/Auth.js";
 import router from "next/router";
+import { TEXT } from "public/util/colors";
 import { isEmail, hasWhiteSpace } from "public/util/functions";
-import {
-  getDatabase,
-  ref,
-  set,
-  child,
-  get,
-  orderByKey,
-  query,
-  orderByChild,
-} from "firebase/database";
-import { db, auth } from "src/firebase";
+import { getDatabase, ref, set, child, get } from "firebase/database";
+import { db, auth, app } from "src/firebase";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -29,35 +21,54 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
+import PopUp from "public/shared/PopUp";
 const uuid = require("uuid");
+const successIcon = require("../../public/img/successIcon.png");
+const failIcon = require("../../public/img/failIcon.png");
 
 export default function Register() {
+  const hidden = "h-screen hidden w-full fixed justify-center items-center";
+  const show =
+    "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
+  const [textState, setTextState] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isHidden, setHidden] = useState(hidden);
 
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     const dbRef = ref(db);
     if (name === "" || email === "" || password === "") {
-      alert("Please fill all the cells below");
+      setTextState("Please fill all the cells below");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     if (!isEmail(email)) {
-      alert("Invalid email form");
+      setTextState("Invalid email form");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     if (hasWhiteSpace(name)) {
-      alert("Your username contain space, please refill");
+      setTextState("Your username contain space, please refill");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     if (password.length < 6) {
-      alert("Password must be at least 6 characters");
+      setTextState("Password must be at least 6 characters");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     if (!check) {
-      alert("You did not agree with privacy!!!");
+      setTextState("You did not agree with privacy!!!");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
 
@@ -81,7 +92,9 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        alert("Username or email existed!");
+        setTextState("Username or email existed!");
+        setHidden(show);
+        setIsSuccess(false);
         return;
       }
       set(ref(db, `users/${id}/`), {
@@ -91,16 +104,26 @@ export default function Register() {
         password,
         pic: "",
         create_at: new Date().getTime(),
-      }).then(alert("Register successfully <3 \nPlease login ~"));
-      router.push("/auth/login");
+      }).then(() => {
+        setTextState("Register successfully <3 \nPlease login ~");
+        setIsSuccess(true);
+        setHidden(show);
+      });
+
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 3000);
     });
   }
   async function signUpAuth() {
-    signOut(getAuth())
-      .then(() => {
+    signOut(auth)
+      .then(async () => {
         var id = uuid.v4();
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
+        const provider = new GoogleAuthProvider(app);
+        provider.setCustomParameters({
+          login_hint: "user@example.com",
+        });
+        await signInWithPopup(auth, provider)
           .then((result) => {
             const newUser = {
               id,
@@ -120,24 +143,41 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                alert("This email existed on database!");
+                setTextState("This email existed on database!");
+                setIsSuccess(false);
+                setHidden(show);
                 return;
               }
-              set(ref(db, `users/${id}/`), newUser).then(
-                alert("Register by google successfully <3 \nPlease login ~")
-              );
-              router.push("/auth/login");
+              set(ref(db, `users/${id}/`), newUser).then(() => {
+                setTextState(
+                  "Register by google successfully <3 \nPlease login ~"
+                );
+                setIsSuccess(true);
+                setHidden(show);
+              });
+              setTimeout(() => {
+                router.push("/auth/login");
+              }, 3000);
             });
           })
           .catch((error) => {
             console.log(error.message);
-            alert("Something went wrong!");
+            setTextState("Something went wrong!");
+            setIsSuccess(false);
+            setHidden(show);
           });
       })
       .catch((error) => {
-        alert(error.message);
+        console.log(error.message);
+        setTextState("Something's wrong that bad");
+        setIsSuccess(false);
+        setHidden(show);
       });
   }
+
+  const closePopup = (e) => {
+    setHidden(hidden);
+  };
 
   const setEmailData = useCallback(
     (e) => {
@@ -203,6 +243,14 @@ export default function Register() {
             normalContent="Đã có tài khoản?"
             boldContent="Đăng nhập luôn!"
             href="/auth/login"
+          />
+        </div>
+        {/* remove hidden add flex */}
+        <div className={isHidden}>
+          <PopUp
+            text={textState}
+            icon={isSuccess ? successIcon : failIcon}
+            close={closePopup}
           />
         </div>
       </section>

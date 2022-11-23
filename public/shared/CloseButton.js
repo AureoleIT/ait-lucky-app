@@ -1,4 +1,7 @@
+// layout for page
+import Auth from "layouts/Auth.js";
 import React, { useState, useEffect } from "react";
+
 
 export default function CloseButton({addBackground = true, clickOutClose = true}) {
     const closeParentDiv = (e) => {
@@ -20,6 +23,7 @@ export default function CloseButton({addBackground = true, clickOutClose = true}
                 popUpBG.classList.add("hidden");
             })
         }
+
         return () => {
             popUpBG.remove();
         }
