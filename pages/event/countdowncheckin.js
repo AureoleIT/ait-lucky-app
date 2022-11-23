@@ -20,27 +20,27 @@ function CountDownCheckIn ()
         background: "#3B88C3"
     }
 
-    // useEffect(() =>
-    // {
-    //     let date = new Date()
-    //     let deadline = date.getTime() + (minutes * 60 * 1000)
+    useEffect(() =>
+    {
+        let date = new Date()
+        let deadline = date.getTime() + (minutes * 60 * 1000)
 
-    //     let countdown = setInterval(() => {
-    //         let nowDate = new Date()
-    //         let left = deadline - nowDate
-    //         let nowSeconds = Math.floor((left / 1000) % 60);
-    //         let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+        let countdown = setInterval(() => {
+            let nowDate = new Date()
+            let left = deadline - nowDate
+            let nowSeconds = Math.floor((left / 1000) % 60);
+            let nowMinutes = Math.floor((left / 1000 / 60) % 60);
 
-    //         if(nowMinutes == 0 && nowSeconds == 0)
-    //         {
-    //             clearInterval(countdown)
-    //         }
-    //         else {
-    //             setMinutes(nowMinutes)
-    //             setSeconds(nowSeconds)
-    //         }
-    //     }, 1000)
-    // },[])
+            if(nowMinutes == 0 && nowSeconds == 0)
+            {
+                clearInterval(countdown)
+            }
+            else {
+                setMinutes(nowMinutes)
+                setSeconds(nowSeconds)
+            }
+        }, 1000)
+    },[])
 
     // generate qr code
     const generateQRcode = () =>
