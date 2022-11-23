@@ -35,15 +35,15 @@ function PinCode ({ value: sourceWholeValue, onChange: onChangeCallback, length 
     const hasError = currentWholeValue.length > 0 && currentWholeValue.length < 6
 
     const selectedStyle = {
-        "border-top": "4px solid black"
+        borderTop: "4px solid black"
     }
     
     const errorStyle = {
-        "border-top": "2px solid red"
+        borderTop: "2px solid red"
     }
 
     const errorSelectedStyle = {
-        "border-top": "4px solid red"
+        borderTop: "4px solid red"
     }
 
     return (
@@ -52,6 +52,7 @@ function PinCode ({ value: sourceWholeValue, onChange: onChangeCallback, length 
                 {
                     values.map((_value, index) => (
                         <input 
+                            key={index}
                             maxLength={1}
                             ref={refs[index]}
                             value={values[index]}
@@ -99,7 +100,7 @@ function PinCode ({ value: sourceWholeValue, onChange: onChangeCallback, length 
             <div className="w-full flex justify-center items-center">
                 {
                     values.map((_value, index) => (
-                        <span style={selectedStyle} className="inline-block w-[35px] md:w-[55px] my-0 mx-[10px] py-0 px-[1px]"></span>
+                        <span style={selectedStyle} key={index} className="inline-block w-[35px] md:w-[55px] my-0 mx-[10px] py-0 px-[1px]"></span>
                     ))
                 }
             </div>
