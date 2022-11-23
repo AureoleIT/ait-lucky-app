@@ -1,9 +1,14 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
+import { useRouter } from "next/router"
+
 import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 
 export default function EventRegister() {
+
+    // router
+    const router = useRouter()
 
     const [nameEvent, setNameEvent] = useState("")
     const [eventDetail, setEventDetail] = useState("")
@@ -22,6 +27,15 @@ export default function EventRegister() {
         }
     }
 
+    // navigate
+    const handleNavigate = () =>
+    {
+        if(nameEvent !== "" && eventDetail !== "" && limitUser !== "")
+        {
+            router.push("/event/rewardregister")
+        }
+    }
+
     return (
     <div className="flex flex-col overflow-y-auto overflow-x-hidden items-center justify-evenly h-screen w-screen">
         <div className="flex flex-col items-center justify-center w-full">
@@ -37,19 +51,12 @@ export default function EventRegister() {
             </div>
 
             <div className="w-3/4 lg:w-4/12">
-                <AuthInput content={"Giới hạn người tham gia"} type={"number"} value={limitUser} onChange={(e) => setLimitUser(e.target.value)}/>
+                <AuthInput content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={limitUser} onChange={(e) => setLimitUser(e.target.value)}/>
             </div>
         </div>
 
         <div className="py-3 w-3/4 lg:w-4/12" onClick={handleSubmit}>
-            {
-                (nameEvent !== "" && eventDetail !== "" && limitUser !== "") ? (
-                    <BgBlueButton content={"TIẾP TỤC"} islink={true} href="rewardregister"/>
-                    ) : (
-                    <BgBlueButton content={"TIẾP TỤC"} islink={false}/>
-                    )
-            }
-            
+            <BgBlueButton content={"TIẾP TỤC"} onClick={handleNavigate}/>
         </div>
     </div>
   );

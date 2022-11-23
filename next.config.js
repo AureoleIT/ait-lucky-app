@@ -25,7 +25,7 @@ module.exports = withImages({
 
   // // false for dev, true for product
   // reactStrictMode: true,
-
+  // swcMinify: true,
   // images: {
   //   domains: ["s120-ava-talk.zadn.vn", "blob"],
   //   },
