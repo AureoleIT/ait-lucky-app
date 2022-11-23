@@ -11,7 +11,7 @@ export default function Dashboard() {
   return (
     <>
       <Header />
-      <section className=" px-5 py-5 max-w-md w-screen mx-auto flex justify-center items-center">
+      <section className="px-5 py-5 max-w-md w-screen mx-auto flex justify-center items-center">
         <div
           className="w-full  h-[100px] flex  rounded-[10px] mb-5"
           style={wrapperBorder}
