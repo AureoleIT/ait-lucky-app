@@ -96,51 +96,68 @@ export default function Register() {
     });
   }
   async function signUpAuth() {
-    signOut(getAuth()).then((val) => {
-      alert("signed out success")
-      console.log(val)
-    }).catch((error) => {
-      alert(error.message)
-    });
-    // var id = uuid.v4();
-    // const provider = new GoogleAuthProvider();
-    // signInWithPopup(auth, provider)
-    //   .then((result) => {
-    //     const newUser = {
-    //       id,
-    //       name: result._tokenResponse.email.slice(
-    //         0,
-    //         result._tokenResponse.email.lastIndexOf("@")
-    //       ),
-    //       email: result._tokenResponse.email,
-    //       password: "123456",
-    //       pic: result._tokenResponse.photoUrl,
-    //       create_at: new Date().getTime(),
-    //     };
-    //     get(child(ref(db), "users/")).then((snapshot) => {
-    //       const record = snapshot.val() ?? [];
-    //       const values = Object.values(record);
-    //       const isUserExisting = values.some(
-    //         (item) => item.email === newUser.email
-    //       );
-    //       if (isUserExisting) {
-    //         alert("This email existed on database!");
-    //         return;
-    //       }
-    //       set(ref(db, `users/${id}/`), newUser).then(
-    //         alert("Register by google successfully <3 \nPlease login ~")
-    //       );
-    //       router.push("/auth/login");
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error.message);
-    //     alert("Something went wrong!");
-    //   });
+    signOut(getAuth())
+      .then(() => {
+        var id = uuid.v4();
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            const newUser = {
+              id,
+              name: result._tokenResponse.email.slice(
+                0,
+                result._tokenResponse.email.lastIndexOf("@")
+              ),
+              email: result._tokenResponse.email,
+              password: "123456",
+              pic: result._tokenResponse.photoUrl,
+              create_at: new Date().getTime(),
+            };
+            get(child(ref(db), "users/")).then((snapshot) => {
+              const record = snapshot.val() ?? [];
+              const values = Object.values(record);
+              const isUserExisting = values.some(
+                (item) => item.email === newUser.email
+              );
+              if (isUserExisting) {
+                alert("This email existed on database!");
+                return;
+              }
+              set(ref(db, `users/${id}/`), newUser).then(
+                alert("Register by google successfully <3 \nPlease login ~")
+              );
+              router.push("/auth/login");
+            });
+          })
+          .catch((error) => {
+            console.log(error.message);
+            alert("Something went wrong!");
+          });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   }
-  const setEmailData = useCallback((e)=>{
-    setEmail(e?.target?.value)
-  }, [setEmail])
+
+  const setEmailData = useCallback(
+    (e) => {
+      setEmail(e?.target?.value);
+    },
+    [setEmail]
+  );
+  const setNameData = useCallback(
+    (e) => {
+      setName(e?.target?.value);
+    },
+    [setName]
+  );
+  const setPassData = useCallback(
+    (e) => {
+      setPassword(e?.target?.value);
+    },
+    [setPassword]
+  );
+  const isCheckPrivacy = () => setCheck(!check);
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
@@ -152,7 +169,7 @@ export default function Register() {
             <AuthInput
               content={"Tên đăng nhập"}
               type={"text"}
-              onChange={(e) => setName(e.target.value)}
+              onChange={setNameData}
             />
             <AuthInput
               content={"Email"}
@@ -162,10 +179,10 @@ export default function Register() {
             <AuthInput
               content={"Mật khẩu"}
               type={"password"}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={setPassData}
             />
           </div>
-          <Privacy onChange={(e) => setCheck(!check)} />
+          <Privacy onChange={isCheckPrivacy} />
           <ConfirmButton
             text="Đăng ký"
             onClick={() => {
