@@ -1,13 +1,14 @@
+import { useState } from "react"
+
 import BgBlueButton from "public/shared/BgBlueButton"
 import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
+import PinCode from "public/shared/PinCode"
 
 function CountDownCheckIn () 
 {
-
-    const wrapperBorder = {
-        border:"2px solid #40bee5",
-    }
+    // state
+    const [pinCode, setPinCode] = useState(0)
 
     const countDownNumber = {
         background: "#3B88C3"
@@ -16,19 +17,12 @@ function CountDownCheckIn ()
     return (
         <div className="flex flex-col justify-center items-center h-screen w-screen">
             <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
-            <h1 className="uppercase text-xl py-2 mb-1 font-bold text-[#004599]">mã pin sự kiện</h1> 
+            <h1 className="uppercase text-base py-2 mb-1 font-bold text-[#004599]">mã pin sự kiện</h1> 
 
              {/* id room */}
 
-             <div className="w-[90%] lg:w-4/12 max-w-xl h-[70px] flex justify-center items-center rounded-[10px] mb-5" style={wrapperBorder}>
-                <div className="flex justify-between px-5 w-full text-3xl text-[#40BEE5]">
-                    <span>1</span>
-                    <span>2</span>
-                    <span>3</span>
-                    <span>4</span>
-                    <span>5</span>
-                    <span>6</span>
-                </div>
+            <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px] mb-5">
+                <PinCode length={6} value={pinCode} onChange={(e) => {setPinCode(e)}}/>
             </div>  
 
             {/* qr code */}
@@ -57,7 +51,7 @@ function CountDownCheckIn ()
 
             </div>
 
-            <div className="w-3/4 lg:w-3/12 flex justify-between mb-2">
+            <div className="w-3/4 md:w-4/12 flex justify-between mb-2">
                 <div className="">
                     <p className="text-[#004599] font-bold">Số người tham gia</p>
                 </div>
@@ -88,7 +82,7 @@ function CountDownCheckIn ()
                 <Line />
             </div>
 
-            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center">
+            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center items-center">
                 <div className="w-[90%] mr-1 drop-shadow-lg">
                     <BgBlueButton content={"BẮT ĐẦU"} islink={true} href={"_countdowncheckin"}/>
                 </div>

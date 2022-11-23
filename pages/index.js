@@ -11,6 +11,7 @@ import QrButton from "public/shared/QrButton";
 import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import LineWithText from "public/shared/LineWithText";
+
 export default function Index() {
   const [pin, setPin] = useState("");
   // Got pin input
