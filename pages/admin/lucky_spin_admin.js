@@ -18,6 +18,7 @@ import Spin from "public/shared/Spin";
 import RewardList from "public/shared/RewardList";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import ConfirmButton from "public/shared/ConfirmButton";
+import CloseButton from "public/shared/CloseButton";
 
 // DB test
 const listPlayer = [
