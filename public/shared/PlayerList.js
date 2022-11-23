@@ -18,19 +18,19 @@ import PlayerDetail from "./PlayerDetail";
 
 export default function PlayerList({listPlayer, listType = "List", changeButton = true}) {
     const [typeList, setTypeList] = useState(listType);
-    const [player, setPlayer] = useState(listPlayer[0]);
+    const [playerChosing, setPlayerChosing] = useState(0);
 
     const PlayerList_List = (
         <div className="flex flex-col">
             {
-                listPlayer.map((player, idx) => {
+                listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
                         <div key={idx} className="h-20 flex py-2 px-6 gap-4" onClick={() => openPlayerDetailByIndex(idx)}>
                             <img className="h-16 w-16 object-cover rounded-full border-1" src={player.playerAvt} />
                             <p className="text-left grow uppercase font-bold my-2 text-[#004599]">{player.playerName}</p>
                         </div>
                     )
-                })
+                }):<></>
             }
         </div>
     )
@@ -44,13 +44,13 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
     const PlayerList_Menu = (
         <div className="grid grid-flow-row grid-cols-4">
             {
-                listPlayer.map((player, idx) => {
+                listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
                         <div key={idx} className="h-20 w-full py-2 flex" onClick={() => openPlayerDetailByIndex(idx)}>
                             <img className="mx-auto h-16 w-16 object-cover rounded-full border-1" src={player.playerAvt} alt={player.playerName} />
                         </div>
                     )
-                })
+                }):<></>
             }
         </div>
     )
@@ -73,7 +73,7 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
             <div className="overflow-auto grow">
                 {typeList==="List"?PlayerList_List:PlayerList_Menu}
             </div>
-            <PlayerDetail player={player} />
+            {listPlayer!==undefined?<PlayerDetail player={listPlayer[playerChosing]} />:<></>}
         </>
     )
 }
