@@ -12,8 +12,8 @@ export default function AuthInput({
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-    "-webkit-background-clip": "text",
-    "-webkit-text-fill-color": "transparent",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
   };
 
   return (
