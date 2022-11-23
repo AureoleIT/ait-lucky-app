@@ -50,7 +50,7 @@ function CountDownCheckIn ()
     // generate qr code
     const generateQRcode = () =>
     {
-        setQrCodeValue("https://www.youtube.com/")
+        setQrCodeValue(`http://localhost:3000/event/lucky_spin/${pinCode}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
     }
@@ -67,6 +67,12 @@ function CountDownCheckIn ()
         document.body.appendChild(downloadElement)
         downloadElement.click()
         document.body.removeChild(downloadElement)
+    }
+
+    // navigate
+    const handleEditPageNavigation = () =>
+    {
+        router.push("/event/edit_event_reward_register")
     }
 
     return (
@@ -153,11 +159,8 @@ function CountDownCheckIn ()
             </div>
 
             <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center items-center">
-                <div className="w-[90%] mr-1 drop-shadow-lg">
+                <div className="w-full mr-1 drop-shadow-lg">
                     <BgBlueButton content={"BẮT ĐẦU"} islink={true} href={"_countdowncheckin"}/>
-                </div>
-                <div className="w-[50px] h-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] rounded-[50px] ml-1 cursor-pointer drop-shadow-lg">
-                    <i className="fas fa-pen text-white flex justify-center items-center w-full h-full"></i>
                 </div>
             </div>
 
