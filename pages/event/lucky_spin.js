@@ -119,7 +119,7 @@ export default function LuckySpin() {
                             </span>
                         </div>
                         <div className="flex w-full justify-between">
-                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người hợp lệ</p>
+                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
                             <span className="flex gap-1">
                                 <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(playerAmount/100)}</p>
                                 <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerAmount%100)/10)}</p>
@@ -131,7 +131,7 @@ export default function LuckySpin() {
                     <div className="w-full mb-12">
                         <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                         <div className="h-44 px-4 py-2 relative">
-                            <RewardList listReward={listReward[0]} showRemain={true} />
+                            <RewardList listReward={listReward[0]} showRemain={true} showAwardedPaticipant={true} />
                         </div>
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1">
