@@ -32,6 +32,9 @@ const uuid = require("uuid");
 const dbRef = ref(db);
 
 export default function Register() {
+  const hidden = "h-screen hidden w-full fixed justify-center items-center";
+  const show =
+    "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
