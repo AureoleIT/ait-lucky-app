@@ -1,5 +1,3 @@
-// layout for page
-import Auth from "layouts/Auth.js";
 import React, { useState, useEffect } from "react";
 
 
