@@ -17,7 +17,7 @@ function SpecialRewardInfo ({ rewardName, amount, image }) {
                         image.map((item, index) =>
                         {
                             return(
-                                <img alt={index} src={item} width={"90px"} height={"90px"} className="rounded-[5px] mx-[10px] drop-shadow-lg"/>
+                                <img alt={index} key={index} src={item} width={"90px"} height={"90px"} className="rounded-[5px] mx-[10px] drop-shadow-lg"/>
                             )
                         })
                     }

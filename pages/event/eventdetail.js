@@ -18,11 +18,23 @@ function EventDetail () {
     // uuid generate event id
     const eventID = useState(uuidv4().slice(0,8))
 
+    // state
+    const [countdown, setCountdown] = useState()
+
     const optionStyles = {
-        background:"#40BEE5"
+        background:"#40BEE5",
     }
 
     // logic
+
+    const onSetCoundownTime = () =>
+    {
+        let select = document.getElementById("timer").value
+        setCountdown(select)
+
+    }
+    console.log(countdown);
+
     const handlePrepare = () =>
     {
         router.push("/event/countdowncheckin")
@@ -68,12 +80,12 @@ function EventDetail () {
                 <div className="flex items-center justify-center h-[40px]">
                     <h1 className="uppercase text-[#004599] font-bold mb-1">thời gian check in</h1>
                 </div>
-                <div className="text-white font-bold ml-3 w-[110px] h-[40px] flex justify-center items-center rounded-[10px] "  style={optionStyles}>
-                    <select className="w-[90px] h-[30px] bg-transparent">
-                        <option>5 phút</option>
-                        <option>10 phút</option>
-                        <option>15 phút</option>
-                        <option>20 phút</option>
+                <div className="text-white font-bold ml-3 w-[110px] h-[40px] flex justify-center items-center rounded-[10px] " style={optionStyles}>
+                    <select className="w-[90px] h-[30px] bg-transparent" style={optionStyles} id={"timer"} onChange={onSetCoundownTime}>
+                        <option value={"5"}>5 phút</option>
+                        <option value={"10"}>10 phút</option>
+                        <option value={"15"}>15 phút</option>
+                        <option value={"20"}>20 phút</option>
                     </select>
                 </div>
             </div>
