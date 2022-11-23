@@ -36,7 +36,7 @@ function EventRewardRegister () {
     {
         if(giftName !== null)
         {
-            router.push("/event/eventdetail")
+            router.push("/event/event-detail")
         }
     }
 

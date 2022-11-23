@@ -36,7 +36,7 @@ function EditEventRewardRegister ()
 
     const handleNavigate = () =>
     {
-        router.push("/event/eventdetail")
+        router.push("/event/event-detail")
     }
 
 

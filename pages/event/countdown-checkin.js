@@ -68,13 +68,7 @@ function CountDownCheckIn ()
         downloadElement.click()
         document.body.removeChild(downloadElement)
     }
-
-    // navigate
-    const handleEditPageNavigation = () =>
-    {
-        router.push("/event/edit_event_reward_register")
-    }
-
+    
     return (
         <div className="flex flex-col justify-center items-center h-screen w-screen">
             <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>

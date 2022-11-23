@@ -27,7 +27,7 @@ export default function EventRegister() {
         if(nameEvent !== "" && eventDetail !== "" && limitUser !== "")
         {
             alert("Thanh cong !!!")
-            router.push("/event/rewardregister")
+            router.push("/event/reward-register")
 
         }
         else 

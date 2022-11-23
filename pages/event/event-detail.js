@@ -37,7 +37,7 @@ function EventDetail () {
 
     const handlePrepare = () =>
     {
-        router.push("/event/countdowncheckin")
+        router.push("/event/countdown-checkin")
     }
 
     const handleEditPageNavigation = () =>
