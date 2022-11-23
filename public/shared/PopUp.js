@@ -4,7 +4,7 @@ import ClosePopUp from "./ClosePopUp";
 export default function PopUp({text, icon, close}) {
   return (
     <div
-      className="h-1/4 w-3/4 max-w-md bg-white border-2 p-5 border-slate-500 
+      className="h-1/4 w-3/4 max-w-md bg-white border-2 p-5 pb-16 border-slate-500 
            shadow-lg shadow-slate-500 rounded-3xl flex flex-col 
            align-middle justify-between"
     >
