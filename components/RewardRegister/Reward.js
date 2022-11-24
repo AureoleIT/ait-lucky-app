@@ -3,9 +3,10 @@ import { useState, useEffect} from "react"
 import AuthInput from "public/shared/AuthInput"
 import Line from "public/shared/Line"
 import ImageCustom from "public/shared/ImageCustom"
+import { Children } from "react/cjs/react.production.min"
 
 
-function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountMinus, onChangeGiftCountPlus, valueGiftCount, imageList })
+function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountMinus, onChangeGiftCountPlus, valueGiftCount, imageList, fileID, toggleID })
 {
 
     // state
@@ -53,13 +54,13 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
         const upload = e.target.files[0]
         setFile(URL.createObjectURL(upload))
 
-        let toggle = document.getElementById("toggleIMG")
+        let toggle = document.getElementById(toggleID)
         toggle.style.display = "flex"
     }
     
     const getImage = (e) =>
     {
-        document.getElementById("getFile").click()
+        document.getElementById(fileID).click()
     }
 
     console.log(valueRewardName);
@@ -90,7 +91,7 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
             </div>
 
             <div className="flex w-3/4 lg:w-4/12 max-w-xl mb-2 overflow-x-auto overflow-y-hidden ">
-                <div className="w-full mb-2 hidden" id="toggleIMG">
+                <div className="w-full mb-2 hidden" id={toggleID}>
                     {
                         imgList.map((item,index) =>
                         {
@@ -109,7 +110,7 @@ function Reward ({ name, onChangeRewardName, valueRewardName, onChangeGiftCountM
                     <div className="font-[900] text-[24px] text-white">Thêm hình ảnh</div>
                     <i className="fas fa-image" style={iconStyle}></i>
                 </button>
-                <input type={"file"} id={"getFile"} onChange={handleChangeFile} style={{display:"none"}}/>
+                <input type={"file"} id={fileID} onChange={handleChangeFile} style={{display:"none"}}/>
             </div>
 
             <div className="w-3/4 lg:w-4/12 max-w-xl flex mb-2">
