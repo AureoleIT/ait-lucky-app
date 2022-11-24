@@ -42,8 +42,8 @@ export default function EventList() {
   return (
     <>
       <Header />
-      <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
-        <div className="flex flex-col w-full h-full items-center">
+      <section className="h-screen max-w-md mx-auto flex flex-col justify-center items-center">
+        <div className="flex flex-col px-5 py-5 w-full h-full items-center">
           <h1 className="uppercase font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
             danh sách sự kiện
           </h1>
