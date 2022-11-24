@@ -11,10 +11,10 @@ export const messagesSuccess = {
 
 //Message lỗi
 export const messagesError = {
-    E0001: (a) => { return "Hạng mục " + a + "bắt buộc nhập" },
-    E0002: (a, b) => { return "Vui lòng nhập hạng mục " + a + "có độ dài lớn hơn hoặc bằng " + b },
-    E0003: (a) => { return "Hạng mục " + a + "nhập sai định dạng" },
-    E0021: (a, b) => { return "Vui lòng nhập hạng mục " + a + "giống với hạng mục " + b },
+    E0001: (a) => { return "Hạng mục " + a + " bắt buộc nhập" },
+    E0002: (a, b) => { return "Vui lòng nhập hạng mục " + a + " có độ dài lớn hơn hoặc bằng " + b },
+    E0003: (a) => { return "Hạng mục " + a + " nhập sai định dạng" },
+    E0021: (a, b) => { return "Vui lòng nhập hạng mục " + a + " giống với hạng mục " + b },
     E0022: "Tải file thất bại",
     E1001: "Đăng ký dữ liệu thất bại",
     E1002: "Cập nhật dữ liệu thất bại",
