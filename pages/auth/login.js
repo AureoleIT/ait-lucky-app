@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 // Components
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
@@ -14,13 +14,22 @@ import router from "next/router";
 import { auth, db } from "../../src/firebase";
 import { hasWhiteSpace } from "public/util/functions";
 import { getDatabase, ref, set, child, get } from "firebase/database";
+import PopUp from "public/shared/PopUp";
 import {
   GoogleAuthProvider,
-  getAuth,
-  createUserWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+const successIcon = require("../../public/img/successIcon.png");
+const failIcon = require("../../public/img/failIcon.png");
+
 export default function Login() {
+  const hidden = "h-screen hidden w-full fixed justify-center items-center";
+  const show =
+    "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
+
+  const [textState, setTextState] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isHidden, setHidden] = useState(hidden);
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
@@ -28,11 +37,15 @@ export default function Login() {
 
   function loginSubmit(name, pass) {
     if (name === "" || pass === "") {
-      alert("Please fill all the cells below");
+      setTextState("Please fill all the cells below");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     if (hasWhiteSpace(name)) {
-      alert("Your username contain space, please refill");
+      setTextState("Your username contain space, please refill");
+      setHidden(show);
+      setIsSuccess(false);
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -43,10 +56,14 @@ export default function Login() {
           (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
-        alert("User not found");
+        setTextState("User not found");
+        setHidden(show);
+        setIsSuccess(false);
         return;
       }
-      alert("Login successfully <3\nYou're welcome!");
+      setTextState("Login successfully <3\nYou're welcome!");
+      setHidden(show);
+      setIsSuccess(true);
       //Go to admin dashboard
       router.push("/admin/dashboard");
     });
@@ -65,21 +82,50 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            alert(
+            setTextState(
               "You did not have an account with this email! \nPlease try another account or register to join with us."
             );
+            setHidden(show);
+            setIsSuccess(false);
             return;
           }
-          alert("Login with google successfully ~");
+          setTextState(
+            "Login with google successfully ~\nYou will be moved to dashboard"
+          );
+          setHidden(show);
+          setIsSuccess(true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
-          router.push("/admin/dashboard");
+          setTimeout(() => {
+            router.push("/admin/dashboard");
+          }, 4000);
         });
       })
       .catch((error) => {
         console.log(error.message);
-        alert("Some thing went wrong");
+        setTextState("Some thing went wrong");
+        setHidden(show);
+        setIsSuccess(false);
       });
   }
+  const closePopup = (e) => {
+    setHidden(hidden);
+  };
+
+  const nameData = useCallback(
+    (e) => {
+      setName(e?.target?.value);
+    },
+    [setName]
+  );
+  const passData = useCallback(
+    (e) => {
+      setPass(e?.target?.value);
+    },
+    [setPass]
+  );
+  const onCheckData = (e) => {
+    setCheck(!check);
+  };
   return (
     <>
       <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
@@ -122,6 +168,13 @@ export default function Login() {
             normalContent="Chưa có tài khoản?"
             boldContent="Đăng kí ngay!!!"
             href="/auth/register"
+          />
+        </div>
+        <div className={isHidden}>
+          <PopUp
+            text={textState}
+            icon={isSuccess ? successIcon : failIcon}
+            close={closePopup}
           />
         </div>
       </section>
