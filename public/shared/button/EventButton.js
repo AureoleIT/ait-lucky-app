@@ -8,41 +8,23 @@ export default function EventButton(props) {
 
   return (
     <>
-      {props.islink ? (
-        <Link href={props.href}>
-          <button
-            className="rounded-[5px] mx-2"
-            style={colorStatus}
-            onClick={props.onClick}
-          >
-            <div className="flex flex-row justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
-              <div className="justify-center items-center text-left font-bold text-sm uppercase truncate w-[250px]">
-                {props.title}
-              </div>
-              <div className="text-xs flex flex-col text-right w-[150px]">
-                <div>{props.id}</div>
-                <div>{props.user_joined} người tham gia</div>
-              </div>
-            </div>
-          </button>
-        </Link>
-      ) : (
+      <Link href={props.href}>
         <button
           className="rounded-[5px] mx-2"
           style={colorStatus}
           onClick={props.onClick}
         >
-          <div className="flex flex-row justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
-            <div className="justify-center items-center text-left font-bold text-sm uppercase truncate w-[250px]">
+          <div className="flex justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
+            <div className="justify-center items-center text-left font-bold text-sm uppercase truncate flex-1">
               {props.title}
             </div>
-            <div className="text-xs flex flex-col text-right w-[150px]">
+            <div className="text-xs flex flex-col text-right w-1/2">
               <div>{props.id}</div>
               <div>{props.user_joined} người tham gia</div>
             </div>
           </div>
         </button>
-      )}
+      </Link>
     </>
   );
 }
