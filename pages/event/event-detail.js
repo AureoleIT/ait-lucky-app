@@ -81,7 +81,7 @@ function EventDetail () {
                     <h1 className="uppercase text-[#004599] font-bold mb-1">thời gian check in</h1>
                 </div>
                 <div className="text-white font-bold ml-3 w-[110px] h-[40px] flex justify-center items-center rounded-[10px] " style={optionStyles}>
-                    <select className="w-[90px] h-[30px] bg-transparent" style={optionStyles} id={"timer"} onChange={onSetCoundownTime}>
+                    <select className="w-[90px] h-[30px] bg-transparent outline-none" style={optionStyles} id={"timer"} onChange={onSetCoundownTime}>
                         <option value={"5"}>5 phút</option>
                         <option value={"10"}>10 phút</option>
                         <option value={"15"}>15 phút</option>

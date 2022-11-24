@@ -15,7 +15,7 @@ function CountDownCheckIn ()
     const router = useRouter()
 
     // state
-    const [pinCode, setPinCode] = useState(0)
+    // const [pinCode, setPinCode] = useState(0)
     const [minutes, setMinutes] = useState(testCoundown.wait_time)
     const [seconds, setSeconds] = useState(0)
     const [qrCodeValue, setQrCodeValue] = useState("")
@@ -23,6 +23,8 @@ function CountDownCheckIn ()
     const countDownNumber = {
         background: "#3B88C3"
     }
+
+    const pinCode = 123456
 
     useEffect(() =>
     {
@@ -77,7 +79,7 @@ function CountDownCheckIn ()
              {/* id room */}
 
             <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px] mb-2">
-                <PinCode length={6} value={pinCode} onChange={(e) => {setPinCode(e)}}/>
+                <PinCode length={6} value={pinCode} />
             </div>  
 
             {/* qr code */}
@@ -88,7 +90,7 @@ function CountDownCheckIn ()
 
             <div className="hidden mb-3 justify-center" id="qr_code">
                 <div>
-                    <QRCodeCanvas id="qrCode" size={100} value={qrCodeValue}/>
+                    <QRCodeCanvas id="qrCode" size={100} value={qrCodeValue} />
                 </div>
                 <div className="relative">
                     <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
@@ -135,7 +137,7 @@ function CountDownCheckIn ()
                 <Line />
             </div>
 
-            <div className="w-full max-h-[200px] overflow-x-hidden overflow-y-auto">
+            <div className="w-full max-h-[150px] overflow-x-hidden overflow-y-auto">
                 <div className="w-full h-full flex flex-col items-center">
                     {
                         testCoundown.player.map((player, index) =>
