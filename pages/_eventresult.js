@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-import Player from "components/EventResult/Player";
+import Player from "public/shared/EventResult/Player";
 import BgBlueButton from "public/shared/BgBlueButton";
 import GradientLine from "public/shared/GradientLine";
-import Award from "components/EventResult/Award";
+import Award from "public/shared/EventResult/Award";
 
 export default function EventResult() {
   const [countPlayer, setCountPlayer] = useState(55);
