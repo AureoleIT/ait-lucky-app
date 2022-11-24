@@ -2,16 +2,11 @@ import React from "react";
 import Link from "next/link";
 
 export default function EventButton(props) {
-  const colorStatus = {
-    background: `${setColor(props.status)}`,
-  };
-
   return (
     <>
       <Link href={props.href}>
         <button
-          className="rounded-[5px] mx-2"
-          style={colorStatus}
+          className={`rounded-[5px] mx-2 bg-[${setColor(props.status)}]`}
           onClick={props.onClick}
         >
           <div className="flex justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">

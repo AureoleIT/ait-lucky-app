@@ -33,11 +33,7 @@ const event = [
 ];
 
 export default function EventList() {
-  const [value, setValue] = useState("");
-
-  const onChange = (e) => {
-    setValue(e.target.value);
-  };
+  const [searchContent, setSearchContent] = useState("");
 
   return (
     <>
@@ -48,47 +44,39 @@ export default function EventList() {
             danh sách sự kiện
           </h1>
           <div className="max-w-md flex flex-col w-full gap-y-[19px] mt-[19px]">
-            <div className="flex flex-col mx-2">
+            <div id="search" className="flex flex-col mx-2">
               <AuthInput
                 content={"Tên sự kiện"}
                 type={"text"}
-                value={value}
-                onChange={onChange}
+                onChange={(e) => setSearchContent(e.target.value)}
               />
             </div>
-            <div>
-              <div>
-                <div className="flex flex-col gap-y-[7px] font-[Nunito Sans] font-bold overflow-auto max-h-[700px]">
-                  {event.filter((item) => {
-                    return value.toLowerCase() === ""
+            <div className="flex flex-col gap-y-[7px] font-[Nunito Sans] font-bold overflow-auto max-h-[700px]">
+              {event.filter((item) => {
+                return searchContent.toLowerCase() === ""
+                  ? item
+                  : item.title.toLowerCase().includes(searchContent);
+              }).length !== 0 ? (
+                event
+                  .filter((item) => {
+                    return searchContent.toLowerCase() === ""
                       ? item
-                      : item.title.toLowerCase().includes(value);
-                  }).length !== 0 ? (
-                    event
-                      .filter((item) => {
-                        return value.toLowerCase() === ""
-                          ? item
-                          : item.title.toLowerCase().includes(value);
-                      })
-                      .map((item, index) => (
-                        <div key={item.id} className="flex flex-col">
-                          <EventButton
-                            title={item.title}
-                            id={item.id}
-                            user_joined={item.user_joined}
-                            status={item.status}
-                            islink={true}
-                            href={`${setLink(item.status)}`}
-                          />
-                        </div>
-                      ))
-                  ) : (
-                    <p className="text-[#004599] text-center">
-                      Danh sách trống
-                    </p>
-                  )}
-                </div>
-              </div>
+                      : item.title.toLowerCase().includes(searchContent);
+                  })
+                  .map((item, index) => (
+                    <div key={item.id} className="flex flex-col">
+                      <EventButton
+                        title={item.title}
+                        id={item.id}
+                        user_joined={item.user_joined}
+                        status={item.status}
+                        href={`${setLink(item.status)}`}
+                      />
+                    </div>
+                  ))
+              ) : (
+                <p className="text-[#004599] text-center">Danh sách trống</p>
+              )}
             </div>
           </div>
         </div>
