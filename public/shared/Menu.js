@@ -33,7 +33,9 @@ export default function Menu(props, {user}) {
     }
 
     return (
-        <div className="bg-slate-100/60 h-screen w-full absolute z-9 left-0 flex justify-between">
+        <div className="h-screen w-full absolute z-10 left-0 flex justify-between">
+            <div className="bg-slate-100/60 h-screen w-full absolute z-10 left-0 flex-1 justify-between" onClick={() => {setShowMenu(false)}}>
+            </div>
             <div className="bg-white h-screen w-[250px] px-[20px] py-[30px] absolute z-10 left-0">
                 <button className="absolute right-2 top-2" onClick={handleCloseMenu}>
                     <CloseIcon />
