@@ -8,6 +8,7 @@ module.exports = {
     "./public/shared/*.{js,ts,jsx,tsx}",
     "./public/**/*.{js,ts,jsx,tsx}",
     "./public/Icons/*.{js,ts,jsx,tsx}"
+    "./public/shared/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
