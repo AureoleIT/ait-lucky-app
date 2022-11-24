@@ -4,3 +4,7 @@ export const LEFT_GRADIENT = "bg-gradient-to-r from-[#003B93] to-[#004293";
 export const RIGHT_GRADIENT = "bg-gradient-to-r from-[#004593] to-[#00FfFF]";
 export const BUTTON_GRADIENT = "bg-gradient-to-r from-[#003B93] to-[#00F0FF]";
 export const BG_WHITE = "bg-white";
+export const LEFT_COLOR = "#003B93";
+export const RIGHT_COLOR = "#00F0FF";
+export const FAIL_LEFT_COLOR = "#ff0026";
+export const FAIL_RIGHT_COLOR = "#f37070";
