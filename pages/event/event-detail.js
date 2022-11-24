@@ -31,7 +31,6 @@ function EventDetail () {
     {
         let select = document.getElementById("timer").value
         setCountdown(select)
-
     }
     console.log(countdown);
 
@@ -64,7 +63,7 @@ function EventDetail () {
                         {
                             return (
                                 <div className='' key={index}>
-                                    <SpecialRewardInfo rewardName={item.nameAward} amount={item.amount} image={item.image}/>
+                                    <SpecialRewardInfo rewardName={item.nameAward} amount={item.amount} image={item.image} color={item.color}/>
                                 </div>
                             )
                         })

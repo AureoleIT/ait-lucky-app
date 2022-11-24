@@ -14,7 +14,8 @@ const testDataAward = [
             "https://th.bing.com/th/id/OIP.DfFa2muZy7KdbOJ4F0dskAHaLG?pid=ImgDet&rs=1",
             "https://th.bing.com/th/id/OIP.p7nqaITPepG75TidfxDmvQHaHa?pid=ImgDet&rs=1",
             "https://www.webivm.com/wp-content/uploads/Free-Pictures.jpg"
-        ]
+        ],
+        color:"#F5F92E"
     },
     {
         nameAward:"Giải nhất",
@@ -25,7 +26,8 @@ const testDataAward = [
             "https://i.pinimg.com/originals/af/f7/42/aff742f2a5d58feef0cb12ef6c88d773.jpg",
             "https://www.dreamgrow.com/wp-content/uploads/2016/03/free-images-sun-clouds.jpg",
             "https://images.freeimages.com/images/large-previews/31d/free-1309548.jpg"
-        ]
+        ],
+        color:"#F5F92E"
     },
     {
         nameAward:"Giải nhì",
@@ -36,7 +38,8 @@ const testDataAward = [
             "https://i.pinimg.com/originals/af/f7/42/aff742f2a5d58feef0cb12ef6c88d773.jpg",
             "https://www.dreamgrow.com/wp-content/uploads/2016/03/free-images-sun-clouds.jpg",
             "https://images.freeimages.com/images/large-previews/31d/free-1309548.jpg"
-        ]
+        ],
+        color:"#FFCE1F"
     },
     {
         nameAward:"Giải ba",
@@ -47,7 +50,8 @@ const testDataAward = [
             "https://i.pinimg.com/originals/af/f7/42/aff742f2a5d58feef0cb12ef6c88d773.jpg",
             "https://www.dreamgrow.com/wp-content/uploads/2016/03/free-images-sun-clouds.jpg",
             "https://images.freeimages.com/images/large-previews/31d/free-1309548.jpg"
-        ]
+        ],
+        color:"#52FF00"
     }
 ]
 
