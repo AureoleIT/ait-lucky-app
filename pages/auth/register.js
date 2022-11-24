@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { React, useCallback, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
-import { BG_WHITE } from "public/util/colors";
+import { BG_WHITE, LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import Title from "public/shared/Title";
 import AuthInput from "public/shared/AuthInput";
 import GradientLine from "public/shared/GradientLine";
@@ -10,17 +10,10 @@ import BgWhiteButton from "public/shared/BgWhiteButton";
 import Privacy from "public/shared/Privacy";
 import Auth from "layouts/Auth.js";
 import router from "next/router";
-import { TEXT } from "public/util/colors";
 import { isEmail, hasWhiteSpace } from "public/util/functions";
-import { getDatabase, ref, set, child, get } from "firebase/database";
+import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
-import {
-  GoogleAuthProvider,
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
 const uuid = require("uuid");
 const successIcon = require("../../public/img/successIcon.png");
@@ -43,32 +36,32 @@ export default function Register() {
     const dbRef = ref(db);
     if (name === "" || email === "" || password === "") {
       setTextState("Please fill all the cells below");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
     if (!isEmail(email)) {
       setTextState("Invalid email form");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
     if (hasWhiteSpace(name)) {
       setTextState("Your username contain space, please refill");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
     if (password.length < 6) {
       setTextState("Password must be at least 6 characters");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
     if (!check) {
       setTextState("You did not agree with privacy!!!");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
 
@@ -93,8 +86,8 @@ export default function Register() {
       );
       if (isUserExisting) {
         setTextState("Username or email existed!");
-        setHidden(show);
         setIsSuccess(false);
+        setHidden(show);
         return;
       }
       set(ref(db, `users/${id}/`), {
@@ -157,7 +150,7 @@ export default function Register() {
               });
               setTimeout(() => {
                 router.push("/auth/login");
-              }, 3000);
+              }, 4000);
             });
           })
           .catch((error) => {
@@ -230,14 +223,18 @@ export default function Register() {
             }}
           />
           <div className="">
-            <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+            <GradientLine
+              color1={LEFT_COLOR}
+              color2={RIGHT_COLOR}
+              content="hoặc"
+            />
             <BgWhiteButton
               content="ĐĂNG KÝ VỚI"
               onClick={() => {
                 signUpAuth();
               }}
             />
-            <GradientLine color1="#003B93" color2="#00F0FF" />
+            <GradientLine color1={LEFT_COLOR} color2={RIGHT_COLOR} />
           </div>
           <AuthFooter
             normalContent="Đã có tài khoản?"
@@ -245,7 +242,6 @@ export default function Register() {
             href="/auth/login"
           />
         </div>
-        {/* remove hidden add flex */}
         <div className={isHidden}>
           <PopUp
             text={textState}
