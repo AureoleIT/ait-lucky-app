@@ -3,7 +3,7 @@ export default function ButtonAndIcon({ content, onClick, classIcon, colorHex })
 
     const iconStyle = {
         color:"white",
-        "font-size":"24px"
+        fontSize:"24px"
     }
 
     const buttonColor = {
