@@ -1,30 +1,36 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode: 'jit',
+  mode: "jit",
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./public/shared/*.{js,ts,jsx,tsx}",
-    "./public/Icons/*.{js,ts,jsx,tsx}"
+    "./public/shared/**/*.{js,ts,jsx,tsx}",
+    "./public/Icons/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        'background': "bg-gradient-to-r from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]",
-        menubar: '#181818',
-        card: '#212121',
-        'secondary-text': '#B3B3B3',
-        'primary-text': '#FFFFFF',
-        'gray-dark': '#273444',
-        gray: '#8492a6',
-        'gray-light': '#d3dce6',
-        accent: '#FE214B',
+        background:
+          "bg-gradient-to-r from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]",
+        menubar: "#181818",
+        card: "#212121",
+        "secondary-text": "#B3B3B3",
+        "primary-text": "#FFFFFF",
+        "gray-dark": "#273444",
+        gray: "#8492a6",
+        "gray-light": "#d3dce6",
+        accent: "#FE214B",
       },
     },
   },
   safelist: [
-    'text-[16px]', 'text-[20px]', 'text-[24px]', 'text-[32px]', 'text-[36px]',
+    "text-[16px]",
+    "text-[20px]",
+    "text-[24px]",
+    "text-[32px]",
+    "text-[36px]",
   ],
   plugins: [],
-}
+};
