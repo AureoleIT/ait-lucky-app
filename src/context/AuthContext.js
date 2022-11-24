@@ -3,6 +3,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { app, db, auth } from "../firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 
+import {auth} from "../firebase"
+
 const AuthContext = createContext();
 export { AuthContext };
 export const useAuth = () => {
