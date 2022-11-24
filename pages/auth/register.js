@@ -1,7 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { React, useCallback, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
-import { BG_WHITE, LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import {
+  BG_WHITE,
+  LEFT_COLOR,
+  RIGHT_COLOR,
+  FAIL_RIGHT_COLOR,
+} from "public/util/colors";
 import Title from "public/shared/Title";
 import AuthInput from "public/shared/AuthInput";
 import GradientLine from "public/shared/GradientLine";
@@ -10,19 +15,22 @@ import BgWhiteButton from "public/shared/BgWhiteButton";
 import Privacy from "public/shared/Privacy";
 import Auth from "layouts/Auth.js";
 import router from "next/router";
-import { isEmail, hasWhiteSpace } from "public/util/functions";
+import {
+  isEmail,
+  hasWhiteSpaceAndValidLength,
+  enoughNumCountPass,
+  isEmpty,
+} from "public/util/functions";
 import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
+import { hidden, show, successIcon, failIcon } from "public/util/popup";
+
 const uuid = require("uuid");
-const successIcon = require("../../public/img/successIcon.png");
-const failIcon = require("../../public/img/failIcon.png");
+const dbRef = ref(db);
 
 export default function Register() {
-  const hidden = "h-screen hidden w-full fixed justify-center items-center";
-  const show =
-    "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -33,8 +41,7 @@ export default function Register() {
 
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
-    const dbRef = ref(db);
-    if (name === "" || email === "" || password === "") {
+    if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
       setTextState("Please fill all the cells below");
       setIsSuccess(false);
       setHidden(show);
@@ -46,8 +53,10 @@ export default function Register() {
       setHidden(show);
       return;
     }
-    if (hasWhiteSpace(name)) {
-      setTextState("Your username contain space, please refill");
+    if (hasWhiteSpaceAndValidLength(name)) {
+      setTextState(
+        "Your username contain space or length less than 6\nPlease refill"
+      );
       setIsSuccess(false);
       setHidden(show);
       return;
@@ -91,12 +100,12 @@ export default function Register() {
         return;
       }
       set(ref(db, `users/${id}/`), {
-        id,
+        userId: id,
         name,
         email,
         password,
         pic: "",
-        create_at: new Date().getTime(),
+        createAt: new Date().getTime(),
       }).then(() => {
         setTextState("Register successfully <3 \nPlease login ~");
         setIsSuccess(true);
@@ -119,7 +128,7 @@ export default function Register() {
         await signInWithPopup(auth, provider)
           .then((result) => {
             const newUser = {
-              id,
+              userId: id,
               name: result._tokenResponse.email.slice(
                 0,
                 result._tokenResponse.email.lastIndexOf("@")
@@ -127,7 +136,7 @@ export default function Register() {
               email: result._tokenResponse.email,
               password: "123456",
               pic: result._tokenResponse.photoUrl,
-              create_at: new Date().getTime(),
+              createAt: new Date().getTime(),
             };
             get(child(ref(db), "users/")).then((snapshot) => {
               const record = snapshot.val() ?? [];
@@ -193,7 +202,7 @@ export default function Register() {
   const isCheckPrivacy = () => setCheck(!check);
   return (
     <>
-      <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
+      <section className="h-screen mx-auto flex justify-center items-center">
         <div
           className={`flex flex-col justify-center max-w-md w-full h-full ${BG_WHITE}`}
         >
@@ -201,17 +210,29 @@ export default function Register() {
           <div className="">
             <AuthInput
               content={"Tên đăng nhập"}
+              leftColor={LEFT_COLOR}
+              rightColor={
+                hasWhiteSpaceAndValidLength(name)
+                  ? FAIL_RIGHT_COLOR
+                  : RIGHT_COLOR
+              }
               type={"text"}
               onChange={setNameData}
             />
             <AuthInput
               content={"Email"}
+              leftColor={LEFT_COLOR}
+              rightColor={!isEmail(email) ? FAIL_RIGHT_COLOR : RIGHT_COLOR}
               type={"email"}
               onChange={setEmailData}
             />
             <AuthInput
               content={"Mật khẩu"}
               type={"password"}
+              leftColor={LEFT_COLOR}
+              rightColor={
+                enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+              }
               onChange={setPassData}
             />
           </div>
@@ -247,6 +268,7 @@ export default function Register() {
             text={textState}
             icon={isSuccess ? successIcon : failIcon}
             close={closePopup}
+            isWarning={!isSuccess}
           />
         </div>
       </section>
