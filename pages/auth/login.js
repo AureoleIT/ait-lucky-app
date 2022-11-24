@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
-// layout for page
 import Auth from "layouts/Auth.js";
 import React, { useCallback, useState } from "react";
-// Components
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -12,21 +10,18 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
-import { hasWhiteSpace } from "public/util/functions";
-import { getDatabase, ref, set, child, get } from "firebase/database";
-import PopUp from "public/shared/PopUp";
 import {
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-const successIcon = require("../../public/img/successIcon.png");
-const failIcon = require("../../public/img/failIcon.png");
+  hasWhiteSpace,
+  hasWhiteSpaceAndValidLength,
+  enoughNumCountPass,
+} from "public/util/functions";
+import { hidden, show, failIcon, successIcon } from "public/util/popup";
+import { getDatabase, ref, set, child, get } from "firebase/database";
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import PopUp from "public/shared/PopUp";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function Login() {
-  const hidden = "h-screen hidden w-full fixed justify-center items-center";
-  const show =
-    "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
-
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
@@ -38,14 +33,16 @@ export default function Login() {
   function loginSubmit(name, pass) {
     if (name === "" || pass === "") {
       setTextState("Please fill all the cells below");
-      setHidden(show);
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
-    if (hasWhiteSpace(name)) {
-      setTextState("Your username contain space, please refill");
-      setHidden(show);
+    if (hasWhiteSpaceAndValidLength(name)) {
+      setTextState(
+        "Your username contain space or invalid format, please refill"
+      );
       setIsSuccess(false);
+      setHidden(show);
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -57,13 +54,13 @@ export default function Login() {
       );
       if (!isUserExisting) {
         setTextState("User not found");
-        setHidden(show);
         setIsSuccess(false);
+        setHidden(show);
         return;
       }
       setTextState("Login successfully <3\nYou're welcome!");
-      setHidden(show);
       setIsSuccess(true);
+      setHidden(show);
       //Go to admin dashboard
       router.push("/admin/dashboard");
     });
@@ -85,15 +82,15 @@ export default function Login() {
             setTextState(
               "You did not have an account with this email! \nPlease try another account or register to join with us."
             );
-            setHidden(show);
             setIsSuccess(false);
+            setHidden(show);
             return;
           }
           setTextState(
             "Login with google successfully ~\nYou will be moved to dashboard"
           );
-          setHidden(show);
           setIsSuccess(true);
+          setHidden(show);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard");
@@ -103,11 +100,11 @@ export default function Login() {
       .catch((error) => {
         console.log(error.message);
         setTextState("Some thing went wrong");
-        setHidden(show);
         setIsSuccess(false);
+        setHidden(show);
       });
   }
-  const closePopup = (e) => {
+  const closePopup = () => {
     setHidden(hidden);
   };
 
@@ -123,7 +120,7 @@ export default function Login() {
     },
     [setPass]
   );
-  const onCheckData = (e) => {
+  const onCheckData = () => {
     setCheck(!check);
   };
   return (
@@ -134,20 +131,30 @@ export default function Login() {
           <div className="">
             <AuthInput
               content={"Tên đăng nhập/Email"}
-              type={"email"}
-              onChange={(e) => setName(e.target.value)}
+              leftColor={LEFT_COLOR}
+              rightColor={
+                hasWhiteSpaceAndValidLength(name)
+                  ? FAIL_RIGHT_COLOR
+                  : RIGHT_COLOR
+              }
+              type={"text"}
+              onChange={nameData}
             />
             <AuthInput
               content={"Mật khẩu"}
+              leftColor={LEFT_COLOR}
+              rightColor={
+                enoughNumCountPass(pass) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+              }
               type={"password"}
-              onChange={(e) => setPass(e.target.value)}
+              onChange={passData}
             />
           </div>
           <div className="flex flex-row">
             <TickBox
               content="Ghi nhớ đăng nhập"
               htmlFor="remberLogin"
-              onChange={() => setCheck(!check)}
+              onChange={onCheckData}
             />
           </div>
           <div className="">
@@ -175,6 +182,7 @@ export default function Login() {
             text={textState}
             icon={isSuccess ? successIcon : failIcon}
             close={closePopup}
+            isWarning={!isSuccess}
           />
         </div>
       </section>
