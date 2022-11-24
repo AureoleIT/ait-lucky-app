@@ -14,8 +14,9 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
+import PlayerList from "./PlayerList";
 
-export default function RewardList({listReward, showRemain = false}) {
+export default function RewardList({listReward, showRemain = false, eventPaticipant, showAwardedPaticipant = false}) {
     listReward = [].concat(listReward);
 
     const getGiftsFromReward = (reward) => {
@@ -46,7 +47,7 @@ export default function RewardList({listReward, showRemain = false}) {
             {
                 listReward.map((reward, idx) => {
                     return (
-                        <div key={idx} className="mb-4 last:mb-0">
+                        <div key={idx} className="mb-3 last:mb-0">
                             <div className="flex items-center justify-between h-8 rounded-full px-4 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold">{reward.description}</p>
                                 <p className="items-center text-left text-[#004599] text-[16px] font-normal">Số lượng: {showRemain?reward.quantity_remain: reward.quantity}</p>
@@ -59,10 +60,28 @@ export default function RewardList({listReward, showRemain = false}) {
         </>
     )
 
+    const awradedPaticipantShowcase = (rewardID) => {
+        const showcaseList = eventPaticipant.filter(paticipant => {
+            paticipant.reward_taken === rewardID;
+        })
+
+        return (
+            <>
+                {showcaseList.length > 0?
+                    <>
+                        <p className="ml-4 items-center text-left text-[#004599] text-4 font-extrabold">Người trúng thưởng</p>
+                        <PlayerList listType="List" changeButton={false} />
+                    </>:
+                <></>}
+            </>
+        )
+    }
+
     return (
         <>
             <div className="overflow-auto h-full">
                 {listRewardShowcase}
+                {showAwardedPaticipant && eventPaticipant !== undefined?awradedPaticipantShowcase():<></>}
             </div>
         </>
     );
