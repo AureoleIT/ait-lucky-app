@@ -1,6 +1,15 @@
 import React from "react";
 
-export default function AuthInput({ content, type, onChange, value, min, name }) {
+export default function AuthInput({
+  content,
+  type,
+  onChange,
+  value,
+  min,
+  name,
+  rightColor,
+  leftColor,
+}) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
     WebkitBackgroundClip: "text",
@@ -8,7 +17,9 @@ export default function AuthInput({ content, type, onChange, value, min, name })
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative">
+    <div
+      className={`bg-gradient-to-r from-[${leftColor}] to-[${rightColor}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+    >
       <div className="h-full">
         <input
           name={name}
