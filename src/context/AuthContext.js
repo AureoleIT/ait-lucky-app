@@ -14,9 +14,10 @@ import {
   getAuth,
 } from "firebase/auth";
 
+import {auth} from "../firebase"
+
 const AuthContext = createContext();
 export { AuthContext };
-const auth = getAuth();
 export const useAuth = () => {
   return useContext(AuthContext);
 };

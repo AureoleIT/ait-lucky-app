@@ -20,13 +20,6 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 export default function Setting() {
     const db = getDatabase();
     const auth = getAuth();
-
-    const gradientText = {
-        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-        "-webkit-background-clip": "text",
-        "-webkit-text-fill-color": "transparent",
-    }
-
     const [username, setUsername] = useState("vutan");
     const [email, setEmail] = useState("vutan@gmail.com")
 
@@ -78,10 +71,10 @@ export default function Setting() {
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
                             <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px]">
-                                <Link href={"/auth/changepassword"}>
+                                <Link href={"/auth/change-password"}>
 
                                     <button className="w-full h-full rounded-[48px] bg-white flex items-center justify-center gap-[10px]">
-                                        <p className="font-[900] text-[22px] text-white" style={gradientText}>ĐỔI MẬT KHẨU</p>
+                                        <p className="font-[900] text-[22px] text-white">ĐỔI MẬT KHẨU</p>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="lightblue" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                         </svg>
