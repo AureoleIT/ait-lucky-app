@@ -2,26 +2,18 @@ import React, { useState } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
-import { AuthContext } from "src/context/AuthContext";
 import {
     getDatabase,
     ref,
-    set,
-    child,
-    get,
-    orderByKey,
-    query,
-    orderByChild,
 } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
+import { getAuth } from "firebase/auth";
+import { auth } from "src/firebase";
 export default function ChangePassword() {
     const [oldPass, setOld] = useState("");
     const [newPass, setNew] = useState("");
     const [repeatPass, setRepeat] = useState("");
 
     const db = getDatabase();
-    const auth = getAuth();
 
     const handleSaveInfo = (event) => {
         event.preventDefault();
