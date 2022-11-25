@@ -125,8 +125,8 @@ export default function Login() {
   };
   return (
     <>
-      <section className="h-screen px-5 py-5 mx-auto flex justify-center items-center">
-        <div className="flex flex-col justify-center max-w-md w-full h-full">
+      <section className="h-screen mx-auto w-full flex justify-center items-center">
+        <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
           <Title title="ĐĂNG NHẬP" />
           <div className="">
             <AuthInput

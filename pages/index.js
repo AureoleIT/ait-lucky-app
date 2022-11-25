@@ -65,9 +65,11 @@ export default function Index() {
 
 
   return (
-    <section className="h-screen mx-auto flex justify-center items-center">
+    <section
+      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
+    >
       <div
-        className={`flex flex-col justify-center items-center w-full h-full ${BG_COLOR}`}
+        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
       >
         <Logotic
           title="AIT LUCKY GIFTS"
@@ -80,7 +82,7 @@ export default function Index() {
           placeholder="Mã pin"
           onChange={pinData}
         />
-        <div className="w-3/4 max-w-md mb-4">
+        <div className="w-full mb-4">
           <BgBlueButton content="Tham gia" onClick={onJoinClick} />
         </div>
         <LineWithText
@@ -88,7 +90,7 @@ export default function Index() {
           leftColor={LEFT_GRADIENT}
           rightColor={RIGHT_GRADIENT}
         />
-        <QrButton onClick={() => alert("direct to device's camera")} />
+        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
         {/* Handle logic todo: go direct to open device's camera */}
         <div className="mt-10">
           <WayLog

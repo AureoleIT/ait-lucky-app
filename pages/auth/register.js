@@ -204,7 +204,7 @@ export default function Register() {
     <>
       <section className="h-screen mx-auto flex justify-center items-center">
         <div
-          className={`flex flex-col justify-center max-w-md w-full h-full ${BG_WHITE}`}
+          className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}
         >
           <Title title="ĐĂNG KÝ" />
           <div className="">
