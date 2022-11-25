@@ -63,12 +63,6 @@ export default function Index() {
     setHidden(hidden)
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHidden(hidden)
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [isHidden])
 
   return (
     <section className="h-screen mx-auto flex justify-center items-center">
