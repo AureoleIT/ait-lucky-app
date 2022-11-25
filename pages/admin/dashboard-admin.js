@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { db, auth, app } from "src/firebase";
+import { getDatabase, ref, child, get, set } from "firebase/database";
 
 // components
 
@@ -7,48 +10,32 @@ import Line from "public/shared/Line";
 import BgBlueButton from "public/shared/BgBlueButton";
 import EventButton from "public/shared/button/EventButton";
 import BorderText from "public/shared/BorderText";
-import { useRouter } from "next/router";
 
 export default function Dashboard() {
   // navigate page
+  const [arr, setArr] = useState([]);
 
   const router = useRouter();
   const playNavigate = () => {
     router.push("/");
   };
   const createNavigate = () => {
-    router.push("../event/eventregister");
+    router.push("/event/event-register");
   };
   const listNavigate = () => {
-    router.push("../event/eventlist");
+    router.push("event-list");
   };
 
-  const event = [
-    {
-      id: "EV20221011",
-      title: "tiệc cuối năm",
-      user_joined: 10,
-      status: 1,
-    },
-    {
-      id: "EV20221012",
-      title: "tiệc năm mới",
-      user_joined: 20,
-      status: 2,
-    },
-    {
-      id: "EV20221013",
-      title: "tiệc thành lập công ty trách nhiệm hữu hạn",
-      user_joined: 30,
-      status: 3,
-    },
-    {
-      id: "EV20221014",
-      title: "tiệc cuối năm",
-      user_joined: 40,
-      status: 4,
-    },
-  ];
+  get(child(ref(db), `event`))
+    .then((snapshot) => {
+      const res = snapshot.val() ?? [];
+      const values = Object.values(res);
+      setArr(values);
+    })
+    .catch((error) => {
+      alert(error.message);
+      console.error(error);
+    });
 
   return (
     <>
@@ -84,14 +71,13 @@ export default function Dashboard() {
                 {"Các sự kiện đang diễn ra"}
               </p>
               <div className="w-full flex flex-col gap-y-[7px] pb-5 ">
-                {event.map((item) => {
+                {arr.slice(0, 4).map((item) => {
                   return item.status === 2 ? (
                     <div className="flex flex-col">
                       <EventButton
                         key={item.id}
                         title={item.title}
                         user_joined={item.user_joined}
-                        islink={true}
                         href={"_countdowncheckin"}
                       ></EventButton>
                     </div>
@@ -99,6 +85,7 @@ export default function Dashboard() {
                     <></>
                   );
                 })}
+                {/* <div className="w-full flex items-center text-center justify-center">...</div> */}
               </div>
             </div>
           }
@@ -140,7 +127,7 @@ export default function Dashboard() {
                 );
               })}
               <BgBlueButton
-                content={"DANH SÁCH SỰ KIỆN"}
+                content={"TẤT CẢ SỰ KIỆN"}
                 onClick={listNavigate}
               />
             </div>
