@@ -22,6 +22,8 @@ function CountDownCheckIn ()
     const [seconds, setSeconds] = useState(0)
     const [qrCodeValue, setQrCodeValue] = useState("")
     const [isHidden, setIsHidden] = useState(hidden)
+    const [isActive, setIsActitve] = useState(true)
+    const [isStop, setIsStop] = useState(false)
 
     const countDownNumber = {
         background: "#3B88C3"
@@ -33,28 +35,42 @@ function CountDownCheckIn ()
 
     const pinCode = 123456
 
-    // useEffect(() =>
-    // {
-    //     let date = new Date()
-    //     let deadline = date.getTime() + (minutes * 60 * 1000)
+    useEffect(() =>
+    {
+        let date = new Date()
+        let deadline = date.getTime() + (minutes * 60 * 1000)
 
-    //     let countdown = setInterval(() => {
-    //         let nowDate = new Date()
-    //         let left = deadline - nowDate
-    //         let nowSeconds = Math.floor((left / 1000) % 60);
-    //         let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+        let countdown = null
 
-    //         if(nowMinutes == 0 && nowSeconds == 0)
-    //         {
-    //             clearInterval(countdown)
-    //             router.push("/event/lucky_spin")
-    //         }
-    //         else {
-    //             setMinutes(nowMinutes)
-    //             setSeconds(nowSeconds)
-    //         }
-    //     }, 1000)
-    // },[])
+        if(isActive && isStop === false)
+        {
+            countdown = setInterval(() => {
+                let nowDate = new Date()
+                let left = deadline - nowDate
+
+                let nowSeconds
+                let nowMinutes
+
+                    nowSeconds = Math.floor((left / 1000) % 60);
+                    nowMinutes = Math.floor((left / 1000 / 60) % 60);
+
+                if(nowMinutes == 0 && nowSeconds == 0)
+                {
+                    clearInterval(countdown)
+                    router.push("/event/lucky_spin")
+                }
+                else {
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
+                }   
+            }, 1000)
+        }
+        else {
+            clearInterval(countdown)
+        }
+
+        return () => clearInterval(countdown)
+    },[isActive, isStop])
     
     const closePopup = (e) => {
         setIsHidden(hidden);
@@ -82,7 +98,13 @@ function CountDownCheckIn ()
         downloadElement.click()
         document.body.removeChild(downloadElement)
     }
-    
+
+    const handleStartEvent = () =>
+    {   
+        setIsStop(true)
+        router.push("/event/lucky_spin")
+    }
+
     return (
         <section className="flex flex-col justify-center items-center h-screen w-screen">
             <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
@@ -170,9 +192,9 @@ function CountDownCheckIn ()
                 <Line />
             </div>
 
-            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center items-center">
+            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center items-center" onClick={handleStartEvent}>
                 <div className="w-full mr-1 drop-shadow-lg">
-                    <BgBlueButton content={"BẮT ĐẦU"} islink={true} href={"_countdowncheckin"}/>
+                    <BgBlueButton content={"BẮT ĐẦU"}/>
                 </div>
             </div>
 
