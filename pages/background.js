@@ -12,6 +12,6 @@ export default function Background() {
                     <div className="origin-center rotate-[30deg] bg-[#ACEFF2]  rounded-full col-start-1 row-start-6 row-end-8 col-span-1 scale-x-150 scale-y-150" />
                 </div>
             </div>
-        </section >
+        </section>
     );
 }

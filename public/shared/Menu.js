@@ -1,15 +1,12 @@
 import React from "react";
-import Link from "next/link";
 
 import CloseIcon from "public/icons/close";
-import { useRouter } from "next/router";
 
 function MenuItem(props) {
-    const router = useRouter()
     return (
         <div className={`cursor-pointer flex w-full gap-x-4 items-center ${props.name === "Đăng xuất" ? "text-red-500" : ""}`}>
             {props.icon}
-            <a onClick={() => {router.push(props.href)}}>
+            <a href={props.href}>
                 <p className="font-[900] text-[14px]">{props.name}</p>
             </a>
         </div>

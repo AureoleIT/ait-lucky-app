@@ -1,19 +1,9 @@
 // layout for page
-import Auth from "layouts/Auth.js";
 import React, { useState } from "react";
-import { Link } from "next/link";
-import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
+
 // Components
-import Logotic from "public/shared/Logotic";
-import AuthInput from "public/shared/AuthInput";
-import TickBox from "public/shared/TickBox";
-import BgBlueButton from "public/shared/BgBlueButton";
-import BgWhiteButton from "public/shared/BgWhiteButton";
-import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import { useMemo } from "react/cjs/react.development";
 import Spin from "public/shared/Spin";
 import RewardList from "public/shared/RewardList";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";

@@ -13,6 +13,6 @@ export default function BackGround() {
                     ></div>
                 </div>
             </div>
-        </section >
+        </section>
     );
 }

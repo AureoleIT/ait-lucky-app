@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
