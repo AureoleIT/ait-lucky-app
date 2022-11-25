@@ -7,6 +7,8 @@ import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
 import PinCode from "public/shared/PinCode"
 import testCoundown from "public/util/testCountdown"
+import PopUpQR from "public/shared/PopUpQR"
+import { hidden, show } from "public/util/popup"
 
 
 function CountDownCheckIn () 
@@ -19,35 +21,44 @@ function CountDownCheckIn ()
     const [minutes, setMinutes] = useState(testCoundown.wait_time)
     const [seconds, setSeconds] = useState(0)
     const [qrCodeValue, setQrCodeValue] = useState("")
+    const [isHidden, setIsHidden] = useState(hidden)
 
     const countDownNumber = {
         background: "#3B88C3"
     }
 
+    const zIndex = {
+        "z-index": "10",
+    }
+
     const pinCode = 123456
 
-    useEffect(() =>
-    {
-        let date = new Date()
-        let deadline = date.getTime() + (minutes * 60 * 1000)
+    // useEffect(() =>
+    // {
+    //     let date = new Date()
+    //     let deadline = date.getTime() + (minutes * 60 * 1000)
 
-        let countdown = setInterval(() => {
-            let nowDate = new Date()
-            let left = deadline - nowDate
-            let nowSeconds = Math.floor((left / 1000) % 60);
-            let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+    //     let countdown = setInterval(() => {
+    //         let nowDate = new Date()
+    //         let left = deadline - nowDate
+    //         let nowSeconds = Math.floor((left / 1000) % 60);
+    //         let nowMinutes = Math.floor((left / 1000 / 60) % 60);
 
-            if(nowMinutes == 0 && nowSeconds == 0)
-            {
-                clearInterval(countdown)
-                router.push("/event/lucky_spin")
-            }
-            else {
-                setMinutes(nowMinutes)
-                setSeconds(nowSeconds)
-            }
-        }, 1000)
-    },[])
+    //         if(nowMinutes == 0 && nowSeconds == 0)
+    //         {
+    //             clearInterval(countdown)
+    //             router.push("/event/lucky_spin")
+    //         }
+    //         else {
+    //             setMinutes(nowMinutes)
+    //             setSeconds(nowSeconds)
+    //         }
+    //     }, 1000)
+    // },[])
+    
+    const closePopup = (e) => {
+        setIsHidden(hidden);
+    };
 
     // generate qr code
     const generateQRcode = () =>
@@ -55,6 +66,7 @@ function CountDownCheckIn ()
         setQrCodeValue(`http://localhost:3000/event/lucky_spin/${pinCode}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
+        setIsHidden(show)
     }
 
     const handleDownloadQR = () =>
@@ -72,7 +84,7 @@ function CountDownCheckIn ()
     }
     
     return (
-        <div className="flex flex-col justify-center items-center h-screen w-screen">
+        <section className="flex flex-col justify-center items-center h-screen w-screen">
             <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
             <h1 className="uppercase text-base py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
 
@@ -88,13 +100,17 @@ function CountDownCheckIn ()
                 <ButtonAndIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"} onClick={generateQRcode}/>
             </div>
 
-            <div className="hidden mb-3 justify-center" id="qr_code">
-                <div>
-                    <QRCodeCanvas id="qrCode" size={100} value={qrCodeValue} />
-                </div>
-                <div className="relative">
-                    <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
-                </div>
+            <div className={isHidden} style={zIndex}>
+                <PopUpQR close={closePopup}>
+                    <div className="hidden mb-3 justify-center" id="qr_code">
+                        <div>
+                            <QRCodeCanvas id="qrCode" size={100} value={qrCodeValue} />
+                        </div>
+                        <div className="relative">
+                            <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
+                        </div>
+                    </div>
+                </PopUpQR>
             </div>
 
             <div className="flex justify-center w-full mb-2">
@@ -133,7 +149,7 @@ function CountDownCheckIn ()
 
             <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">người chơi</h1> 
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl">
+            <div className="w-[90%] lg:w-4/12 max-w-xl z-0">
                 <Line />
             </div>
 
@@ -150,7 +166,7 @@ function CountDownCheckIn ()
                 </div>
             </div>
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl mb-4">
+            <div className="w-[90%] lg:w-4/12 max-w-xl mb-4 z-0">
                 <Line />
             </div>
 
@@ -160,7 +176,7 @@ function CountDownCheckIn ()
                 </div>
             </div>
 
-        </div>
+        </section>
     )
 }
 
