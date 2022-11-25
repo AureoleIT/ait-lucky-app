@@ -62,7 +62,7 @@ export default function Login() {
       setIsSuccess(true);
       setHidden(show);
       //Go to admin dashboard
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard-admin");
     });
   }
 
@@ -93,7 +93,7 @@ export default function Login() {
           setHidden(show);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
-            router.push("/admin/dashboard");
+            router.push("/admin/dashboard-admin");
           }, 4000);
         });
       })
@@ -153,7 +153,7 @@ export default function Login() {
           <div className="flex flex-row">
             <TickBox
               content="Ghi nhớ đăng nhập"
-              htmlFor="remberLogin"
+              htmlFor="rememberLogin"
               onChange={onCheckData}
             />
           </div>
