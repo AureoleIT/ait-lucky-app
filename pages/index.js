@@ -66,7 +66,7 @@ export default function Index() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setHidden(hidden)
-    }, 2000)
+    }, 3000)
     return () => clearTimeout(timer)
   }, [isHidden])
 
