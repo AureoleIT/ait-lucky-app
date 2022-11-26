@@ -5,6 +5,8 @@ import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Header from "public/shared/Header";
+import { failIcon, hidden, show, successIcon } from "public/util/popup";
+import PopUp from "public/shared/PopUp";
 
 export default function EventRegister() {
 
@@ -14,6 +16,9 @@ export default function EventRegister() {
     const [nameEvent, setNameEvent] = useState("")
     const [eventDetail, setEventDetail] = useState("")
     const [limitUser, setLimitUser] = useState("")
+    const [textState, setTextState] = useState("")
+    const [isHidden, setHidden] = useState(hidden)
+    const [isSuccess, setIsSuccess] = useState(false)
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -21,24 +26,38 @@ export default function EventRegister() {
         WebkitTextFillColor: "transparent",
     }
 
+    const closePopup = (e) =>
+    {   
+        setHidden(hidden)
+    }
+
     // handle submit button
     const handleSubmit = () =>
     {
+        if(nameEvent === "" || eventDetail === "" || limitUser === "")
+        {
+            setTextState("Vui lòng nhập đủ thông tin !")
+            setIsSuccess(false)
+            setHidden(show)
+            return
+        }
+        
         if(nameEvent !== "" && eventDetail !== "" && limitUser !== "")
         {
-            alert("Thanh cong !!!")
-            router.push("/event/reward-register")
+            setTextState("Thêm thông tin thành công !")
+            setIsSuccess(true)
+            setHidden(show)
+            setTimeout(() =>
+            {
+                router.push("/event/reward-register")
+            },3000)
+        }
 
-        }
-        else 
-        {
-            alert("Vui lòng nhập đủ thông tin !!!")
-        }
     }
 
     return (
         <>
-            <div className="flex flex-col overflow-y-auto overflow-x-hidden items-center justify-between h-screen w-screen">
+            <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center justify-between h-screen w-screen">
                 <div className="w-full">
                     <Header />
                 </div>
@@ -55,7 +74,7 @@ export default function EventRegister() {
                     </div>
 
                     <div className="w-3/4 lg:w-4/12">
-                        <AuthInput content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={limitUser} onChange={(e) => setLimitUser(e.target.value)}/>
+                        <AuthInput leftColor={"#003B93"} rightColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={limitUser} onChange={(e) => setLimitUser(e.target.value)}/>
                     </div>
 
                     <div className="w-3/4 lg:w-4/12 flex ">
@@ -75,7 +94,16 @@ export default function EventRegister() {
                 <div className="py-3 w-3/4 lg:w-4/12" onClick={handleSubmit}>
                     <BgBlueButton content={"TIẾP TỤC"} />
                 </div>
-            </div>
+
+                <div className={isHidden}>
+                    <PopUp 
+                        text={textState}
+                        icon={isSuccess ? successIcon : failIcon}
+                        close={closePopup}
+                        isWarning={!isSuccess}
+                    />
+                </div>
+            </section>
         </>
   );
 }
