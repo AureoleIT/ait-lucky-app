@@ -32,7 +32,7 @@ function PinCode ({ value: sourceWholeValue, onChange: onChangeCallback, length 
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center">
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full h-full flex justify-center items-center drop-shadow-lg">
                 {
                     values.map((_value, index) => (
                         <input 
