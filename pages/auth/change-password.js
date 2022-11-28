@@ -6,22 +6,56 @@ import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import {
     getDatabase,
     ref,
+    query,
+    orderByChild,
+    equalTo,
+    update,
+    onValue,
+    DataSnapshot
 } from "firebase/database";
-import { getAuth } from "firebase/auth";
-import { auth } from "src/firebase";
+import { useAuth } from "src/context/AuthContext";
+import { isEmpty, enoughNumCountPass, hasWhiteSpaceAndValidLength } from "public/util/functions";
+import { messagesError, messagesSuccess } from "public/util/messages"
+
 export default function ChangePassword() {
+    const db = getDatabase();
+    const auth = useAuth();
     const [oldPass, setOld] = useState("");
     const [newPass, setNew] = useState("");
     const [repeatPass, setRepeat] = useState("");
 
-    const db = getDatabase();
 
-    const handleSaveInfo = (event) => {
-        event.preventDefault();
+    const changePassword = () => {
+        if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
+            console.log(1);
+            return;
+        }
 
-        const dbRef = ref(db);
+        if (newPass != repeatPass) {
+            //message error
+            console.log(2);
+            return;
+        }
 
-        console.log(dbRef);
+        // check old pass
+        const que = query(ref(db, "users"), orderByChild("email"), equalTo(auth.currentUser.email));
+        onValue(que, (snapshot) => {
+            const record = snapshot.val() ?? [];
+            const values = Object.values(record);
+
+            if (values[0].password != oldPass) {
+                //message error
+                return;
+            }
+
+            update(ref(db, 'users/' + values[0].userId),
+                {
+                    password: newPass
+                }).then(() => {
+
+                })
+                .catch((error) => console.log(error));
+        })
     }
 
 
@@ -50,7 +84,7 @@ export default function ChangePassword() {
                                 leftColor={LEFT_COLOR}
                                 rightColor={RIGHT_COLOR}
                                 onChange={(e) => setRepeat(e.target.value)} />
-                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
+                            <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
                         </div>
                     </div>
                 </div>

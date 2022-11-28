@@ -5,7 +5,7 @@ import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Link from "next/link";
 import { useAuth } from "src/context/AuthContext";
-import { auth } from "../../src/firebase";
+import { messagesError, messagesSuccess } from "public/util/messages"
 import {
     getDatabase,
     ref,
@@ -15,60 +15,83 @@ import {
     orderByKey,
     query,
     orderByChild,
-    equalTo
+    equalTo,
+    update,
+    onValue
 } from "firebase/database";
-import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
-import { isEmail } from "public/util/functions";
-import { isEmpty } from "@firebase/util";
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import PopUp from "public/shared/PopUp";
+import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 
 export default function Setting() {
     const db = getDatabase();
-
-    const userValue = useAuth();
+    const auth = useAuth();
+    const [user, setUser] = useState();
+    const emailUser = auth.currentUser.email;
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [check, setCheck] = useState(false);
     const [textState, setTextState] = useState("");
     const [isSuccess, setIsSuccess] = useState(false);
     const [isHidden, setHidden] = useState(hidden);
 
-    const fetchDb = () => {
-        const dbRef = ref(db);
-        //get orderbychild - have conditions
-        const que = query(ref(db, "users"), orderByChild("email"), equalTo(userValue.currentUser.email))
-        get(que).then((snapshot) => {
+    function fetchDb() {
+        // get orderbychild - have conditions
+        const que = query(ref(db, "users"), orderByChild("email"), equalTo(emailUser));
+        onValue(que, (snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
-            console.log(values);
-            setUsername(values.find(item => item.email == userValue.currentUser.email).name);
-            setEmail(userValue.currentUser.email);
+            updateUser(values[0]);
+            setUsername(values.find(item => item.email == emailUser).name);
+            setEmail(emailUser);
         }
         );
-        //get all data
+        // get all data
         // get(child(dbRef, "users/")).then((snapshot) => {
         //     const record = snapshot.val() ?? [];
         //     const values = Object.values(record);
-
         //     setUsername(values.find(item => item.email == userValue.currentUser.email).name);
         //     setEmail(userValue.currentUser.email);
         // });
     }
 
-    const handleSaveInfo = (event, username) => {
-        event.preventDefault();
-
+    function handleSaveInfo(name) {
+        console.log(name);
+        console.log(isEmpty(name))
         //validation
-        if (isEmpty(username))
-        {
-            setTextState()
+        if (isEmpty(name)) {
+            setTextState(messagesError.E0001("tên đăng nhập"));
+            setIsSuccess(false);
+            setHidden(show);
+            return;
         }
-        const dbRef = ref(db);
-        get(child(dbRef, `users/`)).then((snapshot) => {
+        //update 
+        const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
+        onValue(que, (snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
-        });
-
+            if (values.length == 0) {
+                update(ref(db, 'users/' + user.userId),
+                    {
+                        name: name
+                    }).then(() => {
+                        setTextState(messagesSuccess.I0002);
+                        setIsSuccess(true);
+                        setHidden(show);
+                    })
+                    .catch((error) => console.log(error));
+            }
+        }
+        );
     }
+
+    function updateUser(user) {
+        setUser(user);
+        console.log(user);
+    }
+    const closePopup = (e) => {
+        setHidden(hidden);
+    };
 
     useEffect(() => {
         fetchDb();
@@ -83,7 +106,7 @@ export default function Setting() {
     return (
         <section className="h-screen overflow-y-hidden">
             <Header />
-            <div className=" relative h-full ">
+            <div className=" relative h-full w-full ">
                 <div
                     className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
                 >
@@ -103,7 +126,7 @@ export default function Setting() {
                                 content={"Tên đăng nhập"}
                                 type={"text"}
                                 leftColor={LEFT_COLOR}
-                                rightColor={RIGHT_COLOR}
+                                rightColor={hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
                                 onChange={(e) => setUsername(e.target.value)}
                                 value={username} />
                             <div
@@ -129,7 +152,7 @@ export default function Setting() {
                                     </div>
                                 </div>
                             </div>
-                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
+                            <BgBlueButton content={"LƯU"} onClick={() => { handleSaveInfo(username) }} />
                         </div>
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
@@ -150,13 +173,13 @@ export default function Setting() {
                 </div>
             </div>
             <div className={isHidden}>
-          <PopUp
-            text={textState}
-            icon={isSuccess ? successIcon : failIcon}
-            close={closePopup}
-            isWarning={!isSuccess}
-          />
-        </div>
+                <PopUp
+                    text={textState}
+                    icon={isSuccess ? successIcon : failIcon}
+                    close={closePopup}
+                    isWarning={!isSuccess}
+                />
+            </div>
         </section>
 
     );
