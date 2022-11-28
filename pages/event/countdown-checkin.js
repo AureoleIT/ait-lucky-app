@@ -233,4 +233,4 @@ function CountDownCheckIn ()
     )
 }
 
-export default CountDownCheckIn
+export default CountDownCheckIn;

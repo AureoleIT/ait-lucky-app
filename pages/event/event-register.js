@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { useRouter } from "next/router"
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
@@ -9,22 +9,25 @@ import { failIcon, hidden, show, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 
 export default function EventRegister() {
+  // router
+  const router = useRouter();
 
-    // router
-    const router = useRouter()
+  const [nameEvent, setNameEvent] = useState("");
+  const [eventDetail, setEventDetail] = useState("");
+  const [limitUser, setLimitUser] = useState("");
+  const [textState, setTextState] = useState("")
+  const [isHidden, setHidden] = useState(hidden)
+  const [isSuccess, setIsSuccess] = useState(false)
 
-    const [nameEvent, setNameEvent] = useState("")
-    const [eventDetail, setEventDetail] = useState("")
-    const [limitUser, setLimitUser] = useState("")
-    const [textState, setTextState] = useState("")
-    const [isHidden, setHidden] = useState(hidden)
-    const [isSuccess, setIsSuccess] = useState(false)
-
-    const contentCSS = {
-        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
+  // handle submit button
+  const handleSubmit = () => {
+    if (nameEvent !== "" && eventDetail !== "" && limitUser !== "") {
+      alert("Thanh cong !!!");
+      router.push("/event/reward-register");
+    } else {
+      alert("Vui lòng nhập đủ thông tin !!!");
     }
+  };
 
     const closePopup = (e) =>
     {   
@@ -77,20 +80,16 @@ export default function EventRegister() {
                         <AuthInput leftColor={"#003B93"} rightColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={limitUser} onChange={(e) => setLimitUser(e.target.value)}/>
                     </div>
 
-                    <div className="w-3/4 lg:w-4/12 flex ">
-                        <div className="w-[70%]">
-                            <p style={contentCSS} className="font-bold">Cho phép người tham gia không cần đăng nhập</p>
-                        </div>
-                        <div className="w-[30%] flex justify-end items-center">
-                            <input
-                                type="checkbox"
-                                id="accept"
-                                className="appearance-none w-9 focus:outline-none checked:bg-blue-300 h-5 bg-[#ccc] rounded-full before:inline-block before:rounded-full before:bg-blue-500 before:h-4 before:w-4 checked:before:translate-x-full shadow-inner transition-all duration-300 before:ml-0.5"
-                            />
-                        </div>
-                    </div>
-                </div>
-
+          <div className="w-3/4 lg:w-4/12">
+            <AuthInput
+              content={"Giới hạn người tham gia"}
+              type={"number"}
+              min={"1"}
+              value={limitUser}
+              onChange={(e) => setLimitUser(e.target.value)}
+            />
+          </div>
+          
                 <div className="py-3 w-3/4 lg:w-4/12" onClick={handleSubmit}>
                     <BgBlueButton content={"TIẾP TỤC"} />
                 </div>
@@ -105,5 +104,6 @@ export default function EventRegister() {
                 </div>
             </section>
         </>
+
   );
 }

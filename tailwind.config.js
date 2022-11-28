@@ -6,9 +6,9 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./public/shared/*.{js,ts,jsx,tsx}",
-    "./public/**/*.{js,ts,jsx,tsx}",
-    "./public/Icons/*.{js,ts,jsx,tsx}"
     "./public/shared/**/*.{js,ts,jsx,tsx}",
+    "./public/**/*.{js,ts,jsx,tsx}", 
+    "./public/Icons/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -25,50 +25,57 @@ module.exports = {
         accent: "#FE214B",
       },
       animation: {
-        "move-down-0": 'movefrom0to1 0.2s linear 10',
-        "move-down-1": 'movefrom1to2 0.2s linear 10',
-        "move-down-2": 'movefrom2to3 0.2s linear 10',
-        "move-down-3": 'movefrom3to4 0.2s linear 10',
-        "move-down-4": 'movefrom4to5 0.2s linear 10',
-        "move-down-5": 'movefrom5to6 0.2s linear 10',
-        "move-down-6": 'movefrom6to7 0.2s linear 10',
-        "move-down-7": 'movefrom7to8 0.2s linear 10',
-        "slow-move-down-0": 'movefrom0to1 2s linear 5s',
-        "slow-move-down-1": 'movefrom1to2 2s linear 5s',
-        "slow-move-down-2": 'movefrom2to3 2s linear 5s',
-        "slow-move-down-3": 'movefrom3to4 2s linear 5s',
-        "slow-move-down-4": 'movefrom4to5 2s linear 5s',
-        "slow-move-down-5": 'movefrom5to6 2s linear 5s',
-        "slow-move-down-6": 'movefrom6to7 2s linear 5s',
-        "slow-move-down-7": 'movefrom7to8 2s linear 5s',
+        "move-down-0": "movefrom0to1 0.2s linear 10",
+        "move-down-1": "movefrom1to2 0.2s linear 10",
+        "move-down-2": "movefrom2to3 0.2s linear 10",
+        "move-down-3": "movefrom3to4 0.2s linear 10",
+        "move-down-4": "movefrom4to5 0.2s linear 10",
+        "move-down-5": "movefrom5to6 0.2s linear 10",
+        "move-down-6": "movefrom6to7 0.2s linear 10",
+        "move-down-7": "movefrom7to8 0.2s linear 10",
+        "slow-move-down-0": "movefrom0to1 2s linear 5s",
+        "slow-move-down-1": "movefrom1to2 2s linear 5s",
+        "slow-move-down-2": "movefrom2to3 2s linear 5s",
+        "slow-move-down-3": "movefrom3to4 2s linear 5s",
+        "slow-move-down-4": "movefrom4to5 2s linear 5s",
+        "slow-move-down-5": "movefrom5to6 2s linear 5s",
+        "slow-move-down-6": "movefrom6to7 2s linear 5s",
+        "slow-move-down-7": "movefrom7to8 2s linear 5s",
       },
       keyframes: {
         movefrom0to1: {
-          '0%': { zIndex: 6 },
-          '100%': { zIndex: 7, transform: "translateY(-110px) scale(0.85)" }
-        }, movefrom1to2: {
-          '0%': { zIndex: 7 },
-          '100%': { zIndex: 8, transform: "translateY(-90px) scale(0.9)" }
-        }, movefrom2to3: {
-          '0%': { zIndex: 8 },
-          '100%': { zIndex: 9, transform: "translateY(-55px) scale(0.95)" }
-        }, movefrom3to4: {
-          '0%': { zIndex: 9 },
-          '100%': { zIndex: 10, transform: "translateY(0px) scale(1)" }
-        }, movefrom4to5: {
-          '0%': { zIndex: 10 },
-          '100%': { zIndex: 9, transform: "translateY(55px) scale(0.95)" }
-        }, movefrom5to6: {
-          '0%': { zIndex: 9 },
-          '100%': { zIndex: 8, transform: "translateY(90px) scale(0.9)" }
-        }, movefrom6to7: {
-          '0%': { zIndex: 8 },
-          '100%': { zIndex: 7, transform: "translateY(110px) scale(0.85)" }
-        }, movefrom7to8: {
-          '0%': { zIndex: 7 },
-          '100%': { zIndex: 6, transform: "translateY(120px) scale(0.8)" }
-        }
-      }
+          "0%": { zIndex: 6 },
+          "100%": { zIndex: 7, transform: "translateY(-110px) scale(0.85)" },
+        },
+        movefrom1to2: {
+          "0%": { zIndex: 7 },
+          "100%": { zIndex: 8, transform: "translateY(-90px) scale(0.9)" },
+        },
+        movefrom2to3: {
+          "0%": { zIndex: 8 },
+          "100%": { zIndex: 9, transform: "translateY(-55px) scale(0.95)" },
+        },
+        movefrom3to4: {
+          "0%": { zIndex: 9 },
+          "100%": { zIndex: 10, transform: "translateY(0px) scale(1)" },
+        },
+        movefrom4to5: {
+          "0%": { zIndex: 10 },
+          "100%": { zIndex: 9, transform: "translateY(55px) scale(0.95)" },
+        },
+        movefrom5to6: {
+          "0%": { zIndex: 9 },
+          "100%": { zIndex: 8, transform: "translateY(90px) scale(0.9)" },
+        },
+        movefrom6to7: {
+          "0%": { zIndex: 8 },
+          "100%": { zIndex: 7, transform: "translateY(110px) scale(0.85)" },
+        },
+        movefrom7to8: {
+          "0%": { zIndex: 7 },
+          "100%": { zIndex: 6, transform: "translateY(120px) scale(0.8)" },
+        },
+      },
     },
   },
   safelist: [
