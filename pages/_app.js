@@ -9,6 +9,7 @@ import PageChange from "components/PageChange/PageChange.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "styles/tailwind.css"
 import "styles/globals.css";
+import AuthProvider from "src/context/AuthContext";
 
 Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
@@ -47,19 +48,21 @@ export default class MyApp extends App {
     const Layout = Component.layout || (({ children }) => <>{children}</>);
 
     return (
-      <React.Fragment>
-        <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-          />
-          <title>AIT Lucky App</title>
-          <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-        </Head>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </React.Fragment>
+      <AuthProvider>
+        <React.Fragment>
+          <Head>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no"
+            />
+            <title>AIT Lucky App</title>
+            <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+          </Head>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </React.Fragment>
+      </AuthProvider>
     );
   }
 }

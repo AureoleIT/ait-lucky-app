@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import {
     getDatabase,
     ref,
@@ -38,12 +39,18 @@ export default function ChangePassword() {
 
                         <div className="">
                             <AuthInput content={"Mật khẩu cũ"} type={"password"}
+                                leftColor={LEFT_COLOR}
+                                rightColor={RIGHT_COLOR}
                                 onChange={(e) => setOld(e.target.value)} />
                             <AuthInput content={"Mật khẩu mới"} type={"password"}
+                                leftColor={LEFT_COLOR}
+                                rightColor={RIGHT_COLOR}
                                 onChange={(e) => setNew(e.target.value)} />
                             <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
+                                leftColor={LEFT_COLOR}
+                                rightColor={RIGHT_COLOR}
                                 onChange={(e) => setRepeat(e.target.value)} />
-                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo}/>
+                            <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
                         </div>
                     </div>
                 </div>

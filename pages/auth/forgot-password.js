@@ -6,7 +6,9 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { getDatabase, ref, child, get } from "firebase/database";
+import { auth } from "src/firebase";
 import Link from "next/link";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 export default function ForgotPassword() {
   const [name, setName] = useState("");
   const db = getDatabase();
@@ -36,6 +38,8 @@ export default function ForgotPassword() {
               content={"Tên đăng nhập/Email"}
               type={"email"}
               onChange={(e) => setName(e.target.value)}
+              leftColor={LEFT_COLOR}
+              rightColor={RIGHT_COLOR}
             />
           </div>
           <div className="w-3/4 max-w-md">

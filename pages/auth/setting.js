@@ -1,10 +1,11 @@
 import Auth from "layouts/Auth.js";
-import React, { useState,  useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Link from "next/link";
-import { AuthContext } from "src/context/AuthContext";
+import { useAuth } from "src/context/AuthContext";
+import { auth } from "../../src/firebase";
 import {
     getDatabase,
     ref,
@@ -14,28 +15,70 @@ import {
     orderByKey,
     query,
     orderByChild,
+    equalTo
 } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import { isEmail } from "public/util/functions";
+import { isEmpty } from "@firebase/util";
 
 export default function Setting() {
     const db = getDatabase();
-    const auth = getAuth();
-    const [username, setUsername] = useState("vutan");
-    const [email, setEmail] = useState("vutan@gmail.com")
 
-    const handleSaveInfo = (event) => {
-        event.preventDefault();
+    const userValue = useAuth();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [check, setCheck] = useState(false);
+    const [textState, setTextState] = useState("");
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isHidden, setHidden] = useState(hidden);
 
+    const fetchDb = () => {
         const dbRef = ref(db);
-
-        get(child(dbRef, "users/")).then((snapshot) => {
+        //get orderbychild - have conditions
+        const que = query(ref(db, "users"), orderByChild("email"), equalTo(userValue.currentUser.email))
+        get(que).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
-            
             console.log(values);
-            });
+            setUsername(values.find(item => item.email == userValue.currentUser.email).name);
+            setEmail(userValue.currentUser.email);
+        }
+        );
+        //get all data
+        // get(child(dbRef, "users/")).then((snapshot) => {
+        //     const record = snapshot.val() ?? [];
+        //     const values = Object.values(record);
+
+        //     setUsername(values.find(item => item.email == userValue.currentUser.email).name);
+        //     setEmail(userValue.currentUser.email);
+        // });
+    }
+
+    const handleSaveInfo = (event, username) => {
+        event.preventDefault();
+
+        //validation
+        if (isEmpty(username))
+        {
+            setTextState()
+        }
+        const dbRef = ref(db);
+        get(child(dbRef, `users/`)).then((snapshot) => {
+            const record = snapshot.val() ?? [];
+            const values = Object.values(record);
+        });
 
     }
+
+    useEffect(() => {
+        fetchDb();
+    }, [])
+
+    const contentCSS = {
+        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+    };
 
     return (
         <section className="h-screen overflow-y-hidden">
@@ -59,13 +102,33 @@ export default function Setting() {
                             <AuthInput
                                 content={"Tên đăng nhập"}
                                 type={"text"}
+                                leftColor={LEFT_COLOR}
+                                rightColor={RIGHT_COLOR}
                                 onChange={(e) => setUsername(e.target.value)}
                                 value={username} />
-                            <AuthInput
-                                content={"Email"}
-                                type={"email"}
-                                onChange={(e) => setEmail(e.target.value)}
-                                value={email} />
+                            <div
+                                className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+                            >
+                                <div className="h-full">
+                                    <input
+                                        type={"email"}
+                                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={email}
+                                        required
+                                    />
+                                    <div className="bg-white absolute w-full top-0">
+                                        <label
+                                            htmlFor=""
+                                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
+                                        >
+                                            <p style={contentCSS} className="font-bold text-base">
+                                                {"Email"}
+                                            </p>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
                         </div>
 
@@ -74,7 +137,7 @@ export default function Setting() {
                                 <Link href={"/auth/change-password"}>
 
                                     <button className="w-full h-full rounded-[48px] bg-white flex items-center justify-center gap-[10px]">
-                                        <p className="font-[900] text-[22px] text-white">ĐỔI MẬT KHẨU</p>
+                                        <p className="font-[600] text-[20px] text-[#004599]">ĐỔI MẬT KHẨU</p>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="lightblue" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                         </svg>
@@ -86,6 +149,14 @@ export default function Setting() {
                     </div>
                 </div>
             </div>
+            <div className={isHidden}>
+          <PopUp
+            text={textState}
+            icon={isSuccess ? successIcon : failIcon}
+            close={closePopup}
+            isWarning={!isSuccess}
+          />
+        </div>
         </section>
 
     );
