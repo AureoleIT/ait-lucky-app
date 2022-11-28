@@ -694,6 +694,10 @@ video {
   left: 50%;
 }
 
+.left-3 {
+  left: 0.75rem;
+}
+
 .top-\[50\%\] {
   top: 50%;
 }
@@ -1390,6 +1394,10 @@ video {
   width: 1.25rem;
 }
 
+.w-4 {
+  width: 1rem;
+}
+
 .w-\[104\%\] {
   width: 104%;
 }
@@ -1568,8 +1576,8 @@ video {
 }
 
 .animate-move-down-0 {
-  -webkit-animation: movefrom0to1 0.2s linear 10;
-          animation: movefrom0to1 0.2s linear 10;
+  -webkit-animation: movefrom0to1 0.2s linear infinite;
+          animation: movefrom0to1 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom1to2 {
@@ -1597,8 +1605,8 @@ video {
 }
 
 .animate-move-down-1 {
-  -webkit-animation: movefrom1to2 0.2s linear 10;
-          animation: movefrom1to2 0.2s linear 10;
+  -webkit-animation: movefrom1to2 0.2s linear infinite;
+          animation: movefrom1to2 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom2to3 {
@@ -1626,8 +1634,8 @@ video {
 }
 
 .animate-move-down-2 {
-  -webkit-animation: movefrom2to3 0.2s linear 10;
-          animation: movefrom2to3 0.2s linear 10;
+  -webkit-animation: movefrom2to3 0.2s linear infinite;
+          animation: movefrom2to3 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom3to4 {
@@ -1655,8 +1663,8 @@ video {
 }
 
 .animate-move-down-3 {
-  -webkit-animation: movefrom3to4 0.2s linear 10;
-          animation: movefrom3to4 0.2s linear 10;
+  -webkit-animation: movefrom3to4 0.2s linear infinite;
+          animation: movefrom3to4 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom4to5 {
@@ -1684,8 +1692,8 @@ video {
 }
 
 .animate-move-down-4 {
-  -webkit-animation: movefrom4to5 0.2s linear 10;
-          animation: movefrom4to5 0.2s linear 10;
+  -webkit-animation: movefrom4to5 0.2s linear infinite;
+          animation: movefrom4to5 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom5to6 {
@@ -1713,8 +1721,8 @@ video {
 }
 
 .animate-move-down-5 {
-  -webkit-animation: movefrom5to6 0.2s linear 10;
-          animation: movefrom5to6 0.2s linear 10;
+  -webkit-animation: movefrom5to6 0.2s linear infinite;
+          animation: movefrom5to6 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom6to7 {
@@ -1742,8 +1750,8 @@ video {
 }
 
 .animate-move-down-6 {
-  -webkit-animation: movefrom6to7 0.2s linear 10;
-          animation: movefrom6to7 0.2s linear 10;
+  -webkit-animation: movefrom6to7 0.2s linear infinite;
+          animation: movefrom6to7 0.2s linear infinite;
 }
 
 @-webkit-keyframes movefrom7to8 {
@@ -1771,8 +1779,8 @@ video {
 }
 
 .animate-move-down-7 {
-  -webkit-animation: movefrom7to8 0.2s linear 10;
-          animation: movefrom7to8 0.2s linear 10;
+  -webkit-animation: movefrom7to8 0.2s linear infinite;
+          animation: movefrom7to8 0.2s linear infinite;
 }
 
 @keyframes movefrom0to1 {
@@ -1788,8 +1796,8 @@ video {
 }
 
 .animate-slow-move-down-0 {
-  -webkit-animation: movefrom0to1 2s linear 5s;
-          animation: movefrom0to1 2s linear 5s;
+  -webkit-animation: movefrom0to1 0.5s linear infinite;
+          animation: movefrom0to1 0.5s linear infinite;
 }
 
 @keyframes movefrom1to2 {
@@ -1805,8 +1813,8 @@ video {
 }
 
 .animate-slow-move-down-1 {
-  -webkit-animation: movefrom1to2 2s linear 5s;
-          animation: movefrom1to2 2s linear 5s;
+  -webkit-animation: movefrom1to2 0.5s linear infinite;
+          animation: movefrom1to2 0.5s linear infinite;
 }
 
 @keyframes movefrom2to3 {
@@ -1822,8 +1830,8 @@ video {
 }
 
 .animate-slow-move-down-2 {
-  -webkit-animation: movefrom2to3 2s linear 5s;
-          animation: movefrom2to3 2s linear 5s;
+  -webkit-animation: movefrom2to3 0.5s linear infinite;
+          animation: movefrom2to3 0.5s linear infinite;
 }
 
 @keyframes movefrom3to4 {
@@ -1839,8 +1847,8 @@ video {
 }
 
 .animate-slow-move-down-3 {
-  -webkit-animation: movefrom3to4 2s linear 5s;
-          animation: movefrom3to4 2s linear 5s;
+  -webkit-animation: movefrom3to4 0.5s linear infinite;
+          animation: movefrom3to4 0.5s linear infinite;
 }
 
 @keyframes movefrom4to5 {
@@ -1856,8 +1864,8 @@ video {
 }
 
 .animate-slow-move-down-4 {
-  -webkit-animation: movefrom4to5 2s linear 5s;
-          animation: movefrom4to5 2s linear 5s;
+  -webkit-animation: movefrom4to5 0.5s linear infinite;
+          animation: movefrom4to5 0.5s linear infinite;
 }
 
 @keyframes movefrom5to6 {
@@ -1873,8 +1881,8 @@ video {
 }
 
 .animate-slow-move-down-5 {
-  -webkit-animation: movefrom5to6 2s linear 5s;
-          animation: movefrom5to6 2s linear 5s;
+  -webkit-animation: movefrom5to6 0.5s linear infinite;
+          animation: movefrom5to6 0.5s linear infinite;
 }
 
 @keyframes movefrom6to7 {
@@ -1890,8 +1898,8 @@ video {
 }
 
 .animate-slow-move-down-6 {
-  -webkit-animation: movefrom6to7 2s linear 5s;
-          animation: movefrom6to7 2s linear 5s;
+  -webkit-animation: movefrom6to7 0.5s linear infinite;
+          animation: movefrom6to7 0.5s linear infinite;
 }
 
 @keyframes movefrom7to8 {
@@ -1907,8 +1915,8 @@ video {
 }
 
 .animate-slow-move-down-7 {
-  -webkit-animation: movefrom7to8 2s linear 5s;
-          animation: movefrom7to8 2s linear 5s;
+  -webkit-animation: movefrom7to8 0.5s linear infinite;
+          animation: movefrom7to8 0.5s linear infinite;
 }
 
 .cursor-default {
@@ -2798,14 +2806,6 @@ video {
   padding-right: 2.5rem;
 }
 
-.pr-2 {
-  padding-right: 0.5rem;
-}
-
-.pr-9 {
-  padding-right: 2.25rem;
-}
-
 .text-left {
   text-align: left;
 }
@@ -3323,9 +3323,42 @@ video {
   margin-bottom: 0px;
 }
 
+.hover\:-mt-2:hover {
+  margin-top: -0.5rem;
+}
+
+.hover\:h-20:hover {
+  height: 5rem;
+}
+
+.hover\:w-20:hover {
+  width: 5rem;
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+.hover\:animate-\[spin_1s_linear\]:hover {
+  -webkit-animation: spin 1s linear;
+          animation: spin 1s linear;
+}
+
 .hover\:bg-\[\#40BEE5\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(64 190 229 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-\[\#00000099\]:hover {
+  background-color: #00000099;
+}
+
+.hover\:text-lg:hover {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .hover\:font-semibold:hover {
@@ -3374,6 +3407,12 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.hover\:brightness-75:hover {
+  --tw-brightness: brightness(.75);
+  -webkit-filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+          filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -3398,6 +3437,22 @@ video {
 .active\:bg-slate-50:active {
   --tw-bg-opacity: 1;
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
+}
+
+.group:hover .group-hover\:-ml-2 {
+  margin-left: -0.5rem;
+}
+
+.group:hover .group-hover\:mt-4 {
+  margin-top: 1rem;
+}
+
+.group:hover .group-hover\:h-20 {
+  height: 5rem;
+}
+
+.group:hover .group-hover\:w-20 {
+  width: 5rem;
 }
 
 @media not all and (min-width: 640px) {
