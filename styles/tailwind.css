@@ -2062,6 +2062,14 @@ video {
   align-self: flex-end;
 }
 
+.place-self-end {
+  place-self: end;
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
 .self-center {
   align-self: center;
 }
