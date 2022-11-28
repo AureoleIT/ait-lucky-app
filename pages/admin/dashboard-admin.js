@@ -127,18 +127,18 @@ export default function Dashboard() {
           content={
             <div className=" flex flex-col pt-5 gap-y-[7px]">
               {event.map((item) => {
-                  return  (
-                    <div className="flex flex-col">
-                      <EventButton
-                        key={item.id}
-                        title={item.title}
-                        user_joined={item.user_joined}
-                        islink={true}
-                        href={"_countdowncheckin"}
-                      ></EventButton>
-                    </div>
-                  ) 
-                })}
+                return (
+                  <div className="flex flex-col">
+                    <EventButton
+                      key={item.id}
+                      title={item.title}
+                      user_joined={item.user_joined}
+                      islink={true}
+                      href={"_countdowncheckin"}
+                    ></EventButton>
+                  </div>
+                );
+              })}
               <BgBlueButton
                 content={"DANH SÁCH SỰ KIỆN"}
                 onClick={listNavigate}
