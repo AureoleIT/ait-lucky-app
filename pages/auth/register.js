@@ -26,6 +26,7 @@ import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import { messagesError, messagesSuccess } from "public/util/messages";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -42,7 +43,7 @@ export default function Register() {
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      setTextState("Please fill all the cells below");
+      setTextState(messagesError.E0004);
       setIsSuccess(false);
       setHidden(show);
       return;
@@ -54,21 +55,19 @@ export default function Register() {
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      setTextState(
-        "Your username contain space or length less than 6\nPlease refill"
-      );
+      setTextState(messagesError.E0005("username"));
       setIsSuccess(false);
       setHidden(show);
       return;
     }
     if (password.length < 6) {
-      setTextState("Password must be at least 6 characters");
+      setTextState(messagesError.E0002("password", 6));
       setIsSuccess(false);
       setHidden(show);
       return;
     }
     if (!check) {
-      setTextState("You did not agree with privacy!!!");
+      setTextState(messagesError.E0006);
       setIsSuccess(false);
       setHidden(show);
       return;
@@ -94,7 +93,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        setTextState("Username or email existed!");
+        setTextState(messagesError.E0007("username", "email"));
         setIsSuccess(false);
         setHidden(show);
         return;
@@ -107,7 +106,7 @@ export default function Register() {
         pic: "",
         createAt: new Date().getTime(),
       }).then(() => {
-        setTextState("Register successfully <3 \nPlease login ~");
+        setTextState(messagesSuccess.I0001);
         setIsSuccess(true);
         setHidden(show);
       });
@@ -145,15 +144,13 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                setTextState("This email existed on database!");
+                setTextState(messagesError.E0008("email"));
                 setIsSuccess(false);
                 setHidden(show);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                setTextState(
-                  "Register by google successfully <3 \nPlease login ~"
-                );
+                setTextState(messagesSuccess.I0001);
                 setIsSuccess(true);
                 setHidden(show);
               });
@@ -164,14 +161,14 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            setTextState("Something went wrong!");
+            setTextState(messagesError.E4444);
             setIsSuccess(false);
             setHidden(show);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        setTextState("Something's wrong that bad");
+        setTextState(messagesError.E4444);
         setIsSuccess(false);
         setHidden(show);
       });

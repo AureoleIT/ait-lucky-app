@@ -20,6 +20,7 @@ import { getDatabase, ref, set, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { messagesError, messagesSuccess } from "public/util/messages";
 
 export default function Login() {
   const [textState, setTextState] = useState("");
@@ -38,9 +39,7 @@ export default function Login() {
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      setTextState(
-        "Your username contain space or invalid format, please refill"
-      );
+      setTextState(messagesError.E0004);
       setIsSuccess(false);
       setHidden(show);
       return;
@@ -53,12 +52,12 @@ export default function Login() {
           (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
-        setTextState("User not found");
+        setTextState(messagesError.E0009);
         setIsSuccess(false);
         setHidden(show);
         return;
       }
-      setTextState("Login successfully <3\nYou're welcome!");
+      setTextState(messagesSuccess.I0002);
       setIsSuccess(true);
       setHidden(show);
       //Go to admin dashboard
@@ -79,16 +78,12 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            setTextState(
-              "You did not have an account with this email! \nPlease try another account or register to join with us."
-            );
+            setTextState(messagesError.E0010);
             setIsSuccess(false);
             setHidden(show);
             return;
           }
-          setTextState(
-            "Login with google successfully ~\nYou will be moved to dashboard"
-          );
+          setTextState(messagesSuccess.I0002);
           setIsSuccess(true);
           setHidden(show);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
@@ -99,7 +94,7 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        setTextState("Some thing went wrong");
+        setTextState(messagesError.E4444);
         setIsSuccess(false);
         setHidden(show);
       });

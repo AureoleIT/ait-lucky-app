@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
@@ -16,6 +17,7 @@ import { auth, db } from "src/firebase";
 import { ref, set, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import { messagesError, messagesSuccess } from "public/util/messages";
 
 export default function Index() {
   const BG_COLOR =
@@ -25,44 +27,48 @@ export default function Index() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+  var [event, setEvent] = useState({});
 
   const onJoinClick = () => {
     if (isEmpty(pin)) {
-      setTextState("PIN Code is empty!!!");
+      setTextState(messagesError.E2002);
       setIsSuccess(false);
       setHidden(show);
       return;
     }
-    get(child(ref(db), "events/")).then((snapshot) => {
+    get(child(ref(db), "event/")).then((snapshot) => {
       const record = snapshot.val() ?? [];
       const values = Object.values(record);
-      const isUserExisting = values.filter((item) => item.pinCode === pin);
-      var currEvent = isUserExisting[0];
-      if (isUserExisting.length === 0) {
-        setTextState("Event doesn't exist!");
+      var currEvent = values.find((item) => item.pinCode === pin);
+      if (currEvent === undefined) {
+        setTextState(messagesError.E2004);
         setIsSuccess(false);
         setHidden(show);
         return;
       }
-      setTextState("Welcome to " + currEvent.title);
+      setEvent(currEvent);
+      setTextState(messagesSuccess.I0008(currEvent.title));
       setIsSuccess(true);
       setHidden(show);
       setTimeout(() => {
-        router.push("/event/countdowncheckin");
+        router.push("/event/info");
       }, 3000);
     });
   };
+
+  /* Export current event for another access */
+  module.exports = { event };
+
   const pinData = useCallback(
     (e) => {
-      setPin(e.target.value);
+      setPin(e?.target?.value);
     },
     [setPin]
   );
 
   const closePopup = () => {
-    setHidden(hidden)
+    setHidden(hidden);
   };
-
 
   return (
     <section
