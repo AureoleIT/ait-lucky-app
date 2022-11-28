@@ -1,6 +1,7 @@
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { render } from "react-dom";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
@@ -15,10 +16,11 @@ import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 import PlayerDetail from "./PlayerDetail";
+import OverlayBlock from "./OverlayBlock";
 
-export default function PlayerList({listPlayer, listType = "List", changeButton = true}) {
+export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true}) {
     const [typeList, setTypeList] = useState(listType);
-    const [playerChosing, setPlayerChosing] = useState(0);
+    const [playerChosing, setPlayerChosing] = useState(undefined);
 
     const PlayerList_List = (
         <div className="flex flex-col divide-y divide-white/50">
@@ -39,8 +41,9 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
     )
     
     const openPlayerDetailByIndex = (idx) => {
-        document.getElementById("playerDetail").classList.toggle("hidden");
-        document.getElementById("popUpBG").classList.toggle("hidden");
+        if (document.getElementById("playerDetail").classList.contains("hidden"))
+            document.getElementById("playerDetail").classList.remove("hidden");
+        document.getElementById("playerDetailOverlay").classList.toggle("hidden");
         setPlayerChosing(idx);
     }
 
@@ -57,6 +60,11 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
             }
         </div>
     )
+
+    useEffect(() => {
+        const detail = (<PlayerDetail player={listPlayer[playerChosing]} />);
+        if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
+    }, [playerChosing])
 
     return (
         <>
@@ -76,7 +84,7 @@ export default function PlayerList({listPlayer, listType = "List", changeButton 
             <div className="overflow-auto grow">
                 {typeList==="List"?PlayerList_List:PlayerList_Menu}
             </div>
-            {listPlayer!==undefined?<PlayerDetail player={listPlayer[playerChosing]} />:<></>}
+            {listPlayer.length?<OverlayBlock childDiv={<div className="hidden" id="playerDetail"></div>} id={"playerDetailOverlay"} manual={true} />:<></>}
         </>
     )
 }

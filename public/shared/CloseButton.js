@@ -3,31 +3,12 @@ import Auth from "layouts/Auth.js";
 import React, { useState, useEffect } from "react";
 
 
-export default function CloseButton({addBackground = true, clickOutClose = true}) {
+export default function CloseButton({parentDivID}) {
     const closeParentDiv = (e) => {
-        e.target.parentNode.classList.add("hidden");
-        document.getElementById("popUpBG").classList.add("hidden");
+        // console.log(parentDivID);
+        if (parentDivID === undefined) e.target.parentNode.classList.add("hidden");
+        else document.getElementById(parentDivID).classList.add("hidden");
     }
-
-    useEffect(() => {
-        const popUpBG = document.createElement("div");
-        popUpBG.classList = "absolute h-full w-full top-0 left-0 z-40 hidden";
-        popUpBG.id = "popUpBG";
-        document.querySelector("section").appendChild(popUpBG);
-
-        if (addBackground) popUpBG.classList.add("bg-[#00000080]");
-        if (clickOutClose) {
-            const popUpBlock = document.getElementById("close-btn").parentNode;
-            popUpBG.addEventListener("click", () => {
-                popUpBlock.classList.add("hidden");
-                popUpBG.classList.add("hidden");
-            })
-        }
-
-        return () => {
-            popUpBG.remove();
-        }
-    }, [])
 
     return (
         <>
