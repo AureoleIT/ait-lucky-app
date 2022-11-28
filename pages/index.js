@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useState } from "react";
+import { React, useCallback, useEffect, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
@@ -58,9 +58,12 @@ export default function Index() {
     },
     [setPin]
   );
+
   const closePopup = () => {
-    setHidden(hidden);
+    setHidden(hidden)
   };
+
+
   return (
     <section className="h-screen mx-auto flex justify-center items-center">
       <div
