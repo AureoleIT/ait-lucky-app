@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { QRCodeCanvas } from "qrcode.react/lib"
-import { useRouter } from "next/router"
+import { useEffect, useState } from "react";
+import { QRCodeCanvas } from "qrcode.react/lib";
+import { useRouter } from "next/router";
 
 import BgBlueButton from "public/shared/BgBlueButton"
 import ButtonAndIcon from "public/shared/ButtonAndIcon"
@@ -11,11 +11,9 @@ import PopUpQR from "public/shared/PopUpQR"
 import { failIcon, hidden, show, successIcon } from "public/util/popup"
 import PopUp from "public/shared/PopUp"
 
-
-function CountDownCheckIn () 
-{
-    // router
-    const router = useRouter()
+function CountDownCheckIn() {
+  // router
+  const router = useRouter();
 
     // state
     const [minutes, setMinutes] = useState(testCoundown.wait_time)
@@ -28,9 +26,9 @@ function CountDownCheckIn ()
     const [textState, setTextState] = useState("")
     const [isSuccess, setIsSuccess] = useState(false)
 
-    const countDownNumber = {
-        background: "#3B88C3"
-    }
+  const countDownNumber = {
+    background: "#3B88C3",
+  };
 
     const zIndex = {
         "z-index": "10",
@@ -42,10 +40,9 @@ function CountDownCheckIn ()
 
     const pinCode = 263451
 
-    useEffect(() =>
-    {
-        let date = new Date()
-        let deadline = date.getTime() + (minutes * 60 * 1000)
+  useEffect(() => {
+    let date = new Date();
+    let deadline = date.getTime() + minutes * 60 * 1000;
 
         let countdown = null
 
@@ -99,11 +96,11 @@ function CountDownCheckIn ()
         setIsHidden(show)
     }
 
-    const handleDownloadQR = () =>
-    {
-        const qrCodeURL = document.getElementById("qrCode")
-            .toDataURL("image/png")
-            .replace("image/png", "image/octet-stream")
+  const handleDownloadQR = () => {
+    const qrCodeURL = document
+      .getElementById("qrCode")
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
 
         let downloadElement = document.createElement("a")
         downloadElement.href = qrCodeURL
@@ -132,13 +129,13 @@ function CountDownCheckIn ()
             <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
             <h1 className="uppercase text-base py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
 
-             {/* id room */}
+      {/* id room */}
 
             <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px]">
                 <PinCode length={6} value={pinCode} />
             </div>  
 
-            {/* qr code */}
+      {/* qr code */}
 
             <div className="w-[90%] lg:w-4/12 max-w-xl flex mb-4 drop-shadow-lg">
                 <ButtonAndIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"} onClick={generateQRcode}/>
@@ -191,7 +188,9 @@ function CountDownCheckIn ()
                 </div>
             </div>
 
-            <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">người chơi</h1> 
+      <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">
+        người chơi
+      </h1>
 
             <div className="w-[90%] lg:w-4/12 max-w-xl z-0">
                 <Line />
