@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
@@ -17,11 +17,16 @@ export default function EventRegister() {
   const [isHidden, setHidden] = useState(hidden);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const contentCSS = {
-    background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-  };
+    // ref
+    const nameEventRef = useRef()
+    const eventDetailRef = useRef()
+    const limitUserRef = useRef()
+
+    const contentCSS = {
+        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+    };
 
   const closePopup = (e) => {
     setHidden(hidden);
