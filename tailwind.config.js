@@ -45,38 +45,31 @@ module.exports = {
       },
       keyframes: {
         movefrom0to1: {
-          "0%": { zIndex: 6 },
-          "100%": { zIndex: 7, transform: "translateY(-110px) scale(0.85)" },
-        },
-        movefrom1to2: {
-          "0%": { zIndex: 7 },
-          "100%": { zIndex: 8, transform: "translateY(-90px) scale(0.9)" },
-        },
-        movefrom2to3: {
-          "0%": { zIndex: 8 },
-          "100%": { zIndex: 9, transform: "translateY(-55px) scale(0.95)" },
-        },
-        movefrom3to4: {
-          "0%": { zIndex: 9 },
-          "100%": { zIndex: 10, transform: "translateY(0px) scale(1)" },
-        },
-        movefrom4to5: {
-          "0%": { zIndex: 10 },
-          "100%": { zIndex: 9, transform: "translateY(55px) scale(0.95)" },
-        },
-        movefrom5to6: {
-          "0%": { zIndex: 9 },
-          "100%": { zIndex: 8, transform: "translateY(90px) scale(0.9)" },
-        },
-        movefrom6to7: {
-          "0%": { zIndex: 8 },
-          "100%": { zIndex: 7, transform: "translateY(110px) scale(0.85)" },
-        },
-        movefrom7to8: {
-          "0%": { zIndex: 7 },
-          "100%": { zIndex: 6, transform: "translateY(120px) scale(0.8)" },
-        },
-      },
+          '0%': { zIndex: 6 },
+          '100%': { zIndex: 7, transform: "translateY(-110px) scale(0.85)" }
+        }, movefrom1to2: {
+          '0%': { zIndex: 7 },
+          '100%': { zIndex: 8, transform: "translateY(-90px) scale(0.9)" }
+        }, movefrom2to3: {
+          '0%': { zIndex: 8 },
+          '100%': { zIndex: 9, transform: "translateY(-55px) scale(0.95)" }
+        }, movefrom3to4: {
+          '0%': { zIndex: 9 },
+          '100%': { zIndex: 10, transform: "translateY(0px) scale(1)" }
+        }, movefrom4to5: {
+          '0%': { zIndex: 10 },
+          '100%': { zIndex: 9, transform: "translateY(55px) scale(0.95)" }
+        }, movefrom5to6: {
+          '0%': { zIndex: 9 },
+          '100%': { zIndex: 8, transform: "translateY(90px) scale(0.9)" }
+        }, movefrom6to7: {
+          '0%': { zIndex: 8 },
+          '100%': { zIndex: 7, transform: "translateY(110px) scale(0.85)" }
+        }, movefrom7to8: {
+          '0%': { zIndex: 7 },
+          '100%': { zIndex: 6, transform: "translateY(120px) scale(0.8)" }
+        }
+      }
     },
   },
   safelist: [
