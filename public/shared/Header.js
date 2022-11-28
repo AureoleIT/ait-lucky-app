@@ -6,6 +6,7 @@ import Menu from "./Menu";
 
 // Icons
 import MenuIcon from "public/Icons/menu";
+import Link from "next/link";
 
 export default function Header() {
     const [showMenu, setShowMenu] = useState(false)//True: Menu will be displayed, False: Menu will be hidden
@@ -18,7 +19,7 @@ export default function Header() {
         <>
             <Menu showMenu={showMenu} setShowMenu={setShowMenu} />
             <div className="w-full bg-[#40BEE5]">
-                <div className="flex justify-between items-center px-[20px] py-[15px] w-full max-w-4xl mx-auto">
+                <div className="flex justify-between items-center px-[20px] py-[15px] w-full max-w-6xl mx-auto">
                     <button onClick={handleOpenMenu}>
                         <MenuIcon />
                     </button>
