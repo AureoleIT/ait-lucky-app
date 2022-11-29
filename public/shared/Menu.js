@@ -2,10 +2,12 @@ import React from "react";
 import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
+import { auth } from "src/firebase";
+
 function MenuItem(props) {
     const router = useRouter()
     return (
-        <div className={`cursor-pointer flex w-full gap-x-4 items-center ${props.name === "Đăng xuất" ? "text-red-500" : ""}`}>
+        <div className={`cursor-pointer flex w-full gap-x-4 items-center`}>
             {props.icon}
             <a onClick={() => {router.push(props.href)}}>
                 <p className="font-[900] text-[14px]">{props.name}</p>
@@ -17,14 +19,14 @@ function MenuItem(props) {
 
 export default function Menu(props) {
     const [showMenu, setShowMenu] = [props.showMenu, props.setShowMenu]
+    const user = props.user
+    const router = useRouter()
     
     const RenderMenu = MenuList.map((item, index) => {
         return (
             <MenuItem key={index} icon={item.icon} name={item.name} href={item.href} />
         )
     }) 
-
-    const user = props.user
 
     function handleCloseMenu() {
         setShowMenu(!showMenu)
@@ -51,6 +53,15 @@ export default function Menu(props) {
                 </div>
                 <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
                     {RenderMenu}
+                    <div className={`cursor-pointer flex w-full gap-x-4 items-center text-red-500`}>
+                        {logout.icon}
+                        <a onClick={() => {
+                            auth.signOut()
+                            router.push("/auth/login")}
+                        }>
+                            <p className="font-[900] text-[14px]">{logout.name}</p>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,11 +97,12 @@ const MenuList = [
         name: "Cài đặt tài khoản",
         href: "/auth/setting"
     },
-    {
-        icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
-        </svg>,
-        name: "Đăng xuất",
-        href: "/#"
-    }
 ]
+
+const logout = {
+    icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+    </svg>,
+    name: "Đăng xuất",
+    href: "/",
+}
