@@ -50,65 +50,15 @@ const listPlayer = [
     }
 ];
 
-const listReward = [
-    {
-        idReward: "01",
-        event_id: "",
-        description: "Giải Đặc Biệt",
-        quantity: 1,
-        quantity_remain: 1,
-        sortNo: 3,
-        img_url: [
-            "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8aG91c2V8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
-        ]
-    }, {
-        idReward: "02",
-        event_id: "",
-        description: "Giải Nhất",
-        quantity: 1,
-        quantity_remain: 1,
-        sortNo: 2,
-        img_url: [
-            "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
-            "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-        ]
-    }, {
-        idReward: "03",
-        event_id: "",
-        description: "Giải Nhì",
-        quantity: 1,
-        quantity_remain: 1,
-        sortNo: 1,
-        img_url: [
-            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cGhvbmV8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8bGFwdG9wc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1545454675-3531b543be5d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3BlYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-        ]
-    }, {
-        idReward: "04",
-        event_id: "",
-        description: "Giải Ba",
-        quantity: 1,
-        quantity_remain: 1,
-        sortNo: 0,
-        img_url: [
-            "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
-            "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
-            "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
-            "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
-        ]
-    }
-];
-
 const EventID = "EV20221011";
 
-export default function LuckySpinAdmin() {
+export default function LuckySpin() {
     // Danh sách giải thưởng
-    const [rewardList, setRewardList] = useState(listReward);
+    const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
     const [rewardChosing, setRewardChosing] = useState(0);
     // ID của giải thưởng được chọn
-    const [idRewardChosing, setIDRewardChosing] = useState(rewardList[rewardChosing].idReward);
+    const [idRewardChosing, setIDRewardChosing] = useState("");
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState(rewardList);
     // Danh sách người chơi
@@ -121,23 +71,38 @@ export default function LuckySpinAdmin() {
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
-
-    // Firebase
-    const eventRewardsRef = ref(db, "event_rewards");
-
-    onValue(eventRewardsRef, (snapshot) => {
-        const data = snapshot.val();
-    });
     
+    // Firebase
+    const dbRef = ref(db)
+    const eventRewardsRef = ref(db, "event_rewards");
+    const eventRef = ref(db, "event");
+
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
         if (b.sortNo > a.sortNo) return -1;
         return 0;
     }
 
+    // Lấy dữ liệu lần đầu của event
     useEffect(() => {
-        // Sắp xếp danh sách giải thưởng
-        setRewardList([...rewardList.sort(compare)]);
+        get(child(dbRef, "event_rewards")).then((snapshot) => {
+            const record = snapshot.val() ?? [];
+            const values = Object.values(record);
+            setRewardList(values);
+        })
+
+        if (rewardList[rewardChosing]) setIDRewardChosing(rewardList[rewardChosing].idReward);
+
+        // Cập nhật dữ liệu realtime của event
+        return onValue(eventRewardsRef, (snapshot) => {
+            const data = snapshot.val();
+            const values = Object.values(data);
+
+            if (snapshot.exists()) {
+                setRewardList(values);
+                return;
+            }
+        });
     }, [])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
@@ -156,44 +121,42 @@ export default function LuckySpinAdmin() {
     useEffect(() => {
         setEditedPlayerList([...remainPlayerList]);
     }, [remainPlayerList])
-
+    
     // Điều chỉnh danh sách giải thưởng còn lại
     useEffect(() => {
-        if (remainRewardList.filter((reward) => reward.quantity_remain <= 0).length > 0)
-            setRemainRewardList((list) => list.filter((reward) => reward.quantity_remain > 0));
+        if (remainRewardList.filter((reward) => reward.quantityRemain <= 0).length > 0)
+        setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
         setRewardChosing(0);
         setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
+        console.log(remainRewardList);
     }, [remainRewardList])
 
     // Cập nhật danh sách phần trưởng còn lại
     useEffect(() => {
         setRemainRewardList([...rewardList]);
+        rewardList.sort(compare);
     }, [rewardList])
 
     const spining = () => {
-        if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
-        // ngăn sự kiện khi quay thưởng
-        setSpinClicked(true);
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        const awaredNumber = randomNum + 4;
-
+        
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
         
-
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
         }, 50);
-
+        
         const timeoutPhase1 = setTimeout(() => {
             clearInterval(phase1);
-            setPlayerShowList([...editedPlayerList.slice(-4), ...editedPlayerList, ...editedPlayerList.slice(0, 4)].slice(awaredNumber, awaredNumber + 9))
+            setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(randomNum, randomNum + 18))
             Array.from({length: 9}, (_, index) => index).forEach(idx => {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
             })
+                        
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
             }, 500);
@@ -208,19 +171,37 @@ export default function LuckySpinAdmin() {
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
                     setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
-                    rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantity_remain -= 1;
+                    rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantityRemain -= 1;
                     setRewardList((list) => [...list]);
-                    setSpinClicked(false);
                 }, 1000)
             }, 2000)
 
         }, 1000)
     }
 
+    // Lấy dữ liệu lần đầu của event
+    useEffect(() => {
+        var spin = false;
 
-  const toggleSelectMenu = () => {
-    document.getElementById("selectRewardPopUp").classList.toggle("hidden");
-  };
+        get(child(eventRef, 'event/1')).then((snapshot) => {
+            const record = snapshot.val() ?? [];
+            spin = record.isSpinning;
+        })
+
+        // Cập nhật dữ liệu realtime của event
+        return onValue(ref(db, "event/1"), (snapshot) => {
+            const record = snapshot.val();
+            spin = record.isSpinning;
+            
+            console.log(spin);
+            if (snapshot.exists()) {
+                if (spin) {
+                    spining();
+                }
+                return;
+            }
+        });
+    }, [])
 
     const awardNotification = (
         <div className="flex flex-col items-center text-center text-[#004599]">
@@ -260,7 +241,7 @@ export default function LuckySpinAdmin() {
                       <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                       <div className="h-44 px-4 py-2 relative">
                         <RewardList
-                          listReward={listReward[0]}
+                          listReward={remainRewardList.slice(rewardChosing, rewardChosing + 1)}
                           showRemain={true}
                           showAwardedPaticipant={true}
                         />
@@ -272,7 +253,7 @@ export default function LuckySpinAdmin() {
                             <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <CurrentEventDetail listPlayer={playerList} listReward={listReward} showAwardedPaticipant={true} />
+                    <CurrentEventDetail listPlayer={playerList} listReward={rewardList} showAwardedPaticipant={true} />
                     <OverlayBlock childDiv={<LuckySpinSetting />}  id={"settingOverlay"} />
                     <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} />
                 </div>
