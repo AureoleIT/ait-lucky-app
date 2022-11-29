@@ -53,7 +53,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
                         <div key={idx} className="h-20 w-full py-2 flex" onClick={() => openPlayerDetailByIndex(idx)}>
-                            <img className="transition-all mx-auto h-16 w-16 object-cover rounded-full border-1 hover:h-20 hover:w-20 hover:-mt-2 hover:shadow-lg" src={player.playerAvt} alt={player.playerName} />
+                            <img className="transition-all mx-auto h-16 w-16 object-cover rounded-full border-1 hover:h-20 hover:w-20 hover:-mt-2 hover:shadow-2xl" src={player.playerAvt} alt={player.playerName} />
                         </div>
                     )
                 }):<></>

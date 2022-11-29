@@ -35,7 +35,7 @@ export default function OverlayBlock({closeButton = true, clickOutClose = true, 
                 <div className="w-0 h-0" onClick={clickOutCloseOverlay}>
                     {childDiv?childDiv:<div className="h-80 w-80"></div>}
                 </div>:
-                <div className="relative h-fit w-3/4 px-5 py-8 max-w-md bg-white shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle justify-between"
+                <div className="relative h-fit w-3/4 px-5 pt-8 pb-5 max-w-md bg-white shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle justify-between"
                     onClick={(e) => {e.stopPropagation();}}>
                     {childDiv?childDiv:<div className="h-80 w-80"></div>}
                     {closeButton?<CloseButton parentDivID={blockID} />:<></>}
