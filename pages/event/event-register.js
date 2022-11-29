@@ -6,6 +6,7 @@ import BgBlueButton from "public/shared/BgBlueButton";
 import Header from "public/shared/Header";
 import { failIcon, hidden, show, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
+import CheckBox from "public/shared/CheckBox";
 
 export default function EventRegister() {
   // router
