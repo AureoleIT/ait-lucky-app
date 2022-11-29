@@ -2,14 +2,6 @@ import React, { useImperativeHandle, useRef, forwardRef } from "react";
 
 function AuthInput(props, ref) {
 
-    // const textRef = useRef()
-
-    // useImperativeHandle(ref, () => ({
-    //     value() {
-    //         textRef.current.value()
-    //     }
-    // }))
-
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
         WebkitBackgroundClip: "text",
@@ -25,6 +17,7 @@ function AuthInput(props, ref) {
                     rows={props.row}
                     value={props.value}
                     onChange={props.onChange}
+                    maxLength={props.maxLength}
                     required
                 />
                 <div className="bg-white absolute w-full top-0">
