@@ -177,9 +177,9 @@ export default function LuckySpinAdmin() {
     }
 
 
-    const toggleSelectMenu = () => {
-        document.getElementById("selectRewardPopUp").classList.toggle("hidden");
-    }
+  const toggleSelectMenu = () => {
+    document.getElementById("selectRewardPopUp").classList.toggle("hidden");
+  };
 
     const awardNotification = (
         <div className="flex flex-col items-center text-center">
