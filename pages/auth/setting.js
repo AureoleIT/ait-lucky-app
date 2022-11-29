@@ -22,6 +22,14 @@ export default function Setting() {
     const auth = getAuth();
     const [username, setUsername] = useState("vutan");
     const [email, setEmail] = useState("vutan@gmail.com")
+    const auth = useAuth();
+    const [user, setUser] = useState();
+    const emailUser = auth.currentUser.email;
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [textState, setTextState] = useState("");
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isHidden, setHidden] = useState(show);
 
     const handleSaveInfo = (event) => {
         event.preventDefault();
@@ -29,18 +37,91 @@ export default function Setting() {
         const dbRef = ref(db);
 
         get(child(dbRef, "users/")).then((snapshot) => {
+    function handleSaveInfo(name) {
+        //validation
+        if (isEmpty(name)) {
+            setTextState(messagesError.E0001("Tên đăng nhập"));
+            setIsSuccess(false);
+            setHidden(hidden);
+            return;
+        }
+        if (hasWhiteSpaceAndValidLength(name)) {
+            setTextState(messagesError.E0004);
+            setIsSuccess(false);
+            setHidden(show);
+            // console.log(messagesError.E0005("Tên đăng nhập"));
+            return;
+        }
+
+        //update 
+        // const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
+        // onValue(que, (snapshot) => {
+        //     const record = snapshot.val() ?? [];
+        //     const values = Object.values(record);
+        //     if (values.length == 0) {
+        //         update(ref(db, 'users/' + user.userId),
+        //             {
+        //                 name: name
+        //             }).then(() => {
+        //                 setTextState(messagesSuccess.I0003);
+        //                 setIsSuccess(true);
+        //                 setHidden(show);
+        //             })
+        //             .catch((error) => console.log(error));
+        //     }
+        // }
+
+        get(child(ref(db), "users/")).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
             
             console.log(values);
             });
 
+
+            const isExisting = values.some(
+                x => x.name == name
+            )
+
+            if (!isExisting) {
+                update(ref(db, 'users/' + user.userId),
+                    {
+                        name: name
+                    }).then(() => {
+                        setTextState(messagesSuccess.I0003);
+                        setIsSuccess(true);
+                        setHidden(show);
+                    })
+                    .catch((error) => console.log(error));
+            }
+        }
+        );
     }
+
+    function updateUser(user) {
+        setUser(user);
+        console.log(user);
+    }
+    const closePopup = () => {
+        setHidden(hidden);
+        console.log(isHidden)
+    };
+
+    useEffect(() => {
+        fetchDb();
+    }, [])
+
+    const contentCSS = {
+        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+    };
 
     return (
         <section className="h-screen overflow-y-hidden">
             <Header />
             <div className=" relative h-full ">
+            {/* <div className=" relative h-full w-full">
                 <div
                     className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
                 >
@@ -59,6 +140,8 @@ export default function Setting() {
                             <AuthInput
                                 content={"Tên đăng nhập"}
                                 type={"text"}
+                                leftColor={LEFT_COLOR}
+                                rightColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
                                 onChange={(e) => setUsername(e.target.value)}
                                 value={username} />
                             <AuthInput
@@ -67,6 +150,30 @@ export default function Setting() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email} />
                             <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
+                            <div
+                                className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+                            >
+                                <div className="h-full">
+                                    <input
+                                        type={"email"}
+                                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={email}
+                                        required
+                                    />
+                                    <div className="bg-white absolute w-full top-0">
+                                        <label
+                                            htmlFor=""
+                                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
+                                        >
+                                            <p style={contentCSS} className="font-bold text-base">
+                                                {"Email"}
+                                            </p>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <BgBlueButton content={"LƯU"} onClick={(e) => { handleSaveInfo(username) }} />
                         </div>
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
@@ -85,6 +192,15 @@ export default function Setting() {
                         </div>
                     </div>
                 </div>
+            </div>
+            </div> */}
+            <div className={isHidden}>
+                <PopUp
+                    text={textState}
+                    icon={isSuccess ? successIcon : failIcon}
+                    close={closePopup}
+                    isWarning={!isSuccess}
+                />
             </div>
         </section>
 

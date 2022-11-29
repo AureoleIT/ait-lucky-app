@@ -16,18 +16,37 @@ export default function ForgotPassword() {
 
     const dbRef = ref(db);
 
-    get(child(dbRef, "users/")).then((snapshot) => {
-      const record = snapshot.val() ?? [];
-      const values = Object.values(record);
+    if (!isEmail(email)) {
+      console.log(messagesError.E0003("Email"));
+    }
 
-      console.log(values);
-    });
+    if (hasWhiteSpaceAndValidLength(email)) {
+      console.log(messagesError.E0005("Email"));
+    }
+
+    try {
+      const que = query(ref(db, "users"), orderByChild("email"), equalTo(email));
+      onValue(que, (snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+
+        if (values.length == 0) {
+          console.log(messagesError.E0009);
+        } else {
+          console.log(messagesSuccess.I0003);
+          authContext.resetPassword(email);
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      console.log(messagesError.E1002);
+    }
   };
 
   return (
     <>
       <section className="h-screen flex justify-center items-center">
-        <div className="flex flex-col justify-center items-center w-full h-full">
+        <div className="f-full flex flex-col justify-center items-center w-full h-full">
           <div className="relative mb-5">
             <Title title="QUÊN MẬT KHẨU" />
           </div>
@@ -54,13 +73,15 @@ export default function ForgotPassword() {
             </Link>
             <GradientLine color1="#003B93" color2="#00F0FF" content="" />
           </div>
+          <div className="absolute bottom-20">
+            <AuthFooter
+              normalContent="Chưa có tài khoản?"
+              boldContent="Đăng kí ngay!!!"
+              href="/auth/register"
+            />
+          </div>
         </div>
       </section>
-      <AuthFooter
-        normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!!!"
-        href="/auth/register"
-      />
     </>
   );
 }
