@@ -33,7 +33,7 @@ export default function Setting() {
     const [email, setEmail] = useState("");
     const [textState, setTextState] = useState("");
     const [isSuccess, setIsSuccess] = useState(false);
-    const [isHidden, setHidden] = useState(hidden);
+    const [isHidden, setHidden] = useState(show);
 
     function fetchDb() {
         // get orderbychild - have conditions
@@ -57,23 +57,47 @@ export default function Setting() {
 
     function handleSaveInfo(name) {
         //validation
-        if (hasWhiteSpaceAndValidLength(name)) {
-            console.log(messagesError.E0005("Tên đăng nhập"));
-        }
-
         if (isEmpty(name)) {
-            setTextState(messagesError.E0001("tên đăng nhập"));
+            setTextState(messagesError.E0001("Tên đăng nhập"));
+            setIsSuccess(false);
+            setHidden(hidden);
+            return;
+        }
+        if (hasWhiteSpaceAndValidLength(name)) {
+            setTextState(messagesError.E0004);
             setIsSuccess(false);
             setHidden(show);
+            // console.log(messagesError.E0005("Tên đăng nhập"));
             return;
         }
 
         //update 
-        const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
-        onValue(que, (snapshot) => {
+        // const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
+        // onValue(que, (snapshot) => {
+        //     const record = snapshot.val() ?? [];
+        //     const values = Object.values(record);
+        //     if (values.length == 0) {
+        //         update(ref(db, 'users/' + user.userId),
+        //             {
+        //                 name: name
+        //             }).then(() => {
+        //                 setTextState(messagesSuccess.I0003);
+        //                 setIsSuccess(true);
+        //                 setHidden(show);
+        //             })
+        //             .catch((error) => console.log(error));
+        //     }
+        // }
+
+        get(child(ref(db), "users/")).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
-            if (values.length == 0) {
+
+            const isExisting = values.some(
+                x => x.name == name
+            )
+
+            if (!isExisting) {
                 update(ref(db, 'users/' + user.userId),
                     {
                         name: name
@@ -92,8 +116,9 @@ export default function Setting() {
         setUser(user);
         console.log(user);
     }
-    const closePopup = (e) => {
+    const closePopup = () => {
         setHidden(hidden);
+        console.log(isHidden)
     };
 
     useEffect(() => {
@@ -109,7 +134,7 @@ export default function Setting() {
     return (
         <section className="h-screen overflow-y-hidden">
             <Header />
-            <div className=" relative h-full w-full ">
+            {/* <div className=" relative h-full w-full">
                 <div
                     className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
                 >
@@ -129,7 +154,7 @@ export default function Setting() {
                                 content={"Tên đăng nhập"}
                                 type={"text"}
                                 leftColor={LEFT_COLOR}
-                                rightColor={hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+                                rightColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
                                 onChange={(e) => setUsername(e.target.value)}
                                 value={username} />
                             <div
@@ -155,7 +180,7 @@ export default function Setting() {
                                     </div>
                                 </div>
                             </div>
-                            <BgBlueButton content={"LƯU"} onClick={() => { handleSaveInfo(username) }} />
+                            <BgBlueButton content={"LƯU"} onClick={(e) => { handleSaveInfo(username) }} />
                         </div>
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
@@ -174,7 +199,7 @@ export default function Setting() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
             <div className={isHidden}>
                 <PopUp
                     text={textState}
