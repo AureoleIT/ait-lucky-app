@@ -18,9 +18,10 @@ export default function EventRegister() {
   const [isSuccess, setIsSuccess] = useState(false);
 
     // ref
-    const nameEventRef = useRef()
-    const eventDetailRef = useRef()
-    const limitUserRef = useRef()
+    const nameEventRef = useRef() // name event value
+    const eventDetailRef = useRef() // event detail value
+    const limitUserRef = useRef() // limit user number
+    const checkBoxRef = useRef() // checkbox value (checked or not)
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
