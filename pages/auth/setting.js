@@ -15,7 +15,7 @@ import {
     query,
     orderByChild,
 } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, auth } from "firebase/auth";
 
 export default function Setting() {
     const db = getDatabase();
