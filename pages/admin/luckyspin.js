@@ -85,6 +85,24 @@ export default function LuckySpinAdmin() {
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
+
+    // Firebase
+    const eventRewardsRef = ref(db, "event_rewards");
+
+    onValue(eventRewardsRef, (snapshot) => {
+        const data = snapshot.val();
+    });
+    
+    function compare(a, b) {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+
+    useEffect(() => {
+        // Sắp xếp danh sách giải thưởng
+        setRewardList([...rewardList.sort(compare)]);
+    }, [])
     
     // Firebase
     const dbRef = ref(db)
