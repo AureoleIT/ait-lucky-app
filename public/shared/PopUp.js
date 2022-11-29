@@ -6,7 +6,7 @@ import { hidden } from "public/util/popup";
 export default function PopUp({text, icon, close, isWarning}) {
   const bg = isWarning ? "border-red-600" : "border-green-600"; 
 
-  console.log(close)
+  // console.log(close)
 
   useEffect(() => {
     const timer = setTimeout(() => {

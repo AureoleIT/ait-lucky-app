@@ -7,7 +7,7 @@ import Router from "next/router";
 import PageChange from "components/PageChange/PageChange.js";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "styles/tailwind.css"
+import "styles/tailwind.css";
 import "styles/globals.css";
 import AuthProvider from "src/context/AuthContext";
 
