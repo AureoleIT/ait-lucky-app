@@ -1,6 +1,6 @@
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
@@ -49,7 +49,7 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
     )
 
     return (
-        <div className="w-full absolute bottom-0 z-50 flex flex-col ease-in duration-200 overflow-hidden"  onClick={() => setExpand(!expand)}
+        <div className="w-full absolute bottom-0 z-40 flex flex-col ease-in duration-200 overflow-hidden"  onClick={() => setExpand(!expand)}
             style={{height: !expand?"5rem":"100vh"}}>
                 <div className="w-full h-full grow absolute rounded-t-2xl bottom-0 items-center" onClick={() => setExpand(!expand)}>
                     {EventDetailExpand}
