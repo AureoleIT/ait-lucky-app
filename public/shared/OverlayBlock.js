@@ -29,7 +29,7 @@ export default function OverlayBlock({closeButton = true, clickOutClose = true, 
     }
     
     const overlayblock = (
-        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center hidden" id={blockID} onClick={clickOutCloseOverlay}
+        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center z-50 hidden" id={blockID} onClick={clickOutCloseOverlay}
             style={{backgroundColor: background?"#00000080":""}}>
             {manual?
                 <div className="w-0 h-0" onClick={clickOutCloseOverlay}>
