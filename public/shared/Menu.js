@@ -1,6 +1,4 @@
 import React from "react";
-import Link from "next/link";
-
 import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
@@ -17,7 +15,7 @@ function MenuItem(props) {
 }
 
 
-export default function Menu(props, {user}) {
+export default function Menu(props) {
     const [showMenu, setShowMenu] = [props.showMenu, props.setShowMenu]
     
     const RenderMenu = MenuList.map((item, index) => {
@@ -25,6 +23,8 @@ export default function Menu(props, {user}) {
             <MenuItem key={index} icon={item.icon} name={item.name} href={item.href} />
         )
     }) 
+
+    const user = props.user
 
     function handleCloseMenu() {
         setShowMenu(!showMenu)
@@ -38,15 +38,15 @@ export default function Menu(props, {user}) {
         <div className="h-screen w-full absolute z-10 left-0 flex justify-between">
             <div className="bg-slate-100/60 h-screen w-full absolute z-10 left-0 flex-1 justify-between" onClick={() => {setShowMenu(false)}}>
             </div>
-            <div className="bg-white h-screen w-[250px] px-[20px] py-[30px] absolute z-10 left-0">
+            <div className="bg-white h-screen w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
                 <button className="absolute right-2 top-2" onClick={handleCloseMenu}>
                     <CloseIcon />
                 </button>
-                <div className="flex items-center mt-6 gap-x-2">
-                    <img src={!user ? "http://www.gravatar.com/avatar/?d=retro&s=32" : user} alt="" className="w-[65px] h-[65px] rounded-full object-cover" />
+                <div className="flex gap-x-4 items-center mt-6">
+                    <img src={!user ? "http://www.gravatar.com/avatar/?d=retro&s=32" : user.photoURL} className="min-w-[50px] max-w-[65px] min-h-[50px] max-h-[65px] rounded-full object-cover" />
                     <div className="font-[900]">
-                        <h3 className="text-[14px]">Tran Van C</h3>
-                        <p className="text-[#656565] text-[12px]">tranvanc@gmail.com</p>
+                        <h3 className="text-[14px]">{user.displayName}</h3>
+                        <p className="text-[#656565] text-[12px]">{user.email}</p>
                     </div>
                 </div>
                 <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
