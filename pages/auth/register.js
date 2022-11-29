@@ -39,37 +39,31 @@ export default function Register() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
-
+  function showMethod(message, isShow, isTrue){
+    setTextState(message);
+    setIsSuccess(isTrue);
+    setHidden(isShow);
+  }
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      setTextState(messagesError.E0004);
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0004, show, false);
       return;
     }
     if (!isEmail(email)) {
-      setTextState("Invalid email form");
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0003("Email"), show, false);
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      setTextState(messagesError.E0005("username"));
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0005("username"), show, false);
       return;
     }
     if (password.length < 6) {
-      setTextState(messagesError.E0002("password", 6));
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0002("password", 6), show, false);
       return;
     }
     if (!check) {
-      setTextState(messagesError.E0006);
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0006, show, false);
       return;
     }
 
@@ -93,9 +87,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        setTextState(messagesError.E0007("username", "email"));
-        setIsSuccess(false);
-        setHidden(show);
+        showMethod(messagesError.E0007("username", "email"), show, false);
         return;
       }
       set(ref(db, `users/${id}/`), {
@@ -106,9 +98,7 @@ export default function Register() {
         pic: "",
         createAt: new Date().getTime(),
       }).then(() => {
-        setTextState(messagesSuccess.I0001);
-        setIsSuccess(true);
-        setHidden(show);
+        showMethod(messagesSuccess.I0001, show, true);
       });
 
       setTimeout(() => {
@@ -144,15 +134,11 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                setTextState(messagesError.E0008("email"));
-                setIsSuccess(false);
-                setHidden(show);
+                showMethod(messagesError.E0008("Email"), show, false);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                setTextState(messagesSuccess.I0001);
-                setIsSuccess(true);
-                setHidden(show);
+                showMethod(messagesSuccess.I0001, show, true);
               });
               setTimeout(() => {
                 router.push("/auth/login");
@@ -161,16 +147,12 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            setTextState(messagesError.E4444);
-            setIsSuccess(false);
-            setHidden(show);
+            showMethod(messagesError.E4444, show, false);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        setTextState(messagesError.E4444);
-        setIsSuccess(false);
-        setHidden(show);
+        showMethod(messagesError.E4444, show, false);
       });
   }
 
