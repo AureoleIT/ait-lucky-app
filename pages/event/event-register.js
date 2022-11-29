@@ -17,9 +17,10 @@ export default function EventRegister() {
     const [isSuccess, setIsSuccess] = useState(false);
 
     // ref
-    const nameEventRef = useRef()
-    const eventDetailRef = useRef()
-    const limitUserRef = useRef()
+    const nameEventRef = useRef() // name event value
+    const eventDetailRef = useRef() // event detail value
+    const limitUserRef = useRef() // limit user number
+    const checkBoxRef = useRef() // checkbox value (checked or not)
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -97,6 +98,7 @@ export default function EventRegister() {
                         </div>
                         <div className="w-[30%] flex justify-end items-center">
                             <input
+                                ref={checkBoxRef}
                                 type="checkbox"
                                 id="accept"
                                 className="appearance-none w-9 focus:outline-none checked:bg-blue-300 h-5 bg-[#ccc] rounded-full before:inline-block before:rounded-full before:bg-blue-500 before:h-4 before:w-4 checked:before:translate-x-full shadow-inner transition-all duration-300 before:ml-0.5"
