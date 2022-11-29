@@ -31,17 +31,18 @@ export default function Login() {
   const [check, setCheck] = useState(false);
   const dbRef = ref(db);
 
+  function showMethod(message, isShow, isTrue){
+    setTextState(message);
+    setIsSuccess(isTrue);
+    setHidden(isShow);
+  }
   function loginSubmit(name, pass) {
     if (name === "" || pass === "") {
-      setTextState("Please fill all the cells below");
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0004, show, false)
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      setTextState(messagesError.E0004);
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0005("username"), show, false)
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -82,14 +83,10 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            setTextState(messagesError.E0010);
-            setIsSuccess(false);
-            setHidden(show);
+            showMethod(messagesError.E0010, show, false);
             return;
           }
-          setTextState(messagesSuccess.I0002);
-          setIsSuccess(true);
-          setHidden(show);
+          showMethod(messagesSuccess.I0002, show, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
@@ -98,9 +95,7 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        setTextState(messagesError.E4444);
-        setIsSuccess(false);
-        setHidden(show);
+        showMethod(messagesError.E4444, show, false)
       });
   }
   const closePopup = () => {
