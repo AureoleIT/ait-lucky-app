@@ -85,8 +85,9 @@ export default function LuckySpinAdmin() {
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
-
+    
     // Firebase
+    const dbRef = ref(db)
     const eventRewardsRef = ref(db, "event_rewards");
 
     onValue(eventRewardsRef, (snapshot) => {
@@ -99,9 +100,37 @@ export default function LuckySpinAdmin() {
         return 0;
     }
 
+    const setSpinningFB = () => {
+        get(child(dbRef, 'event/1')).then((snapshot) => {
+            const record = snapshot.val() ?? [];
+
+            update(ref(db, 'event/' + 1),
+                        {
+                            isSpinning: !record.isSpinning
+                        });
+        })
+    }
+
+    // Lấy dữ liệu lần đầu của event
     useEffect(() => {
-        // Sắp xếp danh sách giải thưởng
-        setRewardList([...rewardList.sort(compare)]);
+        get(child(dbRef, "event_rewards")).then((snapshot) => {
+            const record = snapshot.val() ?? [];
+            const values = Object.values(record);
+            setRewardList(values);
+        })
+
+        if (rewardList[rewardChosing]) setIDRewardChosing(rewardList[rewardChosing].idReward);
+
+        // Cập nhật dữ liệu realtime của event
+        return onValue(eventRewardsRef, (snapshot) => {
+            const data = snapshot.val();
+            const values = Object.values(data);
+
+            if (snapshot.exists()) {
+                setRewardList(values);
+                return;
+            }
+        });
     }, [])
     
     // Firebase
