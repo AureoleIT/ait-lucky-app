@@ -3,6 +3,7 @@ import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
 import { auth } from "src/firebase";
+import UserAvatar from "./UserAvatar";
 
 function MenuItem(props) {
     const router = useRouter()
@@ -21,6 +22,7 @@ export default function Menu(props) {
     const [showMenu, setShowMenu] = [props.showMenu, props.setShowMenu]
     const user = props.user
     const router = useRouter()
+    const defaultAvatar = "http://www.gravatar.com/avatar/?d=retro&s=32"
     
     const RenderMenu = MenuList.map((item, index) => {
         return (
@@ -45,7 +47,7 @@ export default function Menu(props) {
                     <CloseIcon />
                 </button>
                 <div className="flex gap-x-4 items-center mt-6">
-                    <img src={!user ? "http://www.gravatar.com/avatar/?d=retro&s=32" : user.photoURL} className="min-w-[50px] max-w-[65px] min-h-[50px] max-h-[65px] rounded-full object-cover" />
+                    <UserAvatar avatar={!user ? defaultAvatar : user.photoURL} width={40} height={40} />
                     <div className="font-[900]">
                         <h3 className="text-[14px]">{user.displayName}</h3>
                         <p className="text-[#656565] text-[12px]">{user.email}</p>
