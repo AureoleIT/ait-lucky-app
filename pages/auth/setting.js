@@ -1,5 +1,5 @@
 import Auth from "layouts/Auth.js";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -56,15 +56,18 @@ export default function Setting() {
     }
 
     function handleSaveInfo(name) {
-        console.log(name);
-        console.log(isEmpty(name))
         //validation
+        if (hasWhiteSpaceAndValidLength(name)) {
+            console.log(messagesError.E0005("Tên đăng nhập"));
+        }
+
         if (isEmpty(name)) {
             setTextState(messagesError.E0001("tên đăng nhập"));
             setIsSuccess(false);
             setHidden(show);
             return;
         }
+
         //update 
         const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
         onValue(que, (snapshot) => {
@@ -75,7 +78,7 @@ export default function Setting() {
                     {
                         name: name
                     }).then(() => {
-                        setTextState(messagesSuccess.I0002);
+                        setTextState(messagesSuccess.I0003);
                         setIsSuccess(true);
                         setHidden(show);
                     })

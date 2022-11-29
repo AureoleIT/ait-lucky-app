@@ -5,25 +5,57 @@ import BgBlueButton from "public/shared/BgBlueButton";
 import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
-import { getDatabase, ref, child, get } from "firebase/database";
-import { auth } from "src/firebase";
 import Link from "next/link";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import { useAuth } from "src/context/AuthContext";
+import {
+  getDatabase,
+  ref,
+  query,
+  orderByChild,
+  equalTo,
+  update,
+  onValue,
+  DataSnapshot
+} from "firebase/database";
+import { hasWhiteSpaceAndValidLength, isEmpty, isEmail } from "public/util/functions";
+import { messagesError, messagesSuccess } from "public/util/messages";
 export default function ForgotPassword() {
-  const [name, setName] = useState("");
+  const authContext = useAuth();
   const db = getDatabase();
+  const [email, setEmail] = useState("");
 
-  const handleForgot = (event) => {
-    event.preventDefault();
 
-    const dbRef = ref(db);
+  const handleForgot = (email) => {
+    // validation
+    if (isEmpty(email)) {
+      console.log(messagesError.E0001("Email"));
+    }
 
-    get(child(dbRef, "users/")).then((snapshot) => {
-      const record = snapshot.val() ?? [];
-      const values = Object.values(record);
+    if (isEmail(email)) {
+      console.log(messagesError.E0003("Email"));
+    }
 
-      console.log(values);
-    });
+    if (hasWhiteSpaceAndValidLength(email)) {
+      console.log(messagesError.E0005("Email"));
+    }
+
+    try {
+      const que = query(ref(db, "users"), orderByChild("email"), equalTo(authContext.currentUser.eamil));
+      onValue(que, (snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+
+        if (values.length == 0) {
+          console.log(messagesError.E0009);
+        } else {
+          console.log(messagesSuccess.I0003);
+          authContext.resetPassword(email);
+        }
+      })
+    } catch (error) {
+      console.log(messagesError.E1002);
+    }
   };
 
   return (
@@ -35,9 +67,9 @@ export default function ForgotPassword() {
           </div>
           <div className="w-3/4 max-w-md mx-0">
             <AuthInput
-              content={"Tên đăng nhập/Email"}
+              content={"Email"}
               type={"email"}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               leftColor={LEFT_COLOR}
               rightColor={RIGHT_COLOR}
             />
@@ -46,7 +78,7 @@ export default function ForgotPassword() {
             <BgBlueButton
               content="GỬI"
               onClick={() => {
-                handleForgot();
+                handleForgot(email);
               }}
             />
             <Link href={"/auth/login"} className="my-0">

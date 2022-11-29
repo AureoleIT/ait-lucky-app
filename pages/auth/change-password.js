@@ -27,13 +27,27 @@ export default function ChangePassword() {
 
   const changePassword = () => {
     if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
-      console.log(1);
+      console.log(messagesError.E0004);
       return;
     }
 
+    if (enoughNumCountPass(oldPass))
+    {
+      console.Console(messagesError.E0005("mật khẩu cũ"))
+    }
+
+    if (enoughNumCountPass(newPass))
+    {
+      console.Console(messagesError.E0005("mật khẩu mới"))
+    }
+
+    if (enoughNumCountPass(repeatPass))
+    {
+      console.Console(messagesError.E0005("nhập lại mật khẩu"))
+    }
+
     if (newPass != repeatPass) {
-      //message error
-      console.log(2);
+      console.log(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"));
       return;
     }
 
@@ -44,7 +58,7 @@ export default function ChangePassword() {
       const values = Object.values(record);
 
       if (values[0].password != oldPass) {
-        //message error
+        console.log(messagesError.E0011("Mật khẩu cũ"));
         return;
       }
 
@@ -52,9 +66,9 @@ export default function ChangePassword() {
         {
           password: newPass
         }).then(() => {
-
+          console.log(messagesSuccess.I0003);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(messagesError.E1002));
     })
   }
 
@@ -106,7 +120,7 @@ export default function ChangePassword() {
           type={"password"}
           onChange={(e) => setRepeat(e.target.value)}
         />
-        <BgBlueButton content={"LƯU"} onClick={handleSaveInfo} />
+        <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
       </div>
     </section>
   );
