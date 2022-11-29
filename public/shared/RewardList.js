@@ -1,6 +1,6 @@
 // layout for page
 import Auth from "layouts/Auth.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
@@ -16,8 +16,18 @@ import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 import PlayerList from "./PlayerList";
 
-export default function RewardList({listReward, showRemain = false, eventPaticipant, showAwardedPaticipant = false}) {
+export default function RewardList({listReward, showRemain = false, eventPaticipant}) {
     const rewardList = [].concat(listReward);
+
+    function compare(a, b) {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+
+    useEffect(() => {
+        rewardList.sort(compare);
+    }, [])
 
     const getGiftsFromReward = (reward) => {
         return (
@@ -87,7 +97,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         <>
             <div className="overflow-auto h-full">
                 {listRewardShowcase}
-                {showAwardedPaticipant && eventPaticipant !== undefined?awradedPaticipantShowcase():<></>}
+                {eventPaticipant !== undefined?awradedPaticipantShowcase():<></>}
             </div>
         </>
     );

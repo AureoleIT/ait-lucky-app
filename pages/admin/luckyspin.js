@@ -1,26 +1,19 @@
 // layout for page
-import Auth from "layouts/Auth.js";
 import React, { useEffect, useState } from "react";
 import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
 // Components
-import Logotic from "public/shared/Logotic";
-import AuthInput from "public/shared/AuthInput";
-import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
-import BgWhiteButton from "public/shared/BgWhiteButton";
-import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 import Spin from "public/shared/Spin";
-import RewardList from "public/shared/RewardList";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
-import ConfirmButton from "public/shared/ConfirmButton";
-import CloseButton from "public/shared/CloseButton";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
+// firebase
+import { auth, db } from "../../src/firebase";
+import { getDatabase, ref, set, child, get, onValue } from "firebase/database";
 
 // DB test
 const listPlayer = [
@@ -55,47 +48,48 @@ const listPlayer = [
         playerAvt: "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzJ8fGh1bWFufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
     }
 ];
+
 const listReward = [
     {
-        id: "",
+        idReward: "01",
         event_id: "",
         description: "Giải Đặc Biệt",
         quantity: 1,
         quantity_remain: 1,
-        sort_no: 0,
+        sortNo: 3,
         img_url: [
             "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8aG91c2V8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
         ]
     }, {
-        id: "",
+        idReward: "02",
         event_id: "",
         description: "Giải Nhất",
         quantity: 1,
         quantity_remain: 1,
-        sort_no: 0,
+        sortNo: 2,
         img_url: [
             "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
             "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
         ]
     }, {
-        id: "",
+        idReward: "03",
         event_id: "",
         description: "Giải Nhì",
         quantity: 1,
         quantity_remain: 1,
-        sort_no: 0,
+        sortNo: 1,
         img_url: [
             "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cGhvbmV8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60",
             "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8bGFwdG9wc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
             "https://images.unsplash.com/photo-1545454675-3531b543be5d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3BlYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
         ]
     }, {
-        id: "",
+        idReward: "04",
         event_id: "",
         description: "Giải Ba",
         quantity: 1,
         quantity_remain: 1,
-        sort_no: 0,
+        sortNo: 0,
         img_url: [
             "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
             "https://media.istockphoto.com/id/1307086567/photo/generic-modern-suv-car-in-concrete-garage.jpg?b=1&s=170667a&w=0&k=20&c=m2g-wU5m2tbqC7C_nWAgu7txHzeEnXKSFuby01V4dtI=",
@@ -105,11 +99,17 @@ const listReward = [
     }
 ];
 
+const EventID = "EV20221011";
+
 export default function LuckySpinAdmin() {
-    // Giải thưởng đang được chọn
-    const [rewardChosing, setRewardChosing] = useState(0);
     // Danh sách giải thưởng
     const [rewardList, setRewardList] = useState(listReward);
+    // Index giải thưởng đang được chọn
+    const [rewardChosing, setRewardChosing] = useState(0);
+    // ID của giải thưởng được chọn
+    const [idRewardChosing, setIDRewardChosing] = useState(rewardList[rewardChosing].idReward);
+    // Danh sách phần quà còn lại
+    const [remainRewardList, setRemainRewardList] = useState(rewardList);
     // Danh sách người chơi
     const [playerList, setPlayerList] = useState(listPlayer);
     // Danh sách người chơi quay thưởng
@@ -118,22 +118,59 @@ export default function LuckySpinAdmin() {
     const [editedPlayerList, setEditedPlayerList] = useState(remainPlayerList);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
+    // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
+
+    // Firebase
+    const eventRewardsRef = ref(db, "event_rewards");
+
+    onValue(eventRewardsRef, (snapshot) => {
+        const data = snapshot.val();
+    });
     
+    function compare(a, b) {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+
+    useEffect(() => {
+        // Sắp xếp danh sách giải thưởng
+        setRewardList([...rewardList.sort(compare)]);
+    }, [])
+    
+    // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
         // Làm đầy danh sách
-        console.log(editedPlayerList);
-        if (editedPlayerList.length === 0) return;
+        if (editedPlayerList.length === 0) {
+            setPlayerShowList(editedPlayerList.slice(0, 9))
+            return;
+        };
         if (editedPlayerList.length < 9 && remainPlayerList.length < 9)
             setEditedPlayerList((list) => [...list, ...remainPlayerList]);
         else setPlayerShowList(editedPlayerList.slice(0, 9));
     }, [editedPlayerList])
 
+    // Điều chỉnh danh sách người chơi quay thưởng
     useEffect(() => {
         setEditedPlayerList([...remainPlayerList]);
     }, [remainPlayerList])
-    
+
+    // Điều chỉnh danh sách giải thưởng còn lại
+    useEffect(() => {
+        if (remainRewardList.filter((reward) => reward.quantity_remain <= 0).length > 0)
+            setRemainRewardList((list) => list.filter((reward) => reward.quantity_remain > 0));
+        setRewardChosing(0);
+        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
+    }, [remainRewardList])
+
+    // Cập nhật danh sách phần trưởng còn lại
+    useEffect(() => {
+        setRemainRewardList([...rewardList]);
+    }, [rewardList])
+
     const spining = () => {
+        if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
         // ngăn sự kiện khi quay thưởng
         setSpinClicked(true);
         // Random đối tượng
@@ -151,7 +188,7 @@ export default function LuckySpinAdmin() {
 
         const timeoutPhase1 = setTimeout(() => {
             clearInterval(phase1);
-            setPlayerShowList([...editedPlayerList.slice(-4), ...editedPlayerList, ...editedPlayerList.slice(0, 4)].slice(awaredNumber - 4, awaredNumber + 5))
+            setPlayerShowList([...editedPlayerList.slice(-4), ...editedPlayerList, ...editedPlayerList.slice(0, 4)].slice(awaredNumber, awaredNumber + 9))
             Array.from({length: 9}, (_, index) => index).forEach(idx => {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
@@ -165,11 +202,14 @@ export default function LuckySpinAdmin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
-                setSpinClicked(false);
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
+                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
                     setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
+                    rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantity_remain -= 1;
+                    setRewardList((list) => [...list]);
+                    setSpinClicked(false);
                 }, 1000)
             }, 2000)
 
@@ -182,9 +222,11 @@ export default function LuckySpinAdmin() {
   };
 
     const awardNotification = (
-        <div className="flex flex-col items-center text-center">
-            <p>Chúc mừng</p>
-            <p id="awaredPlayerName"></p>
+        <div className="flex flex-col items-center text-center text-[#004599]">
+            <p className="font-semibold">Chúc mừng</p>
+            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+            <p className="font-semibold">đã nhận được giải:</p>
+            <p className="font-[900] text-lg" id="awaredRewardName"></p>
         </div>
     )
 
@@ -221,7 +263,7 @@ export default function LuckySpinAdmin() {
                                     <button type="button" className="relative w-full cursor-default rounded-md border border-gray-300 bg-white p-2 shadow-sm border-none sm:text-sm outline-0"
                                         aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label"
                                         onClick={!spinClicked?toggleSelectMenu:() => {}}>
-                                        <p className="text-[#004599] font-bold text-base text-center w-full">{rewardList[rewardChosing].description}</p>
+                                        <p className="text-[#004599] font-bold text-base text-center w-full">{remainRewardList.length > 0?remainRewardList[rewardChosing].description:"KHÔNG CÓ"}</p>
                                         <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
                                                 <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clipRule="evenodd" />
@@ -231,22 +273,22 @@ export default function LuckySpinAdmin() {
                                     <ul className="absolute z-10 mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm hidden"
                                         tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3" id="selectRewardPopUp">
                                         {
-                                            rewardList.map((reward, idx) => {
+                                            remainRewardList.length>0?remainRewardList.map((reward, idx) => {
                                                 if (reward.quantity_remain === 0) return;
                                                 return (
                                                     <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-"+idx} role="option"
                                                         style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
-                                                        onClick={() => {setRewardChosing(idx), toggleSelectMenu()}}>
+                                                        onClick={() => {setRewardChosing(idx), setIDRewardChosing(remainRewardList[idx].idReward), toggleSelectMenu()}}>
                                                         <span className="ml-3 block truncate">{reward.description}</span>
                                                         <span className="ml-3 block truncate">Số lượng: {reward.quantity_remain}</span>
                                                     </li>
                                                 )
-                                            })
+                                            }):<></>
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <p className="w-full font-bold text-[#004599] text-center mt-2">Số lượng: {rewardList[rewardChosing].quantity_remain}</p>
+                            <p className="w-full font-bold text-[#004599] text-center mt-2">Số lượng: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantity_remain:0}</p>
                             <BgBlueButton content={"QUAY THƯỞNG"} onClick={!spinClicked?spining:() => {}} />
                         </div>
                     </div>
@@ -256,7 +298,7 @@ export default function LuckySpinAdmin() {
                             <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <CurrentEventDetail listPlayer={playerList} listReward={listReward} />
+                    <CurrentEventDetail listPlayer={playerList} listReward={listReward} showAwardedPaticipant={true} />
                     <OverlayBlock childDiv={<LuckySpinSetting />}  id={"settingOverlay"} />
                     <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} />
                 </div>
