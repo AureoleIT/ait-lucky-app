@@ -17,7 +17,7 @@ import { useMemo } from "react/cjs/react.development";
 import PlayerList from "./PlayerList";
 
 export default function RewardList({listReward, showRemain = false, eventPaticipant}) {
-    const rewardList = [].concat(listReward);
+    const rewardList = listReward;
 
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
@@ -29,18 +29,18 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         rewardList.sort(compare);
     }, [])
 
-    const getGiftsFromReward = (reward) => {
+    const getIMGsFromReward = (reward) => {
         return (
             <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                 {
-                    reward.img_url.slice(0, 3).map((url, idx) => {
+                    reward.imgUrl.slice(0, 3).map((url, idx) => {
                         return (
                             <div key={idx} className="relative h-24 w-full flex">
                                 <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.description + idx}/>
                                 {
-                                    (reward.img_url.length > 3 && idx===2)?
+                                    (reward.imgUrl.length > 3 && idx===2)?
                                     <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
-                                        <p className="w-full text-center font-bold text-white text-4xl">+{reward.img_url.length -3}</p>
+                                        <p className="w-full text-center font-bold text-white text-4xl">+{reward.imgUrl.length -3}</p>
                                     </div>:
                                     <></>
                                 }
@@ -66,9 +66,9 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none">{reward.description}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">Số lượng: {showRemain?reward.quantity_remain: reward.quantity}</p>
+                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">Số lượng: {showRemain?reward.quantityRemain: reward.quantity}</p>
                             </div>
-                            {getGiftsFromReward(reward)}
+                            {getIMGsFromReward(reward)}
                         </div>
                     )
                 })
