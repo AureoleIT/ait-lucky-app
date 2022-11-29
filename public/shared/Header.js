@@ -15,7 +15,7 @@ export default function Header() {
   const [ userData, setUserData ] = useState({})
 
   const context = auth.onAuthStateChanged((user) => {//Hiện tại chỉ lưu thông tin của các user đăng nhập/đăng kí thông qua GG
-    setUserData(user);
+    if(user) setUserData(user);
   });
 
   function handleOpenMenu() {
