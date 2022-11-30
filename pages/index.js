@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useEffect, useState } from "react";
+import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
@@ -29,11 +29,11 @@ export default function Index() {
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
 
-  function showMethod(message, isShow, isTrue){
+  const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
     setHidden(isShow);
-  }
+  }, [])
 
   const onJoinClick = () => {
     if (isEmpty(pin)) {
