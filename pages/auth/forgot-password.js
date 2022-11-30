@@ -6,7 +6,6 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import Link from "next/link";
-import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { useAuth } from "src/context/AuthContext";
 import {
   getDatabase,
@@ -18,26 +17,42 @@ import {
   onValue,
   DataSnapshot
 } from "firebase/database";
-import { hasWhiteSpaceAndValidLength, isEmpty, isEmail } from "public/util/functions";
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import { successIcon, failIcon } from "public/util/popup";
+import OverlayBlock from "public/shared/OverlayBlock";
+import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 export default function ForgotPassword() {
   const authContext = useAuth();
   const db = getDatabase();
   const [email, setEmail] = useState("");
 
+  //validation const
+  const [textState, setTextState] = useState("");
+  const [isHidden, setIsHidden] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const handleForgot = (email) => {
     // validation
     if (isEmpty(email)) {
-      console.log(messagesError.E0001("Email"));
+      setTextState(messagesError.E0001("Email"));
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
 
     if (!isEmail(email)) {
-      console.log(messagesError.E0003("Email"));
+      setTextState(messagesError.E0003("Email"));
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
 
     if (hasWhiteSpaceAndValidLength(email)) {
-      console.log(messagesError.E0005("Email"));
+      setTextState(messagesError.E0005("Email"));
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
 
     try {
@@ -47,17 +62,57 @@ export default function ForgotPassword() {
         const values = Object.values(record);
 
         if (values.length == 0) {
-          console.log(messagesError.E0009);
+          setTextState(messagesError.E0009);
+          setIsSuccess(false);
+          setIsHidden(false);
+          return;
         } else {
-          console.log(messagesSuccess.I0003);
+          setTextState(messagesSuccess.I0003);
+          setIsSuccess(false);
+          setIsHidden(true);
           authContext.resetPassword(email);
+          return;
         }
       })
     } catch (error) {
-      console.log(error)
       console.log(messagesError.E1002);
+      setTextState(messagesError.E1002);
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
   };
+
+  // show popup
+  useEffect(() => {
+    console.log(isHidden)
+    if (isHidden == false) {
+      isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+      document.getElementById("textState").innerHTML = textState;
+      document.getElementById("forgotOverlay").classList.toggle('hidden');
+      const timer = setTimeout(() => {
+        setIsHidden(true);
+      }, 1)
+      return () => { clearTimeout(timer) }
+    }
+  }, [isHidden])
+
+
+  const popupNoti = () => {
+    return (
+      <div className="flex flex-col items-center">
+        <div className="text-center text-[#004599]">
+          <p className="font-[900] text-lg" id="textState"></p>
+        </div>
+        <img
+          id="imgPopup"
+          alt="success"
+          src={failIcon}
+          className="self-center w-12"
+        ></img>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -72,7 +127,7 @@ export default function ForgotPassword() {
               type={"email"}
               onChange={(e) => setEmail(e.target.value)}
               leftColor={LEFT_COLOR}
-              rightColor={RIGHT_COLOR}
+              rightColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
             />
           </div>
           <div className="w-3/4 max-w-md">
@@ -98,6 +153,7 @@ export default function ForgotPassword() {
               href="/auth/register"
             />
           </div>
+          <OverlayBlock childDiv={popupNoti()} id={"forgotOverlay"} />
         </div>
       </section>
     </>
