@@ -7,6 +7,10 @@ import Header from "public/shared/Header";
 import { failIcon, hidden, show, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import CheckBox from "public/shared/CheckBox";
+import { db } from "src/firebase";
+import { set, get, ref, child } from "firebase/database";
+const uuid = require("uuid");
+const dbRef = ref(db);
 
 export default function EventRegister() {
   // router
@@ -18,17 +22,17 @@ export default function EventRegister() {
   const [isHidden, setHidden] = useState(hidden);
   const [isSuccess, setIsSuccess] = useState(false);
 
-    // ref
-    const nameEventRef = useRef() // name event value
-    const eventDetailRef = useRef() // event detail value
-    const limitUserRef = useRef() // limit user number
-    const checkBoxRef = useRef() // checkbox value (checked or not)
+  // ref
+  const nameEventRef = useRef(); // name event value
+  const eventDetailRef = useRef(); // event detail value
+  const limitUserRef = useRef(); // limit user number
+  const checkBoxRef = useRef(); // checkbox value (checked or not)
 
-    const contentCSS = {
-        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-    };
+  const contentCSS = {
+    background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+  };
 
   const closePopup = (e) => {
     setHidden(hidden);
