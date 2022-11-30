@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref } from "@firebase/database";
 import "firebase/compat/auth";
 import "firebase/auth";
-import "firebase/storage";
+import { getStorage } from "firebase/storage";
 import "firebase/analytics";
 import "firebase/performance";
 import { getAuth } from "firebase/auth";
