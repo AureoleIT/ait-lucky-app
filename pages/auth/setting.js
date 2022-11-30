@@ -28,6 +28,7 @@ import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
+import { setEmitFlags } from "typescript";
 
 export default function Setting() {
     //firebase
