@@ -21,6 +21,7 @@ export default function Info() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+  var [player, setPlayer] = useState({});
 
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
@@ -43,6 +44,7 @@ export default function Info() {
         setTextState(messagesSuccess.I0009);
         setIsSuccess(true);
         setHidden(show);
+        setPlayer(newParticipant)
         setTimeout(() => {
           router.push("/event/countdown-checkin");
         }, 2000);
@@ -53,6 +55,11 @@ export default function Info() {
         setHidden(show);
       });
   };
+
+
+  /* Export current player login for another access */
+  module.exports = { player }
+  
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);

@@ -29,6 +29,7 @@ export default function Login() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
+  var [user, setUser] = useState({});
   const dbRef = ref(db);
 
 
@@ -58,6 +59,7 @@ export default function Login() {
         showMethod(messagesError.E0009, show, false)
         return;
       }
+      setUser(values.find(item => item.name === name || item.email === name));
 
       showMethod(messagesSuccess.I0002, show, true)
       //Go to admin dashboard
@@ -93,6 +95,10 @@ export default function Login() {
         showMethod(messagesError.E4444, show, false)
       });
   }
+
+  /* Export current user login for another access */
+  module.exports = { user }
+
   const closePopup = () => {
     setHidden(hidden);
   };
