@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { React, useCallback, useState } from "react";
+import { React, useCallback, useMemo, useState } from "react";
 import ConfirmButton from "public/shared/ConfirmButton";
 import {
   BG_WHITE,
@@ -39,11 +39,13 @@ export default function Register() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
-  function showMethod(message, isShow, isTrue){
+
+  const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
     setHidden(isShow);
-  }
+  }, [])
+
   function signUpSubmit(name, email, password) {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
@@ -90,14 +92,15 @@ export default function Register() {
         showMethod(messagesError.E0007("username", "email"), show, false);
         return;
       }
-      set(ref(db, `users/${id}/`), {
+      var newUser = {
         userId: id,
         name,
         email,
         password,
         pic: "",
         createAt: new Date().getTime(),
-      }).then(() => {
+      }
+      set(ref(db, `users/${id}/`), newUser).then(() => {
         showMethod(messagesSuccess.I0001, show, true);
       });
 

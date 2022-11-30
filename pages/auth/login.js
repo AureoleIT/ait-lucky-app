@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Auth from "layouts/Auth.js";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -31,11 +31,13 @@ export default function Login() {
   const [check, setCheck] = useState(false);
   const dbRef = ref(db);
 
-  function showMethod(message, isShow, isTrue){
+
+  const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
     setHidden(isShow);
-  }
+  }, [])
+
   function loginSubmit(name, pass) {
     if (name === "" || pass === "") {
       showMethod(messagesError.E0004, show, false)
