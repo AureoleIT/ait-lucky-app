@@ -33,10 +33,10 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         return (
             <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                 {
-                    reward.imgUrl.slice(0, 3).map((url, idx) => {
+                    reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
                         return (
                             <div key={idx} className="relative h-24 w-full flex">
-                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.description + idx}/>
+                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}/>
                                 {
                                     (reward.imgUrl.length > 3 && idx===2)?
                                     <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
@@ -46,7 +46,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                                 }
                             </div>
                         )
-                    })
+                    }):<></>
                 }
             </div>
         )
