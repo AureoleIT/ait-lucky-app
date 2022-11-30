@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { db } from "src/firebase";
-import { ref, onValue, 
-  // child, get 
+import {
+  ref,
+  onValue,
+  query,
+  orderByChild,
+  equalTo,
+  // child, get
 } from "firebase/database";
 
 export default function EventList() {
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
+
+  const router = useRouter();
+  const id = String(router.query.id);
 
   // useEffect(() => {
   //   get(child(ref(db), "event/")).then((snapshot) => {
@@ -22,16 +31,20 @@ export default function EventList() {
   //     }
   //   });
   // }, []);
+  const que = query(ref(db, "event"), orderByChild("createBy"), equalTo(id));
 
   useEffect(() => {
-    onValue(ref(db, "event/"), (snapshot) => {
+    onValue(que, (snapshot) => {
       setEvents([]);
+      console.log(snapshot.val());
       const data = snapshot.val();
       if (data !== null) {
         setEvents(Object.values(data));
       }
     });
+  
   }, []);
+  
 
   return (
     <>
@@ -67,7 +80,7 @@ export default function EventList() {
                     <div key={index} className="flex flex-col">
                       <EventButton
                         title={item.title}
-                        id={item.eventId}
+                        id={item.pinCode}
                         userJoined={item.userJoined}
                         status={item.status}
                       />

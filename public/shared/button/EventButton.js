@@ -9,9 +9,13 @@ export default function EventButton(props) {
             {props.title}
           </div>
           <div className="text-xs flex flex-col text-right w-1/2">
-            {props.id ? <div>{props.id}</div> : <></>}
-            {props.user_joined ? (
-              <div>{props.user_joined} người tham gia</div>
+            {props.id !== null ? (
+              <div className="truncate">{props.id}</div>
+            ) : (
+              <></>
+            )}
+            {props.userJoined !== null ? (
+              <div>{props.userJoined} người tham gia</div>
             ) : (
               <></>
             )}
