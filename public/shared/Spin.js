@@ -54,15 +54,20 @@ export default function Spin({listPlayer}) {
             <div className="animate-move-down-0 animate-move-down-1 animate-move-down-2 animate-move-down-3 animate-move-down-4 animate-move-down-5 animate-move-down-6 animate-move-down-7" />
             <div className="animate-slow-move-down-0 animate-slow-move-down-1 animate-slow-move-down-2 animate-slow-move-down-3 animate-slow-move-down-4 animate-slow-move-down-5 animate-slow-move-down-6 animate-slow-move-down-7" />
             {
-                Array.from({length: (listPlayer.length>=9 ? 9 : listPlayer.length)}, (_, index) => index).map(idx => {
-
+                Array.from({length: 9}, (_, index) => index).map(idx => {
+                    
                     return (
                         <div key={idx} className="h-0" style={cssSet[idx]} id={"spin-idx-"+idx}>
                             <div className="bg-[#E9E9E9] h-28 -translate-y-[50%] flex items-center rounded-lg shadow-[0_0_10px_0_rgba(0,0,0,0.25)] py-4 px-6 gap-2">
-                                <img className="h-20 w-20 object-cover rounded-full border-1"
-                                    src={listPlayer[idx].playerAvt}
-                                    alt={listPlayer[idx].playerName} />
-                                <p className="text-center grow font-bold text-[20px]">{listPlayer[idx].playerName}</p>
+                                {
+                                    listPlayer.length >= 9 &&
+                                    <>
+                                        <img className="h-20 w-20 object-cover rounded-full border-1"
+                                            src={listPlayer[idx].playerAvt}
+                                            alt={listPlayer[idx].playerName} />
+                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].playerName}</p>
+                                    </>
+                                }
                             </div>
                         </div>
                     )
