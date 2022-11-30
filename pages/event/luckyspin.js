@@ -50,7 +50,7 @@ const listPlayer = [
     }
 ];
 
-const EventID = "EV20221011";
+const EventID = "EV20221101";
 
 export default function LuckySpin() {
     // Danh sách giải thưởng
@@ -71,6 +71,8 @@ export default function LuckySpin() {
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
+    // Index người trúng thưởng
+    const [lastAwardedPlayerIndex, setLastAwardedPlayerIndex] = useState(0);
     
     // Firebase
     const dbRef = ref(db)
@@ -82,34 +84,30 @@ export default function LuckySpin() {
     }
 
     // Lấy dữ liệu lần đầu của event rewards
-    useEffect(() => {
-        get(child(dbRef, "event_rewards")).then((snapshot) => {
-            const record = snapshot.val() ?? [];
-            const values = Object.values(record);
-            setRewardList(values);
-        })
-    }, [])
+    // useEffect(() => {
+    //     get(child(dbRef, "event_rewards")).then((snapshot) => {
+    //         const record = snapshot.val() ?? [];
+    //         const values = Object.values(record);
+    //         setRewardList(values);
+    //     })
+    // }, [])
 
     useEffect(() => {
         // Cập nhật dữ liệu realtime của event reward
         return onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             const eventRewards = Object.values(data['event_rewards']);
-            const eventsDetail = Object.values(data["event"]);
-            const isSpining = eventsDetail[0].isSpinning;
-            const rewardChosingIndex = eventsDetail[0].rewardChosingIndex;
-            const lastAwardedPIndex = eventsDetail[0].lastAwardedPIndex;
+            eventRewards.sort(compare);
+            const eventData = data["event"][EventID]['playingData'];
+            const isSpining = eventData.isSpinning;
+            const rewardChosingIndex = eventData.rewardChosingIndex;
+            const lastAwardedPIndex = eventData.lastAwardedPIndex;
             setSpinClicked(isSpining);
 
             if (snapshot.exists()) {
-                setRewardList(eventRewards);
-                setRewardChosing(rewardChosingIndex);
-                
-                if (isSpining && !spinClicked) {
-                    console.log("1");
-                    spining()
-                };
-                return;
+                setRewardList(eventRewards.filter((val) => val.eventId === EventID));
+                setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
+                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
             }
         });
     }, [rewardList])
@@ -132,24 +130,20 @@ export default function LuckySpin() {
     }, [remainPlayerList])
 
     // Điều chỉnh danh sách giải thưởng còn lại
-    useEffect(() => {
-        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
-            {
-                setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
-            }
-        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-    }, [remainRewardList])
+    // useEffect(() => {
+    //     if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
+    //         {
+    //             setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
+    //         }
+    //     setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
+    // }, [remainRewardList])
 
     // Cập nhật danh sách phần trưởng còn lại
-    useEffect(() => {
-        rewardList.sort(compare);
-        setRemainRewardList([...rewardList]);
-    }, [rewardList])
+    // useEffect(() => {
+    //     setRemainRewardList([...rewardList]);
+    // }, [rewardList])
 
     const spining = () => {
-        // Random đối tượng
-        const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -160,7 +154,7 @@ export default function LuckySpin() {
         
         const timeoutPhase1 = setTimeout(() => {
             clearInterval(phase1);
-            setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(randomNum, randomNum + 18))
+            setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(lastAwardedPlayerIndex, lastAwardedPlayerIndex + 18))
             Array.from({length: 9}, (_, index) => index).forEach(idx => {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
@@ -177,10 +171,9 @@ export default function LuckySpin() {
                 })
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
+                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedPlayerIndex].playerName;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
-                    setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
-                    rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantityRemain -= 1;
+                    setRemainPlayerList((list) => list.filter((player, idx) => idx !== lastAwardedPlayerIndex));
                     setRewardList((list) => [...list]);
                     setSpinClicked(false);
                 }, 1000)

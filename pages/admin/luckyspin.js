@@ -14,6 +14,7 @@ import LuckySpinSetting from "public/shared/LuckySpinSetting";
 // firebase
 import { auth, db } from "../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update } from "firebase/database";
+import EventDetail from "pages/event/event-detail";
 
 // DB test
 const listPlayer = [
@@ -49,7 +50,7 @@ const listPlayer = [
     }
 ];
 
-const EventID = "EV20221011";
+const EventID = "EV20221101";
 
 export default function LuckySpinAdmin() {
     // Danh sách giải thưởng
@@ -75,6 +76,7 @@ export default function LuckySpinAdmin() {
     const dbRef = ref(db)
     const eventRewardsRef = ref(db, "event_rewards");
 
+    // ------------------------------------------------ Function
     const compare = (a, b) => {
         if (a.sortNo > b.sortNo) return 1;
         if (b.sortNo > a.sortNo) return -1;
@@ -82,69 +84,11 @@ export default function LuckySpinAdmin() {
     }
 
     const setSpinningFB = (status) => {
-        update(ref(db, 'event/' + 1),
+        update(ref(db, 'event/' + EventID),
                         {
                             isSpinning: status
                         });
     }
-
-    // Lấy dữ liệu lần đầu của event rewards
-    useEffect(() => {
-        get(child(dbRef, "event_rewards")).then((snapshot) => {
-            const record = snapshot.val() ?? [];
-            const values = Object.values(record);
-            setRewardList(values);
-        })
-    }, [])
-
-    useEffect(() => {
-        if (!rewardList) {
-            return
-        }
-
-        if (rewardList[rewardChosing]) setIDRewardChosing(rewardList[rewardChosing].idReward);
-
-        // Cập nhật dữ liệu realtime của event reward
-        return onValue(eventRewardsRef, (snapshot) => {
-            const data = snapshot.val();
-            const eventRewards = Object.values(data);
-
-            if (snapshot.exists()) {
-                setRewardList(eventRewards);
-            }
-        });
-    }, [rewardList])
-    
-    // Điều chỉnh danh sách người chơi được điều chỉnh
-    useEffect(() => {
-        // Làm đầy danh sách
-        if (editedPlayerList.length === 0) {
-            setPlayerShowList(editedPlayerList.slice(0, 9))
-            return;
-        };
-        if (editedPlayerList.length < 9 && remainPlayerList.length < 9)
-            setEditedPlayerList((list) => [...list, ...remainPlayerList]);
-        else setPlayerShowList(editedPlayerList.slice(0, 9));
-    }, [editedPlayerList])
-
-    // Điều chỉnh danh sách người chơi quay thưởng
-    useEffect(() => {
-        setEditedPlayerList([...remainPlayerList]);
-    }, [remainPlayerList])
-
-    // Điều chỉnh danh sách giải thưởng còn lại
-    useEffect(() => {
-        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
-            setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
-        setRewardChosing(0);
-        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-    }, [remainRewardList])
-
-    // Cập nhật danh sách phần trưởng còn lại
-    useEffect(() => {
-        rewardList.sort(compare);
-        setRemainRewardList([...rewardList]);
-    }, [rewardList])
 
     const spining = () => {
         if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
@@ -154,6 +98,7 @@ export default function LuckySpinAdmin() {
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
         
         setSpinningFB(true);
+        updateFB('event/1', { lastAwardedPIndex: randomNum })
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -185,6 +130,7 @@ export default function LuckySpinAdmin() {
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
                     setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
+                    updateFB('event_rewards/'+idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
                     rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantityRemain -= 1;
                     setRewardList((list) => [...list]);
                     setSpinClicked(false);
@@ -203,11 +149,79 @@ export default function LuckySpinAdmin() {
         setRewardChosing(idx);
         setIDRewardChosing(remainRewardList[idx].idReward);
         toggleSelectMenu();
-        update(ref(db, 'event/' + 1),
+        update(ref(db, 'event/' + EventID),
             {
                 rewardChosingIndex: idx
             });
     }
+
+    const updateFB = (path, changeData) => {
+        update(ref(db, path), changeData);
+    }
+
+    // --------------------------------------- UseEffect
+
+    // // Lấy dữ liệu lần đầu của event rewards
+    // useEffect(() => {
+    //     get(child(dbRef, "event_rewards")).then((snapshot) => {
+    //         const record = snapshot.val() ?? [];
+    //         const values = Object.values(record);
+    //         setRewardList(values.filter((val) => val.eventId === EventID));
+    //     })
+    // }, [])
+
+    useEffect(() => {
+        if (!rewardList) {
+            return
+        }
+
+        // Cập nhật dữ liệu realtime của event reward
+        return onValue(dbRef, (snapshot) => {
+            const data = snapshot.val();
+            const eventRewards = Object.values(data['event_rewards']);
+            eventRewards.sort(compare);
+            const eventData = data["event"][EventID]['playingData'];
+            const isSpining = eventData.isSpinning;
+            const rewardChosingIndex = eventData.rewardChosingIndex;
+            const lastAwardedPIndex = eventData.lastAwardedPIndex;
+            setSpinClicked(isSpining);
+
+            if (snapshot.exists()) {
+                setRewardList(eventRewards.filter((val) => val.eventId === EventID));
+                setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
+                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+            }
+        });
+    }, [rewardList])
+    
+    // Điều chỉnh danh sách người chơi được điều chỉnh
+    useEffect(() => {
+        // Làm đầy danh sách
+        if (editedPlayerList.length === 0) {
+            setPlayerShowList(editedPlayerList.slice(0, 9))
+            return;
+        };
+        if (editedPlayerList.length < 9 && remainPlayerList.length < 9)
+            setEditedPlayerList((list) => [...list, ...remainPlayerList]);
+        else setPlayerShowList(editedPlayerList.slice(0, 9));
+    }, [editedPlayerList])
+
+    // Điều chỉnh danh sách người chơi quay thưởng
+    useEffect(() => {
+        setEditedPlayerList([...remainPlayerList]);
+    }, [remainPlayerList])
+
+    // Điều chỉnh danh sách giải thưởng còn lại
+    useEffect(() => {
+        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
+            setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
+        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
+    }, [remainRewardList])
+
+    // Cập nhật danh sách phần trưởng còn lại
+    useEffect(() => {
+       setRemainRewardList([...rewardList]);
+    }, [rewardList])
 
     const awardNotification = (
         <div className="flex flex-col items-center text-center text-[#004599]">
@@ -251,7 +265,7 @@ export default function LuckySpinAdmin() {
                                     <button type="button" className="relative w-full cursor-default rounded-md border border-gray-300 bg-white p-2 shadow-sm border-none sm:text-sm outline-0"
                                         aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label"
                                         onClick={!spinClicked?toggleSelectMenu:() => {}}>
-                                        <p className="text-[#004599] font-bold text-base text-center w-full">{remainRewardList.length > 0?remainRewardList[rewardChosing].description:"KHÔNG CÓ"}</p>
+                                        <p className="text-[#004599] font-bold text-base text-center w-full">{remainRewardList.length > 0?remainRewardList[rewardChosing].nameReward:"KHÔNG CÓ"}</p>
                                         <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
                                                 <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clipRule="evenodd" />
