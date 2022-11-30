@@ -17,7 +17,7 @@ import { useMemo } from "react/cjs/react.development";
 import PlayerList from "./PlayerList";
 
 export default function RewardList({listReward, showRemain = false, eventPaticipant}) {
-    const rewardList = listReward;
+    const rewardList = [...listReward];
 
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
