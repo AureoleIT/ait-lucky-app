@@ -17,11 +17,17 @@ export default function ForgotPassword() {
     const dbRef = ref(db);
 
     if (!isEmail(email)) {
-      console.log(messagesError.E0003("Email"));
+      setTextState(messagesError.E0003("Email"));
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
 
     if (hasWhiteSpaceAndValidLength(email)) {
-      console.log(messagesError.E0005("Email"));
+      setTextState(messagesError.E0005("Email"));
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
 
     try {
@@ -31,17 +37,57 @@ export default function ForgotPassword() {
         const values = Object.values(record);
 
         if (values.length == 0) {
-          console.log(messagesError.E0009);
+          setTextState(messagesError.E0009);
+          setIsSuccess(false);
+          setIsHidden(false);
+          return;
         } else {
-          console.log(messagesSuccess.I0003);
+          setTextState(messagesSuccess.I0003);
+          setIsSuccess(false);
+          setIsHidden(true);
           authContext.resetPassword(email);
+          return;
         }
       })
     } catch (error) {
-      console.log(error)
       console.log(messagesError.E1002);
+      setTextState(messagesError.E1002);
+      setIsSuccess(false);
+      setIsHidden(false);
+      return;
     }
   };
+
+  // show popup
+  useEffect(() => {
+    console.log(isHidden)
+    if (isHidden == false) {
+      isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+      document.getElementById("textState").innerHTML = textState;
+      document.getElementById("forgotOverlay").classList.toggle('hidden');
+      const timer = setTimeout(() => {
+        setIsHidden(true);
+      }, 1)
+      return () => { clearTimeout(timer) }
+    }
+  }, [isHidden])
+
+
+  const popupNoti = () => {
+    return (
+      <div className="flex flex-col items-center">
+        <div className="text-center text-[#004599]">
+          <p className="font-[900] text-lg" id="textState"></p>
+        </div>
+        <img
+          id="imgPopup"
+          alt="success"
+          src={failIcon}
+          className="self-center w-12"
+        ></img>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -80,6 +126,7 @@ export default function ForgotPassword() {
               href="/auth/register"
             />
           </div>
+          <OverlayBlock childDiv={popupNoti()} id={"forgotOverlay"} />
         </div>
       </section>
     </>
