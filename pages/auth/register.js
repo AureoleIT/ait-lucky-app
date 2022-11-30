@@ -189,7 +189,7 @@ export default function Register() {
           className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}
         >
           <Title title="ĐĂNG KÝ" />
-          <div className="">
+          <div>
             <AuthInput
               content={"Tên đăng nhập"}
               leftColor={LEFT_COLOR}
@@ -225,7 +225,7 @@ export default function Register() {
               signUpSubmit(name, email, password);
             }}
           />
-          <div className="">
+          <div>
             <GradientLine
               color1={LEFT_COLOR}
               color2={RIGHT_COLOR}

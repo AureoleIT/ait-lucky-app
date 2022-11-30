@@ -117,7 +117,7 @@ export default function Login() {
       <section className="h-screen mx-auto w-full flex justify-center items-center">
         <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
           <Title title="ĐĂNG NHẬP" />
-          <div className="">
+          <div>
             <AuthInput
               content={"Tên đăng nhập/Email"}
               leftColor={LEFT_COLOR}
@@ -146,7 +146,7 @@ export default function Login() {
               onChange={onCheckData}
             />
           </div>
-          <div className="">
+          <div>
             <BgBlueButton
               content="ĐĂNG NHẬP"
               onClick={() => {
