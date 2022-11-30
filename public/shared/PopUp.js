@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { TEXT } from "public/util/colors";
 import ClosePopUp from "./ClosePopUp";
-import { hidden } from "public/util/popup";
 
 export default function PopUp({text, icon, close, isWarning}) {
   const bg = isWarning ? "border-red-600" : "border-green-600"; 
-
-  // console.log(close)
 
   useEffect(() => {
     const timer = setTimeout(() => {
