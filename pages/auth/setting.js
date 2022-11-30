@@ -20,21 +20,27 @@ import {
     onValue
 } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
-import { hidden, show, successIcon, failIcon } from "public/util/popup";
-import PopUp from "public/shared/PopUp";
+import {successIcon, failIcon } from "public/util/popup";
+import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 
 export default function Setting() {
+    //firebase
     const db = getDatabase();
     const auth = useAuth();
     const [user, setUser] = useState();
     const emailUser = auth.currentUser.email;
+
+    //doc
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [textState, setTextState] = useState("");
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isHidden, setHidden] = useState(show);
 
+    //validation const
+    const [textState, setTextState] = useState("");
+    const [isHidden, setIsHidden] = useState(true);
+    const [ isSuccess,setIsSuccess] = useState(true);
+
+    //get auth profile
     function fetchDb() {
         // get orderbychild - have conditions
         const que = query(ref(db, "users"), orderByChild("email"), equalTo(emailUser));
@@ -55,23 +61,23 @@ export default function Setting() {
         // });
     }
 
+    // save new username
     function handleSaveInfo(name) {
         //validation
         if (isEmpty(name)) {
             setTextState(messagesError.E0001("Tên đăng nhập"));
             setIsSuccess(false);
-            setHidden(hidden);
+            setIsHidden(false);
             return;
         }
         if (hasWhiteSpaceAndValidLength(name)) {
-            setTextState(messagesError.E0004);
+            setTextState(messagesError.E0005("tên đăng nhập"));
             setIsSuccess(false);
-            setHidden(show);
-            // console.log(messagesError.E0005("Tên đăng nhập"));
+            setIsHidden(false);
             return;
         }
 
-        //update 
+        // update 
         // const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
         // onValue(que, (snapshot) => {
         //     const record = snapshot.val() ?? [];
@@ -89,6 +95,7 @@ export default function Setting() {
         //     }
         // }
 
+        // update password
         get(child(ref(db), "users/")).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
@@ -104,7 +111,7 @@ export default function Setting() {
                     }).then(() => {
                         setTextState(messagesSuccess.I0003);
                         setIsSuccess(true);
-                        setHidden(show);
+                        setIsHidden(false);
                     })
                     .catch((error) => console.log(error));
             }
@@ -116,14 +123,41 @@ export default function Setting() {
         setUser(user);
         console.log(user);
     }
-    const closePopup = () => {
-        setHidden(hidden);
-        console.log(isHidden)
-    };
 
     useEffect(() => {
         fetchDb();
     }, [])
+
+    // show popup
+    useEffect(() => {
+        console.log(isHidden)
+        if (isHidden == false) {
+            isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+            document.getElementById("textState").innerHTML = textState;
+            document.getElementById("profileOverlay").classList.toggle('hidden');
+            const timer = setTimeout(() => {
+                setIsHidden(true);
+            }, 1)
+            return () => { clearTimeout(timer) }
+        }
+    }, [isHidden])
+
+    
+    const popupNoti = () => {
+        return (
+            <div className="flex flex-col items-center">
+                <div className="text-center text-[#004599]">
+                    <p className="font-[900] text-lg" id="textState"></p>
+                </div>
+                <img
+                id="imgPopup"
+                    alt="success"
+                    src={failIcon}
+                    className="self-center w-12"
+                ></img>
+            </div>
+        )
+    }
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -132,9 +166,9 @@ export default function Setting() {
     };
 
     return (
-        <section className="h-screen overflow-y-hidden">
+        <section className="h-screen w-screen overflow-y-hidden">
             <Header />
-            {/* <div className=" relative h-full w-full">
+            <div className=" relative h-full w-full">
                 <div
                     className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
                 >
@@ -198,15 +232,8 @@ export default function Setting() {
                             </div>
                         </div>
                     </div>
+                    <OverlayBlock childDiv={popupNoti()} id={"profileOverlay"} />
                 </div>
-            </div> */}
-            <div className={isHidden}>
-                <PopUp
-                    text={textState}
-                    icon={isSuccess ? successIcon : failIcon}
-                    close={closePopup}
-                    isWarning={!isSuccess}
-                />
             </div>
         </section>
 
