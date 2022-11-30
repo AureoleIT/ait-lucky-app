@@ -236,7 +236,7 @@ export default function Setting() {
 
                                     onClick={(e) => getImage(e)}
                                     alt="" className="w-[100px] h-[100px] rounded object-cover " />
-                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} />
+                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*"/>
                             </div>
                         </div>
 
