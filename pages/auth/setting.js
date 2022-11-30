@@ -20,18 +20,15 @@ import {
     ref as refStorage,
     uploadBytes,
     getDownloadURL,
-    listAll,
-    list,
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
-import { setEmitFlags } from "typescript";
 
 export default function Setting() {
-    //firebase
+    //firebase auth
     const db = getDatabase();
     const auth = getAuth();
     const [username, setUsername] = useState("vutan");
@@ -40,35 +37,40 @@ export default function Setting() {
     const [user, setUser] = useState();
     const emailUser = auth.currentUser.email;
 
-    //doc
+    // normal state
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [img, setImg] = useState("http://www.gravatar.com/avatar/?d=retro&s=32");
     const [file, setFile] = useState(null);
-
-    //upload image
-    // const imagesListRef = refStorage(storage, "images/");
-    const uploadFile = () => {
-        const imageRef = refStorage(storage, `avatars/${file.name + v4()}`);
-        uploadBytes(imageRef, file).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((url) => {
-                update(ref(db, 'users/' + user.userId),
-                    {
-                        pic: url
-                    }).then(() => {
-                        setTextState(messagesSuccess.I0003);
-                        setIsSuccess(true);
-                        setIsHidden(false);
-                    })
-                    .catch((error) => console.log(error));
-            });
-        });
+    
+    // style css
+    const contentCSS = {
+        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
     };
 
-    //validation const
+    //validation
     const [textState, setTextState] = useState("");
     const [isHidden, setIsHidden] = useState(true);
     const [isSuccess, setIsSuccess] = useState(true);
+
+    // popup
+    const popupNoti = () => {
+        return (
+            <div className="flex flex-col items-center">
+                <div className="text-center text-[#004599]">
+                    <p className="font-[900] text-lg" id="textState"></p>
+                </div>
+                <img
+                    id="imgPopup"
+                    alt="success"
+                    src={failIcon}
+                    className="self-center w-12"
+                ></img>
+            </div>
+        )
+    }
 
     //get auth profile
     function fetchDb() {
@@ -93,7 +95,38 @@ export default function Setting() {
         // });
     }
 
-    // save new username
+    //choose img
+    const handleChangeFile = (e) => {
+        const upload = e.target.files[0]
+        setFile(upload);
+        setImg(URL.createObjectURL(upload));
+
+        //uploadFile();
+    }
+
+    const getImage = (e) => {
+        document.getElementById("fileID").click()
+    }
+
+    //upload image
+    const uploadFile = () => {
+        const imageRef = refStorage(storage, `avatars/${file.name + v4()}`);
+        uploadBytes(imageRef, file).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((url) => {
+                update(ref(db, 'users/' + user.userId),
+                    {
+                        pic: url
+                    }).then(() => {
+                        setTextState(messagesSuccess.I0003);
+                        setIsSuccess(true);
+                        setIsHidden(false);
+                    })
+                    .catch((error) => console.log(error));
+            });
+        });
+    };
+
+    // save new profile
     function handleSaveInfo(name) {
         //validation
         if (isEmpty(name)) {
@@ -182,46 +215,9 @@ export default function Setting() {
         }
     }, [isHidden])
 
-
-    const popupNoti = () => {
-        return (
-            <div className="flex flex-col items-center">
-                <div className="text-center text-[#004599]">
-                    <p className="font-[900] text-lg" id="textState"></p>
-                </div>
-                <img
-                    id="imgPopup"
-                    alt="success"
-                    src={failIcon}
-                    className="self-center w-12"
-                ></img>
-            </div>
-        )
-    }
-
-    //choose img
-    const handleChangeFile = (e) => {
-        const upload = e.target.files[0]
-        setFile(upload);
-        setImg(URL.createObjectURL(upload));
-
-        //uploadFile();
-    }
-
-    const getImage = (e) => {
-        document.getElementById("fileID").click()
-    }
-
-    const contentCSS = {
-        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-    };
-
     useEffect(() => {
 
     }, [file, img])
-
 
     return (
         <section className="h-screen w-screen overflow-y-hidden">
