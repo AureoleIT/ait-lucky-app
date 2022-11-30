@@ -81,38 +81,39 @@ export default function LuckySpinAdmin() {
         return 0;
     }
 
-    const setSpinningFB = () => {
-        get(child(dbRef, 'event/1')).then((snapshot) => {
-            const record = snapshot.val() ?? [];
-
-            update(ref(db, 'event/' + 1),
+    const setSpinningFB = (status) => {
+        update(ref(db, 'event/' + 1),
                         {
-                            isSpinning: !record.isSpinning
+                            isSpinning: status
                         });
-        })
     }
 
-    // Lấy dữ liệu lần đầu của event
+    // Lấy dữ liệu lần đầu của event rewards
     useEffect(() => {
         get(child(dbRef, "event_rewards")).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
             setRewardList(values);
         })
+    }, [])
+
+    useEffect(() => {
+        if (!rewardList) {
+            return
+        }
 
         if (rewardList[rewardChosing]) setIDRewardChosing(rewardList[rewardChosing].idReward);
 
-        // Cập nhật dữ liệu realtime của event
+        // Cập nhật dữ liệu realtime của event reward
         return onValue(eventRewardsRef, (snapshot) => {
             const data = snapshot.val();
-            const values = Object.values(data);
+            const eventRewards = Object.values(data);
 
             if (snapshot.exists()) {
-                setRewardList(values);
-                return;
+                setRewardList(eventRewards);
             }
         });
-    }, [])
+    }, [rewardList])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -133,7 +134,7 @@ export default function LuckySpinAdmin() {
 
     // Điều chỉnh danh sách giải thưởng còn lại
     useEffect(() => {
-        if (remainRewardList.filter((reward) => reward.quantityRemain <= 0).length > 0)
+        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
             setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
         setRewardChosing(0);
         setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
@@ -141,8 +142,8 @@ export default function LuckySpinAdmin() {
 
     // Cập nhật danh sách phần trưởng còn lại
     useEffect(() => {
-        setRemainRewardList([...rewardList]);
         rewardList.sort(compare);
+        setRemainRewardList([...rewardList]);
     }, [rewardList])
 
     const spining = () => {
@@ -152,7 +153,7 @@ export default function LuckySpinAdmin() {
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
         
-        setSpinningFB();
+        setSpinningFB(true);
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -178,7 +179,7 @@ export default function LuckySpinAdmin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
-                setSpinningFB();
+                setSpinningFB(false);
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
@@ -194,9 +195,19 @@ export default function LuckySpinAdmin() {
     }
 
 
-  const toggleSelectMenu = () => {
-    document.getElementById("selectRewardPopUp").classList.toggle("hidden");
-  };
+    const toggleSelectMenu = () => {
+        document.getElementById("selectRewardPopUp").classList.toggle("hidden");
+    };
+
+    const chooseReward = (idx) => {
+        setRewardChosing(idx);
+        setIDRewardChosing(remainRewardList[idx].idReward);
+        toggleSelectMenu();
+        update(ref(db, 'event/' + 1),
+            {
+                rewardChosingIndex: idx
+            });
+    }
 
     const awardNotification = (
         <div className="flex flex-col items-center text-center text-[#004599]">
@@ -255,7 +266,7 @@ export default function LuckySpinAdmin() {
                                                 return (
                                                     <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-"+idx} role="option"
                                                         style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
-                                                        onClick={() => {setRewardChosing(idx), setIDRewardChosing(remainRewardList[idx].idReward), toggleSelectMenu()}}>
+                                                        onClick={() => {chooseReward(idx)}}>
                                                         <span className="ml-3 block truncate">{reward.description}</span>
                                                         <span className="ml-3 block truncate">Số lượng: {reward.quantityRemain}</span>
                                                     </li>

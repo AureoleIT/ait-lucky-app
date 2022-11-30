@@ -74,8 +74,6 @@ export default function LuckySpin() {
     
     // Firebase
     const dbRef = ref(db)
-    const eventRewardsRef = ref(db, "event_rewards");
-    const eventRef = ref(db, "event");
 
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
@@ -83,27 +81,38 @@ export default function LuckySpin() {
         return 0;
     }
 
-    // Lấy dữ liệu lần đầu của event
+    // Lấy dữ liệu lần đầu của event rewards
     useEffect(() => {
         get(child(dbRef, "event_rewards")).then((snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
             setRewardList(values);
         })
+    }, [])
 
-        if (rewardList[rewardChosing]) setIDRewardChosing(rewardList[rewardChosing].idReward);
-
-        // Cập nhật dữ liệu realtime của event
-        return onValue(eventRewardsRef, (snapshot) => {
+    useEffect(() => {
+        // Cập nhật dữ liệu realtime của event reward
+        return onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
-            const values = Object.values(data);
+            const eventRewards = Object.values(data['event_rewards']);
+            const eventsDetail = Object.values(data["event"]);
+            const isSpining = eventsDetail[0].isSpinning;
+            const rewardChosingIndex = eventsDetail[0].rewardChosingIndex;
+            const lastAwardedPIndex = eventsDetail[0].lastAwardedPIndex;
+            setSpinClicked(isSpining);
 
             if (snapshot.exists()) {
-                setRewardList(values);
+                setRewardList(eventRewards);
+                setRewardChosing(rewardChosingIndex);
+                
+                if (isSpining && !spinClicked) {
+                    console.log("1");
+                    spining()
+                };
                 return;
             }
         });
-    }, [])
+    }, [rewardList])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -121,20 +130,20 @@ export default function LuckySpin() {
     useEffect(() => {
         setEditedPlayerList([...remainPlayerList]);
     }, [remainPlayerList])
-    
+
     // Điều chỉnh danh sách giải thưởng còn lại
     useEffect(() => {
-        if (remainRewardList.filter((reward) => reward.quantityRemain <= 0).length > 0)
-        setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
-        setRewardChosing(0);
+        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
+            {
+                setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
+            }
         setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-        console.log(remainRewardList);
     }, [remainRewardList])
 
     // Cập nhật danh sách phần trưởng còn lại
     useEffect(() => {
-        setRemainRewardList([...rewardList]);
         rewardList.sort(compare);
+        setRemainRewardList([...rewardList]);
     }, [rewardList])
 
     const spining = () => {
@@ -173,35 +182,12 @@ export default function LuckySpin() {
                     setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
                     rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantityRemain -= 1;
                     setRewardList((list) => [...list]);
+                    setSpinClicked(false);
                 }, 1000)
             }, 2000)
 
         }, 1000)
     }
-
-    // Lấy dữ liệu lần đầu của event
-    useEffect(() => {
-        var spin = false;
-
-        get(child(eventRef, 'event/1')).then((snapshot) => {
-            const record = snapshot.val() ?? [];
-            spin = record.isSpinning;
-        })
-
-        // Cập nhật dữ liệu realtime của event
-        return onValue(ref(db, "event/1"), (snapshot) => {
-            const record = snapshot.val();
-            spin = record.isSpinning;
-            
-            console.log(spin);
-            if (snapshot.exists()) {
-                if (spin) {
-                    spining();
-                }
-                return;
-            }
-        });
-    }, [])
 
     const awardNotification = (
         <div className="flex flex-col items-center text-center text-[#004599]">
@@ -241,7 +227,7 @@ export default function LuckySpin() {
                       <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                       <div className="h-44 px-4 py-2 relative">
                         <RewardList
-                          listReward={remainRewardList.slice(rewardChosing, rewardChosing + 1)}
+                          listReward={remainRewardList.slice(rewardChosing, rewardChosing+1)}
                           showRemain={true}
                           showAwardedPaticipant={true}
                         />
@@ -261,16 +247,3 @@ export default function LuckySpin() {
         </>
     );
 }
-
-
-{/* Khác với admin
-<div className="w-full mb-12">
-  <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
-  <div className="h-44 px-4 py-2 relative">
-    <RewardList
-      listReward={listReward[0]}
-      showRemain={true}
-      showAwardedPaticipant={true}
-    />
-  </div>
-</div> */}
