@@ -17,8 +17,14 @@ function CountDownCheckIn ()
     // router
     const router = useRouter()
 
+    const {
+        query: {countdown}
+    } = router
+
+    const props = {countdown}
+
     // state
-    const [minutes, setMinutes] = useState(testCoundown.wait_time)
+    const [minutes, setMinutes] = useState(countdown)
     const [seconds, setSeconds] = useState(0)
     const [qrCodeValue, setQrCodeValue] = useState("")
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
@@ -134,7 +140,7 @@ function CountDownCheckIn ()
 
              {/* id room */}
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px]">
+            <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px] mb-4">
                 <PinCode length={6} value={pinCode} />
             </div>  
 

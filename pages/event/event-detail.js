@@ -9,10 +9,12 @@ import Line from "public/shared/Line";
 
 import testDataAward from "public/util/test";
 
+
 function EventDetail() {
   // router
   const router = useRouter();
-
+  
+  // export const time = countdown
   // uuid generate event id
   const eventID = useState(uuidv4().slice(0, 8));
 
@@ -32,11 +34,18 @@ function EventDetail() {
   console.log(countdown);
 
   const handlePrepare = () => {
-    router.push("/event/countdown-checkin");
+    router.push({
+      pathname:"/event/countdown-checkin",
+      query:
+      {
+        countdown
+      }
+    })
   };
 
   const handleEditPageNavigation = () => {
     router.push("/event/edit_event_reward_register");
+    
   };
 
   return (
