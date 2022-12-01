@@ -1,42 +1,21 @@
-import {
-    INCREASE_CANCEL,
-    INCREASE_COMPLETE,
-    INCREASE_ON,
-    INCREASE_PENDING,
-} from '../constants';
-export function increaseComplete(number) {
-    return {
-        type: INCREASE_COMPLETE,
-        payload: { value: number },
-    };
-}
-export function increaseCancel(number) {
-    return {
-        type: INCREASE_CANCEL,
-        payload: { value: number },
-    };
-}
-export function increasePending(number) {
-    return {
-        type: INCREASE_PENDING,
-        payload: { value: number },
-    };
-}
-export function increaseOn(number) {
-    return {
-        type: INCREASE_ON,
-        payload: { value: number },
-    };
-}
-export function increaseNumService(number) {
-    return async dispatch => {
-        try {
-            await dispatch(increaseComplete(number));
-            await dispatch(increaseCancel(number));
-            await dispatch(increasePending(number));
-            await dispatch(increaseOn(number));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
+export const ADD_USER = "ADD_USER";
+export const ADD_EVENT = "ADD_EVENT";
+export const ADD_PARTICIPANT = "ADD_PARTICIPANT";
+export const ADD_REWARD = "ADD_REWARD";
+
+export const addEvent = (event) => ({
+    type: ADD_EVENT,
+    payload: event,
+})
+export const addUser = (user) => ({
+    type: ADD_USER,
+    payload: user,
+})
+export const addParticipant = (participant) => ({
+    type: ADD_PARTICIPANT,
+    payload: participant,
+})
+export const addReward = (reward) => ({
+    type: ADD_REWARD,
+    payload: reward,
+})

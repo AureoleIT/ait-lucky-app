@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Auth from "layouts/Auth.js";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -11,7 +11,6 @@ import AuthFooter from "public/shared/AuthFooter";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
 import {
-  hasWhiteSpace,
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
 } from "public/util/functions";
@@ -31,7 +30,6 @@ export default function Login() {
   const [check, setCheck] = useState(false);
   var [user, setUser] = useState({});
   const dbRef = ref(db);
-
 
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
@@ -89,6 +87,7 @@ export default function Login() {
             showMethod(messagesError.E0010, show, false);
             return;
           }
+          setUser(values.find(item => item.email === currEmail));
           showMethod(messagesSuccess.I0002, show, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
@@ -104,6 +103,10 @@ export default function Login() {
 
   /* Export current user login for another access */
   module.exports = { user }
+
+  useEffect(() => {
+    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
+  }, [user]);
 
   const closePopup = () => {
     setHidden(hidden);
@@ -124,6 +127,7 @@ export default function Login() {
   const onCheckData = () => {
     setCheck(!check);
   };
+
   return (
     <>
       <section className="h-screen mx-auto w-full flex justify-center items-center">

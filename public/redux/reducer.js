@@ -1,40 +1,33 @@
 import {
-    INCREASE_CANCEL,
-    INCREASE_COMPLETE,
-    INCREASE_ON,
-    INCREASE_PENDING,
-} from '../constants';
+    ADD_EVENT,
+    ADD_USER,
+    ADD_PARTICIPANT,
+    // ADD_REWARD,
+    addUser,
+    addParticipant,
+    // addReward,
+    addEvent
+} from "./actions";
 
-const initialState = {
-    complete: 0,
-    cancel: 0,
-    pending: 0,
-    on: 0,
-};
-const testReducer = (state = initialState, action) => {
+const initState = {
+    event: {},
+    user: {},
+    // reward: {},
+    participant: {}
+}
+
+export const objectReducer = (state = initState, action) => {
     switch (action.type) {
-        case INCREASE_COMPLETE:
-            return {
-                ...state,
-                complete: state.complete + 1,
-            };
-        case INCREASE_CANCEL:
-            return {
-                ...state,
-                cancel: state.cancel + 1,
-            };
-        case INCREASE_PENDING:
-            return {
-                ...state,
-                pending: state.pending + 1,
-            };
-        case INCREASE_ON:
-            return {
-                ...state,
-                on: state.on + 1,
-            };
+        case ADD_EVENT: {
+            return { ...state, event: action.payload }
+        }
+        case ADD_PARTICIPANT: {
+            return { ...state, participant: action.payload }
+        }
+        case ADD_USER: {
+            return { ...state, user: action.payload }
+        }
         default:
-            return state;
+            return state
     }
-};
-export default testReducer;
+}
