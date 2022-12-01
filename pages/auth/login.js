@@ -33,7 +33,7 @@ export default function Login() {
   var [user, setUser] = useState({});
 
   const dbRef = ref(db);
-
+  
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
