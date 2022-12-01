@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-// import Link from 'next/link';
+import React, { useState, useEffect } from "react";
 
 // import firebase
 import { db } from "src/firebase";
-import { ref, child, get } from "firebase/database";
+import {
+  ref,
+  orderByChild,
+  equalTo,
+  query,
+  onValue,
+} from "firebase/database";
 
 // components
-
 import Header from "public/shared/Header";
 import BgBlueButton from "public/shared/BgBlueButton";
 import EventButton from "public/shared/button/EventButton";
@@ -16,21 +20,62 @@ import BorderText from "public/shared/BorderText";
 import nyancat from "public/img/nyancat.gif";
 
 export default function Dashboard() {
-  const uuid = "156889a1-eb0b-462d-a550-bcf3802b48de";
+  const uuid = "iasd-asda123-asd1-asd123";
+  const [arrStatus, setArrStatus] = useState([]);
+  const [arrID, setArrID] = useState([]);
+  const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
+  const queID = query(
+    ref(db, "event"),
+    orderByChild("createBy"),
+    equalTo(uuid)
+  );
 
-  const [arr, setArr] = useState([]);
+  // get(child(ref(db), `event`))
+  // .then((snapshot) => {
+  //   const res = snapshot.val() ?? [];
+  //   const values = Object.values(res);
+  //   setArr(values);
+  // })
+  // .catch((error) => {
+  //   alert(error.message);
+  //   console.error(error);
+  // });
 
-  get(child(ref(db), `event`))
-    .then((snapshot) => {
-      const res = snapshot.val() ?? [];
-      const values = Object.values(res);
+  // useEffect(() => {
+  //   onValue(child(ref(db), "event/"), (snapshot) => {
+  //     const record = snapshot.val() ?? [];
+  //     const values = Object.values(record);
+  //     values.forEach((value) => {
+  //       if (value.status === 2) {
+  //         setQueryStatus((prev) => [...prev, value]);
+  //         console.log(value);
+  //       }
+  //     });
+  //     console.log(queryStatus);
+  //   });
+  // }, []);
 
-      setArr(values);
-    })
-    .catch((error) => {
-      alert(error.message);
-      console.error(error);
+  useEffect(() => {
+    onValue(queStatus, (snapshot) => {
+      setArrStatus([]);
+      const data = snapshot.val();
+      if (data != null) {
+        setArrStatus(Object.values(data));
+      }
     });
+  }, []);
+
+  useEffect(() => {
+    onValue(queID, (snapshot) => {
+      setArrID([]);
+      const data = snapshot.val();
+      if (data != null) {
+        setArrID(Object.values(data));
+      }
+    });
+  }, [uuid]);
+
+
 
   return (
     <>
@@ -58,7 +103,7 @@ export default function Dashboard() {
                   <img src={nyancat} alt="must be a nyancat gif"></img>
                 </div>
               </div>
-              <div class="w-full">
+              <div className="w-full">
                 {/* Line */}
                 <div className="w-full h-[2px] justify-center mb-2 px-2 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex"></div>
               </div>
@@ -76,20 +121,25 @@ export default function Dashboard() {
               <p className="font-bold text-sm text-[#000000] pb-2">
                 {"Các sự kiện đang diễn ra"}
               </p>
-              <div className="w-full flex flex-col gap-y-[7px] pb-5 ">
-                {arr.slice(0, 4).map((item, index) => {
-                  return item.status === 2 ? (
-                    <div className="flex flex-col " key={index}>
+              <div className="w-full flex flex-col gap-y-[7px] pb-5">
+                {arrStatus.length === 0 ? (
+                  <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+                    {" "}
+                    {"Không có dữ liệu"}
+                  </div>
+                ) : (
+                  arrStatus.slice(0, 4).map((item, index) => (
+                    <div key={index} className="flex flex-col">
                       <EventButton
                         title={item.title}
                         user_joined={item.user_joined}
                       ></EventButton>
                     </div>
-                  ) : (
-                    <></>
-                  );
-                })}
-                {/* <div className="w-full flex items-center text-center justify-center">...</div> */}
+                  ))
+                )}
+                <div className="w-full flex items-center text-center justify-center">
+                  ...
+                </div>
               </div>
             </div>
           }
@@ -119,23 +169,18 @@ export default function Dashboard() {
           title={"Danh sách sự kiện"}
           content={
             <div className="flex flex-col pt-5 gap-y-[7px]">
-              {arr.slice(0, 4).map((item, index) => {
-                {
-                  /* return (
-                  <div className="flex flex-col" key={index}>
+              {arrID.length === 0 ? (
+                <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+                  {" "}
+                  {"Không có dữ liệu"}
+                </div>
+              ) : (
+                arrID.slice(0, 4).map((item, index) => (
+                  <div key={index} className="flex flex-col">
                     <EventButton title={item.title} id={item.id}></EventButton>
                   </div>
-                ); */
-                }
-
-                return item.id === uuid ? (
-                  <div className="flex flex-col " key={index}>
-                    <EventButton title={item.title} id={item.id}></EventButton>
-                  </div>
-                ) : (
-                  <></>
-                );
-              })}
+                ))
+              )}
 
               <a href="event-list">
                 <BgBlueButton content={"TẤT CẢ SỰ KIỆN"} />
