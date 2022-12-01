@@ -4,7 +4,6 @@ import { db, auth, app } from "src/firebase";
 import { getDatabase, ref, child, get, set } from "firebase/database";
 
 // components
-
 import Header from "public/shared/Header";
 import Line from "public/shared/Line";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -36,6 +35,9 @@ export default function Dashboard() {
       alert(error.message);
       console.error(error);
     });
+  }, [uuid]);
+
+
 
   return (
     <>
@@ -81,11 +83,11 @@ export default function Dashboard() {
                         href={"_countdowncheckin"}
                       ></EventButton>
                     </div>
-                  ) : (
-                    <></>
-                  );
-                })}
-                {/* <div className="w-full flex items-center text-center justify-center">...</div> */}
+                  ))
+                )}
+                <div className="w-full flex items-center text-center justify-center">
+                  ...
+                </div>
               </div>
             </div>
           }
