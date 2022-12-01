@@ -32,7 +32,7 @@ function EditEventRewardRegister() {
   };
 
   const handleNavigate = () => {
-    router.push("/event/event-detail");
+    router.push("/admin/event/event-detail");
   };
 
   return (

@@ -129,7 +129,7 @@ function CountDownCheckIn ()
 
         setTimeout(() =>
         {
-            router.push("/event/lucky_spin")
+            router.push("admin/lucky_spin_admin")
         }, 2000)
     }
 

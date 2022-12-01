@@ -47,12 +47,40 @@ export default function EventRegister() {
       return;
     }
 
-    if (nameEvent !== "" && eventDetail !== "" && limitUser !== "") {
-      setTextState("Thêm thông tin thành công !");
-      setIsSuccess(true);
-      setHidden(show);
+    if (
+      nameEventRef.current.value !== "" &&
+      eventDetailRef.current.value !== "" &&
+      limitUserRef.current.value !== ""
+    ) {
+      const id = uuid.v4();
+      const newEvent = {
+        eventId: id,
+        publicFlag: checkBoxRef.current.checked ? 1 : 0,
+        title: nameEventRef.current.value,
+        description: eventDetailRef.current.value,
+        maxTicket: limitUserRef.current.value,
+        createAt: new Date().getTime(),
+        createBy: "iasd-asda123-asd1-asd123",
+        waitingTime: 300,
+        userJoined: 20,
+        pinCode: id.slice(0,6),
+        status: 1,
+        delFlag: false,
+      };
+      set(ref(db, `event/${id}`), newEvent)
+        .then(() => {
+          setTextState("Thêm thông tin thành công !");
+          setIsSuccess(true);
+          setHidden(show);
+        })
+        .catch((e) => {
+          setTextState("Da co loi he thong ko save dc ");
+          setIsSuccess(false);
+          setHidden(show);
+        });
+
       setTimeout(() => {
-        router.push("/event/reward-register");
+        router.push("/admin/event/reward-register");
       }, 3000);
     }
   };

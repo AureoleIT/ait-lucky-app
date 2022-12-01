@@ -35,7 +35,7 @@ function EventDetail() {
 
   const handlePrepare = () => {
     router.push({
-      pathname:"/event/countdown-checkin",
+      pathname:"/admin/event/countdown-checkin",
       query:
       {
         countdown
@@ -44,7 +44,7 @@ function EventDetail() {
   };
 
   const handleEditPageNavigation = () => {
-    router.push("/event/edit_event_reward_register");
+    router.push("/admin/event/edit-event-reward-register");
     
   };
 
