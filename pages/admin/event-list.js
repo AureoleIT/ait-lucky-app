@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
-
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { db } from "src/firebase";
-import { ref, onValue, 
-  // child, get 
+import {
+  ref,
+  onValue,
+  query,
+  orderByChild,
+  equalTo,
+  // child, get
 } from "firebase/database";
 
 export default function EventList() {
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
 
   // useEffect(() => {
   //   get(child(ref(db), "event/")).then((snapshot) => {
@@ -24,14 +29,26 @@ export default function EventList() {
   // }, []);
 
   useEffect(() => {
-    onValue(ref(db, "event/"), (snapshot) => {
+    const items = JSON.parse(localStorage.getItem("user"));
+    if (items) {
+      setCurrentUser(items);
+    }
+  }, []);
+
+  const que = query(
+    ref(db, "event"),
+    orderByChild("createBy"),
+    equalTo(String(currentUser.userId))
+  );
+  useEffect(() => {
+    onValue(que, (snapshot) => {
       setEvents([]);
       const data = snapshot.val();
-      if (data !== null) {
+      if (data != null) {
         setEvents(Object.values(data));
       }
     });
-  }, []);
+  }, [String(currentUser.userId)]);
 
   return (
     <>

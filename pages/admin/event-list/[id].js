@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import EventButton from "public/shared/button/EventButton";
@@ -18,7 +17,6 @@ import {
 export default function EventList() {
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
-
   const router = useRouter();
   const id = String(router.query.id);
 
@@ -31,6 +29,8 @@ export default function EventList() {
   //     }
   //   });
   // }, []);
+
+  //filter data
   const que = query(ref(db, "event"), orderByChild("createBy"), equalTo(id));
 
   useEffect(() => {
@@ -38,11 +38,10 @@ export default function EventList() {
       setEvents([]);
       console.log(snapshot.val());
       const data = snapshot.val();
-      if (data !== null) {
+      if (data != null) {
         setEvents(Object.values(data));
       }
     });
-  
   }, []);
   
 
@@ -80,7 +79,7 @@ export default function EventList() {
                     <div key={index} className="flex flex-col">
                       <EventButton
                         title={item.title}
-                        id={item.pinCode}
+                        id={item.eventId}
                         userJoined={item.userJoined}
                         status={item.status}
                       />
