@@ -15,7 +15,6 @@ import {
   buttonColor,
 } from "public/util/reward-register";
 import BgBlueButton from "public/shared/BgBlueButton";
-import RewardSingle from "public/shared/RewardSingle";
 import InputWithColor from "public/shared/InputWithColor";
 import AuthInput from "public/shared/AuthInput";
 import Reward from "components/RewardRegister/Reward";
