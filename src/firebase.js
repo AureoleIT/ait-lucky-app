@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "@firebase/database";
+import { getDatabase, ref } from "@firebase/database";
 import "firebase/compat/auth";
 import "firebase/auth";
 import "firebase/storage";
 import "firebase/analytics";
 import "firebase/performance";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA8-_ktKoGnG87bJksBu06_o489Xj8V6tU" || process.env.API_KEY,
@@ -26,4 +27,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-export { app, auth, db };
+const storage = getStorage(app);
+// const storageRef = ref(storage)
+export { app, auth, db, storage };

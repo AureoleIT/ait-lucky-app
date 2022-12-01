@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useEffect, useState } from "react";
+import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
@@ -29,11 +29,15 @@ export default function Index() {
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
 
+  const showMethod = useMemo(() => (message, isShow, isTrue) => {
+    setTextState(message);
+    setIsSuccess(isTrue);
+    setHidden(isShow);
+  }, [])
+
   const onJoinClick = () => {
     if (isEmpty(pin)) {
-      setTextState(messagesError.E2002);
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E2002, show, false);
       return;
     }
     get(child(ref(db), "event/")).then((snapshot) => {
@@ -41,15 +45,11 @@ export default function Index() {
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined) {
-        setTextState(messagesError.E2004);
-        setIsSuccess(false);
-        setHidden(show);
+        showMethod(messagesError.E2004, show, false);
         return;
       }
       setEvent(currEvent);
-      setTextState(messagesSuccess.I0008(currEvent.title));
-      setIsSuccess(true);
-      setHidden(show);
+      showMethod(messagesSuccess.I0008(currEvent.title), show, true);
       setTimeout(() => {
         router.push("/event/info");
       }, 3000);
