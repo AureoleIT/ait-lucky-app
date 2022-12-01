@@ -20,7 +20,8 @@ import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
-
+import { useDispatch, useSelector } from "react-redux";
+import { addEvent } from "public/redux/actions";
 export default function Login() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -29,8 +30,14 @@ export default function Login() {
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
   var [user, setUser] = useState({});
-  const dbRef = ref(db);
 
+  const data = useSelector(state => state);
+  console.log({data})
+  const dispatch= useDispatch()
+  useEffect(() => dispatch(addEvent({"a":"12"})), [])
+  
+  const dbRef = ref(db);
+  
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
