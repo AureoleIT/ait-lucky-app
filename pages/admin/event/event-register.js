@@ -83,7 +83,7 @@ export default function EventRegister() {
         });
 
       setTimeout(() => {
-        router.push("/event/reward-register");
+        router.push("/admin/event/reward-register");
       }, 3000);
     }
   };
