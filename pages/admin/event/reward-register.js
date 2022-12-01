@@ -1,23 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
-import AddRewardPopUp from "public/shared/AddRewardPopUp";
-import { failIcon, hidden, show, successIcon } from "public/util/popup";
-import Line from "public/shared/Line";
-import ImageCustom from "public/shared/ImageCustom";
+import { failIcon, hidden, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
-import CountComponent from "public/shared/CountComponent";
-import {
-  wrapPopUp,
-  wrap,
-  iconStyle,
-  buttonColor,
-} from "public/util/reward-register";
+import { wrap } from "public/util/reward-register";
 import BgBlueButton from "public/shared/BgBlueButton";
-import RewardSingle from "public/shared/RewardSingle";
-import InputWithColor from "public/shared/InputWithColor";
-import AuthInput from "public/shared/AuthInput";
 import Reward from "components/RewardRegister/Reward";
 
 function NewRewardRegister() {
@@ -27,14 +15,12 @@ function NewRewardRegister() {
     const [textState, setTextState] = useState("")
     const [isSuccess, setIsSuccess] = useState(false)
     const [isHidden, setIsHidden] = useState(hidden)
-    const [file, setFile] = useState()
     const [rewardCount, setRewardCount] = useState([])
     // state store data
-    const [imgList, setImgList] = useState([])
     const [count, setCount] = useState(1)
     const [data, setData] = useState([{}])
     const [rewardName, setRewardName] = useState({})
-    const [receiveImg, setReceiveImg] = useState([])
+    const [receiveImg, setReceiveImg] = useState({})
     // ref store data
 
     const isRealValue = (value) =>
@@ -44,12 +30,12 @@ function NewRewardRegister() {
 
     const handleReceiveImg = (data) =>
     {
-        setReceiveImg(prev => [...prev, data])
+        setReceiveImg(prev => ({...prev, ["text"]:data}))
     }
 
     const closePopup = (e) => { setIsHidden(hidden) }
 
-    const onChangeName = (e) =>
+    const onChangeName = (e) => 
     {
         setRewardName(prev => ({...prev,[e.target.name]:e.target.value}))
     }
@@ -57,20 +43,20 @@ function NewRewardRegister() {
     const handleAdd = () =>
     {
         setRewardCount(prev => [...prev, 1])
-        if(rewardName !== "" && count !== null && receiveImg !== null)
-        {
-            setData(prev => [...prev,{
-                name:rewardName,
-                amount:count,
-                image:receiveImg
-            }])
-            console.log("passed!!!");
-        }
+        setData(prev => [...prev,{
+            name:rewardName,
+            amount:count,
+            image:receiveImg
+        }])
     }
     
     const handleNavigate = () =>
     {
-        router.push("/admin/event/event-detail")
+        // router.push("/admin/event/event-detail")
+        // if(rewardName !== "" && count !== null && receiveImg !== null)
+        // {
+            // console.log("passed!!!");
+        // }
     }
 
     useEffect(() =>
@@ -89,7 +75,7 @@ function NewRewardRegister() {
                             return (
                                 <div key={index} className="flex w-full justify-center items-center">
                                     <Reward 
-                                        id={index}
+                                        id={`reward${index}`}
                                         name={nameId}
                                         rewardName={rewardName.nameId}
                                         onChangeRewardName={onChangeName}
