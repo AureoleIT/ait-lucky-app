@@ -1,6 +1,10 @@
-// import { applyMiddleware } from 'redux'
-// import { configureStore, applyMiddleware} from '@reduxjs/toolkit'
-// import { objectReducer } from './reducer'
-// import thunk from 'redux-thunk'
+import { applyMiddleware, createStore, combineReducers } from 'redux'
+import { objectReducer } from './reducer'
+import thunk from 'redux-thunk'
 
-// export const store = configureStore(objectReducer, applyMiddleware(thunk))
+const reducers = combineReducers({
+	objectReducer: objectReducer,
+});
+
+
+export const store = createStore(reducers, applyMiddleware(thunk))
