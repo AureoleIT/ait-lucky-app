@@ -59,6 +59,10 @@ export default function Index() {
   /* Export current event for another access */
   module.exports = { event };
 
+  useEffect(() => {
+    window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event));
+  }, [event]);
+
   const pinData = useCallback(
     (e) => {
       setPin(e?.target?.value);

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useState } from "react";
+import { React, useCallback, useState, useEffect } from "react";
 import PopUp from "public/shared/PopUp";
 import Logotic from "public/shared/Logotic";
 import TextNoLabel from "public/shared/TextNoLabel";
@@ -12,17 +12,28 @@ import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { hasWhiteSpaceAndValidLength, isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { onValue, ref, set } from "firebase/database";
-import { event } from "../index.js";
+// import { event } from "../index.js";
 import router from "next/router";
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
+
+const eventState = JSON.parse(localStorage.getItem("EVENT_JOINED_STATE")) || [];
+
 export default function Info() {
   const [name, setName] = useState("");
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+  const [event, setEvent] = useState(eventState)
   var [player, setPlayer] = useState({});
-
+  console.log(localStorage)
+  if (typeof window !== 'undefined') {
+    console.log('You are on the browser')
+    // 👉️ can use localStorage here
+  } else {
+    console.log('You are on the server')
+    // 👉️ can't use localStorage
+  }
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       setTextState(messagesError.E0004);
@@ -37,7 +48,7 @@ export default function Info() {
       createAt: new Date().getTime(),
       status: 2,
       idReward: "",
-      eventId: event.id,
+      eventId: event.eventId,
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
@@ -60,6 +71,10 @@ export default function Info() {
   /* Export current player login for another access */
   module.exports = { player }
   
+  useEffect(() => {
+    window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
+  }, [player]);
+
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);

@@ -48,7 +48,7 @@ export default class MyApp extends App {
     const Layout = Component.layout || (({ children }) => <>{children}</>);
 
     return (
-      <Provider store={store}>
+      // <Provider store={store}>
         <React.Fragment>
           <Head>
             <meta
@@ -62,7 +62,7 @@ export default class MyApp extends App {
             <Component {...pageProps} />
           </Layout>
         </React.Fragment>
-      </Provider>
+      // </Provider>
     );
   }
 }
