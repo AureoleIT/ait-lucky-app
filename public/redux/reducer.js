@@ -16,7 +16,7 @@ const initState = {
     participant: {}
 }
 
-export const objectReducer = (state = initState, action) => {
+export const addReducer = (state = initState, action) => {
     switch (action.type) {
         case ADD_EVENT: {
             return { ...state, event: action.payload }
