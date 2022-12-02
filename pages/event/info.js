@@ -67,7 +67,7 @@ export default function Info() {
   };
 
   // Set and save new player object to redux
-  useEffect(() => dispatch(addParticipant(player)), [])
+  useEffect(() => dispatch(addParticipant(player)), [dispatch, player])
 
   useEffect(() => {
     window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
