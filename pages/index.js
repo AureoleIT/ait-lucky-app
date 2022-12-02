@@ -18,6 +18,8 @@ import { ref, set, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
+import { useDispatch, useSelector } from "react-redux";
+import { addEvent } from "public/redux/actions";
 
 export default function Index() {
   const BG_COLOR =
@@ -28,6 +30,9 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
+  
+  //Call dispatch from redux
+  const dispatch = useDispatch();
 
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
@@ -56,8 +61,13 @@ export default function Index() {
     });
   };
 
-  /* Export current event for another access */
-  module.exports = { event };
+  /* Export current event to redux for another access */
+  useEffect(() => {
+    dispatch(addEvent(event));
+  }, [dispatch, event])
+  
+  const data = useSelector(state => state.addReducer);
+  console.log({ data })
 
   useEffect(() => {
     window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event));

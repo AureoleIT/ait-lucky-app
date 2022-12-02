@@ -21,7 +21,8 @@ import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch, useSelector } from "react-redux";
-import { addEvent } from "public/redux/actions";
+import { addUser } from "public/redux/actions";
+
 export default function Login() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,13 +32,8 @@ export default function Login() {
   const [check, setCheck] = useState(false);
   var [user, setUser] = useState({});
 
-  const data = useSelector(state => state);
-  console.log({data})
-  const dispatch= useDispatch()
-  useEffect(() => dispatch(addEvent({"a":"12"})), [])
-  
   const dbRef = ref(db);
-  
+
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
@@ -107,9 +103,10 @@ export default function Login() {
         showMethod(messagesError.E4444, show, false)
       });
   }
-
-  /* Export current user login for another access */
-  module.exports = { user }
+  
+  // Call dispatch and set user to redux 
+  const dispatch = useDispatch()
+  useEffect(() => dispatch(addUser({ user })), [])
 
   useEffect(() => {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
@@ -125,12 +122,14 @@ export default function Login() {
     },
     [setName]
   );
+
   const passData = useCallback(
     (e) => {
       setPass(e?.target?.value);
     },
     [setPass]
   );
+  
   const onCheckData = () => {
     setCheck(!check);
   };

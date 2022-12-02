@@ -12,28 +12,27 @@ import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { hasWhiteSpaceAndValidLength, isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { onValue, ref, set } from "firebase/database";
-// import { event } from "../index.js";
 import router from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { addParticipant } from "public/redux/actions";
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
-
-const eventState = JSON.parse(localStorage.getItem("EVENT_JOINED_STATE")) || [];
 
 export default function Info() {
   const [name, setName] = useState("");
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
-  const [event, setEvent] = useState(eventState)
   var [player, setPlayer] = useState({});
-  console.log(localStorage)
-  if (typeof window !== 'undefined') {
-    console.log('You are on the browser')
-    // 👉️ can use localStorage here
-  } else {
-    console.log('You are on the server')
-    // 👉️ can't use localStorage
-  }
+
+  // Call dispatch from redux
+  const dispatch = useDispatch();
+
+  // Get current event from last state get in
+  const currEvent = useSelector(state => state.addReducer.event)
+
+  console.log(currEvent)
+
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       setTextState(messagesError.E0004);
@@ -48,7 +47,7 @@ export default function Info() {
       createAt: new Date().getTime(),
       status: 2,
       idReward: "",
-      eventId: event.eventId,
+      eventId: currEvent.eventId,
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
@@ -67,10 +66,9 @@ export default function Info() {
       });
   };
 
+  // Set and save new player object to redux
+  useEffect(() => dispatch(addParticipant(player)), [])
 
-  /* Export current player login for another access */
-  module.exports = { player }
-  
   useEffect(() => {
     window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
   }, [player]);
@@ -81,9 +79,11 @@ export default function Info() {
     },
     [setName]
   );
+
   const closePopup = (e) => {
     setHidden(hidden);
   };
+
   return (
     <section
       className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
