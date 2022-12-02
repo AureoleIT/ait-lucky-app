@@ -1,0 +1,7 @@
+Button.js sẽ thay thế cho các component sau: 
+  - BgBlueButton.js
+  - BgRedButton.js
+  - BgWhiteButton.js
+  - ButtonAndIcon.js
+  - ConfirmButton.js
+  
