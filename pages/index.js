@@ -30,6 +30,9 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
+  
+  //Call dispatch from redux
+  const dispatch = useDispatch();
 
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
