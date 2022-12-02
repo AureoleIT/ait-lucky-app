@@ -37,8 +37,6 @@ export default function Dashboard() {
     });
   }, [uuid]);
 
-
-
   return (
     <>
       {/* header */}
@@ -85,9 +83,6 @@ export default function Dashboard() {
                     </div>
                   ))
                 )}
-                <div className="w-full flex items-center text-center justify-center">
-                  ...
-                </div>
               </div>
             </div>
           }
