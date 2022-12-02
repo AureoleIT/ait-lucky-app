@@ -100,7 +100,7 @@ export default function Login() {
   
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
-  useEffect(() => dispatch(addUser({ user })), [])
+  useEffect(() => dispatch(addUser({ user })), [dispatch, user])
 
   useEffect(() => {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
