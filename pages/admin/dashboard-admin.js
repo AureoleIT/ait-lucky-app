@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 
 // import firebase
 import { db } from "src/firebase";
-import {
-  ref,
-  orderByChild,
-  equalTo,
-  query,
-  onValue,
-} from "firebase/database";
+import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
 
 // components
 import Header from "public/shared/Header";
@@ -23,12 +17,20 @@ export default function Dashboard() {
   const uuid = "iasd-asda123-asd1-asd123";
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
+  const [currentId, setcurentId] = useState([]);
   const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
   const queID = query(
     ref(db, "event"),
     orderByChild("createBy"),
-    equalTo(uuid)
+    equalTo(String(currentId.userId))
   );
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("users"));
+    if (items) {
+      setcurentId(items);
+    }
+  }, []);
 
   // get(child(ref(db), `event`))
   // .then((snapshot) => {
@@ -75,8 +77,6 @@ export default function Dashboard() {
     });
   }, [uuid]);
 
-
-
   return (
     <>
       {/* header */}
@@ -121,14 +121,14 @@ export default function Dashboard() {
               <p className="font-bold text-sm text-[#000000] pb-2">
                 {"Các sự kiện đang diễn ra"}
               </p>
-              <div className="w-full flex flex-col gap-y-[7px] pb-5">
+              <div className="w-full flex flex-col gap-y-[7px] pb-5 overflow-auto h-[188px] scrollbar-hide">
                 {arrStatus.length === 0 ? (
-                  <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+                  <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
                     {" "}
                     {"Không có dữ liệu"}
                   </div>
                 ) : (
-                  arrStatus.slice(0, 4).map((item, index) => (
+                  arrStatus.map((item, index) => (
                     <div key={index} className="flex flex-col">
                       <EventButton
                         title={item.title}
@@ -137,9 +137,6 @@ export default function Dashboard() {
                     </div>
                   ))
                 )}
-                <div className="w-full flex items-center text-center justify-center">
-                  ...
-                </div>
               </div>
             </div>
           }
@@ -181,7 +178,6 @@ export default function Dashboard() {
                   </div>
                 ))
               )}
-
               <a href="event-list">
                 <BgBlueButton content={"TẤT CẢ SỰ KIỆN"} />
               </a>
