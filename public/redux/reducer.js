@@ -2,17 +2,13 @@ import {
     ADD_EVENT,
     ADD_USER,
     ADD_PARTICIPANT,
-    // ADD_REWARD,
-    addUser,
-    addParticipant,
-    // addReward,
-    addEvent
+    ADD_REWARD,
 } from "./actions";
 
 const initState = {
     event: {},
     user: {},
-    // reward: {},
+    reward: {},
     participant: {}
 }
 
@@ -26,6 +22,9 @@ export const addReducer = (state = initState, action) => {
         }
         case ADD_USER: {
             return { ...state, user: action.payload }
+        }
+        case ADD_REWARD: {
+            return { ...state, reward: action.payload }
         }
         default:
             return state
