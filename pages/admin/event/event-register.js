@@ -8,9 +8,9 @@ import { failIcon, hidden, show, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import CheckBox from "public/shared/CheckBox";
 import { db } from "src/firebase";
-import { set, get, ref, child } from "firebase/database";
+import { set, ref } from "firebase/database";
 const uuid = require("uuid");
-const dbRef = ref(db);
+// const dbRef = ref(db);
 
 export default function EventRegister() {
   // router
@@ -81,7 +81,7 @@ export default function EventRegister() {
 
       setTimeout(() => {
         router.push("/admin/event/reward-register");
-      }, 3000);
+      }, 2000);
     }
   };
 
@@ -91,47 +91,28 @@ export default function EventRegister() {
         <div className="w-full">
           <Header />
         </div>
-        <div className="flex flex-col items-center justify-center w-full">
-          <h1 className="uppercase text-4xl py-3 font-bold text-[#004599]">
-            đăng ký
-          </h1>
-          <h1 className="uppercase text-xl py-3 font-bold text-[#004599] mb-4">
-            thông tin sự kiện
-          </h1>
-
-          <div className="w-3/4 lg:w-4/12">
-            <TextArea
-              content={"Tên sự kiện"}
-              value={nameEvent}
-              onChange={(e) => setNameEvent(e.target.value)}
-            />
-          </div>
-          <div className="pb-[1rem]  pt-[2rem] w-3/4 lg:w-4/12">
-            <TextArea
-              content={"Mô tả sự kiện"}
-              row={5}
-              value={eventDetail}
-              onChange={(e) => setEventDetail(e.target.value)}
-            />
-          </div>
-
-          <div className="w-3/4 lg:w-4/12">
-            <AuthInput
-              leftColor={"#003B93"}
-              rightColor={"#00F0FF"}
-              content={"Giới hạn người tham gia"}
-              type={"number"}
-              min={"1"}
-              value={limitUser}
-              onChange={(e) => setLimitUser(e.target.value)}
-            />
-          </div>
-
-          <div className="w-3/4 lg:w-4/12 flex ">
-            <div className="w-[70%]">
-              <p style={contentCSS} className="font-bold">
-                Cho phép người tham gia không cần đăng nhập
-              </p>
+        <div className="w-full flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center w-4/5 max-w-xl">
+            <h1 className="uppercase text-4xl py-3 font-bold text-[#004599]">
+              đăng ký
+            </h1>
+            <h1 className="uppercase text-xl py-3 font-bold text-[#004599] mb-4">
+              thông tin sự kiện
+            </h1>
+            <div className="w-full h-[70px]">
+              <TextArea
+                content={"Tên sự kiện"}
+                maxLength={"100"}
+                ref={nameEventRef}
+              />
+            </div>
+            <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
+              <TextArea
+                content={"Mô tả sự kiện"}
+                row={5}
+                maxLength={"1000"}
+                ref={eventDetailRef}
+              />
             </div>
             <div className="w-[30%] flex justify-end items-center">
               <input
@@ -142,7 +123,7 @@ export default function EventRegister() {
             </div>
           </div>
         </div>
-        <div className="py-3 w-3/4 lg:w-4/12" onClick={handleSubmit}>
+        <div className="py-3 w-4/5 max-w-xl" onClick={handleSubmit}>
           <BgBlueButton content={"TIẾP TỤC"} />
         </div>
 

@@ -10,6 +10,9 @@ import testCoundown from "public/util/testCountdown"
 import PopUpQR from "public/shared/PopUpQR"
 import { failIcon, hidden, show, successIcon } from "public/util/popup"
 import PopUp from "public/shared/PopUp"
+import Title from "public/shared/Title"
+import { TEXT } from "public/util/colors"
+import PlayerList from "public/shared/PlayerList"
 
 
 function CountDownCheckIn () 
@@ -46,8 +49,9 @@ function CountDownCheckIn ()
         "z-index": "20",
     }
 
-    const pinCode = 263451
+    const pinCode = 263451 // test pin code
 
+    // countdown
     useEffect(() =>
     {
         let date = new Date()
@@ -92,6 +96,7 @@ function CountDownCheckIn ()
         return () => clearInterval(countdown)
     },[isActive, isStop])
     
+    // close pop up
     const closePopup = (e) => {
         setIsHidden(hidden);
     };
@@ -105,6 +110,7 @@ function CountDownCheckIn ()
         setIsHidden(show)
     }
 
+    // download qr code 
     const handleDownloadQR = () =>
     {
         const qrCodeURL = document.getElementById("qrCode")
@@ -119,6 +125,7 @@ function CountDownCheckIn ()
         document.body.removeChild(downloadElement)
     }
 
+    // start event
     const handleStartEvent = () =>
     {   
         setIsStop(true)
@@ -135,35 +142,37 @@ function CountDownCheckIn ()
 
     return (
         <section className="flex flex-col justify-center items-center h-screen w-screen">
-            <h1 className="uppercase text-4xl py-2 font-bold text-[#004599]">tiệc cuối năm</h1>
-            <h1 className="uppercase text-base py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
+            <Title title={"tiệc cuối năm"}/>
+            <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
 
              {/* id room */}
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl h-[80px] flex justify-center items-center rounded-[10px] mb-4">
+            <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center">
                 <PinCode length={6} value={pinCode} />
             </div>  
 
             {/* qr code */}
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl flex mb-4 drop-shadow-lg">
+            <div className="max-w-xl w-4/5 flex mb-4 drop-shadow-lg">
                 <ButtonAndIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"} onClick={generateQRcode}/>
             </div>
 
             <div className={isHidden} style={zIndex}>
                 <PopUpQR close={closePopup}>
                     <div className="hidden mb-3 justify-center" id="qr_code">
-                        <div>
-                            <QRCodeCanvas id="qrCode" size={100} value={qrCodeValue} />
-                        </div>
-                        <div className="relative">
-                            <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
+                        <div className="flex justify-center items-center">
+                            <div>
+                                <QRCodeCanvas id="qrCode" size={120} value={qrCodeValue} />
+                            </div>
+                            <div className="relative">
+                                <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
+                            </div>
                         </div>
                     </div>
                 </PopUpQR>
             </div>
 
-            <div className="flex justify-center w-full mb-4">
+            <div className="flex justify-center max-w-xl w-4/5 mb-4">
                 
                 <div className="w-[65px] h-[100px] rounded-[10px] mr-1 text-white text-6xl flex justify-center items-center drop-shadow-lg" style={countDownNumber}>
                     {minutes > 9 ? (Math.floor(minutes / 10)) : 0}
@@ -183,10 +192,8 @@ function CountDownCheckIn ()
 
             </div>
 
-            <div className="w-3/4 md:w-4/12 flex justify-between mb-2">
-                <div className="">
-                    <p className="text-[#004599] font-bold">Số người tham gia</p>
-                </div>
+            <div className="max-w-xl w-4/5 flex justify-between mb-2">
+                <p className={`text-[16px] text-[${TEXT}] font-bold self-center text-center`}>Số người tham gia</p>
                 <div className="flex">
                     <div className="w-[24px] h-[24px] rounded-[5px] text-white font-bold mr-1 flex justify-center items-center drop-shadow-lg" style={countDownNumber}>
                         {Math.floor(testCoundown.participants / 10)}
@@ -199,40 +206,28 @@ function CountDownCheckIn ()
 
             <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">người chơi</h1> 
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl z-0">
+            <div className="max-w-xl w-4/5 z-0">
                 <Line />
             </div>
 
-            <div className="w-full max-h-[200px] overflow-x-hidden overflow-y-auto">
+            <div className="max-w-xl w-4/5 max-h-[200px] overflow-x-hidden overflow-y-auto">
                 <div className="w-full h-full flex flex-col items-center">
-                    {
-                        testCoundown.player.map((player, index) =>
-                        {
-                            return(
-                                <h1 className="text-xl py-2 font-bold text-[#004599]" key={index}>{player}</h1>
-                            )
-                        })
-                    }
+                    <PlayerList listPlayer={testCoundown.player} />
                 </div>
             </div>
 
-            <div className="w-[90%] lg:w-4/12 max-w-xl mb-4 z-0">
+            <div className="max-w-xl w-4/5 mb-4 z-0">
                 <Line />
             </div>
 
-            <div className="w-11/12 md:w-9/12 lg:w-4/12 flex justify-center items-center" onClick={handleStartEvent}>
+            <div className="max-w-xl w-4/5 flex justify-center items-center" onClick={handleStartEvent}>
                 <div className="w-full mr-1 drop-shadow-lg">
                     <BgBlueButton content={"BẮT ĐẦU"}/>
                 </div>
             </div>
 
             <div className={isNavigateHidden} style={zIndexNaviagte}>
-                <PopUp 
-                    text={textState}
-                    icon={isSuccess ? successIcon : failIcon}
-                    close={closePopup}
-                    isWarning={!isSuccess}
-                />
+                <PopUp text={textState} icon={isSuccess ? successIcon : failIcon} close={closePopup} isWarning={!isSuccess} />
             </div>
 
         </section>
