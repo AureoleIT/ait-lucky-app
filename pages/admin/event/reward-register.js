@@ -1,22 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
-import AddRewardPopUp from "public/shared/AddRewardPopUp";
-import { failIcon, hidden, show, successIcon } from "public/util/popup";
-import Line from "public/shared/Line";
-import ImageCustom from "public/shared/ImageCustom";
+import { failIcon, hidden, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
-import CountComponent from "public/shared/CountComponent";
-import {
-  wrapPopUp,
-  wrap,
-  iconStyle,
-  buttonColor,
-} from "public/util/reward-register";
 import BgBlueButton from "public/shared/BgBlueButton";
-import InputWithColor from "public/shared/InputWithColor";
-import AuthInput from "public/shared/AuthInput";
 import Reward from "components/RewardRegister/Reward";
 
 function NewRewardRegister() {
@@ -26,24 +14,27 @@ function NewRewardRegister() {
     const [textState, setTextState] = useState("")
     const [isSuccess, setIsSuccess] = useState(false)
     const [isHidden, setIsHidden] = useState(hidden)
-    const [file, setFile] = useState()
     const [rewardCount, setRewardCount] = useState([])
     // state store data
-    const [imgList, setImgList] = useState([])
-    const [count, setCount] = useState(1)
+    const [count, setCount] = useState([])
     const [data, setData] = useState([{}])
     const [rewardName, setRewardName] = useState({})
-    const [receiveImg, setReceiveImg] = useState([])
+    const [receiveImg, setReceiveImg] = useState({})
     // ref store data
 
-    const isRealValue = (value) =>
-    {
-        return value && value !== null && value !== undefined
+    const wrap = {
+        height:"100%",
+        zIndex: "20",
     }
 
     const handleReceiveImg = (data) =>
     {
-        setReceiveImg(prev => [...prev, data])
+        setReceiveImg(prev => ({...prev, [""]:data}))
+    }
+
+    const handleReceiveCount = (data) =>
+    {
+        setCount(prev => [...prev, data])
     }
 
     const closePopup = (e) => { setIsHidden(hidden) }
@@ -56,15 +47,15 @@ function NewRewardRegister() {
     const handleAdd = () =>
     {
         setRewardCount(prev => [...prev, 1])
-        if(rewardName !== "" && count !== null && receiveImg !== null)
-        {
+        // if(rewardName !== "" && count > 1 && receiveImg !== null)
+        // {
             setData(prev => [...prev,{
                 name:rewardName,
                 amount:count,
                 image:receiveImg
             }])
-            console.log("passed!!!");
-        }
+        // }
+        // console.log(count);
     }
     
     const handleNavigate = () =>
@@ -79,7 +70,7 @@ function NewRewardRegister() {
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
-            <div className="w-full flex flex-col items-center justify-center">
+            <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
                 <div className="w-full flex flex-col items-center justify-center">
                     {
                         rewardCount.map((item, index) =>
@@ -98,17 +89,18 @@ function NewRewardRegister() {
                                         fileID={`file${index}`}
                                         toggleID={`toggle${index}`}
                                         receiveImg={handleReceiveImg}
+                                        receiveCount={handleReceiveCount}
                                     /> 
                                 </div>
                             )
                         })
                     }
                 </div>
-                <div className="w-[90%] lg:w-3/4">
+                <div className="w-full">
                     <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
                 </div>
             </div>
-            <div className="pb-4 w-[90%] lg:w-4/12 drop-shadow-lg max-w-xl">
+            <div className="pb-4 w-4/5 drop-shadow-lg max-w-xl">
                 <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} onClick={handleNavigate} />
             </div>
             <div className={isHidden} style={wrap}>
