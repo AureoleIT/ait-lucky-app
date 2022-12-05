@@ -147,7 +147,7 @@ function CountDownCheckIn ()
 
              {/* id room */}
 
-            <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center">
+            <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center mb-4">
                 <PinCode length={6} value={pinCode} />
             </div>  
 

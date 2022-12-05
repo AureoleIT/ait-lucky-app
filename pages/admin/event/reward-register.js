@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
@@ -7,66 +7,65 @@ import PopUp from "public/shared/PopUp";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Reward from "components/RewardRegister/Reward";
 
-function NewRewardRegister() {
+function RewardRegister() {
     // router
     const router = useRouter();
     // state
     const [textState, setTextState] = useState("")
     const [isSuccess, setIsSuccess] = useState(false)
     const [isHidden, setIsHidden] = useState(hidden)
+
     const [rewardCount, setRewardCount] = useState([])
     // state store data
     const [count, setCount] = useState([])
     const [data, setData] = useState([{}])
+    const [value, setValue] = useState([])
     const [rewardName, setRewardName] = useState({})
-    const [receiveImg, setReceiveImg] = useState({})
+    const [receiveImg, setReceiveImg] = useState([])
+    const [receiveName, setReceiveName] = useState([])
     // ref store data
+    const refs = useRef()
 
     const wrap = {
         height:"100%",
         zIndex: "20",
     }
 
-    const handleReceiveImg = (data) =>
+    const handleReceiveData = (data) =>
     {
-        setReceiveImg(prev => ({...prev, [""]:data}))
-    }
-
-    const handleReceiveCount = (data) =>
-    {
-        setCount(prev => [...prev, data])
+        console.log(data);
+        setValue(prev => [...prev, data])
     }
 
     const closePopup = (e) => { setIsHidden(hidden) }
 
-    const onChangeName = (e) =>
+    const onChangeName = useCallback((e) =>
     {
         setRewardName(prev => ({...prev,[e.target.name]:e.target.value}))
-    }
+    })
 
     const handleAdd = () =>
     {
         setRewardCount(prev => [...prev, 1])
-        // if(rewardName !== "" && count > 1 && receiveImg !== null)
-        // {
-            setData(prev => [...prev,{
-                name:rewardName,
-                amount:count,
-                image:receiveImg
-            }])
-        // }
-        // console.log(count);
     }
     
     const handleNavigate = () =>
     {
-        router.push("/admin/event/event-detail")
+        setData(prev => [...prev, value])
+        // router.push("/admin/event/event-detail")
     }
-
     useEffect(() =>
     {
-        console.log(data);
-    },[data])
+        const size = data.length-1;
+        const temp = data[size];
+        const length = temp.length;
+        const last =  temp[length-1];
+        const arr = last ?? [];
+        console.log({length});
+        console.log({last});
+        console.log(arr[0]);
+        console.log({data})
+    })
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
@@ -78,18 +77,19 @@ function NewRewardRegister() {
                             let nameId = `name${index}`
                             return (
                                 <div key={index} className="flex w-full justify-center items-center">
-                                    <Reward 
+                                    <Reward
+                                        ref={refs}
                                         id={index}
+                                        inputId={index}
                                         name={nameId}
                                         rewardName={rewardName.nameId}
                                         onChangeRewardName={onChangeName}
-                                        rewardCountValue={count}
-                                        onRewardCountUp={() => setCount(count + 1)}
-                                        onRewardCountDown={() => setCount(count - 1)}
+                                        // rewardCountValue={count}
+                                        // onRewardCountUp={() => setCount(count + 1)}
+                                        // onRewardCountDown={() => setCount(count - 1)}
                                         fileID={`file${index}`}
                                         toggleID={`toggle${index}`}
-                                        receiveImg={handleReceiveImg}
-                                        receiveCount={handleReceiveCount}
+                                        receiveData={handleReceiveData}
                                     /> 
                                 </div>
                             )
@@ -110,4 +110,4 @@ function NewRewardRegister() {
   );
 }
 
-export default NewRewardRegister;
+export default RewardRegister;
