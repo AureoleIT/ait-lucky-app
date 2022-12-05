@@ -706,6 +706,8 @@ video {
   left: -10px;
 }
 
+.z-10 {
+  z-index: 10;
 .z-0 {
   z-index: 0;
 }
@@ -3038,7 +3040,7 @@ video {
 
 .text-sky-500 {
   --tw-text-opacity: 1;
-  color: rgb(14 165 233 / var(--tw-text-opacity));
+  color: rgb(0 69 153 / var(--tw-text-opacity));
 }
 
 .text-\[\#004599\] {
