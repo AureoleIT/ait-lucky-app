@@ -15,9 +15,8 @@ const uuid = require("uuid");
 export default function EventRegister() {
   // router
   const router = useRouter();
-  const [nameEvent, setNameEvent] = useState("");
-  const [eventDetail, setEventDetail] = useState("");
-  const [limitUser, setLimitUser] = useState("");
+
+  // state
   const [textState, setTextState] = useState("");
   const [isHidden, setHidden] = useState(hidden);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -40,7 +39,11 @@ export default function EventRegister() {
 
   // handle submit button
   const handleSubmit = () => {
-    if (nameEvent === "" || eventDetail === "" || limitUser === "") {
+    if (
+      nameEventRef.current.value === "" ||
+      eventDetailRef.current.value === "" ||
+      limitUserRef.current.value === ""
+    ) {
       setTextState("Vui lòng nhập đủ thông tin !");
       setIsSuccess(false);
       setHidden(show);
@@ -114,12 +117,25 @@ export default function EventRegister() {
                 ref={eventDetailRef}
               />
             </div>
-            <div className="w-[30%] flex justify-end items-center">
-              <input
-                type="checkbox"
-                id="accept"
-                className="appearance-none w-9 focus:outline-none checked:bg-blue-300 h-5 bg-[#ccc] rounded-full before:inline-block before:rounded-full before:bg-blue-500 before:h-4 before:w-4 checked:before:translate-x-full shadow-inner transition-all duration-300 before:ml-0.5"
+            <div className="w-full">
+              <AuthInput
+                leftColor={"#003B93"}
+                rightColor={"#00F0FF"}
+                content={"Giới hạn người tham gia"}
+                type={"number"}
+                min={"1"}
+                ref={limitUserRef}
               />
+            </div>
+            <div className="w-full flex justify-center items-center">
+              <div className="w-[70%]">
+                <p style={contentCSS} className="font-bold">
+                  Cho phép người tham gia không cần đăng nhập
+                </p>
+              </div>
+              <div className="w-[30%] flex items-center text-right">
+                <CheckBox ref={checkBoxRef} />
+              </div>
             </div>
           </div>
         </div>

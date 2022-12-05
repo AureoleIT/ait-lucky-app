@@ -17,12 +17,9 @@ function RewardRegister() {
 
     const [rewardCount, setRewardCount] = useState([])
     // state store data
-    const [count, setCount] = useState([])
     const [data, setData] = useState([{}])
     const [value, setValue] = useState([])
     const [rewardName, setRewardName] = useState({})
-    const [receiveImg, setReceiveImg] = useState([])
-    const [receiveName, setReceiveName] = useState([])
     // ref store data
     const refs = useRef()
 
@@ -33,16 +30,19 @@ function RewardRegister() {
 
     const handleReceiveData = (data) =>
     {
-        console.log(data);
-        setValue(prev => [...prev, data])
+        if(data)
+        {
+            console.log(data);
+        }
+        // setValue(prev => [...prev, data])
     }
 
     const closePopup = (e) => { setIsHidden(hidden) }
 
-    const onChangeName = useCallback((e) =>
+    const onChangeName = (e) =>
     {
         setRewardName(prev => ({...prev,[e.target.name]:e.target.value}))
-    })
+    }
 
     const handleAdd = () =>
     {
@@ -51,21 +51,22 @@ function RewardRegister() {
     
     const handleNavigate = () =>
     {
-        setData(prev => [...prev, value])
-        // router.push("/admin/event/event-detail")
+        // setData(prev => [...prev, value])
+        router.push("/admin/event/event-detail")
     }
-    useEffect(() =>
-    {
-        const size = data.length-1;
-        const temp = data[size];
-        const length = temp.length;
-        const last =  temp[length-1];
-        const arr = last ?? [];
-        console.log({length});
-        console.log({last});
-        console.log(arr[0]);
-        console.log({data})
-    })
+
+    // useEffect(() =>
+    // {
+    //     const size = data.length-1;
+    //     const temp = data[size];
+    //     const length = temp.length;
+    //     const last =  temp[length-1];
+    //     const arr = last ?? [];
+    //     console.log({length});
+    //     console.log({last});
+    //     console.log(arr[0]);
+    //     console.log({data})
+    // })
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
@@ -84,9 +85,6 @@ function RewardRegister() {
                                         name={nameId}
                                         rewardName={rewardName.nameId}
                                         onChangeRewardName={onChangeName}
-                                        // rewardCountValue={count}
-                                        // onRewardCountUp={() => setCount(count + 1)}
-                                        // onRewardCountDown={() => setCount(count - 1)}
                                         fileID={`file${index}`}
                                         toggleID={`toggle${index}`}
                                         receiveData={handleReceiveData}
