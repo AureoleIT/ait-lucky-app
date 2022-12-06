@@ -4,7 +4,6 @@ import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Link from "next/link";
-import { useAuth } from "src/context/AuthContext";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import {
     getDatabase,
@@ -34,16 +33,14 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 export default function Setting() {
     //firebase auth
     const db = getDatabase();
-    const auth = useAuth();
-    const [user, setUser] = useState();
-    const emailUser = auth.currentUser.email;
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("USER_LOGIN_STATE")));
 
     // normal state
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [img, setImg] = useState("http://www.gravatar.com/avatar/?d=retro&s=32");
     const [file, setFile] = useState(null);
-    
+
     // style css
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -75,14 +72,14 @@ export default function Setting() {
 
     //get auth profile
     function fetchDb() {
+        
         // get orderbychild - have conditions
-        const que = query(ref(db, "users"), orderByChild("email"), equalTo(emailUser));
+        const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
         onValue(que, (snapshot) => {
             const record = snapshot.val() ?? [];
             const values = Object.values(record);
-            updateUser(values[0]);
-            setUsername(values.find(item => item.email == emailUser).name);
-            setEmail(emailUser);
+            setUsername(values.find(item => item.email == user.email).name);
+            setEmail(user.email)
             if (values[0].pic != "")
                 setImg(values[0].pic);
         }
@@ -189,18 +186,16 @@ export default function Setting() {
         );
     }
 
-    function updateUser(user) {
-        setUser(user);
-        console.log(user);
-    }
-
     useEffect(() => {
         fetchDb();
     }, [])
+    
+    useEffect(() => {
+        window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
+      }, [user]);
 
     // show popup
     useEffect(() => {
-        console.log(isHidden)
         if (isHidden == false) {
             isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
             document.getElementById("textState").innerHTML = textState;
@@ -233,7 +228,7 @@ export default function Setting() {
 
                                     onClick={(e) => getImage(e)}
                                     alt="" className="w-[100px] h-[100px] rounded object-cover " />
-                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*"/>
+                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
                             </div>
                         </div>
 
