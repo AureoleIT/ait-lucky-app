@@ -64,8 +64,8 @@ export default function Spin({listPlayer}) {
                                     <>
                                         <img className="h-20 w-20 object-cover rounded-full border-1"
                                             src={listPlayer[idx].playerAvt}
-                                            alt={listPlayer[idx].playerName} />
-                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].playerName}</p>
+                                            alt={listPlayer[idx].nameDisplay} />
+                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].nameDisplay}</p>
                                     </>
                                 }
                             </div>

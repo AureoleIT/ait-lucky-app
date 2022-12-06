@@ -18,7 +18,7 @@ import { useMemo } from "react/cjs/react.development";
 import PlayerDetail from "./PlayerDetail";
 import OverlayBlock from "./OverlayBlock";
 
-export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true}) {
+export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = []}) {
     const [typeList, setTypeList] = useState(listType);
     const [playerChosing, setPlayerChosing] = useState(undefined);
 
@@ -30,8 +30,8 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                         <div key={idx} className="group h-fit flex py-2 px-6 gap-4 text-[#004599] text-base hover:text-lg" onClick={() => openPlayerDetailByIndex(idx)}>
                             <img className="transition-all h-16 w-16 object-cover rounded-full border-1 group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.playerAvt} />
                             <div className="flex flex-col justify-center">
-                                <p className="h-fit text-left grow uppercase font-bold mt-2 group-hover:mt-4">{player.playerName}</p>
-                                <p className="h-fit text-left grow font-semibold">{player.playerName}</p>
+                                <p className="h-fit text-left grow uppercase font-bold mt-2 group-hover:mt-4">{player.nameDisplay}</p>
+                                <p className="h-fit text-left grow font-semibold">{player.nameDisplay}</p>
                             </div>
                         </div>
                     )
@@ -62,9 +62,13 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     )
 
     useEffect(() => {
-        const detail = (<PlayerDetail player={listPlayer[playerChosing]} />);
+        const detail = (<PlayerDetail player={listPlayer[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} />);
         if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
     }, [playerChosing])
+
+    useEffect(() => {
+        console.log(listReward);
+    }, [listReward]);
 
     return (
         <>

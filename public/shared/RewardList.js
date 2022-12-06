@@ -29,25 +29,43 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         rewardList.sort(compare);
     }, [])
 
-    const getIMGsFromReward = (reward) => {
+    const awradedPaticipantShowcase = (rewardID) => {
+        const showcaseList = eventPaticipant.filter(paticipant => paticipant.idReward == rewardID)
+
         return (
-            <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
-                {
-                    reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
-                        return (
-                            <div key={idx} className="relative h-24 w-full flex">
-                                <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}/>
-                                {
-                                    (reward.imgUrl.length > 3 && idx===2)?
-                                    <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
-                                        <p className="w-full text-center font-bold text-white text-4xl">+{reward.imgUrl.length -3}</p>
-                                    </div>:
-                                    <></>
-                                }
-                            </div>
-                        )
-                    }):<></>
-                }
+            <>
+                {showcaseList.length > 0?
+                    <>
+                        <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">Người trúng thưởng</p>
+                        <PlayerList listType="List" changeButton={false} listPlayer={showcaseList} />
+                    </>:
+                <></>}
+            </>
+        )
+    }
+
+    const getDetailFromReward = (reward) => {
+        return (
+            <div>
+                <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
+                    {
+                        reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
+                            return (
+                                <div key={idx} className="relative h-24 w-full flex">
+                                    <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}/>
+                                    {
+                                        (reward.imgUrl.length > 3 && idx===2)?
+                                        <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
+                                            <p className="w-full text-center font-bold text-white text-4xl">+{reward.imgUrl.length -3}</p>
+                                        </div>:
+                                        <></>
+                                    }
+                                </div>
+                            )
+                        }):<></>
+                    }
+                </div>
+                {eventPaticipant !== undefined?awradedPaticipantShowcase(reward.idReward):<></>}
             </div>
         )
     }
@@ -65,10 +83,10 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             </div>
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
-                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none">{reward.description}</p>
+                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none">{reward.nameReward}</p>
                                 <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">Số lượng: {showRemain?reward.quantityRemain: reward.quantity}</p>
                             </div>
-                            {getIMGsFromReward(reward)}
+                            {getDetailFromReward(reward)}
                         </div>
                     )
                 })
@@ -76,28 +94,10 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         </>
     )
 
-    const awradedPaticipantShowcase = (rewardID) => {
-        const showcaseList = eventPaticipant.filter(paticipant => {
-            paticipant.reward_taken === rewardID;
-        })
-
-        return (
-            <>
-                {showcaseList.length > 0?
-                    <>
-                        <p className="ml-4 items-center text-left text-[#004599] text-4 font-extrabold">Người trúng thưởng</p>
-                        <PlayerList listType="List" changeButton={false} listPlayer={showcaseList} />
-                    </>:
-                <></>}
-            </>
-        )
-    }
-
     return (
         <>
             <div className="overflow-auto h-full">
                 {listRewardShowcase}
-                {eventPaticipant !== undefined?awradedPaticipantShowcase():<></>}
             </div>
         </>
     );
