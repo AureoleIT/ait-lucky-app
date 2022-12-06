@@ -11,6 +11,7 @@ export default function Input({
   secondaryColor, // Thay thế cho rightColor ở component AuthInput cũ
   value,
   onChange,
+  children,
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -19,14 +20,14 @@ export default function Input({
   };
   return (
     <div
-      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] py-[2px] my-4 outline-none relative`}
     >
       <div className="h-full">
         <input
           type={type}
-          className={`h-full w-full rounded-lg text-lg px-4 outline-none border-none ${
+          className={`min-h-full w-full rounded-lg text-lg px-4 outline-none border-none ${
             noContent ? "text-center" : ""
-          }`}
+          } ${children ? "hidden" : ""}`}
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
@@ -39,11 +40,14 @@ export default function Input({
           >
             <p
               style={isTextGradient ? contentCSS : {}}
-              className={`font-bold text-base ${noContent? "hidden" : ""}`}
+              className={`font-bold text-base ${noContent ? "hidden" : ""}`}
             >
               {content}
             </p>
           </label>
+        </div>
+        <div className={children ? "bg-white rounded-lg px-5" : ""}>
+          {children}
         </div>
       </div>
     </div>
