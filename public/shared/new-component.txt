@@ -18,4 +18,7 @@ Input.js sẽ thay thế cho các component sau:
   - TextNoLabel.js
   - BorderText.js (truyền children)
   
-  
+Line.js sẽ thay thế cho các component sau:
+  - LineGradient.js
+  - GradientLine.js
+  - LineWithText.js
