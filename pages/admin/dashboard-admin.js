@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-
+//import redux
+import { useSelector } from "react-redux";
 // import firebase
 import { db } from "src/firebase";
 import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
@@ -14,23 +15,18 @@ import BorderText from "public/shared/BorderText";
 import nyancat from "public/img/nyancat.gif";
 
 export default function Dashboard() {
-  const uuid = "iasd-asda123-asd1-asd123";
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
-  const [currentId, setcurentId] = useState([]);
+
+  // const [currentId, setcurentId] = useState([]);
+  const currentId = useSelector((state) => state.addReducer.user);
+
   const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
   const queID = query(
     ref(db, "event"),
     orderByChild("createBy"),
-    equalTo(String(currentId.userId))
+    equalTo(String(currentId.user.userId))
   );
-
-  useEffect(() => {
-    const items = JSON.parse(localStorage.getItem("users"));
-    if (items) {
-      setcurentId(items);
-    }
-  }, []);
 
   // get(child(ref(db), `event`))
   // .then((snapshot) => {
@@ -75,23 +71,23 @@ export default function Dashboard() {
         setArrID(Object.values(data));
       }
     });
-  }, [uuid]);
+  }, [String(currentId.user.userId)]);
 
   return (
     <>
       {/* header */}
 
       <Header />
-      <section className="px-5 py-5 max-w-md w-screen mx-auto flex flex-col justify-center items-center">
+      <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
         {/* participate in event */}
 
         <BorderText
           title={""}
           content={
-            <div className="flex flex-col pt-5">
+            <div className="flex flex-col pb-4">
               <div className="flex ">
                 <div className="flex flex-col flex-1">
-                  <p className="font-bold text-sm text-[#656565]">
+                  <p className="font-bold text-sm text-[#656565] mt-2">
                     {"Chào mừng đến với AIT Lucky App,"}
                   </p>
                   <p className="text-sm text-[#656565] mb-2">
@@ -121,7 +117,7 @@ export default function Dashboard() {
               <p className="font-bold text-sm text-[#000000] pb-2">
                 {"Các sự kiện đang diễn ra"}
               </p>
-              <div className="w-full flex flex-col gap-y-[7px] pb-5 overflow-auto h-[188px] scrollbar-hide">
+              <div className="w-full flex flex-col gap-y-[7px] overflow-auto h-[188px] scrollbar-hide">
                 {arrStatus.length === 0 ? (
                   <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
                     {" "}
@@ -133,7 +129,7 @@ export default function Dashboard() {
                       <EventButton
                         title={item.title}
                         user_joined={item.user_joined}
-                      ></EventButton>
+                      />
                     </div>
                   ))
                 )}
@@ -174,7 +170,7 @@ export default function Dashboard() {
               ) : (
                 arrID.slice(0, 4).map((item, index) => (
                   <div key={index} className="flex flex-col">
-                    <EventButton title={item.title} id={item.id}></EventButton>
+                    <EventButton title={item.title} id={item.id} />
                   </div>
                 ))
               )}
