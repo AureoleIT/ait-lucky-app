@@ -2,8 +2,14 @@ import React from "react";
 import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
-import { auth } from "src/firebase";
+//Component
 import UserAvatar from "./UserAvatar";
+
+//Firebase
+import { auth } from "src/firebase";
+
+//Redux
+import { useDispatch } from "react-redux"
 
 function MenuItem(props) {
     const router = useRouter()
@@ -20,19 +26,17 @@ function MenuItem(props) {
 
 export default function Menu(props) {
     const [showMenu, setShowMenu] = [props.showMenu, props.setShowMenu]
-    const user = props.user
+    const [userData, setUserData] = [props.userData, props.setUserData]
+    const dispatch = useDispatch()
+    const user = userData
     const router = useRouter()
-    const defaultAvatar = "http://www.gravatar.com/avatar/?d=retro&s=32"
+    const defaultAvatar = props.defaultAvatar
     
     const RenderMenu = MenuList.map((item, index) => {
         return (
             <MenuItem key={index} icon={item.icon} name={item.name} href={item.href} />
         )
     }) 
-
-    function handleCloseMenu() {
-        setShowMenu(!showMenu)
-    }
 
     if(!showMenu) {
         return <></>
@@ -43,13 +47,13 @@ export default function Menu(props) {
             <div className="bg-slate-100/60 h-screen w-full absolute z-10 left-0 flex-1 justify-between" onClick={() => {setShowMenu(false)}}>
             </div>
             <div className="bg-white h-screen w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
-                <button className="absolute right-2 top-2" onClick={handleCloseMenu}>
+                <button className="absolute right-2 top-2" onClick={() => {setShowMenu(!showMenu)}}>
                     <CloseIcon />
                 </button>
                 <div className="flex gap-x-4 items-center mt-6">
-                    <UserAvatar avatar={!user ? defaultAvatar : user.photoURL} width={40} height={40} />
+                    <UserAvatar avatar={!user.pic ? (!user.photoURL ? defaultAvatar : user.photoURL) : user.pic} width={40} height={40} />
                     <div className="font-[900]">
-                        <h3 className="text-[14px]">{user.displayName}</h3>
+                        <h3 className="text-[14px]">{user.name || user.displayName}</h3>
                         <p className="text-[#656565] text-[12px]">{user.email}</p>
                     </div>
                 </div>
@@ -59,6 +63,7 @@ export default function Menu(props) {
                         {logout.icon}
                         <a onClick={() => {
                             auth.signOut()
+                            setUserData({})
                             router.push("/auth/login")}
                         }>
                             <p className="font-[900] text-[14px]">{logout.name}</p>
