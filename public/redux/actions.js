@@ -7,8 +7,7 @@ import {
     USER_EVENT,
     USER_PACKAGE,
     USER_REWARD,
-    REMOVE_STATE,
-    USER_CURR_HOSTING_EVENT
+    REMOVE_STATE
 } from "./constants"
 
 export const incognitoEvent = (event) => ({
