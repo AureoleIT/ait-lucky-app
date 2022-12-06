@@ -26,10 +26,11 @@ import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
-
+import { useSelector } from "react-redux";
 export default function Setting() {
     //firebase auth
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem("USER_LOGIN_STATE")));
+    const currentUser = useSelector(state => state.addReducer.user);
+    const [user, setUser] = useState(currentUser.user);
 
     // normal state
     const [username, setUsername] = useState("");
@@ -179,10 +180,6 @@ export default function Setting() {
     useEffect(() => {
         fetchDb();
     }, [])
-
-    useEffect(() => {
-        window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
-    }, [user]);
 
     // show popup
     useEffect(() => {
