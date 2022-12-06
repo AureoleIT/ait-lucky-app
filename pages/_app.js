@@ -10,7 +10,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "styles/tailwind.css";
 import "styles/globals.css";
-import AuthProvider from "src/context/AuthContext";
 
 Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
