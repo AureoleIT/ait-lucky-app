@@ -1,109 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import {
-  getDatabase,
   ref,
   query,
   orderByChild,
   equalTo,
   update,
   onValue,
-  DataSnapshot
+  child,
+  get
 } from "firebase/database";
 import { useAuth } from "src/context/AuthContext";
 import { successIcon, failIcon } from "public/util/popup";
-import { isEmpty, enoughNumCountPass, hasWhiteSpaceAndValidLength } from "public/util/functions";
+import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import OverlayBlock from "public/shared/OverlayBlock";
-
+import { db } from "src/firebase";
 
 export default function ChangePassword() {
-  const db = getDatabase();
-  const auth = useAuth();
   const [oldPass, setOld] = useState("");
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("USER_LOGIN_STATE")));
 
   //validation const
   const [textState, setTextState] = useState("");
   const [isHidden, setIsHidden] = useState(true);
   const [isSuccess, setIsSuccess] = useState(true);
+  const showMethod = useMemo(() => (message, isSuccess, isHidden) => {
+    setTextState(message);
+    setIsSuccess(isSuccess);
+    setIsHidden(isHidden);
+  }, [])
 
 
   const changePassword = () => {
     if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
-      setTextState(messagesError.E0004);
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0004, false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(oldPass)) {
-      setTextState(messagesError.E0005("mật khẩu cũ"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("mật khẩu cũ"), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(newPass)) {
-      setTextState(messagesError.E0005("mật khẩu mới"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("mật khẩu mới"), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(repeatPass)) {
-      setTextState(messagesError.E0005("nhập lại mật khẩu"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("nhập lại mật khẩu"), false, false);
       return;
     }
 
     if (newPass != repeatPass) {
-      setTextState(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"), false, false);
       return;
     }
 
     // check old pass
-    const que = query(ref(db, "users"), orderByChild("email"), equalTo(auth.currentUser.email));
-    onValue(que, (snapshot) => {
+    const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
+    get(que).then((snapshot) => {
       const record = snapshot.val() ?? [];
       const values = Object.values(record);
 
       if (values[0].password != oldPass) {
-        setTextState(messagesError.E0011("Mật khẩu cũ"));
-        setIsSuccess(false);
-        setIsHidden(false);
+        showMethod(messagesError.E0011("Mật khẩu cũ"), false, false);
         return;
+      } else {
+        update(ref(db, 'users/' + values[0].userId),
+          {
+            password: newPass
+          }).then(() => {
+            showMethod(messagesSuccess.I0003, true, false);
+            console.log("???")
+            return;
+          })
+          .catch((error) => {
+            showMethod(error, false, false);
+            return;
+          });
       }
-
-      update(ref(db, 'users/' + values[0].userId),
-        {
-          password: newPass
-        }).then(() => {
-          setTextState(messagesSuccess.I0003);
-          setIsSuccess(true);
-          setIsHidden(false);
-          return;
-        })
-        .catch((error) => {
-          setTextState(error);
-          setIsSuccess(false);
-          setIsHidden(false);
-          return;
-        });
     })
   }
 
+  useEffect(() => {
+    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
+  }, [user]);
+
   // show popup
   useEffect(() => {
-    console.log(isHidden)
     if (isHidden == false) {
+      console.log(textState);
       isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
       document.getElementById("textState").innerHTML = textState;
       document.getElementById("changeOverlay").classList.toggle('hidden');
