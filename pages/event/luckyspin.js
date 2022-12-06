@@ -14,7 +14,7 @@ import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
 // firebase
 import { auth, db } from "../../src/firebase";
-import { getDatabase, ref, set, child, get, onValue } from "firebase/database";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
 
 // DB test
 const listPlayer = [
@@ -54,7 +54,7 @@ const EventID = "EV20221101";
 
 export default function LuckySpin() {
     // Danh sách giải thưởng
-    const [rewardList, setRewardList] = useState([]);
+    const [rewardList, setRewardList] = useState([""]);
     // Index giải thưởng đang được chọn
     const [rewardChosing, setRewardChosing] = useState(0);
     // ID của giải thưởng được chọn
@@ -71,46 +71,133 @@ export default function LuckySpin() {
     const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
-    // Index người trúng thưởng
-    const [lastAwardedPlayerIndex, setLastAwardedPlayerIndex] = useState(0);
+    // Người nhận thưởng
+    const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
     
     // Firebase
-    const dbRef = ref(db)
+    const dbRef = ref(db);
 
+    const fetchDB = () => {
+        const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
+        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que1, (snapshot) => {
+            const data = Object.values(snapshot.val());
+            data.sort(compare);
+        
+            if (snapshot.exists()) {
+                setRewardList(data);
+                setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
+            }
+        });
+        onValue(que2, (snapshot) => {
+            const data = Object.values(snapshot.val());
+            
+            if (snapshot.exists()) {
+                setPlayerList(data);
+                setRemainPlayerList(data.filter((val) => (val.idReward === "")));
+            }
+        });
+        onValue(que3, (snapshot) => {
+            const data = Object.values(snapshot.val())[0];
+            const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
+            const isSpining = data['playingData']['isSpinning'];
+            const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
+
+            if (snapshot.exists()) {
+                if (!spinClicked && isSpining) {
+                    setLastAwardedIndex(lastAwardedIndex);
+                    setSpinClicked(isSpining);
+                };
+                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+            }
+        });
+    }
+
+    // ------------------------------------------------- Function
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
         if (b.sortNo > a.sortNo) return -1;
         return 0;
     }
 
-    // Lấy dữ liệu lần đầu của event rewards
-    // useEffect(() => {
-    //     get(child(dbRef, "event_rewards")).then((snapshot) => {
-    //         const record = snapshot.val() ?? [];
-    //         const values = Object.values(record);
-    //         setRewardList(values);
-    //     })
-    // }, [])
+    const spining = () => {
+        console.log(lastAwardedIndex);
+        if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
+        Array.from({length: 9}, (_, index) => index).forEach(idx => {
+            document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
+        })
+        
+        const phase1 = setInterval(() => {
+            setPlayerShowList((list) => [list.pop(), ...list]);
+        }, 50);
+        
+        const timeoutPhase1 = setTimeout(() => {
+            clearInterval(phase1);
+            setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(lastAwardedIndex, lastAwardedIndex + 18))
+            Array.from({length: 9}, (_, index) => index).forEach(idx => {
+                document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
+                document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
+            })
+                        
+            const phase2 = setInterval(() => {
+                setPlayerShowList((list) => [list.pop(), ...list]);
+            }, 500);
 
+            const timeoutPhase2 = setTimeout(() => {
+                clearInterval(phase2);
+                Array.from({length: 9}, (_, index) => index).forEach(idx => {
+                    document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
+                })
+                const timeoutPhase3 = setTimeout(() => {
+                    document.getElementById("awardedOverlay").classList.toggle('hidden');
+                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
+                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
+                    setSpinClicked(false);
+                }, 1000)
+            }, 2000)
+
+        }, 1000)
+    }
+
+    const awardNotification = (
+        <div className="flex flex-col items-center text-center text-[#004599]">
+            <p className="font-semibold">Chúc mừng</p>
+            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+            <p className="font-semibold">đã nhận được giải:</p>
+            <p className="font-[900] text-lg" id="awaredRewardName"></p>
+        </div>
+    )
+
+    // ------------------------------------------------------------------------ UseEffect
+    
     useEffect(() => {
-        // Cập nhật dữ liệu realtime của event reward
-        return onValue(dbRef, (snapshot) => {
-            const data = snapshot.val();
-            const eventRewards = Object.values(data['event_rewards']);
-            eventRewards.sort(compare);
-            const eventData = data["event"][EventID]['playingData'];
-            const isSpining = eventData.isSpinning;
-            const rewardChosingIndex = eventData.rewardChosingIndex;
-            const lastAwardedPIndex = eventData.lastAwardedPIndex;
-            setSpinClicked(isSpining);
+        fetchDB();
+    }, [])
 
-            if (snapshot.exists()) {
-                setRewardList(eventRewards.filter((val) => val.eventId === EventID));
-                setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
-                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
-            }
-        });
-    }, [rewardList])
+    // useEffect(() => {
+    //     // Cập nhật dữ liệu realtime của event reward
+    //     return onValue(dbRef, (snapshot) => {
+    //         const data = snapshot.val();
+    //         const eventRewards = Object.values(data['event_rewards']);
+    //         eventRewards.sort(compare);
+    //         const eventData = data["event"][EventID]['playingData'];
+    //         const isSpining = eventData.isSpinning;
+    //         const rewardChosingIndex = eventData.rewardChosingIndex;
+    //         const lastAwardedIndex = eventData.lastAwardedIndex;
+    //         setSpinClicked(isSpining);
+
+    //         if (snapshot.exists()) {
+    //             setRewardList(eventRewards.filter((val) => val.eventId === EventID));
+    //             setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
+    //             if (!spinClicked && isSpining) {
+    //                 setSpinClicked(isSpining);
+    //                 spining(lastAwardedIndex);
+    //             };
+    //             if (rewardChosing !== rewardChosingIndex && rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+    //         }
+    //     });
+    // }, [rewardList])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -130,66 +217,17 @@ export default function LuckySpin() {
     }, [remainPlayerList])
 
     // Điều chỉnh danh sách giải thưởng còn lại
-    // useEffect(() => {
+    useEffect(() => {
     //     if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
     //         {
     //             setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
     //         }
-    //     setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-    // }, [remainRewardList])
+        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
+    }, [remainRewardList])
 
-    // Cập nhật danh sách phần trưởng còn lại
-    // useEffect(() => {
-    //     setRemainRewardList([...rewardList]);
-    // }, [rewardList])
-
-    const spining = () => {
-        Array.from({length: 9}, (_, index) => index).forEach(idx => {
-            document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
-        })
-        
-        const phase1 = setInterval(() => {
-            setPlayerShowList((list) => [list.pop(), ...list]);
-        }, 50);
-        
-        const timeoutPhase1 = setTimeout(() => {
-            clearInterval(phase1);
-            setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(lastAwardedPlayerIndex, lastAwardedPlayerIndex + 18))
-            Array.from({length: 9}, (_, index) => index).forEach(idx => {
-                document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
-                document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
-            })
-                        
-            const phase2 = setInterval(() => {
-                setPlayerShowList((list) => [list.pop(), ...list]);
-            }, 500);
-
-            const timeoutPhase2 = setTimeout(() => {
-                clearInterval(phase2);
-                Array.from({length: 9}, (_, index) => index).forEach(idx => {
-                    document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
-                })
-                const timeoutPhase3 = setTimeout(() => {
-                    document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedPlayerIndex].playerName;
-                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
-                    setRemainPlayerList((list) => list.filter((player, idx) => idx !== lastAwardedPlayerIndex));
-                    setRewardList((list) => [...list]);
-                    setSpinClicked(false);
-                }, 1000)
-            }, 2000)
-
-        }, 1000)
-    }
-
-    const awardNotification = (
-        <div className="flex flex-col items-center text-center text-[#004599]">
-            <p className="font-semibold">Chúc mừng</p>
-            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-            <p className="font-semibold">đã nhận được giải:</p>
-            <p className="font-[900] text-lg" id="awaredRewardName"></p>
-        </div>
-    )
+    useEffect(() => {
+        if (spinClicked) spining();
+    }, [spinClicked])
 
     return (
         <>

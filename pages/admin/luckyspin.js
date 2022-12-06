@@ -13,8 +13,7 @@ import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 // firebase
 import { auth, db } from "../../src/firebase";
-import { getDatabase, ref, set, child, get, onValue, update } from "firebase/database";
-import EventDetail from "pages/event/event-detail";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
 
 // DB test
 const listPlayer = [
@@ -54,7 +53,7 @@ const EventID = "EV20221101";
 
 export default function LuckySpinAdmin() {
     // Danh sách giải thưởng
-    const [rewardList, setRewardList] = useState([]);
+    const [rewardList, setRewardList] = useState([""]);
     // Index giải thưởng đang được chọn
     const [rewardChosing, setRewardChosing] = useState(0);
     // ID của giải thưởng được chọn
@@ -68,13 +67,45 @@ export default function LuckySpinAdmin() {
     // Danh sách người chơi được điều chỉnh
     const [editedPlayerList, setEditedPlayerList] = useState(remainPlayerList);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
-    const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
+    const [playerShowList, setPlayerShowList] = useState(Object.values(playerList).slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     
     // Firebase
     const dbRef = ref(db)
-    const eventRewardsRef = ref(db, "event_rewards");
+
+    const fetchDB = () => {
+        const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
+        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que1, (snapshot) => {
+            const rawData = snapshot.val();
+            const data = Object.values(snapshot.val());
+            data.sort(compare);
+        
+            if (snapshot.exists()) {
+                setRewardList(data);
+                setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
+            }
+        });
+        onValue(que2, (snapshot) => {
+            const rawData = snapshot.val();
+            // console.log()
+            const data = Object.values(snapshot.val());
+            if (snapshot.exists()) {
+                setPlayerList(rawData);
+                setRemainPlayerList(data.filter((val) => (val.idReward === "")));
+            }
+        });
+        onValue(que3, (snapshot) => {
+            const data = Object.values(snapshot.val())[0];
+            const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
+
+            if (snapshot.exists()) {
+                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+            }
+        });
+    }
 
     // ------------------------------------------------ Function
     const compare = (a, b) => {
@@ -83,10 +114,11 @@ export default function LuckySpinAdmin() {
         return 0;
     }
 
-    const setSpinningFB = (status) => {
-        update(ref(db, 'event/' + EventID),
+    const setSpinningFB = (statusSpin = false, awardIndex = 0) => {
+        update(ref(db, 'event/' + EventID + '/playingData'),
                         {
-                            isSpinning: status
+                            isSpinning: statusSpin,
+                            lastAwardedIndex: awardIndex
                         });
     }
 
@@ -96,9 +128,7 @@ export default function LuckySpinAdmin() {
         setSpinClicked(true);
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        
-        setSpinningFB(true);
-        updateFB('event/1', { lastAwardedPIndex: randomNum })
+        setSpinningFB(true, randomNum);
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -124,22 +154,21 @@ export default function LuckySpinAdmin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
-                setSpinningFB(false);
+                setSpinningFB(false, randomNum);
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].playerName;
-                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].description;
+                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
+                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
-                    updateFB('event_rewards/'+idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
-                    rewardList[rewardList.findIndex((reward) => reward.idReward === idRewardChosing)].quantityRemain -= 1;
-                    setRewardList((list) => [...list]);
+                    updateFB('event_participants/'+ Object.keys(playerList)[randomNum], { idReward: idRewardChosing });
+                    updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
+                    // updateFB('event_participants/'+, { });
                     setSpinClicked(false);
                 }, 1000)
             }, 2000)
 
         }, 1000)
     }
-
 
     const toggleSelectMenu = () => {
         document.getElementById("selectRewardPopUp").classList.toggle("hidden");
@@ -149,7 +178,7 @@ export default function LuckySpinAdmin() {
         setRewardChosing(idx);
         setIDRewardChosing(remainRewardList[idx].idReward);
         toggleSelectMenu();
-        update(ref(db, 'event/' + EventID),
+        update(ref(db, 'event/' + EventID + '/playingData'),
             {
                 rewardChosingIndex: idx
             });
@@ -159,41 +188,19 @@ export default function LuckySpinAdmin() {
         update(ref(db, path), changeData);
     }
 
-    // --------------------------------------- UseEffect
-
-    // // Lấy dữ liệu lần đầu của event rewards
-    // useEffect(() => {
-    //     get(child(dbRef, "event_rewards")).then((snapshot) => {
-    //         const record = snapshot.val() ?? [];
-    //         const values = Object.values(record);
-    //         setRewardList(values.filter((val) => val.eventId === EventID));
-    //     })
-    // }, [])
+    const awardNotification = (
+        <div className="flex flex-col items-center text-center text-[#004599]">
+            <p className="font-semibold">Chúc mừng</p>
+            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+            <p className="font-semibold">đã nhận được giải:</p>
+            <p className="font-[900] text-lg" id="awaredRewardName"></p>
+        </div>
+    )
 
     useEffect(() => {
-        if (!rewardList) {
-            return
-        }
+        fetchDB();
+    }, [])
 
-        // Cập nhật dữ liệu realtime của event reward
-        return onValue(dbRef, (snapshot) => {
-            const data = snapshot.val();
-            const eventRewards = Object.values(data['event_rewards']);
-            eventRewards.sort(compare);
-            const eventData = data["event"][EventID]['playingData'];
-            const isSpining = eventData.isSpinning;
-            const rewardChosingIndex = eventData.rewardChosingIndex;
-            const lastAwardedPIndex = eventData.lastAwardedPIndex;
-            setSpinClicked(isSpining);
-
-            if (snapshot.exists()) {
-                setRewardList(eventRewards.filter((val) => val.eventId === EventID));
-                setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
-                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
-            }
-        });
-    }, [rewardList])
-    
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
         // Làm đầy danh sách
@@ -213,24 +220,8 @@ export default function LuckySpinAdmin() {
 
     // Điều chỉnh danh sách giải thưởng còn lại
     useEffect(() => {
-        if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
-            setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
         setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
     }, [remainRewardList])
-
-    // Cập nhật danh sách phần trưởng còn lại
-    useEffect(() => {
-       setRemainRewardList([...rewardList]);
-    }, [rewardList])
-
-    const awardNotification = (
-        <div className="flex flex-col items-center text-center text-[#004599]">
-            <p className="font-semibold">Chúc mừng</p>
-            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-            <p className="font-semibold">đã nhận được giải:</p>
-            <p className="font-[900] text-lg" id="awaredRewardName"></p>
-        </div>
-    )
 
     return (
         <>
@@ -242,9 +233,9 @@ export default function LuckySpinAdmin() {
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(playerList.length/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerList.length%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerList.length%100)%10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(Object.keys(playerList).length/100)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)/10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)%10)}</p>
                             </span>
                         </div>
                         <div className="flex w-full justify-between">
@@ -281,7 +272,7 @@ export default function LuckySpinAdmin() {
                                                     <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-"+idx} role="option"
                                                         style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
                                                         onClick={() => {chooseReward(idx)}}>
-                                                        <span className="ml-3 block truncate">{reward.description}</span>
+                                                        <span className="ml-3 block truncate">{reward.nameReward}</span>
                                                         <span className="ml-3 block truncate">Số lượng: {reward.quantityRemain}</span>
                                                     </li>
                                                 )
