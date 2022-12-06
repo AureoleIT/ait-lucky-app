@@ -1304,6 +1304,10 @@ video {
   width: 100vw;
 }
 
+.w-2\/5 {
+  width: 40%;
+}
+
 .w-3\/4 {
   width: 75%;
 }
@@ -1422,6 +1426,10 @@ video {
 
 .w-\[5px\] {
   width: 5px;
+}
+
+.w-1\/5 {
+  width: 20%;
 }
 
 .min-w-0 {
@@ -2566,6 +2574,10 @@ video {
 
 .bg-cover {
   background-size: cover;
+}
+
+.bg-auto {
+  background-size: auto;
 }
 
 .bg-center {
