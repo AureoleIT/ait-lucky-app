@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Auth from "layouts/Auth.js";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -11,7 +11,6 @@ import AuthFooter from "public/shared/AuthFooter";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
 import {
-  hasWhiteSpace,
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
 } from "public/util/functions";
@@ -21,6 +20,8 @@ import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "public/redux/actions";
 
 export default function Login() {
   const [textState, setTextState] = useState("");
@@ -29,8 +30,9 @@ export default function Login() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
-  const dbRef = ref(db);
+  var [user, setUser] = useState({});
 
+  const dbRef = ref(db);
 
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
@@ -58,6 +60,7 @@ export default function Login() {
         showMethod(messagesError.E0009, show, false)
         return;
       }
+      setUser(values.find(item => item.name === name || item.email === name));
 
       showMethod(messagesSuccess.I0002, show, true)
       //Go to admin dashboard
@@ -81,6 +84,7 @@ export default function Login() {
             showMethod(messagesError.E0010, show, false);
             return;
           }
+          setUser(values.find(item => item.email === currEmail));
           showMethod(messagesSuccess.I0002, show, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
@@ -93,6 +97,15 @@ export default function Login() {
         showMethod(messagesError.E4444, show, false)
       });
   }
+  
+  // Call dispatch and set user to redux 
+  const dispatch = useDispatch()
+  useEffect(() => dispatch(addUser({ user })), [dispatch, user])
+
+  useEffect(() => {
+    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
+  }, [user]);
+
   const closePopup = () => {
     setHidden(hidden);
   };
@@ -103,15 +116,18 @@ export default function Login() {
     },
     [setName]
   );
+
   const passData = useCallback(
     (e) => {
       setPass(e?.target?.value);
     },
     [setPass]
   );
+  
   const onCheckData = () => {
     setCheck(!check);
   };
+
   return (
     <>
       <section className="h-screen mx-auto w-full flex justify-center items-center">

@@ -1,14 +1,22 @@
 import Link from "next/link";
+import Image from "next/image"
 import React from "react";
 
-export default function UserAvatar({ avatar }) {
+export default function UserAvatar({ avatar, width, height }) {
+  const myLoader = ({src, width, quality}) => {
+    return avatar
+  }
+
   return (
     <Link href="/auth/setting">
-      <div className="w-[40px] h-[40px]">
-        <img
-          src="https://media.istockphoto.com/id/1385769431/photo/young-sad-woman-leaning-on-shopping-cart-while-standing-among-produce-aisle-at-supermarket.jpg?b=1&s=170667a&w=0&k=20&c=fuB2hAboZBVCTUj969LVNt-cvdir7ru2rfVAf5R02Ug="
-          alt=""
-          className="rounded-full w-[40px] h-[40px] object-cover"
+      <div className="rounded-full object-cover flex justify-center items-center" >
+        <Image
+          loader={myLoader}
+          src={"avatar.png"}
+          alt="User's avatar"
+          width={!width ? 45 : width}
+          height={!height ? 45 : height}
+          className="rounded-full object-cover"
         />
       </div>
     </Link>

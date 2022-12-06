@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
-
+import { persistor, store } from "../public/redux/store"
+import { Provider } from "react-redux";
 import PageChange from "components/PageChange/PageChange.js";
-
+import { PersistGate } from "redux-persist/integration/react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "styles/tailwind.css";
 import "styles/globals.css";
@@ -47,19 +48,23 @@ export default class MyApp extends App {
     const Layout = Component.layout || (({ children }) => <>{children}</>);
 
     return (
-      <React.Fragment>
-        <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-          />
-          <title>AIT Lucky App</title>
-          <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-        </Head>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </React.Fragment>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <React.Fragment>
+            <Head>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, shrink-to-fit=no"
+              />
+              <title>AIT Lucky App</title>
+              <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+            </Head>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </React.Fragment>
+        </PersistGate>
+      </Provider>
     );
   }
 }
