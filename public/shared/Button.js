@@ -7,8 +7,10 @@ export default function Button({
   isTextGradient = false, // nếu là true thì chữ sẽ có màu gradient (xanh), nếu false thi chữ màu trắng
   isSquare = false, // nếu true thì button không có border-radius
   fontSize = "24px",
+  marginY = 4, // Margin top và bottom
   fontWeight = 900,
   iconClass = "", // Fontawesome Icon's class
+  logoGg = false, // nếu true thì button có hình logo Google
   onClick, // xử lý event khi button được nhấn
 }) {
   const gradientText = {
@@ -21,40 +23,54 @@ export default function Button({
   };
 
   return (
-    <>
-      <button
-        className={`
+      <div className={`
           w-full
           h-[50px]
+          p-[2px]
           flex
           justify-center
           items-center
+          my-${marginY}
           gap-x-[15px]
           rounded-[${!isSquare ? "50px" : "5px"}]
           ${
             !secondaryColor
               ? `bg-[${primaryColor}]`
               : `bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`
-          }`}
-        onClick={onClick}
-      >
+          }
+      `}>
+      <button className={`
+          w-full 
+          h-full 
+          rounded-[48px] 
+          ${isTextGradient ? "bg-white" : ""} 
+          flex 
+          items-center 
+          justify-center 
+          gap-[10px]`}
+            onClick={onClick}
+          >
+      
         <div
           className={`
             font-[${fontWeight}] 
             text-[${fontSize}]
-            uppercase
-            leading-none
+            uppercase           
           `}
           style={isTextGradient ? gradientText : whiteText}
         >
           {content}
         </div>
         <i
-          className={`relative top-[1px] text-2xl text-white${
+          className={`relative top-[1px] text-2xl 
+            ${
             !iconClass ? "hidden" : iconClass
-          }`}
+          }`} 
+          style={isTextGradient ? gradientText : whiteText}
         ></i>
+        <img src="../img/google.svg" className={`h-7 w-7 ${!logoGg ?  "hidden" : ""}`} alt="" />
+        
       </button>
-    </>
+      </div>
   );
 }
