@@ -14,4 +14,10 @@ module.exports = {
   isEmpty: (s) => {
     return s === "" || s.length === 0;
   },
+  isLoggedIn: (user) => {
+    if(Object.keys(user).length === 0){
+      alert("Please Log In to access to this feature!")
+      return false//False: chưa đăng nhập / đã đăng xuất
+    }
+  }
 };
