@@ -34,6 +34,7 @@ const dbRef = ref(db);
 export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
   const [textState, setTextState] = useState("");
@@ -66,6 +67,10 @@ export default function Register() {
     }
     if (!check) {
       showMethod(messagesError.E0006, show, false);
+      return;
+    }
+    if ( password !== rePassword ){
+      showMethod(messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), show, false);
       return;
     }
 
@@ -181,6 +186,12 @@ export default function Register() {
     },
     [setPassword]
   );
+  const setRePassData = useCallback(
+    (e) => {
+      setRePassword(e?.target?.value);
+    },
+    [setRePassword]
+  );
   const isCheckPrivacy = () => setCheck(!check);
   return (
     <>
@@ -216,6 +227,15 @@ export default function Register() {
                 enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
               }
               onChange={setPassData}
+            />
+            <AuthInput
+              content={"Nhập lại mật khẩu"}
+              type={"password"}
+              leftColor={LEFT_COLOR}
+              rightColor={
+                enoughNumCountPass(rePassword) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+              }
+              onChange={setRePassData}
             />
           </div>
           <Privacy onChange={isCheckPrivacy} />
