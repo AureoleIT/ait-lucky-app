@@ -19,12 +19,14 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import OverlayBlock from "public/shared/OverlayBlock";
 import { db } from "src/firebase";
+import { useSelector } from "react-redux";
 
 export default function ChangePassword() {
   const [oldPass, setOld] = useState("");
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("USER_LOGIN_STATE")));
+  const [user, setUser] = useState();
+  const currentUser = useSelector(state => state.addReducer.user)
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -90,8 +92,8 @@ export default function ChangePassword() {
   }
 
   useEffect(() => {
-    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
-  }, [user]);
+    setUser(currentUser.user)
+  }, []);
 
   // show popup
   useEffect(() => {
