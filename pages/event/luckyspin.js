@@ -16,45 +16,11 @@ import RewardList from "public/shared/RewardList";
 import { auth, db } from "../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
 
-// DB test
-const listPlayer = [
-    {
-        playerName: "Nguyễn Văn A",
-        playerAvt: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }
-    , {
-        playerName: "Nguyễn Văn B",
-        playerAvt: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn C",
-        playerAvt: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }
-    , {
-        playerName: "Nguyễn Văn D",
-        playerAvt: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn E",
-        playerAvt: "https://images.unsplash.com/photo-1628890920690-9e29d0019b9b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTd8fGF2YXRhcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn F",
-        playerAvt: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGF2YXRhcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn G",
-        playerAvt: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn H",
-        playerAvt: "https://images.unsplash.com/photo-1544348817-5f2cf14b88c8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mjh8fGh1bWFufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }, {
-        playerName: "Nguyễn Văn I",
-        playerAvt: "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzJ8fGh1bWFufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
-    }
-];
-
 const EventID = "EV20221101";
 
 export default function LuckySpin() {
     // Danh sách giải thưởng
-    const [rewardList, setRewardList] = useState([""]);
+    const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
     const [rewardChosing, setRewardChosing] = useState(0);
     // ID của giải thưởng được chọn
@@ -62,13 +28,13 @@ export default function LuckySpin() {
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState(rewardList);
     // Danh sách người chơi
-    const [playerList, setPlayerList] = useState(listPlayer);
+    const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
     const [remainPlayerList, setRemainPlayerList] = useState(playerList);
     // Danh sách người chơi được điều chỉnh
     const [editedPlayerList, setEditedPlayerList] = useState(remainPlayerList);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
-    const [playerShowList, setPlayerShowList] = useState(playerList.slice(0, 9));
+    const [playerShowList, setPlayerShowList] = useState(Object.values(playerList).slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     // Người nhận thưởng
@@ -91,10 +57,11 @@ export default function LuckySpin() {
             }
         });
         onValue(que2, (snapshot) => {
+            const rawData = snapshot.val();
             const data = Object.values(snapshot.val());
             
             if (snapshot.exists()) {
-                setPlayerList(data);
+                setPlayerList(rawData);
                 setRemainPlayerList(data.filter((val) => (val.idReward === "")));
             }
         });
@@ -239,9 +206,9 @@ export default function LuckySpin() {
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(playerList.length/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerList.length%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((playerList.length%100)%10)}</p>
+                            <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(Object.keys(playerList).length/100)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)/10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)%10)}</p>
                             </span>
                         </div>
                         <div className="flex w-full justify-between">
