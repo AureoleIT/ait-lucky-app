@@ -12,11 +12,12 @@ import {
   equalTo,
   // child, get
 } from "firebase/database";
+import { useSelector } from "react-redux";
 
 export default function EventList() {
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
+  // const [currentUser, setCurrentUser] = useState({});
 
   // useEffect(() => {
   //   get(child(ref(db), "event/")).then((snapshot) => {
@@ -28,17 +29,23 @@ export default function EventList() {
   //   });
   // }, []);
 
-  useEffect(() => {
-    const items = JSON.parse(localStorage.getItem("user"));
-    if (items) {
-      setCurrentUser(items);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const items = JSON.parse(localStorage.getItem("user"));
+  //   if (items) {
+  //     setCurrentUser(items);
+  //   }
+  // }, []);
 
+  //get current user from last state get in
+  const currentUser = useSelector((state) => state.addReducer.user);
+  // console.log(currentUser)
+  // console.log(currentUser.user.userId)
+
+  // filter events by user from firebase
   const que = query(
     ref(db, "event"),
     orderByChild("createBy"),
-    equalTo(String(currentUser.userId))
+    equalTo(String(currentUser.user.userId))
   );
   useEffect(() => {
     onValue(que, (snapshot) => {
