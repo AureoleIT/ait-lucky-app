@@ -26,7 +26,7 @@ export default function AuthProvider({ children }) {
   };
 
   const resetPassword = (email) => {
-    return auth.sendPasswordResetEmail(email);
+    return sendPasswordResetEmail(email);
   };
 
   const signInWithGoogle = () => {
