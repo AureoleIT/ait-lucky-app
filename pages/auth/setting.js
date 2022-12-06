@@ -1,24 +1,21 @@
 import Auth from "layouts/Auth.js";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Link from "next/link";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import {
-    getDatabase,
     ref,
-    set,
     child,
     get,
-    orderByKey,
     query,
     orderByChild,
     equalTo,
     update,
     onValue
 } from "firebase/database";
-import { storage } from "src/firebase";
+import { storage, db } from "src/firebase";
 import {
     ref as refStorage,
     uploadBytes,
@@ -32,7 +29,6 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 
 export default function Setting() {
     //firebase auth
-    const db = getDatabase();
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("USER_LOGIN_STATE")));
 
     // normal state
@@ -52,6 +48,11 @@ export default function Setting() {
     const [textState, setTextState] = useState("");
     const [isHidden, setIsHidden] = useState(true);
     const [isSuccess, setIsSuccess] = useState(true);
+    const showMethod = useMemo(() => (message, isSuccess, isHidden) => {
+        setTextState(message);
+        setIsSuccess(isSuccess);
+        setIsHidden(isHidden);
+    }, [])
 
     // popup
     const popupNoti = () => {
@@ -72,7 +73,6 @@ export default function Setting() {
 
     //get auth profile
     function fetchDb() {
-        
         // get orderbychild - have conditions
         const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
         onValue(que, (snapshot) => {
@@ -98,8 +98,6 @@ export default function Setting() {
         const upload = e.target.files[0]
         setFile(upload);
         setImg(URL.createObjectURL(upload));
-
-        //uploadFile();
     }
 
     const getImage = (e) => {
@@ -115,9 +113,7 @@ export default function Setting() {
                     {
                         pic: url
                     }).then(() => {
-                        setTextState(messagesSuccess.I0003);
-                        setIsSuccess(true);
-                        setIsHidden(false);
+                        showMethod(messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
             });
@@ -128,15 +124,11 @@ export default function Setting() {
     function handleSaveInfo(name) {
         //validation
         if (isEmpty(name)) {
-            setTextState(messagesError.E0001("Tên đăng nhập"));
-            setIsSuccess(false);
-            setIsHidden(false);
+            showMethod(messagesError.E0001("Tên đăng nhập"), false, false);
             return;
         }
         if (hasWhiteSpaceAndValidLength(name)) {
-            setTextState(messagesError.E0005("tên đăng nhập"));
-            setIsSuccess(false);
-            setIsHidden(false);
+            showMethod(messagesError.E0005("tên đăng nhập"), false, false);
             return;
         }
 
@@ -172,9 +164,7 @@ export default function Setting() {
                     {
                         name: name
                     }).then(() => {
-                        setTextState(messagesSuccess.I0003);
-                        setIsSuccess(true);
-                        setIsHidden(false);
+                        showMethod(messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
             }
@@ -189,10 +179,10 @@ export default function Setting() {
     useEffect(() => {
         fetchDb();
     }, [])
-    
+
     useEffect(() => {
         window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
-      }, [user]);
+    }, [user]);
 
     // show popup
     useEffect(() => {
