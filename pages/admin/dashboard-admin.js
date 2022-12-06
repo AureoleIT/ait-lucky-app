@@ -1,54 +1,81 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+// import firebase
+import { db } from "src/firebase";
+import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
 
 // components
-
 import Header from "public/shared/Header";
-import Line from "public/shared/Line";
 import BgBlueButton from "public/shared/BgBlueButton";
 import EventButton from "public/shared/button/EventButton";
 import BorderText from "public/shared/BorderText";
-import { useRouter } from "next/router";
+
+//import gif
+import nyancat from "public/img/nyancat.gif";
 
 export default function Dashboard() {
-  // navigate page
+  const uuid = "iasd-asda123-asd1-asd123";
+  const [arrStatus, setArrStatus] = useState([]);
+  const [arrID, setArrID] = useState([]);
+  const [currentId, setcurentId] = useState([]);
+  const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
+  const queID = query(
+    ref(db, "event"),
+    orderByChild("createBy"),
+    equalTo(String(currentId.userId))
+  );
 
-  const router = useRouter();
-  const playNavigate = () => {
-    router.push("/");
-  };
-  const createNavigate = () => {
-    router.push("../event/eventregister");
-  };
-  const listNavigate = () => {
-    router.push("../event/eventlist");
-  };
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("users"));
+    if (items) {
+      setcurentId(items);
+    }
+  }, []);
 
-  const event = [
-    {
-      id: "EV20221011",
-      title: "tiệc cuối năm",
-      user_joined: 10,
-      status: 1,
-    },
-    {
-      id: "EV20221012",
-      title: "tiệc năm mới",
-      user_joined: 20,
-      status: 2,
-    },
-    {
-      id: "EV20221013",
-      title: "tiệc thành lập công ty trách nhiệm hữu hạn",
-      user_joined: 30,
-      status: 3,
-    },
-    {
-      id: "EV20221014",
-      title: "tiệc cuối năm",
-      user_joined: 40,
-      status: 4,
-    },
-  ];
+  // get(child(ref(db), `event`))
+  // .then((snapshot) => {
+  //   const res = snapshot.val() ?? [];
+  //   const values = Object.values(res);
+  //   setArr(values);
+  // })
+  // .catch((error) => {
+  //   alert(error.message);
+  //   console.error(error);
+  // });
+
+  // useEffect(() => {
+  //   onValue(child(ref(db), "event/"), (snapshot) => {
+  //     const record = snapshot.val() ?? [];
+  //     const values = Object.values(record);
+  //     values.forEach((value) => {
+  //       if (value.status === 2) {
+  //         setQueryStatus((prev) => [...prev, value]);
+  //         console.log(value);
+  //       }
+  //     });
+  //     console.log(queryStatus);
+  //   });
+  // }, []);
+
+  useEffect(() => {
+    onValue(queStatus, (snapshot) => {
+      setArrStatus([]);
+      const data = snapshot.val();
+      if (data != null) {
+        setArrStatus(Object.values(data));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    onValue(queID, (snapshot) => {
+      setArrID([]);
+      const data = snapshot.val();
+      if (data != null) {
+        setArrID(Object.values(data));
+      }
+    });
+  }, [uuid]);
 
   return (
     <>
@@ -61,44 +88,55 @@ export default function Dashboard() {
         <BorderText
           title={""}
           content={
-            <div className=" flex flex-col pt-5">
-              <p className="font-bold text-sm text-[#656565]">
-                {"Chào mừng đến với AIT Lucky App,"}
-              </p>
-              <p className=" text-sm text-[#656565]">
-                {"hãy bắt đầu các sự kiện ngay nào!"}
-              </p>
-              <div class="  w-full">
-                <Line />
+            <div className="flex flex-col pt-5">
+              <div className="flex ">
+                <div className="flex flex-col flex-1">
+                  <p className="font-bold text-sm text-[#656565]">
+                    {"Chào mừng đến với AIT Lucky App,"}
+                  </p>
+                  <p className="text-sm text-[#656565] mb-2">
+                    {"hãy bắt đầu các sự kiện ngay nào!"}
+                  </p>
+                </div>
+
+                <div className="w-1/5 flex self-end">
+                  <img src={nyancat} alt="must be a nyancat gif"></img>
+                </div>
+              </div>
+              <div className="w-full">
+                {/* Line */}
+                <div className="w-full h-[2px] justify-center mb-2 px-2 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex"></div>
               </div>
               <p className="font-bold text-sm text-[#000000]">
                 {"Tham gia sự kiện"}
               </p>
-              <p className=" text-sm text-[#656565]">
+              <p className="text-sm text-[#656565]">
                 {
                   "Tham gia vào các sự kiện được tổ chức với tài khoản đăng nhập hiện tại của bạn."
                 }
               </p>
-              <BgBlueButton content={"CHƠI NÀO"} onClick={playNavigate} />
+              <a href="/">
+                <BgBlueButton content={"CHƠI NÀO!!!"} />
+              </a>
               <p className="font-bold text-sm text-[#000000] pb-2">
                 {"Các sự kiện đang diễn ra"}
               </p>
-              <div className="w-full flex flex-col gap-y-[7px] pb-5 ">
-                {event.map((item) => {
-                  return item.status === 2 ? (
-                    <div className="flex flex-col">
+              <div className="w-full flex flex-col gap-y-[7px] pb-5 overflow-auto h-[188px] scrollbar-hide">
+                {arrStatus.length === 0 ? (
+                  <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
+                    {" "}
+                    {"Không có dữ liệu"}
+                  </div>
+                ) : (
+                  arrStatus.map((item, index) => (
+                    <div key={index} className="flex flex-col">
                       <EventButton
-                        key={item.id}
                         title={item.title}
                         user_joined={item.user_joined}
-                        islink={true}
-                        href={"_countdowncheckin"}
                       ></EventButton>
                     </div>
-                  ) : (
-                    <></>
-                  );
-                })}
+                  ))
+                )}
               </div>
             </div>
           }
@@ -110,12 +148,14 @@ export default function Dashboard() {
           title={"Tạo sự kiện"}
           content={
             <div className="">
-              <p className=" text-sm text-[#656565] pt-5">
+              <p className="text-sm text-[#656565] pt-5">
                 {
                   "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
                 }
               </p>
-              <BgBlueButton content={"BẮT ĐẦU NGAY"} onClick={createNavigate} />
+              <a href="/event/event-register">
+                <BgBlueButton content={"BẮT ĐẦU NGAY"} />
+              </a>
             </div>
           }
         ></BorderText>
@@ -125,24 +165,22 @@ export default function Dashboard() {
         <BorderText
           title={"Danh sách sự kiện"}
           content={
-            <div className=" flex flex-col pt-5 gap-y-[7px]">
-              {event.map((item) => {
-                return (
-                  <div className="flex flex-col">
-                    <EventButton
-                      key={item.id}
-                      title={item.title}
-                      user_joined={item.user_joined}
-                      islink={true}
-                      href={"_countdowncheckin"}
-                    ></EventButton>
+            <div className="flex flex-col pt-5 gap-y-[7px]">
+              {arrID.length === 0 ? (
+                <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+                  {" "}
+                  {"Không có dữ liệu"}
+                </div>
+              ) : (
+                arrID.slice(0, 4).map((item, index) => (
+                  <div key={index} className="flex flex-col">
+                    <EventButton title={item.title} id={item.id}></EventButton>
                   </div>
-                );
-              })}
-              <BgBlueButton
-                content={"DANH SÁCH SỰ KIỆN"}
-                onClick={listNavigate}
-              />
+                ))
+              )}
+              <a href="event-list">
+                <BgBlueButton content={"TẤT CẢ SỰ KIỆN"} />
+              </a>
             </div>
           }
         ></BorderText>
