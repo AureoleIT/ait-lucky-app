@@ -45,23 +45,11 @@ export default function Setting() {
     const [img, setImg] = useState("http://www.gravatar.com/avatar/?d=retro&s=32");
     const [file, setFile] = useState(null);
 
-    //upload image
-    // const imagesListRef = refStorage(storage, "images/");
-    const uploadFile = () => {
-        const imageRef = refStorage(storage, `avatars/${file.name + v4()}`);
-        uploadBytes(imageRef, file).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((url) => {
-                update(ref(db, 'users/' + user.userId),
-                    {
-                        pic: url
-                    }).then(() => {
-                        setTextState(messagesSuccess.I0003);
-                        setIsSuccess(true);
-                        setIsHidden(false);
-                    })
-                    .catch((error) => console.log(error));
-            });
-        });
+    // style css
+    const contentCSS = {
+        background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
     };
 
     //validation const
