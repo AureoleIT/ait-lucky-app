@@ -13,7 +13,7 @@ export default function Award({ listReward, listPlayer, showRemain = false }) {
           {
             reward.img_url.slice(0, 3).map((url, idx) => {
               return (
-                <div key={idx} className="relative h-24 w-full flex">
+                <div key={idx} className="relative w-full flex">
                   <img className="object-cover h-full w-full rounded-lg drop-shadow-lg" src={url} alt={reward.description + idx} />
                   {
                     (reward.img_url.length > 3 && idx === 2) ?
@@ -34,7 +34,7 @@ export default function Award({ listReward, listPlayer, showRemain = false }) {
               return (
                 (player.reward_taken === reward.id) ?
                   <div className="flex w-full h-[60px] mt-2" key={idx}>
-                    <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-[50px] h-[50px] rounded-full object-cover ml-2"></img>
+                    <img src="http://www.gravatar.com/avatar/?d=retro&s=32" alt="" className="w-16 h-16 rounded-full object-cover ml-2"></img>
                     <p className={`text-[${TEXT}] text-[18px] ml-3 font-semibold`}>{player.user_id}</p>
                   </div > :
                   <div key={idx}></div>)

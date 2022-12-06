@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Components
 import UserAvatar from "./UserAvatar";
@@ -17,7 +17,7 @@ export default function Header() {
   const context = auth.onAuthStateChanged((user) => {//Hiện tại chỉ lưu thông tin của các user đăng nhập/đăng kí thông qua GG
     if(user) setUserData(user);
   });
-
+  
   function handleOpenMenu() {
     setShowMenu(!showMenu);
   }

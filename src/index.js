@@ -18,15 +18,15 @@ import EventDetail from "pages/_eventdetail";
 import EventRewardRegister from "pages/_registergift";
 import EventRegister from "pages/_joinevent";
 import Setting from "pages/auth/setting"
-import ForgotPassword from "pages/auth/forgotpassword";
+import ForgotPassword from "pages/auth/forgot-password";
 
 ReactDOM.render(
   <AuthProvider>
     <Routes>
       <Route path="auth/login" element={<Login />} />
       <Route path="auth/register" element={<Register />} />
-      <Route path="auth/forgotpassword" element={<ForgotPassword />} />
-      <Route path="setting" element={<Setting />} />
+      <Route path="auth/forgot-password" element={<ForgotPassword />} />
+      <Route path="auth/setting" element={<Setting />} />
     </Routes>
   </AuthProvider>,
   <BrowserRouter>
@@ -37,8 +37,8 @@ ReactDOM.render(
       <Route path="/_registergift" exact component={EventRewardRegister} />
       <Route path="/_joinevent" exact component={EventRegister} />
       <Route path="/_eventdetail" exact component={EventDetail} />
-      <Route path="/setting" exact component={Setting} />
-      <Route path="/auth/forgotpassword" exact component={ForgotPassword} />
+      <Route path="/auth/setting" exact component={Setting} />
+      <Route path="/auth/forgot-password" exact component={ForgotPassword} />
       <Redirect from="*" to="/" />
     </Switch>
   </BrowserRouter>,

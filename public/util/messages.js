@@ -37,6 +37,7 @@ export const messagesError = {
   E0009: "Không tồn tại người dùng",
   E0010:
     "Bạn chưa có tài khoản với email này \nThử với tài khoản khác hoặc đăng ký tài khoản mới",
+  E0011: (a) => a + " không trùng khớp",
   E0021: (a, b) => {
     return "Vui lòng nhập " + a + " giống với " + b;
   },
