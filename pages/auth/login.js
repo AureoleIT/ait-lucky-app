@@ -18,7 +18,7 @@ import { hidden, show, failIcon, successIcon } from "public/util/popup";
 import { getDatabase, ref, set, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "public/redux/actions";
@@ -54,9 +54,7 @@ export default function Login() {
       const values = Object.values(record);
       const isUserExisting = values.some(
         (item) =>
-          {(item.email === name || item.name === name) && item.password === pass
-          console.log(item)
-          }
+          (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
         showMethod(messagesError.E0009, show, false)
