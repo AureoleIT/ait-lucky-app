@@ -43,7 +43,7 @@ export default function Button({
           w-full 
           h-full 
           rounded-[48px] 
-          ${isTextGradient ? "bg-white" : ""} 
+          ${isTextGradient && "bg-white"} 
           flex 
           items-center 
           justify-center 
@@ -68,7 +68,7 @@ export default function Button({
           }`} 
           style={isTextGradient ? gradientText : whiteText}
         ></i>
-        <img src="../img/google.svg" className={`h-7 w-7 ${!logoGg ?  "hidden" : ""}`} alt="" />
+        <img src="../img/google.svg" className={`h-7 w-7 ${!logoGg && "hidden"}`} alt="" />
         
       </button>
       </div>
