@@ -4,4 +4,15 @@ Button.js sẽ thay thế cho các component sau:
   - BgWhiteButton.js
   - ButtonAndIcon.js
   - ConfirmButton.js
+  - SingleColorButton.js
+
+Input.js sẽ thay thế cho các component sau:
+  - AuthInput.js
+  - TextNoLabel.js
   
+  LƯU Ý: sử dụng primaryColor và secondaryColor sẽ tạo ra màu Gradient
+  import { LEFT_COLOR, RIGHT_COLOR} from "public/util/colors";
+  <Input 
+    primaryColor={LEFT_COLOR}
+    secondaryColor={RIGHT_COLOR}
+  />
