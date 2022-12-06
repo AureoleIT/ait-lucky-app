@@ -14,7 +14,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { onValue, ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { addParticipant } from "public/redux/actions";
+import { addParticipant, incognitoParticipant, removeState } from "public/redux/actions";
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
@@ -29,7 +29,7 @@ export default function Info() {
   const dispatch = useDispatch();
 
   // Get current event from last state get in
-  const currEvent = useSelector(state => state.addReducer.event)
+  const currEvent = useSelector(state => state)
 
   console.log(currEvent)
 
@@ -67,7 +67,7 @@ export default function Info() {
   };
 
   // Set and save new player object to redux
-  useEffect(() => dispatch(addParticipant(player)), [dispatch, player])
+  useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
 
   useEffect(() => {
     window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
