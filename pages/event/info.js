@@ -15,6 +15,8 @@ import { onValue, ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { addParticipant, incognitoParticipant, removeState } from "public/redux/actions";
+import { useJoinEventHook } from "public/redux/hooks";
+
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
@@ -29,9 +31,9 @@ export default function Info() {
   const dispatch = useDispatch();
 
   // Get current event from last state get in
-  const currEvent = useSelector(state => state)
+  const currEvent = useJoinEventHook()
 
-  console.log(currEvent)
+  console.log({currEvent})
 
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {

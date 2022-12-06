@@ -87,6 +87,11 @@ export default function Index() {
       setHidden(hidden);
     }, []
   );
+const renderLogo = useMemo(()=>{
+  return  ( <Logotic
+    title="AIT LUCKY GIFTS"
+    src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png" />)
+  }, [])
 
   return (
     <section
@@ -95,10 +100,7 @@ export default function Index() {
       <div
         className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
       >
-        <Logotic
-          title="AIT LUCKY GIFTS"
-          src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
-        />
+        {renderLogo}
         <BigText font=" text-2xl" text="Mã pin sự kiện" />
         <TextNoLabel
           type="text"
