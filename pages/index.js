@@ -6,19 +6,19 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
 import Logotic from "public/shared/Logotic";
-import { BG, LEFT_GRADIENT, RIGHT_GRADIENT, TEXT } from "public/util/colors";
+import { LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
 import TextNoLabel from "public/shared/TextNoLabel";
 import QrButton from "public/shared/QrButton";
 import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import router from "next/router";
 import LineWithText from "public/shared/LineWithText";
-import { auth, db } from "src/firebase";
-import { ref, set, child, get } from "firebase/database";
+import { db } from "src/firebase";
+import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { incognitoEvent } from "public/redux/actions";
 
 export default function Index() {
@@ -30,9 +30,6 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
-
-  //Call dispatch from redux
-  const dispatch = useDispatch();
 
   const showMethod = useMemo(() => (message, isShow, isTrue) => {
     setTextState(message);
@@ -61,15 +58,15 @@ export default function Index() {
     });
   };
 
+  //Call dispatch from redux
+  const dispatch = useDispatch();
+
   /* Export current event to redux for another access */
   useEffect(() => {
     dispatch(incognitoEvent(event));
   }, [dispatch, event])
 
-  const data = useSelector(state => state);
-
-  console.log({ data })
-
+  /*localStorage is here to track what has been saved*/
   useEffect(() => {
     window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event));
   }, [event]);
@@ -87,6 +84,11 @@ export default function Index() {
       setHidden(hidden);
     }, []
   );
+  const renderLogo = useMemo(() => {
+    return (<Logotic
+      title="AIT LUCKY GIFTS"
+      src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png" />)
+  }, [])
 
   return (
     <section
@@ -95,10 +97,7 @@ export default function Index() {
       <div
         className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
       >
-        <Logotic
-          title="AIT LUCKY GIFTS"
-          src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
-        />
+        {renderLogo}
         <BigText font=" text-2xl" text="Mã pin sự kiện" />
         <TextNoLabel
           type="text"
