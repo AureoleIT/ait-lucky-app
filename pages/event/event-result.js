@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import BgBlueButton from "public/shared/BgBlueButton";
 import GradientLine from "public/shared/GradientLine";
-import Award from "public/shared/EventResult/Award";
+import RewardList from "public/shared/RewardList";
 import PlayerList from "public/shared/PlayerList";
 import { db } from "src/firebase";
 import { onValue, get, update, child, query, ref, orderByChild, equalTo } from "firebase/database";
+import { list } from "firebase/storage";
 
 const eventID = "EV20221101";
 
@@ -14,6 +15,7 @@ export default function EventResult() {
   const [listReward, setListReward] = useState([]);
   const [listPlayer, setListPlayer] = useState([]);
   const [event, setEvent] = useState({});
+  const [rewardChosing, setRewardChosing] = useState(0);
 
   const fetchDb = () => {
     const que1 = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID));
@@ -24,12 +26,12 @@ export default function EventResult() {
       setEvent(values[0]);
     })
 
-    const que2 = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID));
+    const que2 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(eventID));
     onValue(que2, (snapshot) => {
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
 
-      setEvent(values[0]);
+      setListReward(values);
     })
 
     const que3 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
@@ -41,7 +43,7 @@ export default function EventResult() {
     })
   }
 
-  useEffect(() =>{
+  useEffect(() => {
     setCountPlayer(listPlayer.length);
   }, [listPlayer])
 
@@ -62,8 +64,13 @@ export default function EventResult() {
           <GradientLine color1="#003B93" color2="#00F0FF" />
         </div>
 
-        <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto h-[40%]">
-          <Award listReward={listReward} listPlayer={listPlayer}></Award>
+        <div className="flex flex-col items-center justify-center w-full overflow-y-auto h-[40%]">
+          <RewardList
+            listReward={listReward}
+            showRemain={false}
+            showAwardedPaticipant={true}
+            eventPaticipant={listPlayer}
+          />
         </div>
 
         <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]">
@@ -73,11 +80,11 @@ export default function EventResult() {
           số người tham gia: {countPlayer}/100
         </h1>
 
-        <div className="w-full max-w-md h-[30%] overflow-y-auto">
+        <div className="flex flex-col grow w-full max-w-md h-[30%] overflow-y-auto">
           <div className="w-full max-w-md my-2">
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
-          <PlayerList listPlayer={listPlayer} />
+          <PlayerList listPlayer={listPlayer} listReward={listReward}/>
         </div>
 
         <div className="content-end py-3 w-full max-w-md px-5">
