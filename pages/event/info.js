@@ -29,7 +29,7 @@ export default function Info() {
 
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
-
+  
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       setTextState(messagesError.E0004);
