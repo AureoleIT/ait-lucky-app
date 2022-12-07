@@ -1,9 +1,9 @@
-import React from "react";
+import React, {useEffect} from "react";
 
-export default function EventButton({title, id, userJoined, status}) {
+export default function EventButton({title, id, userJoined, status, onclick}) { 
   return (
     <a href={`${setLink(status)}`} className="flex flex-col w-full">
-      <button className={`rounded-[5px] mx-2 ${setColor(status)}`}>
+      <button className={`rounded-[5px] mx-2 ${setColor(status)}`} onClick={onclick}>
         <div className="flex justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
           <div className="justify-center items-center text-left font-bold text-sm uppercase truncate flex-1">
             {title}
@@ -18,7 +18,7 @@ export default function EventButton({title, id, userJoined, status}) {
               <div>{userJoined} người tham gia</div>
             ) : (
               <></>
-            )}
+            )}           
           </div>
         </div>
       </button>

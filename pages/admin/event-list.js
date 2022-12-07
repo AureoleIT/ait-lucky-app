@@ -15,6 +15,8 @@ import {
 // import { useSelector } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { userCurrentHostingEvent } from "public/redux/actions";
 
 export default function EventList() {
   const [searchContent, setSearchContent] = useState("");
@@ -61,6 +63,8 @@ export default function EventList() {
     });
   }, [String(currentUser.userId)]);
 
+  const dispatch = useDispatch()
+ 
   if (currentUser.userId != null) {
     return (
       <>
@@ -99,6 +103,7 @@ export default function EventList() {
                           id={item.eventId}
                           userJoined={item.userJoined}
                           status={item.status}
+                          onclick = {() => dispatch(userCurrentHostingEvent(item))}
                         />
                       </div>
                     ))
