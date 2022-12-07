@@ -27,15 +27,15 @@ export default function LuckySpinAdmin() {
     // ID của giải thưởng được chọn
     const [idRewardChosing, setIDRewardChosing] = useState("");
     // Danh sách phần quà còn lại
-    const [remainRewardList, setRemainRewardList] = useState(rewardList);
+    const [remainRewardList, setRemainRewardList] = useState([]);
     // Danh sách người chơi
     const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
-    const [remainPlayerList, setRemainPlayerList] = useState(playerList);
+    const [remainPlayerList, setRemainPlayerList] = useState([]);
     // Danh sách người chơi được điều chỉnh
-    const [editedPlayerList, setEditedPlayerList] = useState(remainPlayerList);
+    const [editedPlayerList, setEditedPlayerList] = useState([]);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
-    const [playerShowList, setPlayerShowList] = useState(Object.values(playerList).slice(0, 9));
+    const [playerShowList, setPlayerShowList] = useState([]);
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     // Số người chơi online
@@ -237,7 +237,7 @@ export default function LuckySpinAdmin() {
                             </span>
                         </div>
                     </div>
-                    <Spin listPlayer={playerShowList} />
+                    <Spin listPlayer={playerShowList}></Spin>
                     <div className="w-full mb-12">
                         <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                         <div className="h-44 px-4 py-2 relative">
