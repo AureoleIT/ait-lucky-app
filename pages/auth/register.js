@@ -37,40 +37,41 @@ export default function Register() {
   const [rePassword, setRePassword] = useState("");
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
+
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
 
-  const showMethod = useMemo(() => (message, isShow, isTrue) => {
+  const showMethod = useCallback((message, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
-    setHidden(isShow);
+    setHidden(show)
   }, [])
 
-  function signUpSubmit(name, email, password) {
+  const signUpSubmit = useCallback((name, email, password) => {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      showMethod(messagesError.E0004, show, false);
+      showMethod(messagesError.E0004, false);
       return;
     }
     if (!isEmail(email)) {
-      showMethod(messagesError.E0003("Email"), show, false);
+      showMethod(messagesError.E0003("Email"), false);
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), show, false);
+      showMethod(messagesError.E0005("username"), false);
       return;
     }
     if (password.length < 6) {
-      showMethod(messagesError.E0002("password", 6), show, false);
+      showMethod(messagesError.E0002("password", 6), false);
       return;
     }
     if (!check) {
-      showMethod(messagesError.E0006, show, false);
+      showMethod(messagesError.E0006, false);
       return;
     }
-    if ( password !== rePassword ){
-      showMethod(messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), show, false);
+    if (password !== rePassword) {
+      showMethod(messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), false);
       return;
     }
 
@@ -94,7 +95,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        showMethod(messagesError.E0007("username", "email"), show, false);
+        showMethod(messagesError.E0007("username", "email"), false);
         return;
       }
       var newUser = {
@@ -106,15 +107,16 @@ export default function Register() {
         createAt: new Date().getTime(),
       }
       set(ref(db, `users/${id}/`), newUser).then(() => {
-        showMethod(messagesSuccess.I0001, show, true);
+        showMethod(messagesSuccess.I0001, true);
       });
 
       setTimeout(() => {
         router.push("/auth/login");
       }, 3000);
     });
-  }
-  async function signUpAuth() {
+  }, [check, rePassword, showMethod])
+
+  const signUpAuth = useCallback(() => {
     signOut(auth)
       .then(async () => {
         var id = uuid.v4();
@@ -142,11 +144,11 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                showMethod(messagesError.E0008("Email"), show, false);
+                showMethod(messagesError.E0008("Email"), false);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                showMethod(messagesSuccess.I0001, show, true);
+                showMethod(messagesSuccess.I0001, true);
               });
               setTimeout(() => {
                 router.push("/auth/login");
@@ -155,18 +157,18 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            showMethod(messagesError.E4444, show, false);
+            showMethod(messagesError.E4444, false);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, show, false);
+        showMethod(messagesError.E4444, false);
       });
-  }
+  }, [showMethod])
 
-  const closePopup = (e) => {
+  const closePopup = useCallback(() => {
     setHidden(hidden);
-  };
+  }, []);
 
   const setEmailData = useCallback(
     (e) => {
@@ -174,18 +176,21 @@ export default function Register() {
     },
     [setEmail]
   );
+
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);
     },
     [setName]
   );
+
   const setPassData = useCallback(
     (e) => {
       setPassword(e?.target?.value);
     },
     [setPassword]
   );
+
   const setRePassData = useCallback(
     (e) => {
       setRePassword(e?.target?.value);
@@ -273,6 +278,7 @@ export default function Register() {
             isWarning={!isSuccess}
           />
         </div>
+        {renderPopUp}
       </section>
     </>
   );

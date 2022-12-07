@@ -34,19 +34,19 @@ export default function Login() {
 
   const dbRef = ref(db);
 
-  const showMethod = useMemo(() => (message, isShow, isTrue) => {
+  const showMethod = useCallback((message, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
-    setHidden(isShow);
+    setHidden(show);
   }, [])
 
-  function loginSubmit(name, pass) {
+  const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
-      showMethod(messagesError.E0004, show, false)
+      showMethod(messagesError.E0004, false)
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), show, false)
+      showMethod(messagesError.E0005("username"), false)
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -70,9 +70,9 @@ export default function Login() {
       //Go to admin dashboard
       router.push("/admin/dashboard-admin");
     });
-  }
+  }, [dbRef, showMethod])
 
-  function loginAuth() {
+  const loginAuth = useCallback(() => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -85,11 +85,11 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            showMethod(messagesError.E0010, show, false);
+            showMethod(messagesError.E0010, false);
             return;
           }
           setUser(values.find(item => item.email === currEmail));
-          showMethod(messagesSuccess.I0002, show, true);
+          showMethod(messagesSuccess.I0002, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
@@ -98,9 +98,9 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, show, false)
+        showMethod(messagesError.E4444, false)
       });
-  }
+  }, [showMethod])
 
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
@@ -110,9 +110,9 @@ export default function Login() {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
   }, [user]);
 
-  const closePopup = () => {
+  const closePopup = useCallback(() => {
     setHidden(hidden);
-  };
+  }, []);
 
   const nameData = useCallback(
     (e) => {
@@ -128,9 +128,13 @@ export default function Login() {
     [setPass]
   );
 
-  const onCheckData = () => {
+  const onCheckData = useCallback(() => {
     setCheck(!check);
-  };
+  }, [check]);
+
+  const renderTitle = useMemo(() => {
+    return (<Title title="ĐĂNG NHẬP" />)
+  }, [])
 
   return (
     <>
@@ -194,6 +198,7 @@ export default function Login() {
             isWarning={!isSuccess}
           />
         </div>
+        {renderPopUp}
       </section>
     </>
   );

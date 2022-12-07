@@ -5,7 +5,6 @@
 import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
-import Logotic from "public/shared/Logotic";
 import { LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
 import TextNoLabel from "public/shared/TextNoLabel";
 import QrButton from "public/shared/QrButton";
@@ -20,6 +19,7 @@ import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent } from "public/redux/actions";
+import Logo from "public/shared/Logo";
 
 export default function Index() {
   const BG_COLOR =
@@ -29,20 +29,21 @@ export default function Index() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+
   var [event, setEvent] = useState({});
   
   //Call dispatch from redux
   const dispatch = useDispatch();
 
-  const showMethod = useMemo(() => (message, isShow, isTrue) => {
+  const showMethod = useCallback((message, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
-    setHidden(isShow);
+    setHidden(show);
   }, [])
 
-  const onJoinClick = () => {
+  const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
-      showMethod(messagesError.E2002, show, false);
+      showMethod(messagesError.E2002, false);
       return;
     }
     get(child(ref(db), "event/")).then((snapshot) => {
@@ -50,16 +51,16 @@ export default function Index() {
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined) {
-        showMethod(messagesError.E2004, show, false);
+        showMethod(messagesError.E2004, false);
         return;
       }
       setEvent(currEvent);
-      showMethod(messagesSuccess.I0008(currEvent.title), show, true);
+      showMethod(messagesSuccess.I0008(currEvent.title), true);
       setTimeout(() => {
         router.push("/event/info");
       }, 1000);
     });
-  };
+  }, [pin, showMethod]);
 
   //Call dispatch from redux
   const dispatch = useDispatch();
@@ -87,11 +88,77 @@ export default function Index() {
       setHidden(hidden);
     }, []
   );
+
   const renderLogo = useMemo(() => {
-    return (<Logotic
-      title="AIT LUCKY GIFTS"
-      src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png" />)
+    return (
+      <Logo />
+    )
   }, [])
+
+  const renderTitle = useMemo(() => {
+    return (
+      <BigText font=" text-2xl" text="Mã pin sự kiện" />
+    )
+  }, [])
+
+  const renderInput = useMemo(() => {
+    return (
+      <TextNoLabel
+        type="text"
+        id="idRoom"
+        placeholder="Mã pin"
+        onChange={pinData}
+      />
+    )
+  }, [pinData])
+
+  const renderButton = useMemo(() => {
+    return (
+      <div className="w-full mb-4">
+        <BgBlueButton content="Tham gia" onClick={onJoinClick} />
+      </div>
+    )
+  }, [onJoinClick])
+
+  const renderLine = useMemo(() => {
+    return (
+      <LineWithText
+        text="hoặc"
+        leftColor={LEFT_GRADIENT}
+        rightColor={RIGHT_GRADIENT}
+      />
+    )
+  }, [])
+
+  const renderDirect = useMemo(() => {
+    return (
+      <div className="mt-10">
+        <WayLog
+          action="Đăng nhập"
+          title="để quản lý sự kiện?"
+          path="/auth/login"
+        />
+        <WayLog
+          action="Đăng ký"
+          title="để tạo tài khoản."
+          path="/auth/register"
+        />
+      </div>
+    )
+  }, [])
+
+  const renderPopUp = useMemo(() => {
+    return (
+      <div className={isHidden}>
+        <PopUp
+          text={textState}
+          icon={isSuccess ? successIcon : failIcon}
+          close={closePopup}
+          isWarning={!isSuccess}
+        />
+      </div>
+    )
+  }, [closePopup, isHidden, isSuccess, textState])
 
   return (
     <section
@@ -101,44 +168,15 @@ export default function Index() {
         className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
       >
         {renderLogo}
-        <BigText font=" text-2xl" text="Mã pin sự kiện" />
-        <TextNoLabel
-          type="text"
-          id="idRoom"
-          placeholder="Mã pin"
-          onChange={pinData}
-        />
-        <div className="w-full mb-4">
-          <BgBlueButton content="Tham gia" onClick={onJoinClick} />
-        </div>
-        <LineWithText
-          text="hoặc"
-          leftColor={LEFT_GRADIENT}
-          rightColor={RIGHT_GRADIENT}
-        />
+        {renderTitle}
+        {renderInput}
+        {renderButton}
+        {renderLine}
         <QrButton onClick={() => alert("Please scan a QR code to join.")} />
         {/* Handle logic todo: go direct to open device's camera */}
-        <div className="mt-10">
-          <WayLog
-            action="Đăng nhập"
-            title="để quản lý sự kiện?"
-            path="/auth/login"
-          />
-          <WayLog
-            action="Đăng ký"
-            title="để tạo tài khoản."
-            path="/auth/register"
-          />
-        </div>
+        {renderDirect}
       </div>
-      <div className={isHidden}>
-        <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
-        />
-      </div>
+      {renderPopUp}
     </section>
   );
 }
