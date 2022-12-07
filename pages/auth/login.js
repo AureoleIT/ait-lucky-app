@@ -34,19 +34,19 @@ export default function Login() {
 
   const dbRef = ref(db);
 
-  const showMethod = useMemo(() => (message, isShow, isTrue) => {
+  const showMethod = useCallback((message, isTrue) => {
     setTextState(message);
     setIsSuccess(isTrue);
-    setHidden(isShow);
+    setHidden(show);
   }, [])
 
-  function loginSubmit(name, pass) {
+  const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
-      showMethod(messagesError.E0004, show, false)
+      showMethod(messagesError.E0004, false)
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), show, false)
+      showMethod(messagesError.E0005("username"), false)
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -57,18 +57,18 @@ export default function Login() {
           (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
-        showMethod(messagesError.E0009, show, false)
+        showMethod(messagesError.E0009, false)
         return;
       }
       setUser(values.find(item => item.name === name || item.email === name));
 
-      showMethod(messagesSuccess.I0002, show, true)
+      showMethod(messagesSuccess.I0002, true)
       //Go to admin dashboard
       router.push("/admin/dashboard-admin");
     });
-  }
+  }, [dbRef, showMethod])
 
-  function loginAuth() {
+  const loginAuth = useCallback(() => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -81,11 +81,11 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            showMethod(messagesError.E0010, show, false);
+            showMethod(messagesError.E0010, false);
             return;
           }
           setUser(values.find(item => item.email === currEmail));
-          showMethod(messagesSuccess.I0002, show, true);
+          showMethod(messagesSuccess.I0002, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
@@ -94,9 +94,9 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, show, false)
+        showMethod(messagesError.E4444, false)
       });
-  }
+  }, [showMethod])
 
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
@@ -106,9 +106,9 @@ export default function Login() {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
   }, [user]);
 
-  const closePopup = () => {
+  const closePopup = useCallback(() => {
     setHidden(hidden);
-  };
+  }, []);
 
   const nameData = useCallback(
     (e) => {
@@ -124,72 +124,130 @@ export default function Login() {
     [setPass]
   );
 
-  const onCheckData = () => {
+  const onCheckData = useCallback(() => {
     setCheck(!check);
-  };
+  }, [check]);
+
+  const renderTitle = useMemo(() => {
+    return (<Title title="ĐĂNG NHẬP" />)
+  }, [])
+
+  const renderName = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Tên đăng nhập/Email"}
+        leftColor={LEFT_COLOR}
+        rightColor={
+          hasWhiteSpaceAndValidLength(name)
+            ? FAIL_RIGHT_COLOR
+            : RIGHT_COLOR
+        }
+        type={"text"}
+        onChange={nameData}
+      />
+    )
+  }, [name, nameData])
+
+  const renderPassword = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Mật khẩu"}
+        leftColor={LEFT_COLOR}
+        rightColor={
+          enoughNumCountPass(pass) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+        }
+        type={"password"}
+        onChange={passData}
+      />
+    )
+  }, [pass, passData])
+
+  const renderPrivacy = useMemo(() => {
+    return (
+      <TickBox
+        content="Ghi nhớ đăng nhập"
+        htmlFor="rememberLogin"
+        onChange={onCheckData}
+      />
+    )
+  }, [onCheckData])
+
+  const renderSubmitButton = useMemo(() => {
+    return (
+      <BgBlueButton
+        content="ĐĂNG NHẬP"
+        onClick={() => {
+          loginSubmit(name, pass);
+        }}
+      />
+    )
+  }, [loginSubmit, name, pass]);
+
+  const renderFirstLine = useMemo(() => {
+    return (
+      <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+    )
+  }, [])
+
+  const renderAuthInput = useMemo(() => {
+    return (
+      <BgWhiteButton
+        content="ĐĂNG NHẬP BẰNG"
+        onClick={() => loginAuth(name, pass)}
+      />
+    )
+  }, [loginAuth, name, pass]);
+
+  const renderSecondLine = useMemo(() => {
+    return (
+      <GradientLine color1="#003B93" color2="#00F0FF" content="" />
+    )
+  }, [])
+
+  const renderFooter = useMemo(() => {
+    return (
+      <AuthFooter
+        normalContent="Chưa có tài khoản?"
+        boldContent="Đăng kí ngay!!!"
+        href="/auth/register"
+      />
+    )
+  }, [])
+
+  const renderPopUp = useMemo(() => {
+    return (
+      <div className={isHidden}>
+        <PopUp
+          text={textState}
+          icon={isSuccess ? successIcon : failIcon}
+          close={closePopup}
+          isWarning={!isSuccess}
+        />
+      </div>
+    )
+  }, [closePopup, isHidden, isSuccess, textState])
 
   return (
     <>
       <section className="h-screen mx-auto w-full flex justify-center items-center">
         <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
-          <Title title="ĐĂNG NHẬP" />
+          {renderTitle}
           <div>
-            <AuthInput
-              content={"Tên đăng nhập/Email"}
-              leftColor={LEFT_COLOR}
-              rightColor={
-                hasWhiteSpaceAndValidLength(name)
-                  ? FAIL_RIGHT_COLOR
-                  : RIGHT_COLOR
-              }
-              type={"text"}
-              onChange={nameData}
-            />
-            <AuthInput
-              content={"Mật khẩu"}
-              leftColor={LEFT_COLOR}
-              rightColor={
-                enoughNumCountPass(pass) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
-              }
-              type={"password"}
-              onChange={passData}
-            />
+            {renderName}
+            {renderPassword}
           </div>
           <div className="flex flex-row">
-            <TickBox
-              content="Ghi nhớ đăng nhập"
-              htmlFor="rememberLogin"
-              onChange={onCheckData}
-            />
+            {renderPrivacy}
           </div>
           <div>
-            <BgBlueButton
-              content="ĐĂNG NHẬP"
-              onClick={() => {
-                loginSubmit(name, pass);
-              }}
-            />
-            <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
-            <BgWhiteButton
-              content="ĐĂNG NHẬP BẰNG"
-              onClick={() => loginAuth(name, pass)}
-            />
-            <GradientLine color1="#003B93" color2="#00F0FF" content="" />
+            {renderSubmitButton}
+            {renderFirstLine}
+            {renderAuthInput}
+            {renderSecondLine}
           </div>
-          <AuthFooter
-            normalContent="Chưa có tài khoản?"
-            boldContent="Đăng kí ngay!!!"
-            href="/auth/register"
-          />
+          {renderFooter}
         </div>
-        <div className={isHidden}>
-          <PopUp
-            text={textState}
-            icon={isSuccess ? successIcon : failIcon}
-            close={closePopup}
-            isWarning={!isSuccess}
-          />
-        </div>
+        {renderPopUp}
       </section>
     </>
   );

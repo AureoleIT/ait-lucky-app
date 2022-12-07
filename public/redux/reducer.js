@@ -26,6 +26,12 @@ const userState = {
     currEvent: {}
 }
 
+const popUpState = {
+    message: "",
+    status: false,
+    visible: ""
+}
+
 export const playerReducer = (state = joinState, action) => {
     const { type, error } = action;
     switch (type) {
