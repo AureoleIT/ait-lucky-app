@@ -7,7 +7,8 @@ import {
     USER_EVENT,
     USER_PACKAGE,
     USER_REWARD,
-    REMOVE_STATE
+    REMOVE_STATE,
+    USER_CURR_HOSTING_EVENT
 } from "./constants"
 import { store } from "./store";
 
@@ -22,7 +23,8 @@ const userState = {
     event: [],
     user: {},
     reward: [],
-    participant: []
+    participant: [],
+    currEvent: {}
 }
 
 export const playerReducer = (state = joinState, action) => {
@@ -66,6 +68,9 @@ export const userReducer = (state = userState, action) => {
         }
         case USER_REWARD: {
             return { ...state, reward: [...action.payload] }
+        }
+        case USER_CURR_HOSTING_EVENT: {
+            return { ...state, currEvent: action.payload }
         }
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")

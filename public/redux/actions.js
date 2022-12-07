@@ -7,7 +7,8 @@ import {
     USER_EVENT,
     USER_PACKAGE,
     USER_REWARD,
-    REMOVE_STATE
+    REMOVE_STATE,
+    USER_CURR_HOSTING_EVENT
 } from "./constants"
 
 export const incognitoEvent = (event) => ({
@@ -44,4 +45,8 @@ export const userParticipant = (participant) => ({
 export const userReward = (reward) => ({
     type: USER_REWARD,
     payload: reward,
+})
+export const userCurrentHostingEvent = (event) => ({
+    type: USER_CURR_HOSTING_EVENT,
+    payload: event,
 })
