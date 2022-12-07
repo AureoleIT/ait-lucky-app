@@ -27,7 +27,7 @@ export default function LuckySpinAdmin() {
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState(rewardList);
     // Danh sách người chơi
-    const [playerList, setPlayerList] = useState(listPlayer);
+    const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
     const [remainPlayerList, setRemainPlayerList] = useState(playerList);
     // Danh sách người chơi được điều chỉnh
@@ -36,41 +36,58 @@ export default function LuckySpinAdmin() {
     const [playerShowList, setPlayerShowList] = useState(Object.values(playerList).slice(0, 9));
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
+    // Số người chơi online
+    const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
     
     // Firebase
     const dbRef = ref(db)
 
     const fetchDB = () => {
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
-        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
-        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
             const rawData = snapshot.val();
             const data = Object.values(snapshot.val());
             data.sort(compare);
-        
+            
             if (snapshot.exists()) {
                 setRewardList(data);
                 setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
             }
         });
+        
+        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
             const rawData = snapshot.val();
-            // console.log()
-            const data = Object.values(snapshot.val());
+            const data = Object.values(rawData);
+            data.forEach((val, idx) => {
+                val.ID = Object.keys(rawData)[idx];
+                get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        val.pic = snapshot.val().pic;
+                    }
+                })
+            })
+            const online = data.filter(val => val.status === 1).length;
+            const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+
+
             if (snapshot.exists()) {
                 setPlayerList(rawData);
-                setRemainPlayerList(data.filter((val) => (val.idReward === "")));
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
             }
         });
+        
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
             const data = Object.values(snapshot.val())[0];
             const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
-
+            
             if (snapshot.exists()) {
                 if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
             }
         });
+
     }
 
     // ------------------------------------------------ Function
@@ -125,10 +142,9 @@ export default function LuckySpinAdmin() {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
-                    setRemainPlayerList((list) => list.filter((player, idx) => idx !== randomNum));
-                    updateFB('event_participants/'+ Object.keys(playerList)[randomNum], { idReward: idRewardChosing });
+                    console.log(remainPlayerList[randomNum].ID);
+                    updateFB('event_participants/'+ remainPlayerList[randomNum].ID, { idReward: idRewardChosing });
                     updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
-                    // updateFB('event_participants/'+, { });
                     setSpinClicked(false);
                 }, 1000)
             }, 2000)
@@ -194,14 +210,20 @@ export default function LuckySpinAdmin() {
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
-                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"/>
+                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"></Title>
                         <Title title="TIỆC CUỐI NĂM" fontSize="32" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(Object.keys(playerList).length/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)%10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor(onlinePlayerAmount/100)}
+                                </p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor((onlinePlayerAmount%100)/10)}
+                                </p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor((onlinePlayerAmount%100)%10)}
+                                </p>
                             </span>
                         </div>
                         <div className="flex w-full justify-between">

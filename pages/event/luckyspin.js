@@ -39,14 +39,14 @@ export default function LuckySpin() {
     const [spinClicked, setSpinClicked] = useState(false);
     // Người nhận thưởng
     const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
-    
+    // Số người chơi online
+    const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
+
     // Firebase
     const dbRef = ref(db);
 
     const fetchDB = () => {
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
-        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
-        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
             const data = Object.values(snapshot.val());
             data.sort(compare);
@@ -56,15 +56,29 @@ export default function LuckySpin() {
                 setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
             }
         });
+
+        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
             const rawData = snapshot.val();
-            const data = Object.values(snapshot.val());
-            
+            const data = Object.values(rawData);
+            data.forEach((val, idx) => {
+                val.ID = Object.keys(rawData)[idx];
+                get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        val.pic = snapshot.val().pic;
+                    }
+                })
+            })
+            const online = data.filter(val => val.status === 1).length;
+            const filted = data.filter(val => (val.idReward === "" && val.status === 1));
             if (snapshot.exists()) {
                 setPlayerList(rawData);
-                setRemainPlayerList(data.filter((val) => (val.idReward === "")));
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
             }
         });
+
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
             const data = Object.values(snapshot.val())[0];
             const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
@@ -206,9 +220,15 @@ export default function LuckySpin() {
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
-                            <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(Object.keys(playerList).length/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((Object.keys(playerList).length%100)%10)}</p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor(onlinePlayerAmount/100)}
+                                </p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor((onlinePlayerAmount%100)/10)}
+                                </p>
+                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                    {Math.floor((onlinePlayerAmount%100)%10)}
+                                </p>
                             </span>
                         </div>
                         <div className="flex w-full justify-between">
