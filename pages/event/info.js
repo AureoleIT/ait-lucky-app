@@ -9,13 +9,13 @@ import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import { db } from "./../../src/firebase";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
-import { hasWhiteSpaceAndValidLength, isEmpty } from "public/util/functions";
+import { isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { onValue, ref, set } from "firebase/database";
+import { ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { addParticipant, incognitoParticipant, removeState } from "public/redux/actions";
-import { useJoinEventHook } from "public/redux/hooks";
+import { incognitoParticipant } from "public/redux/actions";
+import { usePlayerEventHook } from "public/redux/hooks";
 
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -27,13 +27,8 @@ export default function Info() {
   const [isHidden, setHidden] = useState(hidden);
   var [player, setPlayer] = useState({});
 
-  // Call dispatch from redux
-  const dispatch = useDispatch();
-
-  // Get current event from last state get in
-  const currEvent = useJoinEventHook()
-
-  console.log({currEvent})
+  // Get current event from previous state get in
+  const currEvent = usePlayerEventHook();
 
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
@@ -68,9 +63,13 @@ export default function Info() {
       });
   };
 
+  // Call dispatch from redux
+  const dispatch = useDispatch();
+
   // Set and save new player object to redux
   useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
 
+  /*localStorage is here to track what has been saved*/
   useEffect(() => {
     window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
   }, [player]);
