@@ -15,12 +15,12 @@ import {
   enoughNumCountPass,
 } from "public/util/functions";
 import { hidden, show, failIcon, successIcon } from "public/util/popup";
-import { getDatabase, ref, set, child, get } from "firebase/database";
+import { ref, set, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 
 export default function Login() {
