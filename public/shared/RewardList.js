@@ -97,7 +97,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
 
     return (
         <>
-            <div className="overflow-auto h-full">
+            <div className="overflow-auto w-full grow">
                 {listRewardShowcase}
             </div>
         </>

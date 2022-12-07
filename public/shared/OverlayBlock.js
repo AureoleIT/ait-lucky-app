@@ -47,7 +47,6 @@ export default function OverlayBlock({closeButton = true, clickOutClose = true, 
     useEffect(() => {
         const fsOverlay = document.createElement('div');
         fsOverlay.id=blockID+"wrapper";
-        // fsOverlay.classList = "absolute h-screen top-0 left-0 w-screen";
         document.getElementsByTagName('section')[0].appendChild(fsOverlay);
         render(overlayblock, document.getElementById(blockID+"wrapper"));
 

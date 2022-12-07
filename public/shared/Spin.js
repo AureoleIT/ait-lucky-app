@@ -48,7 +48,13 @@ const cssSet = [
 ]
 
 export default function Spin({listPlayer}) {
-    
+
+    const [showcase, setShowcase] = useState(listPlayer);
+
+    useEffect(() => {
+        setShowcase([...listPlayer]);
+    }, [listPlayer])
+
     const listPlayerShowcase = (
         <div className="flex flex-col h-full justify-center w-full z-0 relative overflow-hidden">
             <div className="animate-move-down-0 animate-move-down-1 animate-move-down-2 animate-move-down-3 animate-move-down-4 animate-move-down-5 animate-move-down-6 animate-move-down-7" />
@@ -60,12 +66,13 @@ export default function Spin({listPlayer}) {
                         <div key={idx} className="h-0" style={cssSet[idx]} id={"spin-idx-"+idx}>
                             <div className="bg-[#E9E9E9] h-28 -translate-y-[50%] flex items-center rounded-lg shadow-[0_0_10px_0_rgba(0,0,0,0.25)] py-4 px-6 gap-2">
                                 {
-                                    listPlayer.length >= 9 &&
+                                    showcase.length >= 9 &&
                                     <>
-                                        <img className="h-20 w-20 object-cover rounded-full border-1"
-                                            src={listPlayer[idx].pic}
-                                            alt={listPlayer[idx].nameDisplay} />
-                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].nameDisplay}</p>
+                                        <img className="h-20 w-20 object-cover rounded-full border-2"
+                                            src={showcase[idx].pic}
+                                            alt={showcase[idx].nameDisplay} />
+                                        <p className="text-center grow font-bold text-[20px] truncate">{showcase[idx].nameDisplay}</p>
+                                        <p className="text-center grow font-bold text-[20px] truncate">{showcase[idx].pic}</p>
                                     </>
                                 }
                             </div>
