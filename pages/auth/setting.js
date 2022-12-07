@@ -26,11 +26,11 @@ import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useUserPackageHook } from "public/redux/hooks";
 export default function Setting() {
     //firebase auth
-    const currentUser = useSelector(state => state.addReducer.user);
-    const [user, setUser] = useState(currentUser.user);
+    const user = useUserPackageHook();
 
     // normal state
     const [username, setUsername] = useState("");
@@ -74,17 +74,21 @@ export default function Setting() {
 
     //get auth profile
     function fetchDb() {
+        setUsername(user.name);
+        setEmail(user.email);
+        if (user.pic !== "")
+            setImg(user.pic);
         // get orderbychild - have conditions
-        const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
-        onValue(que, (snapshot) => {
-            const record = snapshot.val() ?? [];
-            const values = Object.values(record);
-            setUsername(values.find(item => item.email == user.email).name);
-            setEmail(user.email)
-            if (values[0].pic != "")
-                setImg(values[0].pic);
-        }
-        );
+        // const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
+        // onValue(que, (snapshot) => {
+        //     const record = snapshot.val() ?? [];
+        //     const values = Object.values(record);
+        //     setUsername(values.find(item => item.email == user.email).name);
+        //     setEmail(user.email)
+        //     if (values[0].pic != "")
+        //         setImg(values[0].pic);
+        // }
+        // );
         // get all data
         // get(child(dbRef, "users/")).then((snapshot) => {
         //     const record = snapshot.val() ?? [];
@@ -197,6 +201,10 @@ export default function Setting() {
     useEffect(() => {
 
     }, [file, img])
+
+    useEffect(() => {
+        window.localStorage.setItem('USER_STATE', JSON.stringify(user));
+    }, [user])
 
     return (
         <section className="h-screen w-screen overflow-y-hidden">
