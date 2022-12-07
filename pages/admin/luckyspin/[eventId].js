@@ -11,13 +11,15 @@ import Spin from "public/shared/Spin";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
+import { useRouter } from "next/router";
 // firebase
-import { auth, db } from "../../src/firebase";
+import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
 
-const EventID = "EV20221101";
-
 export default function LuckySpinAdmin() {
+    const router = useRouter();
+    // Mã event
+    const EventID = router.query.eventId;
     // Danh sách giải thưởng
     const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
@@ -42,14 +44,25 @@ export default function LuckySpinAdmin() {
     // Firebase
     const dbRef = ref(db)
 
-    const fetchDB = () => {
+    const fetchDB = () => {     
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que3, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = Object.values(snapshot.val())[0];
+                if (data["status"] < 3) router.push('/');
+                if (data["status"] > 3) router.push('/');
+                const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
+                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+            } else {
+                router.back();
+            }
+        });
+
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
-            const rawData = snapshot.val();
-            const data = Object.values(snapshot.val());
-            data.sort(compare);
-            
             if (snapshot.exists()) {
+                const data = Object.values(snapshot.val());
+                data.sort(compare);
                 setRewardList(data);
                 setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
             }
@@ -57,35 +70,24 @@ export default function LuckySpinAdmin() {
         
         const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
-            const rawData = snapshot.val();
-            const data = Object.values(rawData);
-            data.forEach((val, idx) => {
-                val.ID = Object.keys(rawData)[idx];
-                get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
-                    if (snapshot.exists()) {
-                        val.pic = snapshot.val().pic;
-                    }
-                })
-            })
-            const online = data.filter(val => val.status === 1).length;
-            const filted = data.filter(val => (val.idReward === "" && val.status === 1));
             if (snapshot.exists()) {
+                const rawData = snapshot.val();
+                const data = Object.values(rawData);
+                data.forEach((val, idx) => {
+                    val.ID = Object.keys(rawData)[idx];
+                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            val.pic = snapshot.val().pic;
+                        }
+                    })
+                })
+                const online = data.filter(val => val.status === 1).length;
+                const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
                 setRemainPlayerList(filted);
                 setOnlinePlayerAmount(online);
             }
         });
-        
-        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
-        onValue(que3, (snapshot) => {
-            const data = Object.values(snapshot.val())[0];
-            const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
-            
-            if (snapshot.exists()) {
-                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
-            }
-        });
-
     }
 
     // ------------------------------------------------ Function
@@ -176,6 +178,8 @@ export default function LuckySpinAdmin() {
             <p className="font-[900] text-lg" id="awaredRewardName"></p>
         </div>
     )
+
+    // --------------------------------------------------- useEffect
 
     useEffect(() => {
         fetchDB();
