@@ -29,7 +29,6 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
 export default function Setting() {
-    //firebase auth
     const user = useUserPackageHook();
 
     // normal state
