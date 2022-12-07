@@ -6,7 +6,7 @@ import { Link } from "next/link";
 import { useForm } from "react-hook-form";
 // import AuthContext from "../../src/context/AuthContext";
 // Components
-import Logotic from "public/shared/Logotic";
+import Logotic from "public/shared/Logo";
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
 import BgBlueButton from "public/shared/BgBlueButton";
