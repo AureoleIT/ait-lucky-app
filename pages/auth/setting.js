@@ -27,10 +27,11 @@ import { successIcon, failIcon } from "public/util/popup";
 import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { useDispatch } from "react-redux";
+import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 export default function Setting() {
-    const user = useUserPackageHook();
-
+    const [user, setUser] = useState(useUserPackageHook());
+    const dispatch = useDispatch();
     // normal state
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -117,6 +118,10 @@ export default function Setting() {
                     {
                         pic: url
                     }).then(() => {
+                        setUser(prev => ({
+                            ...prev,
+                            pic: url
+                        }));
                         showMethod(messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
@@ -136,24 +141,6 @@ export default function Setting() {
             return;
         }
 
-        // update 
-        // const que = query(ref(db, "users"), orderByChild("name"), equalTo(name));
-        // onValue(que, (snapshot) => {
-        //     const record = snapshot.val() ?? [];
-        //     const values = Object.values(record);
-        //     if (values.length == 0) {
-        //         update(ref(db, 'users/' + user.userId),
-        //             {
-        //                 name: name
-        //             }).then(() => {
-        //                 setTextState(messagesSuccess.I0003);
-        //                 setIsSuccess(true);
-        //                 setHidden(show);
-        //             })
-        //             .catch((error) => console.log(error));
-        //     }
-        // }
-
         // update password
         get(child(ref(db), "users/")).then((snapshot) => {
             const record = snapshot.val() ?? [];
@@ -168,6 +155,10 @@ export default function Setting() {
                     {
                         name: name
                     }).then(() => {
+                        setUser(prev => ({
+                            ...prev,
+                            name: name
+                        }));
                         showMethod(messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
@@ -201,9 +192,7 @@ export default function Setting() {
 
     }, [file, img])
 
-    useEffect(() => {
-        window.localStorage.setItem('USER_STATE', JSON.stringify(user));
-    }, [user])
+    useEffect(() => dispatch(userPackage(user)), [user.name, user.pic])
 
     return (
         <section className="h-screen w-screen overflow-y-hidden">
