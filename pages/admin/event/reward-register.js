@@ -22,7 +22,7 @@ function RewardRegister() {
     // ref store data
     const refs = useRef()
 
-    let uniqueKey = []// uniqueKey store local id of reward
+    let uniqueKey = [] // uniqueKey store local id of reward
 
     const wrap = {
         height:"100%",
@@ -36,7 +36,7 @@ function RewardRegister() {
     // get value of reward realtime
     const handleReceiveData = (data) =>
     {
-        setValue(prev => [...prev, data])
+            setValue(prev => [...prev, data])
     }
 
     // get array of reward id (has duplicate)
@@ -94,47 +94,54 @@ function RewardRegister() {
     {
         let valueLength = value.length - 1
         let lastValue = value[valueLength]
+        console.log(valueLength);
 
         if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined") {
-            setTextState("Da dang ky su kien !")
-            setIsSuccess(true)
-            setIsHidden(show)
-
-            setTimeout(() =>
+            // save value to data
+            uniqueKey.map((item, index) =>
             {
-                router.push("/admin/event/event-detail")
-            },2000)
+                for(let tempValueLength = valueLength; tempValueLength > 0; tempValueLength --)
+                {
+                    let tempValue = value[tempValueLength]
+                    let tempItem = tempValue[0] ?? []
+                    let tempId = tempItem.id
+                    let tempName = tempItem.name 
+                    let tempAmount = tempItem.amount
+                    let tempImg = tempItem.image
+
+                    if(tempId === item)
+                    {
+                        setData(prev => [...prev, 
+                        {
+                            name: tempName,
+                            amount: tempAmount,
+                            image: tempImg
+                        }])
+                        break;
+                    }
+                }
+                return <></>
+            })
+            // setTextState("Da dang ky su kien !")
+            // setIsSuccess(true)
+            // setIsHidden(show)
+
+            // setTimeout(() =>
+            // {
+            //     router.push("/admin/event/event-detail")
+            // },2000)
         }
         else {
             setTextState("Vui long nhap ten giai thuong !")
             setIsSuccess(false)
             setIsHidden(show)
         }
-        // setData(prev => [...prev, value])
     }
 
-    // useEffect(() =>
-    // {
-    //     const size = data.length-1;
-    //     const temp = data[size];
-    //     const length = temp.length;
-    //     const last =  temp[length-1];
-    //     const arr = last ?? [];
-    //     console.log({length});
-    //     console.log({last});
-    //     console.log(arr[0]);
-    //     // console.log({data})
-    // })
-
-    // useEffect(() =>
-    // {
-    //     console.log(uniqueKey);
-    // },[uniqueKey])
-
     useEffect(() =>
-    {   
-        console.log(rewardCount.length);
-    },[rewardCount])
+    {
+        console.log(data);
+    },[data])
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
