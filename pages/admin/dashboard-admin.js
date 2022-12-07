@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-//import redux
-import { useSelector } from "react-redux";
 // import firebase
 import { db } from "src/firebase";
 import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
@@ -13,19 +11,24 @@ import BorderText from "public/shared/BorderText";
 
 //import gif
 import nyancat from "public/img/nyancat.gif";
+import { useUserPackageHook } from "public/redux/hooks";
+import { useSelector } from "react-redux";
 
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
 
   // const [currentId, setcurentId] = useState([]);
-  const currentId = useSelector((state) => state.addReducer.user);
+
+  const currentUser = useUserPackageHook();
+  console.log(currentUser);
+  console.log(useSelector((state) => state));
 
   const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
   const queID = query(
     ref(db, "event"),
     orderByChild("createBy"),
-    equalTo(String(currentId.user.userId))
+    equalTo(String(currentUser.userId))
   );
 
   // get(child(ref(db), `event`))
@@ -71,7 +74,7 @@ export default function Dashboard() {
         setArrID(Object.values(data));
       }
     });
-  }, [String(currentId.user.userId)]);
+  }, [String(currentUser.userId)]);
 
   return (
     <>
