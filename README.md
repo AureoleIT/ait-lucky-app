@@ -5,14 +5,14 @@ This web-app is an Intern Project, which is created to organize or join events i
 ## Contributors
 Mentor: AIT-phuclq \
 Members: 
-- ng-anhhtuann
-- CamThuy0212
-- dungdung7301
-- HAT1209
-- royscofield
-- Pet3r1512
-- Viresty
-- vuphamngoctan1612
+- [ng-anhhtuann](https://github.com/ng-anhhtuann)
+- [CamThuy0212](https://github.com/CamThuy0212)
+- [dungdung7301](https://github.com/dungdung7301)
+- [HAT1209](https://github.com/HAT1209)
+- [royscofield](https://github.com/royscofield)
+- [Pet3r1512](https://github.com/Pet3r1512)
+- [Viresty](https://github.com/Viresty)
+- [vuphamngoctan1612](https://github.com/vuphamngoctan1612)
 
 ## Installation
 Make sure you installed node

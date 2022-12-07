@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useState } from "react";
+import { React, useCallback, useState, useEffect } from "react";
 import PopUp from "public/shared/PopUp";
 import Logotic from "public/shared/Logotic";
 import TextNoLabel from "public/shared/TextNoLabel";
@@ -12,15 +12,26 @@ import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { hasWhiteSpaceAndValidLength, isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { onValue, ref, set } from "firebase/database";
-import { event } from "../index.js";
 import router from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { addParticipant, incognitoParticipant, removeState } from "public/redux/actions";
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
+
 export default function Info() {
   const [name, setName] = useState("");
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+  var [player, setPlayer] = useState({});
+
+  // Call dispatch from redux
+  const dispatch = useDispatch();
+
+  // Get current event from last state get in
+  const currEvent = useSelector(state => state)
+
+  console.log(currEvent)
 
   const onJoinClick = () => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
@@ -36,13 +47,14 @@ export default function Info() {
       createAt: new Date().getTime(),
       status: 2,
       idReward: "",
-      eventId: event.id,
+      eventId: currEvent.eventId,
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
         setTextState(messagesSuccess.I0009);
         setIsSuccess(true);
         setHidden(show);
+        setPlayer(newParticipant)
         setTimeout(() => {
           router.push("/event/countdown-checkin");
         }, 2000);
@@ -53,15 +65,25 @@ export default function Info() {
         setHidden(show);
       });
   };
+
+  // Set and save new player object to redux
+  useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
+
+  useEffect(() => {
+    window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player));
+  }, [player]);
+
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);
     },
     [setName]
   );
+
   const closePopup = (e) => {
     setHidden(hidden);
   };
+
   return (
     <section
       className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
