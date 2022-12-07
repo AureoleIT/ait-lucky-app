@@ -13,20 +13,18 @@ import {
   child,
   get
 } from "firebase/database";
-import { useAuth } from "src/context/AuthContext";
 import { successIcon, failIcon } from "public/util/popup";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import OverlayBlock from "public/shared/OverlayBlock";
 import { db } from "src/firebase";
-import { useSelector } from "react-redux";
+import { useUserPackageHook } from "public/redux/hooks";
 
 export default function ChangePassword() {
   const [oldPass, setOld] = useState("");
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
-  const [user, setUser] = useState();
-  const currentUser = useSelector(state => state.addReducer.user)
+  const user = useUserPackageHook();
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -92,7 +90,7 @@ export default function ChangePassword() {
   }
 
   useEffect(() => {
-    setUser(currentUser.user)
+    
   }, []);
 
   // show popup
