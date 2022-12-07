@@ -69,8 +69,6 @@ export default function LuckySpinAdmin() {
             })
             const online = data.filter(val => val.status === 1).length;
             const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-
-
             if (snapshot.exists()) {
                 setPlayerList(rawData);
                 setRemainPlayerList(filted);

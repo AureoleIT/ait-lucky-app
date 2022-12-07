@@ -18,7 +18,7 @@ import { useMemo } from "react/cjs/react.development";
 import PlayerDetail from "./PlayerDetail";
 import OverlayBlock from "./OverlayBlock";
 
-export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = []}) {
+export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = [], showDetail = true}) {
     const [typeList, setTypeList] = useState(listType);
     const [playerChosing, setPlayerChosing] = useState(undefined);
 
@@ -26,12 +26,18 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
         <div className="flex flex-col divide-y divide-white/50">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
+                    const reward = listReward.find((val) => val.idReward === player.idReward);
                     return (
-                        <div key={idx} className="group h-fit flex py-2 px-6 gap-4 text-[#004599] text-base hover:text-lg" onClick={() => openPlayerDetailByIndex(idx)}>
-                            <img className="transition-all h-16 w-16 object-cover rounded-full border-1 group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.playerAvt} />
-                            <div className="flex flex-col justify-center">
-                                <p className="h-fit text-left grow uppercase font-bold mt-2 group-hover:mt-4">{player.nameDisplay}</p>
-                                <p className="h-fit text-left grow font-semibold">{player.nameDisplay}</p>
+                        <div key={idx} className="relative group h-fit flex py-2 px-6 gap-4 text-[#004599] text-base hover:text-lg" onClick={() => openPlayerDetailByIndex(idx)}>
+                            <div className="transition-all relative h-16 w-20 group-hover:w-20 group-hover:h-20 group-hover:-ml-1">
+                                <span className="block absolute right-4 bottom-1 h-3 w-3 rounded-full group-hover:right-2 group-hover:bottom-2 group-hover:h-4 group-hover:w-4"
+                                    style={{backgroundColor: (player.status === 1 ? "green" : "gray")}}></span>
+                                <img className="transition-all h-16 w-16 object-cover border-2 rounded-full group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.pic}
+                                    style={{borderColor: (player.idReward !== ""?"yellow":"gray")}} />
+                                </div>
+                            <div className="flex flex-col justify-center ">
+                                <p className="h-fit text-left uppercase font-bold mt-2 group-hover:mt-4">{player.nameDisplay}</p>
+                                {reward?<p className="h-fit text-left font-semibold">{reward.nameReward}</p>:<></>}
                             </div>
                         </div>
                     )
@@ -41,6 +47,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     )
     
     const openPlayerDetailByIndex = (idx) => {
+        if (!showDetail) return;
         if (document.getElementById("playerDetail").classList.contains("hidden"))
             document.getElementById("playerDetail").classList.remove("hidden");
         document.getElementById("playerDetailOverlay").classList.toggle("hidden");
@@ -48,12 +55,17 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     }
 
     const PlayerList_Menu = (
-        <div className="grid grid-flow-row grid-cols-4 mt-2">
+        <div className="grid grid-flow-row grid-cols-4 mt-2 grow min-h-fit h-24">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     return (
-                        <div key={idx} className="h-20 w-full py-2 flex" onClick={() => openPlayerDetailByIndex(idx)}>
-                            <img className="transition-all mx-auto h-16 w-16 object-cover rounded-full border-1 hover:h-20 hover:w-20 hover:-mt-2 hover:shadow-2xl" src={player.playerAvt} alt={player.playerName} />
+                        <div key={idx} className="group h-20 w-full py-2 flex" onClick={() => openPlayerDetailByIndex(idx)}>
+                            <div className="transition-all relative h-16 w-full group-hover:h-20 group-hover:-mt-1">
+                                <span className="block absolute right-4 bottom-1 h-3 w-3 rounded-full group-hover:right-2 group-hover:bottom-2 group-hover:h-4 group-hover:w-4"
+                                    style={{backgroundColor: (player.status === 1 ? "green" : "gray")}}></span>
+                                <img className="transition-all mx-auto h-16 w-16 object-cover border-2 rounded-full border-1 group-hover:h-20 group-hover:w-20 group-hover:shadow-2xl" src={player.pic} alt={player.playerName}
+                                    style={{borderColor: (player.idReward !== ""?"yellow":"gray")}} />
+                            </div>
                         </div>
                     )
                 }):<></>
@@ -62,13 +74,10 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     )
 
     useEffect(() => {
+        if (listPlayer[playerChosing] === undefined) return;
         const detail = (<PlayerDetail player={listPlayer[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} />);
         if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
     }, [playerChosing])
-
-    useEffect(() => {
-        console.log(listReward);
-    }, [listReward]);
 
     return (
         <>

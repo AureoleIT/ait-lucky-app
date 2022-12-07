@@ -16,7 +16,7 @@ import AuthFooter from "public/shared/AuthFooter";
 import { useMemo } from "react/cjs/react.development";
 import PlayerList from "./PlayerList";
 
-export default function RewardList({listReward, showRemain = false, eventPaticipant}) {
+export default function RewardList({listReward, showRemain = false, eventPaticipant, showDetail = false}) {
     const rewardList = [...listReward];
 
     function compare(a, b) {
@@ -27,7 +27,8 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
 
     useEffect(() => {
         rewardList.sort(compare);
-    }, [])
+        console.log()
+    }, [rewardList])
 
     const awradedPaticipantShowcase = (rewardID) => {
         const showcaseList = eventPaticipant.filter(paticipant => paticipant.idReward == rewardID)
@@ -37,7 +38,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                 {showcaseList.length > 0?
                     <>
                         <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">Người trúng thưởng</p>
-                        <PlayerList listType="List" changeButton={false} listPlayer={showcaseList} />
+                        <PlayerList listType="Menu" changeButton={false} listPlayer={showcaseList} showDetail={showDetail} />
                     </>:
                 <></>}
             </>
@@ -46,7 +47,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
 
     const getDetailFromReward = (reward) => {
         return (
-            <div>
+            <div className="flex flex-col">
                 <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                     {
                         reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
@@ -83,8 +84,8 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             </div>
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
-                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none">{reward.nameReward}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">Số lượng: {showRemain?reward.quantityRemain: reward.quantity}</p>
+                                <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none text-ellipsis">{reward.nameReward}</p>
+                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>
                             </div>
                             {getDetailFromReward(reward)}
                         </div>

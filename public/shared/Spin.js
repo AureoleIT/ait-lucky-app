@@ -63,7 +63,7 @@ export default function Spin({listPlayer}) {
                                     listPlayer.length >= 9 &&
                                     <>
                                         <img className="h-20 w-20 object-cover rounded-full border-1"
-                                            src={listPlayer[idx].playerAvt}
+                                            src={listPlayer[idx].pic}
                                             alt={listPlayer[idx].nameDisplay} />
                                         <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].nameDisplay}</p>
                                     </>
