@@ -1,21 +1,21 @@
 import React from "react";
 
-export default function EventButton(props) {
+export default function EventButton({title, id, userJoined, status}) {
   return (
-    <a href={`${setLink(props.status)}`} className="flex flex-col w-full">
-      <button className={`rounded-[5px] mx-2 ${setColor(props.status)}`}>
+    <a href={`${setLink(status)}`} className="flex flex-col w-full">
+      <button className={`rounded-[5px] mx-2 ${setColor(status)}`}>
         <div className="flex justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
           <div className="justify-center items-center text-left font-bold text-sm uppercase truncate flex-1">
-            {props.title}
+            {title}
           </div>
           <div className="text-xs flex flex-col text-right w-1/2">
-            {props.id !== null ? (
-              <div className="truncate">{props.id}</div>
+            {id !== null ? (
+              <div className="truncate">{id}</div>
             ) : (
               <></>
             )}
-            {props.userJoined !== null ? (
-              <div>{props.userJoined} người tham gia</div>
+            {userJoined !== null ? (
+              <div>{userJoined} người tham gia</div>
             ) : (
               <></>
             )}
