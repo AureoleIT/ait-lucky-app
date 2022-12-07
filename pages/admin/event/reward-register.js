@@ -1,72 +1,140 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
-import { failIcon, hidden, successIcon } from "public/util/popup";
+import { failIcon, hidden, show, successIcon } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Reward from "components/RewardRegister/Reward";
 
-function NewRewardRegister() {
+function RewardRegister() {
     // router
     const router = useRouter();
     // state
     const [textState, setTextState] = useState("")
     const [isSuccess, setIsSuccess] = useState(false)
     const [isHidden, setIsHidden] = useState(hidden)
+    const [key, setKey] = useState([])
     const [rewardCount, setRewardCount] = useState([])
     // state store data
-    const [count, setCount] = useState([])
-    const [data, setData] = useState([{}])
-    const [rewardName, setRewardName] = useState({})
-    const [receiveImg, setReceiveImg] = useState({})
+    const [data, setData] = useState([{}]) // data store array of object of reward
+    const [value, setValue] = useState([]) // value store object of reward when typing
     // ref store data
+    const refs = useRef()
+
+    let uniqueKey = []// uniqueKey store local id of reward
 
     const wrap = {
         height:"100%",
         zIndex: "20",
     }
 
-    const handleReceiveImg = (data) =>
+    // idea: each reward has its own id (render in the first time component called by uuid)
+    // idea: output of reward data is array of object and it's update when has change with the key is id render by uuid
+    // idea: so we only get the last value of reward of each id
+
+    // get value of reward realtime
+    const handleReceiveData = (data) =>
     {
-        setReceiveImg(prev => ({...prev, [""]:data}))
+        setValue(prev => [...prev, data])
     }
 
-    const handleReceiveCount = (data) =>
+    // get array of reward id (has duplicate)
+    useEffect(() =>
     {
-        setCount(prev => [...prev, data])
-    }
+        value.map((item, index) =>
+        {   
+            let key = item[0] ?? [];
+            setKey(prev => [...prev, key.id])
+            return <></>
+        })
+    },[value])
+
+    // store array of reward id (not duplicate)
+    useMemo(() =>
+    {
+        key.forEach((item) =>
+        {
+            if(!uniqueKey.includes(item) && typeof item !== "undefined")
+            {
+                uniqueKey.push(item)
+            }
+        })
+    },[key, uniqueKey])
 
     const closePopup = (e) => { setIsHidden(hidden) }
 
-    const onChangeName = (e) =>
-    {
-        setRewardName(prev => ({...prev,[e.target.name]:e.target.value}))
-    }
-
+    // add reward
     const handleAdd = () =>
     {
-        setRewardCount(prev => [...prev, 1])
-        // if(rewardName !== "" && count > 1 && receiveImg !== null)
-        // {
-            setData(prev => [...prev,{
-                name:rewardName,
-                amount:count,
-                image:receiveImg
-            }])
-        // }
-        // console.log(count);
+        if(rewardCount.length > 0)
+        {
+            let valueLength = value.length - 1
+            let lastValue = value[valueLength]
+
+            if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined")
+            {
+                setRewardCount(prev => [...prev, 1])
+            }
+            else 
+            {
+                setTextState("Vui long nhap ten giai thuong !")
+                setIsSuccess(false)
+                setIsHidden(show)
+            }
+        }
+        else if(rewardCount.length === 0)
+        {
+            setRewardCount(prev => [...prev, 1])
+        }
     }
     
+    // navigate to event detail, push data to firebase and add to redux
     const handleNavigate = () =>
     {
-        router.push("/admin/event/event-detail")
+        let valueLength = value.length - 1
+        let lastValue = value[valueLength]
+
+        if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined") {
+            setTextState("Da dang ky su kien !")
+            setIsSuccess(true)
+            setIsHidden(show)
+
+            setTimeout(() =>
+            {
+                router.push("/admin/event/event-detail")
+            },2000)
+        }
+        else {
+            setTextState("Vui long nhap ten giai thuong !")
+            setIsSuccess(false)
+            setIsHidden(show)
+        }
+        // setData(prev => [...prev, value])
     }
 
+    // useEffect(() =>
+    // {
+    //     const size = data.length-1;
+    //     const temp = data[size];
+    //     const length = temp.length;
+    //     const last =  temp[length-1];
+    //     const arr = last ?? [];
+    //     console.log({length});
+    //     console.log({last});
+    //     console.log(arr[0]);
+    //     // console.log({data})
+    // })
+
+    // useEffect(() =>
+    // {
+    //     console.log(uniqueKey);
+    // },[uniqueKey])
+
     useEffect(() =>
-    {
-        console.log(data);
-    },[data])
+    {   
+        console.log(rewardCount.length);
+    },[rewardCount])
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
@@ -75,21 +143,15 @@ function NewRewardRegister() {
                     {
                         rewardCount.map((item, index) =>
                         {
-                            let nameId = `name${index}`
                             return (
                                 <div key={index} className="flex w-full justify-center items-center">
-                                    <Reward 
+                                    <Reward
+                                        ref={refs}
                                         id={index}
-                                        name={nameId}
-                                        rewardName={rewardName.nameId}
-                                        onChangeRewardName={onChangeName}
-                                        rewardCountValue={count}
-                                        onRewardCountUp={() => setCount(count + 1)}
-                                        onRewardCountDown={() => setCount(count - 1)}
+                                        inputId={index}
                                         fileID={`file${index}`}
                                         toggleID={`toggle${index}`}
-                                        receiveImg={handleReceiveImg}
-                                        receiveCount={handleReceiveCount}
+                                        receiveData={handleReceiveData}
                                     /> 
                                 </div>
                             )
@@ -110,4 +172,4 @@ function NewRewardRegister() {
   );
 }
 
-export default NewRewardRegister;
+export default RewardRegister;

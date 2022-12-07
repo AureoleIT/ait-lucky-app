@@ -26,6 +26,11 @@ function EditEventRewardRegister() {
         WebkitTextFillColor: "transparent",
     };
 
+    const handleReceiveData = () =>
+    {
+        
+    }
+
     const handleNavigate = () => {
         router.push("/admin/event/event-detail");
     };
@@ -64,6 +69,7 @@ function EditEventRewardRegister() {
             <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
                 <Reward 
                     rewardCountValue={"1"}
+                    receiveData={handleReceiveData}
                 />
                 <div className="w-full">
                     <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
