@@ -10,7 +10,6 @@ import {
     REMOVE_STATE,
     USER_CURR_HOSTING_EVENT
 } from "./constants"
-import { store } from "./store";
 
 const joinState = {
     event: {},
