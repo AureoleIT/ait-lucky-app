@@ -19,7 +19,7 @@ import { isEmpty } from "public/util/functions";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch, useSelector } from "react-redux";
-import { addEvent } from "public/redux/actions";
+import { incognitoEvent } from "public/redux/actions";
 
 export default function Index() {
   const BG_COLOR =
@@ -30,7 +30,7 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
   var [event, setEvent] = useState({});
-  
+
   //Call dispatch from redux
   const dispatch = useDispatch();
 
@@ -57,32 +57,36 @@ export default function Index() {
       showMethod(messagesSuccess.I0008(currEvent.title), show, true);
       setTimeout(() => {
         router.push("/event/info");
-      }, 3000);
+      }, 1000);
     });
   };
 
   /* Export current event to redux for another access */
   useEffect(() => {
-    dispatch(addEvent(event));
+    dispatch(incognitoEvent(event));
   }, [dispatch, event])
-  
-  const data = useSelector(state => state.addReducer);
+
+  const data = useSelector(state => state);
+
   console.log({ data })
 
   useEffect(() => {
     window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event));
   }, [event]);
 
+  console.log({ pin })
+
   const pinData = useCallback(
     (e) => {
       setPin(e?.target?.value);
-    },
-    [setPin]
+    }, [setPin]
   );
 
-  const closePopup = () => {
-    setHidden(hidden);
-  };
+  const closePopup = useCallback(
+    () => {
+      setHidden(hidden);
+    }, []
+  );
 
   return (
     <section

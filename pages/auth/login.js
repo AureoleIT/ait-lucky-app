@@ -21,7 +21,7 @@ import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "public/redux/actions";
+import { userPackage } from "public/redux/actions";
 
 export default function Login() {
   const [textState, setTextState] = useState("");
@@ -97,10 +97,10 @@ export default function Login() {
         showMethod(messagesError.E4444, show, false)
       });
   }
-  
+
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
-  useEffect(() => dispatch(addUser({ user })), [dispatch, user])
+  useEffect(() => dispatch(userPackage({ user })), [dispatch, user])
 
   useEffect(() => {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
@@ -123,7 +123,7 @@ export default function Login() {
     },
     [setPass]
   );
-  
+
   const onCheckData = () => {
     setCheck(!check);
   };
