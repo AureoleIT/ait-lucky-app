@@ -9,12 +9,12 @@ export default function EventButton({title, id, userJoined, status}) {
             {title}
           </div>
           <div className="text-xs flex flex-col text-right w-1/2">
-            {id !== null ? (
+            {id != null ? (
               <div className="truncate">{id}</div>
             ) : (
               <></>
             )}
-            {userJoined !== null ? (
+            {userJoined != null ? (
               <div>{userJoined} người tham gia</div>
             ) : (
               <></>
