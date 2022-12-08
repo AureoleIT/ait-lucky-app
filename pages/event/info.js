@@ -8,14 +8,15 @@ import TextNoLabel from "public/shared/TextNoLabel";
 import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import { db } from "./../../src/firebase";
-import { hidden, show, successIcon, failIcon } from "public/util/popup";
-import { isEmpty, logo } from "public/util/functions";
+import { ShowMethod } from "public/util/popup";
+import { isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
 import { incognitoParticipant } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -23,24 +24,20 @@ const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 export default function Info() {
   const [name, setName] = useState("");
 
-  const [textState, setTextState] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isHidden, setHidden] = useState(hidden);
+  const message = usePopUpMessageHook();
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook();
 
+  // Call dispatch from redux
+  const dispatch = useDispatch();
   var [player, setPlayer] = useState({});
 
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
 
-  const showMethod = useCallback((message, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(show);
-  }, [])
-
   const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
-      showMethod(messagesError.E0004, false);
+      ShowMethod(dispatch, messagesError.E0004, false)
       return;
     }
     var id = uuid.v4();
@@ -54,19 +51,16 @@ export default function Info() {
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
-        showMethod(messagesSuccess.I0009, true)
+        ShowMethod(dispatch, messagesSuccess.I0009, true)
         setPlayer(newParticipant)
         setTimeout(() => {
           router.push("/event/countdown-checkin");
         }, 2000);
       })
       .catch((e) => {
-        showMethod(messagesError.E4444, false)
+        ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [currEvent.eventId, name, showMethod]);
-
-  // Call dispatch from redux
-  const dispatch = useDispatch();
+  }, [currEvent.eventId, dispatch, name]);
 
   // Set and save new player object to redux
   useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
@@ -81,12 +75,6 @@ export default function Info() {
       setName(e?.target?.value);
     },
     [setName]
-  );
-
-  const closePopup = useCallback(
-    () => {
-      setHidden(hidden);
-    }, []
   );
 
   const renderLogo = useMemo(() => {
@@ -121,16 +109,15 @@ export default function Info() {
 
   const renderPopUp = useMemo(() => {
     return (
-      <div className={isHidden}>
+      <div className={visible}>
         <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
+          text={message}
+          status={status}
+          isWarning={!status}
         />
       </div>
     )
-  }, [closePopup, isHidden, isSuccess, textState])
+  }, [visible, status, message])
 
   return (
     <section
