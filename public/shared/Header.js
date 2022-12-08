@@ -8,7 +8,6 @@ import Menu from "./Menu";
 import MenuIcon from "public/Icons/menu";
 
 // Redux
-import { useSelector } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
 
 export default function Header() {
