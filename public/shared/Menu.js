@@ -10,6 +10,7 @@ import { auth } from "src/firebase";
 
 //Redux
 import { useDispatch } from "react-redux"
+import { removeState } from "public/redux/actions";
 
 function MenuItem(props) {
     const router = useRouter()
@@ -63,7 +64,7 @@ export default function Menu(props) {
                         {logout.icon}
                         <a onClick={() => {
                             auth.signOut()
-                            setUserData({})
+                            dispatch(removeState())
                             router.push("/auth/login")}
                         }>
                             <p className="font-[900] text-[14px]">{logout.name}</p>
