@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 
 export default function EventButton({title, id, userJoined, status, onclick}) { 
   return (
@@ -44,17 +44,17 @@ function setColor(status) {
 function setLink(status) {
   switch (status) {
     case 1:
-      return "/event/event-detail";
+      return "/admin/event/event-detail";
     case 2:
-      return "/event/countdown-checkin";
+      return "/admin/event/countdown-checkin";
 
     case 3:
-      return "/event/lucky_spin";
+      return "/admin/luckyspin";
 
     case 4:
-      return "/_eventresult";
+      return "/event/event-result";
 
     default:
-      return "/event/event-detail";
+      return "/admin/event/event-detail";
   }
 }
