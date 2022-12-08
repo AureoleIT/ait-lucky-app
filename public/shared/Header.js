@@ -9,13 +9,14 @@ import MenuIcon from "public/Icons/menu";
 
 // Redux
 import { useSelector } from "react-redux";
+import { useUserPackageHook } from "public/redux/hooks";
 
 export default function Header() {
   const [showMenu, setShowMenu] = useState(false); //True: Menu will be displayed, False: Menu will be hidden
   const [userData, setUserData] = useState({})
-  const currentUser = useSelector(state => state.addReducer.user)
+  const currentUser = useUserPackageHook();
   useEffect(() => {
-    setUserData(currentUser.user)
+    setUserData(currentUser)
   }, [])
 
   const defaultAvatar = "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"
