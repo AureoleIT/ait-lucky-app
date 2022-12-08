@@ -19,32 +19,13 @@ import { useDispatch } from "react-redux";
 import { userCurrentHostingEvent } from "public/redux/actions";
 
 export default function EventList() {
+  const dispatch = useDispatch()
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
   const router = useRouter();
-  // const [currentUser, setCurrentUser] = useState({});
-
-  // useEffect(() => {
-  //   get(child(ref(db), "event/")).then((snapshot) => {
-  //     setEvents([]);
-  //     const data = snapshot.val();
-  //     if (data !== null) {
-  //       setEvents(Object.values(data));
-  //     }
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   const items = JSON.parse(localStorage.getItem("user"));
-  //   if (items) {
-  //     setCurrentUser(items);
-  //   }
-  // }, []);
 
   //get current user from last state get in
   const currentUser = useUserPackageHook();
-  console.log(currentUser);
-  // console.log(currentUser.user.userId)
 
   // filter events by user from firebase
   const que = query(
@@ -63,7 +44,11 @@ export default function EventList() {
     });
   }, [String(currentUser.userId)]);
 
-  const dispatch = useDispatch()
+  const filteredEvents = events.filter((item) => {
+    return searchContent.toLowerCase() === ""
+      ? item
+      : item.title.toLowerCase().includes(searchContent);
+  }) 
  
   if (currentUser.userId != null) {
     return (
@@ -85,18 +70,8 @@ export default function EventList() {
                 />
               </div>
               <div className="flex flex-col gap-y-[7px] font-[Nunito Sans] font-bold overflow-auto max-h-[700px] mb-3">
-                {events.filter((item) => {
-                  return searchContent.toLowerCase() === ""
-                    ? item
-                    : item.title.toLowerCase().includes(searchContent);
-                }).length !== 0 ? (
-                  events
-                    .filter((item) => {
-                      return searchContent.toLowerCase() === ""
-                        ? item
-                        : item.title.toLowerCase().includes(searchContent);
-                    })
-                    .map((item, index) => (
+                {filteredEvents.length !== 0 ? 
+                  filteredEvents.map((item, index) => (
                       <div key={index} className="flex flex-col">
                         <EventButton
                           title={item.title}
@@ -107,7 +82,7 @@ export default function EventList() {
                         />
                       </div>
                     ))
-                ) : (
+                 : (
                   <p className="text-[#004599] text-center">Danh sách trống</p>
                 )}
               </div>
