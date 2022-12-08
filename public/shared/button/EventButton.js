@@ -44,16 +44,13 @@ function setColor(status) {
 function setLink(status) {
   switch (status) {
     case 1:
-      return "/admin/event/event-detail";
+      return "/admin/event/event-detail";   
     case 2:
       return "/admin/event/countdown-checkin";
-
     case 3:
       return "/admin/luckyspin";
-
     case 4:
       return "/event/event-result";
-
     default:
       return "/admin/event/event-detail";
   }
