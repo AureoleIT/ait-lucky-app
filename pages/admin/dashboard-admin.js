@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 // import firebase
 import { db } from "src/firebase";
 import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
@@ -76,113 +76,134 @@ export default function Dashboard() {
     });
   }, [String(currentUser.userId)]);
 
-  return (
-    <>
-      {/* header */}
+  const renderHeader = useMemo(() => {
+    return <Header />;
+  }, []);
 
-      <Header />
-      <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
-        {/* participate in event */}
-
-        <BorderText
-          title={""}
-          content={
-            <div className="flex flex-col pb-4">
-              <div className="flex ">
-                <div className="flex flex-col flex-1">
-                  <p className="font-bold text-sm text-[#656565] mt-2">
-                    {"Chào mừng đến với AIT Lucky App,"}
-                  </p>
-                  <p className="text-sm text-[#656565] mb-2">
-                    {"hãy bắt đầu các sự kiện ngay nào!"}
-                  </p>
-                </div>
-
-                <div className="w-1/5 flex self-end">
-                  <img src={nyancat} alt="must be a nyancat gif"></img>
-                </div>
+  const renderJoinEvent = useMemo(() => {
+    return (
+      <BorderText
+        title={""}
+        content={
+          <div className="flex flex-col pb-4">
+            <div className="flex ">
+              <div className="flex flex-col flex-1">
+                <p className="font-bold text-sm text-[#656565] mt-2">
+                  {"Chào mừng đến với AIT Lucky App,"}
+                </p>
+                <p className="text-sm text-[#656565] mb-2">
+                  {"hãy bắt đầu các sự kiện ngay nào!"}
+                </p>
               </div>
-              <div className="w-full">
-                {/* Line */}
-                <div className="w-full h-[2px] justify-center mb-2 px-2 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex"></div>
-              </div>
-              <p className="font-bold text-sm text-[#000000]">
-                {"Tham gia sự kiện"}
-              </p>
-              <p className="text-sm text-[#656565]">
-                {
-                  "Tham gia vào các sự kiện được tổ chức với tài khoản đăng nhập hiện tại của bạn."
-                }
-              </p>
-              <a href="/">
-                <BgBlueButton content={"CHƠI NÀO!!!"} />
-              </a>
-              <p className="font-bold text-sm text-[#000000] pb-2">
-                {"Các sự kiện đang diễn ra"}
-              </p>
-              <div className="w-full flex flex-col gap-y-[7px] overflow-auto h-[188px] scrollbar-hide">
-                {arrStatus.length === 0 ? (
-                  <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
-                    {" "}
-                    {"Không có dữ liệu"}
-                  </div>
-                ) : (
-                  arrStatus.map((item, index) => (
-                    <div key={index} className="flex flex-col">
-                      <EventButton
-                        title={item.title}
-                        user_joined={item.user_joined}
-                      />
-                    </div>
-                  ))
-                )}
+
+              <div className="w-1/5 flex self-end">
+                <img src={nyancat} alt="must be a nyancat gif"></img>
               </div>
             </div>
-          }
-        ></BorderText>
-
-        {/* create a event */}
-
-        <BorderText
-          title={"Tạo sự kiện"}
-          content={
-            <div className="">
-              <p className="text-sm text-[#656565] pt-5">
-                {
-                  "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
-                }
-              </p>
-              <a href="/event/event-register">
-                <BgBlueButton content={"BẮT ĐẦU NGAY"} />
-              </a>
+            <div className="w-full">
+              {/* Line */}
+              <div className="w-full h-[2px] justify-center mb-2 px-2 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex"></div>
             </div>
-          }
-        ></BorderText>
-
-        {/* show events */}
-
-        <BorderText
-          title={"Danh sách sự kiện"}
-          content={
-            <div className="flex flex-col pt-5 gap-y-[7px]">
-              {arrID.length === 0 ? (
-                <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+            <p className="font-bold text-sm text-[#000000]">
+              {"Tham gia sự kiện"}
+            </p>
+            <p className="text-sm text-[#656565]">
+              {
+                "Tham gia vào các sự kiện được tổ chức với tài khoản đăng nhập hiện tại của bạn."
+              }
+            </p>
+            <a href="/">
+              <BgBlueButton content={"CHƠI NÀO!!!"} />
+            </a>
+            <p className="font-bold text-sm text-[#000000] pb-2">
+              {"Các sự kiện đang diễn ra"}
+            </p>
+            <div className="w-full flex flex-col gap-y-[7px] overflow-auto h-[188px] scrollbar-hide">
+              {arrStatus.length === 0 ? (
+                <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
                   {" "}
                   {"Không có dữ liệu"}
                 </div>
               ) : (
-                arrID.slice(0, 4).map((item, index) => (
+                arrStatus.map((item, index) => (
                   <div key={index} className="flex flex-col">
-                    <EventButton title={item.title} id={item.id} />
+                    <EventButton
+                      title={item.title}
+                      user_joined={item.userJoined}
+                    />
                   </div>
                 ))
               )}
-              <a href="event-list">
-                <BgBlueButton content={"TẤT CẢ SỰ KIỆN"} />
-              </a>
             </div>
-          }
-        ></BorderText>
+          </div>
+        }
+      ></BorderText>
+    );
+  }, [arrStatus]);
+
+  const renderCreateEvent = useMemo(() => {
+    return (
+      <BorderText
+        title={"Tạo sự kiện"}
+        content={
+          <div className="">
+            <p className="text-sm text-[#656565] pt-5">
+              {
+                "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
+              }
+            </p>
+            <a href="/admin/event/event-register">
+              <BgBlueButton content={"BẮT ĐẦU NGAY"} />
+            </a>
+          </div>
+        }
+      ></BorderText>
+    );
+  }, []);
+
+  const renderShowEvent = useMemo(() => {
+    return (
+      <BorderText
+        title={"Danh sách sự kiện"}
+        content={
+          <div className="flex flex-col pt-5 gap-y-[7px]">
+            {arrID.length === 0 ? (
+              <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
+                {" "}
+                {"Không có dữ liệu"}
+              </div>
+            ) : (
+              arrID.slice(0, 4).map((item, index) => (
+                <div key={index} className="flex flex-col">
+                  <EventButton title={item.title} id={item.eventId} />
+                </div>
+              ))
+            )}
+            <a href="event-list">
+              <BgBlueButton content={"TẤT CẢ SỰ KIỆN"} />
+            </a>
+          </div>
+        }
+      ></BorderText>
+    );
+  }, [arrID]);
+  return (
+    <>
+      {/* header */}
+
+      {renderHeader}
+
+      <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
+        {/* participate in event */}
+
+        {renderJoinEvent}
+
+        {/* create a event */}
+
+        {renderCreateEvent}
+
+        {/* show events */}
+        {renderShowEvent}
       </section>
     </>
   );
