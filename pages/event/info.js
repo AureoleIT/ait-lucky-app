@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
-import { React, useCallback, useState, useEffect } from "react";
+import { React, useCallback, useState, useEffect, useMemo } from "react";
 import PopUp from "public/shared/PopUp";
-import Logotic from "public/shared/Logotic";
+import Logo from "public/shared/Logo";
 import TextNoLabel from "public/shared/TextNoLabel";
 import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import { db } from "./../../src/firebase";
 import { hidden, show, successIcon, failIcon } from "public/util/popup";
-import { isEmpty } from "public/util/functions";
+import { isEmpty, logo } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { ref, set } from "firebase/database";
 import router from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { incognitoParticipant } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
 
@@ -22,19 +22,25 @@ const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
 export default function Info() {
   const [name, setName] = useState("");
+
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+
   var [player, setPlayer] = useState({});
 
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
-  
-  const onJoinClick = () => {
+
+  const showMethod = useCallback((message, isTrue) => {
+    setTextState(message);
+    setIsSuccess(isTrue);
+    setHidden(show);
+  }, [])
+
+  const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
-      setTextState(messagesError.E0004);
-      setIsSuccess(false);
-      setHidden(show);
+      showMethod(messagesError.E0004, false);
       return;
     }
     var id = uuid.v4();
@@ -48,20 +54,16 @@ export default function Info() {
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
-        setTextState(messagesSuccess.I0009);
-        setIsSuccess(true);
-        setHidden(show);
+        showMethod(messagesSuccess.I0009, true)
         setPlayer(newParticipant)
         setTimeout(() => {
           router.push("/event/countdown-checkin");
         }, 2000);
       })
       .catch((e) => {
-        setTextState(messagesError.E4444);
-        setIsSuccess(false);
-        setHidden(show);
+        showMethod(messagesError.E4444, false)
       });
-  };
+  }, [currEvent.eventId, name, showMethod]);
 
   // Call dispatch from redux
   const dispatch = useDispatch();
@@ -81,32 +83,44 @@ export default function Info() {
     [setName]
   );
 
-  const closePopup = (e) => {
-    setHidden(hidden);
-  };
+  const closePopup = useCallback(
+    () => {
+      setHidden(hidden);
+    }, []
+  );
 
-  return (
-    <section
-      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
-    >
-      <div
-        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
-      >
-        <Logotic
-          title="AIT LUCKY GIFTS"
-          src="https://cdn.123job.vn/123job/uploads/2019/09/18/2019_09_18______f334ace51b475d2c562648c2ee9058d3.png"
-        />
-        <BigText font=" text-2xl" text="Thông tin người chơi" />
-        <TextNoLabel
-          type="text"
-          id="idRoom"
-          placeholder="Vui lòng nhập tên hiển thị"
-          onChange={setNameData}
-        />
-        <div className="w-full mb-4">
-          <BgBlueButton content="Tham gia" onClick={onJoinClick} />
-        </div>
+  const renderLogo = useMemo(() => {
+    return (
+      <Logo />)
+  }, [])
+
+  const renderTitle = useMemo(() => {
+    return (
+      <BigText font=" text-2xl" text="Thông tin người chơi" />
+    )
+  }, [])
+
+  const renderInput = useMemo(() => {
+    return (
+      <TextNoLabel
+        type="text"
+        id="idRoom"
+        placeholder="Vui lòng nhập tên hiển thị"
+        onChange={setNameData}
+      />
+    )
+  }, [setNameData])
+
+  const renderButton = useMemo(() => {
+    return (
+      <div className="w-full mb-4">
+        <BgBlueButton content="Tham gia" onClick={onJoinClick} />
       </div>
+    )
+  }, [onJoinClick])
+
+  const renderPopUp = useMemo(() => {
+    return (
       <div className={isHidden}>
         <PopUp
           text={textState}
@@ -115,6 +129,22 @@ export default function Info() {
           isWarning={!isSuccess}
         />
       </div>
+    )
+  }, [closePopup, isHidden, isSuccess, textState])
+
+  return (
+    <section
+      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
+    >
+      <div
+        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+      >
+        {renderLogo}
+        {renderTitle}
+        {renderInput}
+        {renderButton}
+      </div>
+      {renderPopUp}
     </section>
   );
 }
