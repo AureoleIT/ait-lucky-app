@@ -1,3 +1,4 @@
+import { hidden } from "public/util/popup"
 import {
     INCOGNITO_PARTICIPANT,
     INCOGNITO_EVENT,
@@ -8,7 +9,10 @@ import {
     USER_PACKAGE,
     USER_REWARD,
     REMOVE_STATE,
-    USER_CURR_HOSTING_EVENT
+    USER_CURR_HOSTING_EVENT,
+    POPUP_MESSAGE,
+    POPUP_STATUS,
+    POPUP_VISIBLE
 } from "./constants"
 
 const joinState = {
@@ -29,12 +33,11 @@ const userState = {
 const popUpState = {
     message: "",
     status: false,
-    visible: ""
+    visible: hidden
 }
 
 export const playerReducer = (state = joinState, action) => {
-    const { type, error } = action;
-    switch (type) {
+    switch (action.type) {
         case INCOGNITO_EVENT: {
             return { ...state, event: action.payload }
         }
@@ -84,6 +87,29 @@ export const userReducer = (state = userState, action) => {
                 user: {},
                 reward: [],
                 participant: []
+            };
+        }
+        default:
+            return state
+    }
+}
+export const popUpReducer = (state = popUpState, action) => {
+    switch (action.type) {
+        case POPUP_MESSAGE: {
+            return { ...state, message: action.payload }
+        }
+        case POPUP_STATUS: {
+            return { ...state, status: action.payload }
+        }
+        case POPUP_VISIBLE: {
+            return { ...state, visible: action.payload }
+        }
+        case REMOVE_STATE: {
+            console.log("REMOVE STATE POPUP")
+            return {
+                message: "",
+                status: false,
+                visible: hidden
             };
         }
         default:
