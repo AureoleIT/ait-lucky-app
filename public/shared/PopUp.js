@@ -1,9 +1,10 @@
-import React, { useEffect, useCallback} from "react";
+import React, { useEffect, useCallback } from "react";
 import { TEXT } from "public/util/colors";
 import ClosePopUp from "./ClosePopUp";
 import { HideMethod } from "public/util/popup";
 import { useDispatch } from "react-redux";
 import { successIcon, failIcon } from "public/util/popup";
+
 export default function PopUp({ text, status, isWarning }) {
   const bg = isWarning ? "border-red-600" : "border-green-600";
   const dispatch = useDispatch();
