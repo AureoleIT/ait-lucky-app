@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
@@ -11,6 +11,8 @@ import { db } from "src/firebase";
 import { set, ref } from "firebase/database";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import { useDispatch } from "react-redux"
+import { userCurrentHostingEvent } from "public/redux/actions"
 const uuid = require("uuid");
 
 export default function EventRegister() {
@@ -39,6 +41,20 @@ export default function EventRegister() {
     setHidden(show);
   }, [])
 
+  // set event id to redux
+  let id = useRef()
+
+  useEffect(() =>
+  { 
+    id = uuid.v4()
+  },[])
+
+  const dispatch = useDispatch()
+  useEffect(() =>
+  {
+    dispatch(userCurrentHostingEvent(id))
+  },[dispatch, id])
+  
   // handle submit button
   const handleSubmit = useCallback((title, description, maxTicket, publicFlag) =>
   {
@@ -48,7 +64,6 @@ export default function EventRegister() {
     }
       
       if (title !== "" && description !== "" && maxTicket !== "") {
-          const id = uuid.v4();
           const newEvent = {
               eventId: id,
               publicFlag: publicFlag ? 1 : 0,
@@ -56,12 +71,12 @@ export default function EventRegister() {
               description: description,
               maxTicket: maxTicket,
               createAt: new Date().getTime(),
-        createBy: "iasd-asda123-asd1-asd123",
-        waitingTime: 300,
-        userJoined: 20,
-        pinCode: id.slice(0,6),
-        status: 1,
-        delFlag: false,
+              createBy: "iasd-asda123-asd1-asd123",
+              waitingTime: 300,
+              userJoined: 20,
+              pinCode: id.slice(0,6),
+              status: 1,
+              delFlag: false,
       };
       set(ref(db, `event/${id}`), newEvent)
         .then(() => {
