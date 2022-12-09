@@ -5,6 +5,8 @@ function CheckBox (props, ref) {
         <div className="w-full">
             <input
                 ref={ref}
+                value={props.value}
+                onChange={props.onChange}
                 type="checkbox"
                 id="accept"
                 defaultChecked
