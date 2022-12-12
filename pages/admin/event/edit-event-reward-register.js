@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import TextArea from "public/shared/TextArea";
@@ -10,14 +10,23 @@ import SingleColorButton from "public/shared/SingleColorButton";
 import Title from "public/shared/Title";
 import CheckBox from "public/shared/CheckBox";
 
+import { db } from "src/firebase"
+import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+
+import { useUserCurrEventHook } from "public/redux/hooks";
+
 function EditEventRewardRegister() {
     // router
     const router = useRouter();
-
+    // eventID
+    const eventID = useUserCurrEventHook()
+    // state
+    const [event, setEvent] = useState({})
+    const [rewards, setRewards] = useState([])
+    const [nameEvent, setNameEvent] = useState("")
+    const [description, setDescription] = useState("")
+    const [maxTicket, setMaxTicket] = useState("")
     // ref
-    const nameEventRef = useRef()
-    const eventDetailRef = useRef()
-    const limitUserRef = useRef()
     const checkBoxRef = useRef()
 
     const contentCSS = {
@@ -25,6 +34,43 @@ function EditEventRewardRegister() {
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
     };
+    // get event from firebase
+    const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
+
+    useEffect(() =>
+    {
+        onValue(getEvent, (snapshot) =>
+        {
+            const data = snapshot.val()
+            if(data !== undefined)
+            {
+                setNameEvent(Object.values(data)[0].title)
+                setDescription(Object.values(data)[0].description)
+                setMaxTicket(Object.values(data)[0].maxTicket)
+                Object.values(data)[0].publicFlag == 1 ? (checkBoxRef.current.checked = true) : (checkBoxRef.current.checked = false)
+                setEvent(Object.values(data)[0])
+            }
+        })
+    },[])
+    // get reward from firebase
+    const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(String(eventID)))
+    useEffect(() =>
+    {
+        onValue(getReward, (snapshot) =>
+        {
+            const data = snapshot.val()
+            if (data !== undefined)
+            {
+                setRewards(Object.values(data))
+            }   
+        })
+        
+    },[])
+
+    useEffect(() =>
+    {
+        console.log(rewards);
+    },[rewards])
 
     const handleReceiveData = () =>
     {
@@ -40,45 +86,118 @@ function EditEventRewardRegister() {
 
     }
 
-    return (
-        <div className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
+    const renderHeader = useMemo(() =>
+    {
+        return (
             <div className="w-full"> <Header /> </div>
+        )
+    },[])
 
-            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
+    const renderTitle = useMemo(() =>
+    {
+        return (
+            <Title fontSize={"20"} title={event.title}/>
+        )
+    },[event])
 
-                <Title fontSize={"20"} title={"thông tin sự kiện"}/>
-                <div className="w-full h-[70px]">
-                    <TextArea content={"Tên sự kiện"} maxLength={"100"} ref={nameEventRef} />
+    const renderEventTitle = useMemo(() =>
+    {
+        return (
+            <div className="w-full h-[70px]">
+                <TextArea content={"Tên sự kiện"} maxLength={"100"} value={nameEvent} onChange={(e) => setNameEvent(e.target.value)} />
+            </div>
+        )
+    },[setNameEvent, nameEvent])
+
+    const renderEventDescription = useMemo(() =>
+    {
+        return (
+            <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
+                <TextArea content={"Mô tả sự kiện"} row={5} maxLength={"1000"} value={description} onChange={(e) => setDescription(e.target.value)} />
+            </div>
+        )
+    },[description, setDescription])
+
+    const renderMaxTicket = useMemo(() =>
+    {
+        return (
+            <div className="w-full">
+                <AuthInput leftColor={"#003B93"} rightColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={maxTicket} onChange={(e) => setMaxTicket(e.target.value)} />
+            </div>
+        )
+    },[maxTicket, setMaxTicket])
+
+    const renderCheckbox = useMemo(() =>
+    {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <div className="w-[70%]">
+                    <p style={contentCSS} className="font-bold"> Cho phép người tham gia không cần đăng nhập </p>
                 </div>
-                <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
-                    <TextArea content={"Mô tả sự kiện"} row={5} maxLength={"1000"} ref={eventDetailRef} />
-                </div>
-                <div className="w-full">
-                    <AuthInput leftColor={"#003B93"} rightColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} ref={limitUserRef} />
-                </div>
-                <div className="w-full flex justify-center items-center">
-                    <div className="w-[70%]">
-                        <p style={contentCSS} className="font-bold"> Cho phép người tham gia không cần đăng nhập </p>
-                    </div>
-                    <div className="w-[30%] flex items-center text-right">
-                        <CheckBox ref={checkBoxRef} />
-                    </div>
+                <div className="w-[30%] flex items-center text-right">
+                    <CheckBox ref={checkBoxRef} />
                 </div>
             </div>
+        )
+    },[checkBoxRef])
 
-            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
-                <Reward 
-                    rewardCountValue={"1"}
-                    receiveData={handleReceiveData}
-                />
-                <div className="w-full">
-                    <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
-                </div>
+    const renderReward = useMemo(() =>
+    {
+        return (
+            // <Reward 
+            //     rewardCountValue={"1"}
+            //     receiveData={handleReceiveData}
+            // />
+            <>
+            {
+                rewards.map((item, index) =>
+                {
+                    return (
+                        <Reward 
+                            
+                        />
+                    )
+                })
+            }
+            </>
+        )
+    },[])
+
+    const renderAddButton = useMemo(() =>
+    {
+        return (
+            <div className="w-full">
+                <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
             </div>
+        )
+    },[handleAdd])
 
+    const renderEditButton = useMemo(() =>
+    {
+        return (
             <div className="py-3 w-4/5 max-w-xl">
                 <BgBlueButton content={"ĐIỀU CHỈNH"} onClick={handleNavigate} />
             </div>
+        )
+    },[handleNavigate])
+
+    return (
+        <div className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
+            {renderHeader}
+            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
+                {renderTitle}
+                {renderEventTitle}
+                {renderEventDescription}
+                {renderMaxTicket}
+                {renderCheckbox}
+            </div>
+
+            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
+                {renderReward}
+                {renderAddButton}
+            </div>
+            {renderEditButton}
+            
         </div>
     );
 }
