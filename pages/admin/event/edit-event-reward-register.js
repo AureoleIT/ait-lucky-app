@@ -26,6 +26,11 @@ function EditEventRewardRegister() {
     const [nameEvent, setNameEvent] = useState("")
     const [description, setDescription] = useState("")
     const [maxTicket, setMaxTicket] = useState("")
+
+    const [nameReward, setNameReward] = useState([])
+    const [quantity, setQuantity] = useState([])
+    const [imageFB, setImageFB] = useState([])
+    
     // ref
     const checkBoxRef = useRef()
 
@@ -70,7 +75,20 @@ function EditEventRewardRegister() {
     useEffect(() =>
     {
         console.log(rewards);
+        rewards.map((item, index) =>
+        {
+            setNameReward(prev => [...prev, item.nameReward])
+            setQuantity(prev => [...prev, item.quantity])
+            setImageFB(prev => [...prev, item.imgUrl])
+        })
     },[rewards])
+
+    // useEffect(() =>
+    // {
+    //     console.log(nameReward);
+    //     console.log(quantity);
+    //     console.log(imageFB);
+    // },[nameReward, quantity, imageFB])
 
     const handleReceiveData = () =>
     {
@@ -144,24 +162,29 @@ function EditEventRewardRegister() {
     const renderReward = useMemo(() =>
     {
         return (
-            // <Reward 
-            //     rewardCountValue={"1"}
-            //     receiveData={handleReceiveData}
-            // />
             <>
             {
                 rewards.map((item, index) =>
                 {
                     return (
-                        <Reward 
-                            
-                        />
+                        <div key={index} className={"flex w-full justify-center items-center"}>
+                            <Reward
+                                id={index}
+                                inputId={index}
+                                fileID={`file${index}`}
+                                toggleID={`toggle${index}`}
+                                rewardName={nameReward[index]}
+                                amount={quantity[index]}
+                                imageList={imageFB[index]}
+                                receiveData={handleReceiveData}
+                            /> 
+                        </div>
                     )
                 })
             }
             </>
         )
-    },[])
+    },[nameReward, rewards, quantity, imageFB])
 
     const renderAddButton = useMemo(() =>
     {
