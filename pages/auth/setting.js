@@ -79,25 +79,11 @@ export default function Setting() {
         setEmail(user.email);
         if (user.pic !== "")
             setImg(user.pic);
-        // get orderbychild - have conditions
-        // const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
-        // onValue(que, (snapshot) => {
-        //     const record = snapshot.val() ?? [];
-        //     const values = Object.values(record);
-        //     setUsername(values.find(item => item.email == user.email).name);
-        //     setEmail(user.email)
-        //     if (values[0].pic != "")
-        //         setImg(values[0].pic);
-        // }
-        // );
-        // get all data
-        // get(child(dbRef, "users/")).then((snapshot) => {
-        //     const record = snapshot.val() ?? [];
-        //     const values = Object.values(record);
-        //     setUsername(values.find(item => item.email == userValue.currentUser.email).name);
-        //     setEmail(userValue.currentUser.email);
-        // });
     }
+
+    useEffect(() => {
+        fetchDb();
+    }, [])
 
     //choose img
     const handleChangeFile = (e) => {
@@ -176,9 +162,65 @@ export default function Setting() {
         );
     }
 
-    useEffect(() => {
-        fetchDb();
-    }, [])
+    //avoid re-render
+    const usernameData = useCallback(
+        (e) => {
+            setUsername(e?.target?.value);
+        },
+        [setUsername]
+    );
+
+    const renderUsername = useMemo(() => {
+        return (
+            <AuthInput
+                content={"Tên đăng nhập"}
+                type={"text"}
+                leftColor={LEFT_COLOR}
+                rightColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+                onChange={usernameData}
+                value={username} />
+        )
+    }, [username, usernameData])
+
+    const emailData = useCallback(
+        (e) => {
+            setEmail(e?.target?.value)
+        },
+        [setEmail]
+    )
+
+    const renderEmail = useMemo(() => {
+        return (
+            <div
+                className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+            >
+                <div className="h-full">
+                    <input
+                        type={"email"}
+                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
+                        onChange={emailData}
+                        value={email}
+                        required
+                    />
+                    <div className="bg-white absolute w-full top-0">
+                        <label
+                            htmlFor=""
+                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
+                        >
+                            <p style={contentCSS} className="font-bold text-base">
+                                {"Email"}
+                            </p>
+                        </label>
+                    </div>
+                </div>
+            </div>)
+    }, [email, emailData])
+
+    const renderButton = useMemo(() => {
+        return (
+            <BgBlueButton content={"LƯU"} onClick={() => { handleSaveInfo(username) }} />
+        )
+    }, [handleSaveInfo, username])
 
     // show popup
     useEffect(() => {
@@ -217,37 +259,9 @@ export default function Setting() {
                         </div>
 
                         <div className="">
-                            <AuthInput
-                                content={"Tên đăng nhập"}
-                                type={"text"}
-                                leftColor={LEFT_COLOR}
-                                rightColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                                onChange={(e) => setUsername(e.target.value)}
-                                value={username} />
-                            <div
-                                className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
-                            >
-                                <div className="h-full">
-                                    <input
-                                        type={"email"}
-                                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        value={email}
-                                        required
-                                    />
-                                    <div className="bg-white absolute w-full top-0">
-                                        <label
-                                            htmlFor=""
-                                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
-                                        >
-                                            <p style={contentCSS} className="font-bold text-base">
-                                                {"Email"}
-                                            </p>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <BgBlueButton content={"LƯU"} onClick={() => { handleSaveInfo(username) }} />
+                            {renderUsername}
+                            {renderEmail}
+                            {renderButton}
                         </div>
 
                         <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
