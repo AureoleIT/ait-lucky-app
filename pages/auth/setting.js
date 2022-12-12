@@ -105,6 +105,9 @@ export default function Setting() {
 
     //choose img
     const handleChangeFile = (e) => {
+        if (e.target.files.length == 0) {
+            return;
+        }
         const upload = e.target.files[0]
         setFile(upload);
         setImg(URL.createObjectURL(upload));
