@@ -29,6 +29,7 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
+import router from "next/router";
 export default function Setting() {
     const [user, setUser] = useState(useUserPackageHook());
     const dispatch = useDispatch();
@@ -74,6 +75,10 @@ export default function Setting() {
 
     //get auth profile
     function fetchDb() {
+        if (user === undefined) {
+            router.push("/");
+            return;
+        }
         setUsername(user.name);
         setEmail(user.email);
         if (user.pic !== "")
@@ -192,7 +197,7 @@ export default function Setting() {
 
     }, [file, img])
 
-    useEffect(() => dispatch(userPackage(user)), [user.name, user.pic])
+    useEffect(() => dispatch(userPackage(user)), [user])
 
     return (
         <section className="h-screen w-screen overflow-y-hidden">
