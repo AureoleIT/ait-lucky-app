@@ -11,6 +11,7 @@ import {
     REMOVE_STATE,
     USER_CURR_HOSTING_EVENT,
     USER_EVENT_CREATING,
+    USER_REWARD_CREATING,
     POPUP_MESSAGE,
     POPUP_STATUS,
     POPUP_VISIBLE
@@ -30,6 +31,7 @@ const userState = {
     participant: [],
     currEvent: {},
     currEventCreating: {},
+    currRewardCreating: [],
 }
 
 const popUpState = {
@@ -68,16 +70,16 @@ export const playerReducer = (state = joinState, action) => {
 export const userReducer = (state = userState, action) => {
     switch (action.type) {
         case USER_EVENT: {
-            return { ...state, event: [...action.payload] }
+            return { ...state, event: [...state.event, ...action.payload] }
         }
         case USER_PARTICIPANT: {
-            return { ...state, participant: [...action.payload] }
+            return { ...state, participant: [...state.participant, ...action.payload] }
         }
         case USER_PACKAGE: {
             return { ...state, user: action.payload }
         }
         case USER_REWARD: {
-            return { ...state, reward: [...action.payload] }
+            return { ...state, reward: [...state.reward, ...action.payload] }
         }
         case USER_CURR_HOSTING_EVENT: {
             return { ...state, currEvent: action.payload }
@@ -85,13 +87,19 @@ export const userReducer = (state = userState, action) => {
         case USER_EVENT_CREATING: {
             return { ...state, currEventCreating: action.payload }
         }
+        case USER_REWARD_CREATING: {
+            return { ...state, currRewardCreating: [...state.currRewardCreating, ...action.payload] }
+        }
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")
             return {
                 event: [],
                 user: {},
                 reward: [],
-                participant: []
+                participant: [],
+                currEvent: {},
+                currEventCreating: {},
+                currRewardCreating: [],
             };
         }
         default:
