@@ -10,6 +10,7 @@ import {
     REMOVE_STATE,
     USER_CURR_HOSTING_EVENT,
     USER_EVENT_CREATING,
+    USER_REWARD_CREATING,
     POPUP_STATUS,
     POPUP_MESSAGE,
     POPUP_VISIBLE,
@@ -57,6 +58,10 @@ export const userEventCreating = (event) => ({
 export const userCurrentHostingEvent = (event) => ({
     type: USER_CURR_HOSTING_EVENT,
     payload: event,
+})
+export const userRewardCreating = (reward) => ({
+    type: USER_REWARD_CREATING,
+    payload: reward,
 })
 export const popUpMessage = (message) => ({
     type: POPUP_MESSAGE,
