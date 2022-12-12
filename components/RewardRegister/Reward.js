@@ -78,12 +78,16 @@ function Reward (props, ref) {
 
     const handleChangeFile = useCallback((e) =>
     {
-        const upload = e.target.files[0]
-        setStorageImg(upload)
-        setFile(URL.createObjectURL(upload))
-
-        let toggle = document.getElementById(props.toggleID)
-        toggle.style.display = "flex"
+        if(e.target.files.length !== 0)
+        {
+            const upload = e.target.files[0]
+            setStorageImg(upload)
+    
+            setFile(URL.createObjectURL(upload))
+    
+            let toggle = document.getElementById(props.toggleID)
+            toggle.style.display = "flex"
+        }
     },[file, setFile])
 
     const getImage = useCallback((e) =>
