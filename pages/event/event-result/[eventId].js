@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import BgBlueButton from "public/shared/BgBlueButton";
 import GradientLine from "public/shared/GradientLine";
@@ -57,6 +57,25 @@ export default function EventResult() {
     fetchDb();
   }, []);
 
+  const renderRewardList = useMemo(() => {
+    console.log(1)
+    return (
+      <RewardList
+        listReward={listReward}
+        showRemain={false}
+        showAwardedPaticipant={true}
+        eventPaticipant={listPlayer}
+      />
+    )
+  }, [listPlayer, listReward])
+
+  const renderPlayerList = useMemo(() => {
+    console.log(2);
+    return (
+      <PlayerList listPlayer={listPlayer} listReward={listReward} />
+    )
+  }, [listPlayer, listReward])
+
   return (
     <section className="overflow-hidden flex flex-col justify-evenly h-screen">
       <div className="flex flex-col items-center justify-center h-full">
@@ -71,12 +90,7 @@ export default function EventResult() {
         </div>
 
         <div className="flex flex-col items-center justify-center w-full overflow-y-auto h-[40%]">
-          <RewardList
-            listReward={listReward}
-            showRemain={false}
-            showAwardedPaticipant={true}
-            eventPaticipant={listPlayer}
-          />
+          {renderRewardList}
         </div>
 
         <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]">
@@ -90,7 +104,7 @@ export default function EventResult() {
           <div className="w-full max-w-md my-2">
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
-          <PlayerList listPlayer={listPlayer} listReward={listReward} />
+          {renderPlayerList}
         </div>
 
         <div className="content-end py-3 w-full max-w-md px-5">
