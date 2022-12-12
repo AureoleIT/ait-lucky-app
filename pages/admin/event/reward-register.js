@@ -12,11 +12,10 @@ import {v4 as uuidv4} from "uuid"
 
 import { db } from "src/firebase"
 import { storage } from "src/firebase"
-import { set, ref, update } from "firebase/database"
+import { set, ref } from "firebase/database"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import { useUserCurrEventHook } from "public/redux/hooks";
-import { useSelector } from "react-redux";
 
 function RewardRegister() {
     // router
@@ -150,7 +149,7 @@ function RewardRegister() {
                             nameReward:tempName,
                             eventId:eventID,
                             quantity: tempAmount,
-                            sortNo:"",
+                            sortNo:index,
                             quantityRemain:"",
                             imgUrl: tempImg
                         }

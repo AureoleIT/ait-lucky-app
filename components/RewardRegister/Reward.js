@@ -13,11 +13,22 @@ function Reward (props, ref) {
         id.current = uuid.v4()
     },[])
 
+    let initAmount
+    let initRewardName
+
+    props.amount && props.rewardName ? (
+        initAmount = props.amount,
+        initRewardName = props.initRewardName
+    ) : (
+        initAmount = 0,
+        initRewardName=""
+    )
+
     const [imgList, setImgList] = useState([])
     const [img, setImg] = useState([])
     const [file, setFile] = useState()
-    const [count, setCount] = useState(1)
-    const [name, setName] = useState("")
+    const [count, setCount] = useState(initAmount)
+    const [name, setName] = useState(initRewardName)
     const [value, setValue] = useState({})
     const [storageImg, setStorageImg] = useState([])
 
@@ -25,7 +36,7 @@ function Reward (props, ref) {
         color:"white",
         fontSize:"24px"
     }
-   
+
     const buttonColor = {
         background:"#40BEE5"
     }
@@ -50,7 +61,6 @@ function Reward (props, ref) {
                 if(file !== undefined)
                 {
                     newImgList = [...prev, <ImageCustom image={file}/>]
-                    // setImg(prev => [...prev, file])
                 }
                 return newImgList
         })
@@ -97,6 +107,7 @@ function Reward (props, ref) {
 
     const renderInput = useMemo(() =>
     {
+        console.log(props.rewardName);
         return (
             <div className="flex w-full">
                     <AuthInput value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} leftColor="#003B93" rightColor="#00F0FF" type={"text"} />
