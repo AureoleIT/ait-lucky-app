@@ -165,7 +165,7 @@ export default function Setting() {
     //avoid re-render
     const usernameData = useCallback(
         (e) => {
-            setUsername(e?.target?.value);
+            setUsername(e?.target?.value.replace(/^\s+|\s+$/gm,''));
         },
         [setUsername]
     );
@@ -197,9 +197,10 @@ export default function Setting() {
                 <div className="h-full">
                     <input
                         type={"email"}
-                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
+                        className="h-full w-full rounded-lg text-lg px-4 outline-none border-none disabled:bg-white"
                         onChange={emailData}
                         value={email}
+                        disabled={true}
                         required
                     />
                     <div className="bg-white absolute w-full top-0">
