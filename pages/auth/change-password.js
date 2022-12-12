@@ -89,10 +89,6 @@ export default function ChangePassword() {
     })
   }
 
-  useEffect(() => {
-    
-  }, []);
-
   // show popup
   useEffect(() => {
     if (isHidden == false) {
@@ -108,7 +104,7 @@ export default function ChangePassword() {
   }, [isHidden])
 
 
-  const popupNoti = () => {
+  const popupNoti = useMemo(() => {
     return (
       <div className="flex flex-col items-center">
         <div className="text-center text-[#004599]">
@@ -122,7 +118,7 @@ export default function ChangePassword() {
         ></img>
       </div>
     )
-  }
+  }, [])
 
   return (
     <section className="h-screen overflow-y-hidden">
@@ -157,7 +153,7 @@ export default function ChangePassword() {
 
       <div className="">
         <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
-        <OverlayBlock childDiv={popupNoti()} id={"changeOverlay"} />
+        <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
       </div>
     </section>
   );
