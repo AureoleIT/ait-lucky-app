@@ -14,8 +14,8 @@ import {
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
 } from "public/util/functions";
-import { hidden, show, failIcon, successIcon, ShowMethod } from "public/util/popup";
-import { ref, set, child, get } from "firebase/database";
+import { ShowMethod } from "public/util/popup";
+import { ref, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";

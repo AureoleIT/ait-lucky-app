@@ -25,7 +25,7 @@ import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
-import { hidden, show, successIcon, failIcon, ShowMethod } from "public/util/popup";
+import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";

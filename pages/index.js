@@ -99,7 +99,7 @@ export default function Index() {
 
   const renderButton = useMemo(() => {
     return (
-      <div className="w-full mb-4">
+      <div className="w-full">
         <BgBlueButton content="Tham gia" onClick={onJoinClick} />
       </div>
     )
@@ -117,7 +117,7 @@ export default function Index() {
 
   const renderDirect = useMemo(() => {
     return (
-      <div className="mt-10">
+      <div>
         <WayLog
           action="Đăng nhập"
           title="để quản lý sự kiện?"
@@ -146,7 +146,7 @@ export default function Index() {
 
   return (
     <section
-      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
+      className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
     >
       <div
         className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
