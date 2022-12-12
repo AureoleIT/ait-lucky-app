@@ -1,5 +1,5 @@
 import Auth from "layouts/Auth.js";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -57,7 +57,7 @@ export default function Setting() {
     }, [])
 
     // popup
-    const popupNoti = () => {
+    const popupNoti = useMemo(() => {
         return (
             <div className="flex flex-col items-center">
                 <div className="text-center text-[#004599]">
@@ -71,7 +71,7 @@ export default function Setting() {
                 ></img>
             </div>
         )
-    }
+    }, [])
 
     //get auth profile
     function fetchDb() {
@@ -109,6 +109,7 @@ export default function Setting() {
             return;
         }
         const upload = e.target.files[0]
+        console.log(upload);
         setFile(upload);
         setImg(URL.createObjectURL(upload));
     }
@@ -118,7 +119,7 @@ export default function Setting() {
     }
 
     //upload image
-    const uploadFile = () => {
+    const uploadFile = useCallback(() => {
         const imageRef = refStorage(storage, `avatars/${file.name + v4()}`);
         uploadBytes(imageRef, file).then((snapshot) => {
             getDownloadURL(snapshot.ref).then((url) => {
@@ -135,7 +136,7 @@ export default function Setting() {
                     .catch((error) => console.log(error));
             });
         });
-    };
+    }, [file]);
 
     // save new profile
     function handleSaveInfo(name) {
@@ -195,10 +196,6 @@ export default function Setting() {
             return () => { clearTimeout(timer) }
         }
     }, [isHidden])
-
-    useEffect(() => {
-
-    }, [file, img])
 
     useEffect(() => dispatch(userPackage(user)), [user])
 
@@ -272,7 +269,7 @@ export default function Setting() {
                             </div>
                         </div>
                     </div>
-                    <OverlayBlock childDiv={popupNoti()} id={"profileOverlay"} />
+                    <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
                 </div>
             </div>
         </section>
