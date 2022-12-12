@@ -19,6 +19,7 @@ import { messagesError, messagesSuccess } from "public/util/messages"
 import OverlayBlock from "public/shared/OverlayBlock";
 import { db } from "src/firebase";
 import { useUserPackageHook } from "public/redux/hooks";
+import router from "next/router";
 
 export default function ChangePassword() {
   const [oldPass, setOld] = useState("");
@@ -102,6 +103,11 @@ export default function ChangePassword() {
       return () => { clearTimeout(timer) }
     }
   }, [isHidden])
+
+  useEffect(() => {
+    if (Object.keys(user).length === 0)
+      router.push("/");
+  }, [])
 
 
   const popupNoti = useMemo(() => {
