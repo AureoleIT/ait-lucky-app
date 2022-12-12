@@ -5,28 +5,34 @@ import GradientLine from "public/shared/GradientLine";
 import RewardList from "public/shared/RewardList";
 import PlayerList from "public/shared/PlayerList";
 import { db } from "src/firebase";
-import { onValue, get, update, child, query, ref, orderByChild, equalTo } from "firebase/database";
-import { list } from "firebase/storage";
-
-const eventID = "EV20221101";
+import { onValue, query, ref, orderByChild, equalTo } from "firebase/database";
+import { useRouter } from "next/router";
 
 export default function EventResult() {
+  // Dynamic link
+  const router = useRouter();
+  const EventId = router.query.eventId;
+
+  // list db
   const [countPlayer, setCountPlayer] = useState(0);
   const [listReward, setListReward] = useState([]);
   const [listPlayer, setListPlayer] = useState([]);
   const [event, setEvent] = useState({});
-  const [rewardChosing, setRewardChosing] = useState(0);
 
+  // get db 
   const fetchDb = () => {
-    const que1 = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID));
+    const que1 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventId));
     onValue(que1, (snapshot) => {
+      // check id event
+      if (!snapshot.exists())
+        router.push("/");
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
 
       setEvent(values[0]);
     })
 
-    const que2 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(eventID));
+    const que2 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventId));
     onValue(que2, (snapshot) => {
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
@@ -34,7 +40,7 @@ export default function EventResult() {
       setListReward(values);
     })
 
-    const que3 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
+    const que3 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventId));
     onValue(que3, (snapshot) => {
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
@@ -53,7 +59,7 @@ export default function EventResult() {
 
   return (
     <section className="overflow-hidden flex flex-col justify-evenly h-screen">
-      <div className="flex flex-col items-center justify-center h-full px-5 mt-5">
+      <div className="flex flex-col items-center justify-center h-full">
         <h1 className="uppercase text-4xl py-0 font-bold text-[#004599]">
           tiệc cuối năm
         </h1>
@@ -84,7 +90,7 @@ export default function EventResult() {
           <div className="w-full max-w-md my-2">
             <GradientLine color1="#003B93" color2="#00F0FF" />
           </div>
-          <PlayerList listPlayer={listPlayer} listReward={listReward}/>
+          <PlayerList listPlayer={listPlayer} listReward={listReward} />
         </div>
 
         <div className="content-end py-3 w-full max-w-md px-5">
