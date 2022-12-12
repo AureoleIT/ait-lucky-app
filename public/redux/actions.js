@@ -8,7 +8,10 @@ import {
     USER_PACKAGE,
     USER_REWARD,
     REMOVE_STATE,
-    USER_CURR_HOSTING_EVENT
+    USER_CURR_HOSTING_EVENT,
+    POPUP_STATUS,
+    POPUP_MESSAGE,
+    POPUP_VISIBLE,
 } from "./constants"
 
 export const incognitoEvent = (event) => ({
@@ -49,4 +52,16 @@ export const userReward = (reward) => ({
 export const userCurrentHostingEvent = (event) => ({
     type: USER_CURR_HOSTING_EVENT,
     payload: event,
+})
+export const popUpMessage = (message) => ({
+    type: POPUP_MESSAGE,
+    payload: message,
+})
+export const popUpStatus = (status) => ({
+    type: POPUP_STATUS,
+    payload: status,
+})
+export const popUpVisible = (visible) => ({
+    type: POPUP_VISIBLE,
+    payload: visible,
 })

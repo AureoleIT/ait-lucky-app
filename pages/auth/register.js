@@ -25,8 +25,10 @@ import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
-import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import { hidden, show, successIcon, failIcon, ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
+import { useDispatch } from "react-redux";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -38,40 +40,36 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
 
-  const [textState, setTextState] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isHidden, setHidden] = useState(hidden);
+  const message = usePopUpMessageHook();
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook();
 
-  const showMethod = useCallback((message, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(show)
-  }, [])
+  const dispatch = useDispatch();
 
   const signUpSubmit = useCallback((name, email, password) => {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      showMethod(messagesError.E0004, false);
+      ShowMethod(dispatch, messagesError.E0004, false);
       return;
     }
     if (!isEmail(email)) {
-      showMethod(messagesError.E0003("Email"), false);
+      ShowMethod(dispatch, messagesError.E0003("Email"), false);
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), false);
+      ShowMethod(dispatch, messagesError.E0005("username"), false);
       return;
     }
     if (password.length < 6) {
-      showMethod(messagesError.E0002("password", 6), false);
+      ShowMethod(dispatch, messagesError.E0002("password", 6), false);
       return;
     }
     if (!check) {
-      showMethod(messagesError.E0006, false);
+      ShowMethod(dispatch, messagesError.E0006, false);
       return;
     }
     if (password !== rePassword) {
-      showMethod(messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), false);
+      ShowMethod(dispatch, messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), false);
       return;
     }
 
@@ -95,7 +93,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        showMethod(messagesError.E0007("username", "email"), false);
+        ShowMethod(dispatch, messagesError.E0007("username", "email"), false);
         return;
       }
       var newUser = {
@@ -107,14 +105,14 @@ export default function Register() {
         createAt: new Date().getTime(),
       }
       set(ref(db, `users/${id}/`), newUser).then(() => {
-        showMethod(messagesSuccess.I0001, true);
+        ShowMethod(dispatch, messagesSuccess.I0001, true);
       });
 
       setTimeout(() => {
         router.push("/auth/login");
       }, 3000);
     });
-  }, [check, rePassword, showMethod])
+  }, [check, dispatch, rePassword])
 
   const signUpAuth = useCallback(() => {
     signOut(auth)
@@ -144,11 +142,11 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                showMethod(messagesError.E0008("Email"), false);
+                ShowMethod(dispatch, messagesError.E0008("Email"), false);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                showMethod(messagesSuccess.I0001, true);
+                ShowMethod(dispatch, messagesSuccess.I0001, true);
               });
               setTimeout(() => {
                 router.push("/auth/login");
@@ -157,18 +155,14 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            showMethod(messagesError.E4444, false);
+            ShowMethod(dispatch, messagesError.E4444, false);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, false);
+        ShowMethod(dispatch, dispatch, dispatch, dispatch, messagesError.E4444, false);
       });
-  }, [showMethod])
-
-  const closePopup = useCallback(() => {
-    setHidden(hidden);
-  }, []);
+  }, [dispatch])
 
   const setEmailData = useCallback(
     (e) => {
@@ -318,17 +312,15 @@ export default function Register() {
 
   const renderPopUp = useMemo(() => {
     return (
-      <div className={isHidden}>
+      <div className={visible}>
         <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
+          text={message}
+          status={status}
+          isWarning={!status}
         />
       </div>
-
     )
-  }, [closePopup, isHidden, isSuccess, textState])
+  }, [visible, status, message])
 
   return (
     <>

@@ -14,7 +14,7 @@ import {
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
 } from "public/util/functions";
-import { hidden, show, failIcon, successIcon } from "public/util/popup";
+import { hidden, show, failIcon, successIcon, ShowMethod } from "public/util/popup";
 import { ref, set, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
@@ -22,31 +22,29 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
 export default function Login() {
-  const [textState, setTextState] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isHidden, setHidden] = useState(hidden);
+  const message = usePopUpMessageHook();
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook();
+  
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
   var [user, setUser] = useState({});
 
+  // Call dispatch and set user to redux 
+  const dispatch = useDispatch()
   const dbRef = ref(db);
-
-  const showMethod = useCallback((message, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(show);
-  }, [])
 
   const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
-      showMethod(messagesError.E0004, false)
+      ShowMethod(dispatch, messagesError.E0004, false)
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), false)
+      ShowMethod(dispatch, messagesError.E0005("username"), false)
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -57,16 +55,16 @@ export default function Login() {
           (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
-        showMethod(messagesError.E0009, false)
+        ShowMethod(dispatch, messagesError.E0009, false)
         return;
       }
       setUser(values.find(item => item.name === name || item.email === name));
 
-      showMethod(messagesSuccess.I0002, true)
+      ShowMethod(dispatch, messagesSuccess.I0002, true)
       //Go to admin dashboard
       router.push("/admin/dashboard-admin");
     });
-  }, [dbRef, showMethod])
+  }, [dbRef, dispatch])
 
   const loginAuth = useCallback(() => {
     const provider = new GoogleAuthProvider();
@@ -81,11 +79,11 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            showMethod(messagesError.E0010, false);
+            ShowMethod(dispatch, messagesError.E0010, false);
             return;
           }
           setUser(values.find(item => item.email === currEmail));
-          showMethod(messagesSuccess.I0002, true);
+          ShowMethod(dispatch, messagesSuccess.I0002, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
@@ -94,21 +92,15 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, false)
+        ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [showMethod])
+  }, [dispatch])
 
-  // Call dispatch and set user to redux 
-  const dispatch = useDispatch()
   useEffect(() => dispatch(userPackage(user)), [dispatch, user])
 
   useEffect(() => {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
   }, [user]);
-
-  const closePopup = useCallback(() => {
-    setHidden(hidden);
-  }, []);
 
   const nameData = useCallback(
     (e) => {
@@ -216,16 +208,15 @@ export default function Login() {
 
   const renderPopUp = useMemo(() => {
     return (
-      <div className={isHidden}>
+      <div className={visible}>
         <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
+          text={message}
+          status={status}
+          isWarning={!status}
         />
       </div>
     )
-  }, [closePopup, isHidden, isSuccess, textState])
+  }, [visible, status, message])
 
   return (
     <>
