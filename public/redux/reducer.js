@@ -10,6 +10,7 @@ import {
     USER_REWARD,
     REMOVE_STATE,
     USER_CURR_HOSTING_EVENT,
+    USER_EVENT_CREATING,
     POPUP_MESSAGE,
     POPUP_STATUS,
     POPUP_VISIBLE
@@ -27,7 +28,8 @@ const userState = {
     user: {},
     reward: [],
     participant: [],
-    currEvent: {}
+    currEvent: {},
+    currEventCreating: {},
 }
 
 const popUpState = {
@@ -79,6 +81,9 @@ export const userReducer = (state = userState, action) => {
         }
         case USER_CURR_HOSTING_EVENT: {
             return { ...state, currEvent: action.payload }
+        }
+        case USER_EVENT_CREATING: {
+            return { ...state, currEventCreating: action.payload }
         }
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")
