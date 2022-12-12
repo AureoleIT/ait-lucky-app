@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -77,7 +77,6 @@ export default function ChangePassword() {
             password: newPass
           }).then(() => {
             showMethod(messagesSuccess.I0003, true, false);
-            console.log("???")
             return;
           })
           .catch((error) => {
@@ -91,7 +90,6 @@ export default function ChangePassword() {
   // show popup
   useEffect(() => {
     if (isHidden == false) {
-      console.log(textState);
       isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
       document.getElementById("textState").innerHTML = textState;
       document.getElementById("changeOverlay").classList.toggle('hidden');
@@ -107,6 +105,54 @@ export default function ChangePassword() {
       router.push("/");
   }, [])
 
+  const oldPassData = useCallback(
+    (e) => {
+      setOld(e?.target?.value)
+    },
+    [setOld]
+  )
+
+  const newPassData = useCallback(
+    (e) => {
+      setNew(e?.target?.value)
+    },
+    [setNew]
+  )
+
+  const repeatPassData = useCallback(
+    (e) => {
+      setRepeat(e?.target?.value)
+    },
+    [setRepeat]
+  )
+
+  const renderOldPass = useMemo(() => {
+    return (
+      <AuthInput content={"Mật khẩu cũ"} type={"password"}
+        leftColor={LEFT_COLOR}
+        rightColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={oldPassData} />
+    )
+  }, [oldPass, oldPassData])
+
+  const renderNewPass = useMemo(() => {
+    return (
+      <AuthInput content={"Mật khẩu mới"} type={"password"}
+        leftColor={LEFT_COLOR}
+        rightColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={newPassData} />
+    )
+  }, [newPass, newPassData])
+
+  const renderRepeatPass = useMemo(() => {
+    return (
+      <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
+        leftColor={LEFT_COLOR}
+        rightColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={repeatPassData} />
+    )
+  }, [repeatPass, repeatPassData]
+  )
 
   const popupNoti = useMemo(() => {
     return (
@@ -124,6 +170,12 @@ export default function ChangePassword() {
     )
   }, [])
 
+  const renderButton = useMemo(() => {
+    return (
+      <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
+    )
+  }, [changePassword])
+
   return (
     <section className="h-screen overflow-y-hidden">
       <Header />
@@ -137,26 +189,16 @@ export default function ChangePassword() {
             </div>
 
             <div className="">
-              <AuthInput content={"Mật khẩu cũ"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setOld(e.target.value)} />
-              <AuthInput content={"Mật khẩu mới"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setNew(e.target.value)} />
-              <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setRepeat(e.target.value)} />
-              <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
+              {renderOldPass}
+              {renderNewPass}
+              {renderRepeatPass}
+              {renderButton}
             </div>
           </div>
         </div>
       </div>
 
       <div className="">
-        <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
         <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
       </div>
     </section>
