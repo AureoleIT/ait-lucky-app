@@ -9,8 +9,6 @@ import {
   orderByChild,
   equalTo,
   update,
-  onValue,
-  child,
   get
 } from "firebase/database";
 import { successIcon, failIcon } from "public/util/popup";
