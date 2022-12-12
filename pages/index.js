@@ -20,6 +20,9 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent } from "public/redux/actions";
 import Logo from "public/shared/Logo";
+import Webcam from "react-webcam";
+import QrReader from 'react-qr-scanner'
+
 
 export default function Index() {
   const BG_COLOR =
@@ -29,6 +32,8 @@ export default function Index() {
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
+  const [isShown, setIsShown] = useState(false);
+  const [scanResultWebCam, setScanResultWebCam ] = useState('');
 
   var [event, setEvent] = useState({});
 
@@ -156,7 +161,24 @@ export default function Index() {
       </div>
     )
   }, [closePopup, isHidden, isSuccess, textState])
+// ------------------------------------------------------
+const handleClick = event => {
+  setIsShown(current => !current);
+};
 
+
+
+const renderQRscan = useMemo(() =>{
+    return(
+      <div className="flex flex-col justify-center items-center">
+        <QrButton onClick={handleClick} />
+        {/* {isShown && <Webcam className="h-[120px]"/>} */}
+        {isShown && <QrReader className="h-[120px]"     
+        />}
+      </div>
+    )
+},[handleClick,isShown])
+// ------------------------------------------------------
   return (
     <section
       className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
@@ -169,8 +191,7 @@ export default function Index() {
         {renderInput}
         {renderButton}
         {renderLine}
-        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
-        {/* Handle logic todo: go direct to open device's camera */}
+        {renderQRscan}
         {renderDirect}
       </div>
       {renderPopUp}

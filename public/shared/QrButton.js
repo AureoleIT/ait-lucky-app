@@ -4,7 +4,7 @@ export default function QrButton({ onClick }) {
   return (
     <button
       type="button"
-      className="w-1/2 max-w-sm flex-col items-center flex mb-5"
+      className="w-2/2 max-w-sm flex-col items-center flex mb-5"
       onClick={onClick}
     >
       {/* <input type="file" accept="image/*;capture=camera" /> */}
