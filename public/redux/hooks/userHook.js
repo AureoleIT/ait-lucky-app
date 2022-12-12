@@ -5,7 +5,8 @@ import {
     userPackageSelector,
     userParticipantSelector,
     userRewardSelector,
-    userEventCreatingSelector
+    userEventCreatingSelector,
+    userRewardCreatingSelector
 } from "../selectors";
 
 export const useUserEventHook = () => {
@@ -25,4 +26,7 @@ export const useUserCurrEventHook = () => {
 }
 export const useUserCurrEventCreatingHook = () => {
     return useSelector(userEventCreatingSelector);
+}
+export const useUserCurrRewardCreatingHook = () => {
+    return useSelector(userRewardCreatingSelector);
 }
