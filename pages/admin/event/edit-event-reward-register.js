@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import TextArea from "public/shared/TextArea";
@@ -23,13 +23,29 @@ function EditEventRewardRegister() {
     // state
     const [event, setEvent] = useState({})
     const [rewards, setRewards] = useState([])
+    const [newRewards, setNewRewards] = useState([])
+    const [updateRewads, setUpdateRewards] = useState([])
     const [nameEvent, setNameEvent] = useState("")
     const [description, setDescription] = useState("")
     const [maxTicket, setMaxTicket] = useState("")
 
+    const [rewardId, setRewardId] = useState([])
     const [nameReward, setNameReward] = useState([])
     const [quantity, setQuantity] = useState([])
     const [imageFB, setImageFB] = useState([])
+    const [key, setKey] = useState([])
+    const [value, setValue] = useState([]) // value store object of reward when typing
+
+    const [rewardCount, setRewardCount] = useState([])
+
+    let uniqueKey = [] // uniqueKey store local id of reward
+
+    // message
+    const showMethod = useCallback((message, isTrue) => {
+        setTextState(message);
+        setIsSuccess(isTrue);
+        setHidden(show);
+    }, [])
     
     // ref
     const checkBoxRef = useRef()
@@ -74,35 +90,125 @@ function EditEventRewardRegister() {
 
     useEffect(() =>
     {
-        console.log(rewards);
         rewards.map((item, index) =>
         {
+            setRewardId(prev => [...prev, item.idReward])
             setNameReward(prev => [...prev, item.nameReward])
             setQuantity(prev => [...prev, item.quantity])
             setImageFB(prev => [...prev, item.imgUrl])
         })
     },[rewards])
 
-    // useEffect(() =>
-    // {
-    //     console.log(nameReward);
-    //     console.log(quantity);
-    //     console.log(imageFB);
-    // },[nameReward, quantity, imageFB])
-
-    const handleReceiveData = () =>
+    // get value of reward realtime
+    const handleReceiveData = useCallback((data) =>
     {
+        setValue(prev => [...prev, data])
+    })
+
+    // get array of reward id (has duplicate)
+    useEffect(() =>
+    {
+        value.map((item, index) =>
+        {   
+            let key = item[0] ?? [];
+            setKey(prev => [...prev, key.id])
+            return <></>
+        })
+    },[value])
+
+    // store array of reward id (not duplicate)
+    useMemo(() =>
+    {
+        key.forEach((item) =>
+        {
+            if(!uniqueKey.includes(item) && typeof item !== "undefined")
+            {
+                uniqueKey.push(item)
+            }
+        })
         
-    }
+    },[key])
 
     const handleNavigate = () => {
-        router.push("/admin/event/event-detail");
+        // router.push("/admin/event/event-detail");
+        console.log("name event: ", nameEvent);
+        console.log("description: ", description);
+        console.log("max ticket: ", maxTicket);
+        console.log("value: ", value);
+        console.log("public flag: ", checkBoxRef.current.checked);
+        console.log("uniqueKey: ", uniqueKey);
+        console.log("rewardId: ", rewardId);
+
+        let valueLength = value.length - 1
+        let lastValue = value[valueLength]
+
+        if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined")
+        {
+            uniqueKey.map((item, index) =>
+            {
+                for(let tempValueLength = valueLength; tempValueLength > 0; tempValueLength --)
+                {
+                    let tempValue = value[tempValueLength]
+                    let tempItem = tempValue[0] ?? []
+                    let tempId = tempItem.id
+                    let tempName = tempItem.name 
+                    let tempAmount = tempItem.amount
+                    let tempImg = tempItem.image
+
+                    if(tempId === item)
+                    {
+                        setNewRewards(prev => [...prev, 
+                        {
+                            idReward: tempId,
+                            nameReward:tempName,
+                            eventId:eventID,
+                            quantity: tempAmount,
+                            sortNo:index,
+                            quantityRemain:"",
+                            imgUrl: tempImg
+                        }])
+                        break;
+                    }
+                }
+                return <></>
+            })
+        }
+        else {
+            showMethod(messagesError.E0001("Tên giải thưởng"), false)
+        }
     };
 
-    const handleAdd = () =>
+    useEffect(() =>
     {
+        console.log("new: ",newRewards);
+    },[newRewards])
 
-    }
+    // useEffect(() =>
+    // {
+    //     console.log("update: ",updateRewads);
+    // },[updateRewads])
+
+    const handleAdd = useCallback(() =>
+    {
+        if(rewardCount.length > 0)
+        {
+            let valueLength = value.length - 1
+            let lastValue = value[valueLength]
+
+            if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined")
+            {
+                setRewardCount(prev => [...prev, 1])
+            }
+            else 
+            {
+                showMethod(messagesError.E0001("Tên giải thưởng"), false)
+            }
+        }
+        else if(rewardCount.length === 0)
+        {
+            setRewardCount(prev => [...prev, 1])
+        }
+    },[rewardCount, value, showMethod])
 
     const renderHeader = useMemo(() =>
     {
@@ -113,9 +219,7 @@ function EditEventRewardRegister() {
 
     const renderTitle = useMemo(() =>
     {
-        return (
-            <Title fontSize={"20"} title={event.title}/>
-        )
+        return ( <Title fontSize={"20"} title={event.title}/> )
     },[event])
 
     const renderEventTitle = useMemo(() =>
@@ -169,8 +273,7 @@ function EditEventRewardRegister() {
                     return (
                         <div key={index} className={"flex w-full justify-center items-center"}>
                             <Reward
-                                id={index}
-                                inputId={index}
+                                rewardId={rewardId[index]}
                                 fileID={`file${index}`}
                                 toggleID={`toggle${index}`}
                                 rewardName={nameReward[index]}
@@ -184,7 +287,29 @@ function EditEventRewardRegister() {
             }
             </>
         )
-    },[nameReward, rewards, quantity, imageFB])
+    },[nameReward, quantity, imageFB])
+
+    const renderNewReward = useMemo(() =>
+    {
+        return (
+            <div className="w-full flex flex-col items-center justify-center">
+                {
+                    rewardCount.map((item, index) =>
+                    {
+                        return (
+                            <div key={index} className="flex w-full justify-center items-center">
+                                <Reward
+                                    fileID={`filenew${index}`}
+                                    toggleID={`togglenew${index}`}
+                                    receiveData={handleReceiveData}
+                                /> 
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        )
+    },[rewardCount])
 
     const renderAddButton = useMemo(() =>
     {
@@ -217,6 +342,7 @@ function EditEventRewardRegister() {
 
             <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
                 {renderReward}
+                {renderNewReward}
                 {renderAddButton}
             </div>
             {renderEditButton}

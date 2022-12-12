@@ -1,34 +1,30 @@
-import { useEffect, useState, forwardRef, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 
 import Line from "public/shared/Line";
 import ImageCustom from "public/shared/ImageCustom";
 import AuthInput from "public/shared/AuthInput";
 const uuid = require("uuid");
 
-function Reward (props, ref) {
+function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, receiveData }) {
 
     let id = useRef()
-    useEffect(() =>
+
+    if(rewardId)
     {
-        id.current = uuid.v4()
-    },[])
-
-    let initAmount
-    let initRewardName
-
-    props.amount && props.rewardName ? (
-        initAmount = props.amount,
-        initRewardName = props.initRewardName
-    ) : (
-        initAmount = 0,
-        initRewardName=""
-    )
+        id.current = rewardId
+    }
+    else {
+        useEffect(() =>
+        {
+            id.current = uuid.v4()
+        },[])
+    }
 
     const [imgList, setImgList] = useState([])
     const [img, setImg] = useState([])
-    const [file, setFile] = useState()
-    const [count, setCount] = useState(initAmount)
-    const [name, setName] = useState(initRewardName)
+    const [file, setFile] = useState([])
+    const [count, setCount] = useState(amount || 1)
+    const [name, setName] = useState(rewardName || "")
     const [value, setValue] = useState({})
     const [storageImg, setStorageImg] = useState([])
 
@@ -83,7 +79,7 @@ function Reward (props, ref) {
 
     useEffect(() =>
     {
-        props.receiveData(value)
+        receiveData(value)
     },[value])
 
     const handleChangeFile = useCallback((e) =>
@@ -95,19 +91,27 @@ function Reward (props, ref) {
     
             setFile(URL.createObjectURL(upload))
     
-            let toggle = document.getElementById(props.toggleID)
+            let toggle = document.getElementById(toggleID)
             toggle.style.display = "flex"
         }
     },[file, setFile])
 
+    useEffect(() =>
+    {
+        if(imageList)
+        {
+            let toggle = document.getElementById(toggleID)
+            toggle.style.display = "flex" 
+        }
+    },[])
+
     const getImage = useCallback((e) =>
     {
-        document.getElementById(props.fileID).click()
+        document.getElementById(fileID).click()
     },[])
 
     const renderInput = useMemo(() =>
     {
-        console.log(props.rewardName);
         return (
             <div className="flex w-full">
                     <AuthInput value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} leftColor="#003B93" rightColor="#00F0FF" type={"text"} />
@@ -133,16 +137,52 @@ function Reward (props, ref) {
     {
         return (
             <div className="flex w-full mb-2 overflow-x-auto overflow-y-hidden ">
-                <div className="w-full mb-2 hidden" id={props.toggleID}>
+                <div className="w-full mb-2 hidden" id={toggleID}>
                     {
-                        imgList.map((item,index) =>
-                        {
-                            return (
-                                <div key={index} className="mx-2 ">
-                                    {item}
-                                </div>
-                            )
-                        })
+                        imageList ? (
+                            <>
+                            {
+                                imageList.map((item, index) =>
+                                {
+                                    return (
+                                        <div key={index} className="mx-2">
+                                            <ImageCustom image={item}/>
+                                        </div> )
+                                })
+                            }
+                            {
+                                imgList.map((item,index) =>
+                                {
+                                    if(index === 0)
+                                    {
+                                        return <div key={index}></div>
+                                    }
+                                    else {
+                                        return (
+                                            <div key={index} className="mx-2">
+                                                {item}
+                                            </div>
+                                        )
+                                    }
+                                })
+                            }
+                            </>
+                        ) : (
+                            imgList.map((item,index) =>
+                            {
+                                if(index === 0)
+                                    {
+                                        return <div key={index}></div>
+                                    }
+                                    else {
+                                        return (
+                                            <div key={index} className="mx-2">
+                                                {item}
+                                            </div>
+                                        )
+                                }
+                            })
+                        )
                     }
                 </div>
             </div>
@@ -156,7 +196,7 @@ function Reward (props, ref) {
                     <div className="font-[900] text-[24px] text-white">Thêm hình ảnh</div>
                     <i className="fas fa-image" style={iconStyle}></i>
                 </button>
-                <input type={"file"} id={props.fileID} onChange={handleChangeFile} style={{display:"none"}}/>
+                <input type={"file"} id={fileID} onChange={handleChangeFile} style={{display:"none"}}/>
             </div>
         )
     },[getImage, handleChangeFile])
@@ -183,7 +223,7 @@ function Reward (props, ref) {
     return (
         <>
             <div className="w-full flex flex-col items-center justify-center">
-                <form className="w-full" ref={ref}>
+                <form className="w-full">
                     {renderInput}
                     {renderCount}
                     {renderLine1}
@@ -196,4 +236,4 @@ function Reward (props, ref) {
     )
 }
 
-export default forwardRef(Reward)
+export default Reward
