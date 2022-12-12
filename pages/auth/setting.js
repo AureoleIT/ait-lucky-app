@@ -9,11 +9,7 @@ import {
     ref,
     child,
     get,
-    query,
-    orderByChild,
-    equalTo,
     update,
-    onValue
 } from "firebase/database";
 import { storage, db } from "src/firebase";
 import {
