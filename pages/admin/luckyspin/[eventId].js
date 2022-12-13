@@ -17,6 +17,15 @@ export default function LuckySpinAdmin() {
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
+    // Thông tin admin
+    const adminInfo = useUserPackageHook();
+    // Mã admin
+    // const adminId = adminInfo.userId
+    const adminId = "cc4b1337-7c86-4fb8-a981-dd98f266e242"; // Dự định sử dụng lấy từ redux
+
+    // Event
+    const [eventInfo, setEventInfo] = useState({})
+    
     // Danh sách giải thưởng
     const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
@@ -25,6 +34,7 @@ export default function LuckySpinAdmin() {
     const [idRewardChosing, setIDRewardChosing] = useState("");
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState([]);
+    
     // Danh sách người chơi
     const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
@@ -37,9 +47,6 @@ export default function LuckySpinAdmin() {
     const [spinClicked, setSpinClicked] = useState(false);
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
-
-    // thông tin người chơi
-    const currEvent = usePlayerUserHook();
 
     // Memo
     const spinBlock = useMemo(() => {
@@ -57,6 +64,9 @@ export default function LuckySpinAdmin() {
                 if (data["status"] === 1) router.push('/');
                 if (data["status"] === 2) router.push('/');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(data);
+                // Nếu không phải admin sự kiện, đưa về trang chủ.
+                if (adminId !== data.createBy) router.push('/');
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
             } else {
@@ -189,7 +199,7 @@ export default function LuckySpinAdmin() {
     )
 
     // --------------------------------------------------- useEffect
-
+    // Real time 
     useEffect(() => {
         fetchDB();
 
@@ -231,7 +241,7 @@ export default function LuckySpinAdmin() {
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
                         <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"></Title>
-                        <Title title="TIỆC CUỐI NĂM" fontSize="32" />
+                        <Title title={eventInfo.title} fontSize="32" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">

@@ -18,11 +18,14 @@ export default function LuckySpin() {
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
-    // thông tin người chơi
-    const currEvent = useUserPackageHook();
+    // Thông tin người chơi
+    const currUser = useUserPackageHook();
     // Mã người chơi
     const participantId = "0a4c1257-aa60-4685-8226-4b2be61c09d5"; // Dự định sử dụng lấy từ redux
     
+    // Event
+    const [eventInfo, setEventInfo] = useState({})
+        
     // Danh sách giải thưởng
     const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
@@ -53,6 +56,9 @@ export default function LuckySpin() {
     // Firebase
     const dbRef = ref(db);
 
+    // Link
+
+
     const fetchDB = () => {
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
@@ -61,10 +67,10 @@ export default function LuckySpin() {
                 if (data["status"] === 1) router.push('/');
                 if (data["status"] === 2) router.push('/');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(data);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const isSpining = data['playingData']['isSpinning'];
                 const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
-
                 if (!spinClicked && isSpining) {
                     setLastAwardedIndex(lastAwardedIndex);
                     setSpinClicked(isSpining);
@@ -105,7 +111,9 @@ export default function LuckySpin() {
                     setPlayerList(rawData);
                     setRemainPlayerList(filted);
                     setOnlinePlayerAmount(online);
-                }, 200)
+                }, 200);
+            } else {
+                router.push('/')
             }
         });
     }
@@ -167,6 +175,9 @@ export default function LuckySpin() {
     // ------------------------------------------------------------------------ UseEffect
     // Real time
     useEffect(() => {
+        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
+        if (participantId === "") router.push('/');
+
         fetchDB();
         
         const setOnlineStatus = (status) => {
@@ -212,7 +223,7 @@ export default function LuckySpin() {
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
                         <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"/>
-                        <Title title="TIỆC CUỐI NĂM" fontSize="32" />
+                        <Title title={eventInfo.title} fontSize="32" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
