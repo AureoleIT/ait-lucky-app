@@ -16,3 +16,9 @@ export const userRewardSelector = (state) => {
 export const userCurrentEventSelector = (state) => {
     return selectUserReducer(state).currEvent
 }
+export const userEventCreatingSelector = (state) => {
+    return selectUserReducer(state).currEventCreating
+}
+export const userRewardCreatingSelector = (state) => {
+    return selectUserReducer(state).currRewardCreating
+}

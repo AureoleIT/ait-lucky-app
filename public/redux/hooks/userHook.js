@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux";
-import { 
-    userCurrentEventSelector, 
-    userEventSelector, 
-    userPackageSelector, 
-    userParticipantSelector, 
-    userRewardSelector 
+import {
+    userCurrentEventSelector,
+    userEventSelector,
+    userPackageSelector,
+    userParticipantSelector,
+    userRewardSelector,
+    userEventCreatingSelector,
+    userRewardCreatingSelector
 } from "../selectors";
 
 export const useUserEventHook = () => {
@@ -21,4 +23,10 @@ export const useUserRewardHook = () => {
 }
 export const useUserCurrEventHook = () => {
     return useSelector(userCurrentEventSelector);
+}
+export const useUserCurrEventCreatingHook = () => {
+    return useSelector(userEventCreatingSelector);
+}
+export const useUserCurrRewardCreatingHook = () => {
+    return useSelector(userRewardCreatingSelector);
 }
