@@ -95,6 +95,7 @@ export default function LuckySpin() {
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
+                if (!Object.keys(rawData).includes(participantId)) router.push('/')
                 const data = Object.values(rawData);
                 data.forEach((val, idx) => {
                     val.ID = Object.keys(rawData)[idx];
@@ -112,8 +113,6 @@ export default function LuckySpin() {
                     setRemainPlayerList(filted);
                     setOnlinePlayerAmount(online);
                 }, 200);
-            } else {
-                router.push('/')
             }
         });
     }

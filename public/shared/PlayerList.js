@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import PlayerDetail from "./PlayerDetail";
 import OverlayBlock from "./OverlayBlock";
 
-export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = [], showDetail = true}) {
+export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = []}) {
     const [typeList, setTypeList] = useState(listType);
     const [playerChosing, setPlayerChosing] = useState(undefined);
 
@@ -32,7 +32,6 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     )
     
     const openPlayerDetailByIndex = (idx) => {
-        if (!showDetail) return;
         if (document.getElementById("playerDetail").classList.contains("hidden"))
             document.getElementById("playerDetail").classList.remove("hidden");
         document.getElementById("playerDetailOverlay").classList.toggle("hidden");
