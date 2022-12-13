@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Header from "public/shared/Header";
-import AuthInput from "public/shared/AuthInput";
-import BgBlueButton from "public/shared/BgBlueButton";
-import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+
+//firebase
 import {
   ref,
   query,
@@ -11,13 +9,23 @@ import {
   update,
   get
 } from "firebase/database";
+import { db } from "src/firebase";
+
+//redux
+import { useUserPackageHook } from "public/redux/hooks";
+
+//component
+import Header from "public/shared/Header";
+import OverlayBlock from "public/shared/OverlayBlock";
+import router from "next/router";
+import Input from "public/shared/Input";
+import Button from "public/shared/Button";
+
+//util
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages"
-import OverlayBlock from "public/shared/OverlayBlock";
-import { db } from "src/firebase";
-import { useUserPackageHook } from "public/redux/hooks";
-import router from "next/router";
 
 export default function ChangePassword() {
   const [oldPass, setOld] = useState("");
@@ -35,7 +43,7 @@ export default function ChangePassword() {
     setIsHidden(isHidden);
   }, [])
 
-
+  //handle change password
   const changePassword = () => {
     if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
       showMethod(messagesError.E0004, false, false);
@@ -100,11 +108,13 @@ export default function ChangePassword() {
     }
   }, [isHidden])
 
+  //check user login
   useEffect(() => {
     if (Object.keys(user).length === 0)
       router.push("/");
   }, [])
 
+  //prevent re-render
   const oldPassData = useCallback(
     (e) => {
       setOld(e?.target?.value)
@@ -128,27 +138,36 @@ export default function ChangePassword() {
 
   const renderOldPass = useMemo(() => {
     return (
-      <AuthInput content={"Mật khẩu cũ"} type={"password"}
-        leftColor={LEFT_COLOR}
-        rightColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+      <Input
+        content={"Mật khẩu cũ"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={oldPassData} />
     )
   }, [oldPass, oldPassData])
 
   const renderNewPass = useMemo(() => {
     return (
-      <AuthInput content={"Mật khẩu mới"} type={"password"}
-        leftColor={LEFT_COLOR}
-        rightColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+      <Input
+        content={"Mật khẩu mới"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={newPassData} />
     )
   }, [newPass, newPassData])
 
   const renderRepeatPass = useMemo(() => {
     return (
-      <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
-        leftColor={LEFT_COLOR}
-        rightColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+      <Input
+        content={"Nhập lại mật khẩu"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={repeatPassData} />
     )
   }, [repeatPass, repeatPassData]
@@ -172,7 +191,11 @@ export default function ChangePassword() {
 
   const renderButton = useMemo(() => {
     return (
-      <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
+      <Button
+        content={"LƯU"}
+        onClick={() => changePassword()}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR} />
     )
   }, [changePassword])
 
@@ -183,17 +206,15 @@ export default function ChangePassword() {
         <div
           className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
         >
-          <div className="absolute top-10 flex flex-col w-full max-w-md w-3/4 md:mb-0">
+          <div className="absolute top-10 flex flex-col w-full max-w-md md:mb-0">
             <div className="flex flex-col justify-center items-center">
               <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">ĐỔI MẬT KHẨU</p>
             </div>
 
-            <div className="">
-              {renderOldPass}
-              {renderNewPass}
-              {renderRepeatPass}
-              {renderButton}
-            </div>
+            {renderOldPass}
+            {renderNewPass}
+            {renderRepeatPass}
+            {renderButton}
           </div>
         </div>
       </div>
