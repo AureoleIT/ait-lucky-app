@@ -1,10 +1,28 @@
-function Line ({ content })
-{
-    return (
-        <div className="w-full h-[2px] justify-center my-2 px-2 bg-gradient-to-r from-[#003B93] to-[#00F0FF] relative flex">
-                <p className="absolute top-[-50%] mx-2 transform translate-y-[-50%] px-[10px] text-[#003B93] font-semibold bg-white">{content}</p>
-        </div>
-    )
-}
+export default function Line({
+  content, // nội dung được hiển thị trên Line
+  primaryColor = "#003B93", // màu bên trái
+  secondaryColor = "#00F0FF", // màu bên phải
+  lineWeight = true, // mặc đinh line dày 2px, nếu false thì dày 1px
+}) {
+  const gradientCSS = `bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`;
 
-export default Line
+  return (
+    <div
+      className={`w-full ${
+        lineWeight ? "h-[2px]" : "h-[1px]"
+      } z-10 my-4 ${gradientCSS} relative flex justify-center`}
+    >
+      <p
+        className={`absolute top-[-50%] transform translate-y-[-50%] font-extrabol bg-white ${
+          !content && "hidden"
+        }`}
+      >
+        <span
+          className={`mx-2 text-transparent text-xl bg-clip-text font-semibold ${gradientCSS}`}
+        >
+          {content}
+        </span>
+      </p>
+    </div>
+  );
+}
