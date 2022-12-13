@@ -1,10 +1,4 @@
-// layout for page
 import React, { useEffect, useState } from "react";
-import { Link } from "next/link";
-import { useForm } from "react-hook-form";
-// import AuthContext from "../../src/context/AuthContext";
-// Components
-import BgBlueButton from "public/shared/BgBlueButton";
 import Title from "public/shared/Title";
 import { useMemo } from "react/cjs/react.development";
 import Spin from "public/shared/Spin";
@@ -62,7 +56,7 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] < 3) router.push('/');
-                if (data["status"] > 3) router.push('/');
+                if (data["status"] > 3) router.push('/event/event-result/' + EventID);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const isSpining = data['playingData']['isSpinning'];
                 const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
@@ -251,7 +245,7 @@ export default function LuckySpin() {
                         </svg>
                     </div>
                     <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true} />
-                    <OverlayBlock childDiv={<LuckySpinSetting />}  id={"settingOverlay"} />
+                    <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"} />
                     <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} />
                 </div>
             </section>

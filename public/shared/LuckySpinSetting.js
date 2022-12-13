@@ -1,29 +1,18 @@
-// layout for page
-import Auth from "layouts/Auth.js";
 import React, { useEffect, useState } from "react";
-import { Link } from "next/link";
-import { useForm } from "react-hook-form";
-// import AuthContext from "../../src/context/AuthContext";
-// Components
-import Logotic from "public/shared/Logo";
-import AuthInput from "public/shared/AuthInput";
-import TickBox from "public/shared/TickBox";
-import BgBlueButton from "public/shared/BgBlueButton";
-import BgWhiteButton from "public/shared/BgWhiteButton";
-import GradientLine from "public/shared/GradientLine";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import { useMemo } from "react/cjs/react.development";
-import Spin from "public/shared/Spin";
-import RewardList from "public/shared/RewardList";
-import CurrentEventDetail from "public/shared/CurrentEventDetail";
-import ConfirmButton from "public/shared/ConfirmButton";
-import CloseButton from "public/shared/CloseButton";
-import OverlayBlock from "public/shared/OverlayBlock";
-import SingleColorButton from "./SingleColorButton";
+import Button from "./Button";
 
-export default function LuckySpinSetting() {
-    // Setting
+// Fire base
+import { db } from "src/firebase";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
+
+export default function LuckySpinSetting({router}) {
+    const linkPath = router.pathname.split("/");
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (linkPath[1] === "admin") setIsAdmin(true);
+    }, [])
+
     function setBackgroundSize(id) {
         const input = document.getElementById(id);
         input.style.setProperty("--background-size", `${getBackgroundSize(input)}%`);
@@ -35,7 +24,18 @@ export default function LuckySpinSetting() {
         const value = +input.value;
         const size = (value - min) / (max - min) * 100;
         return size;
-    }   
+    }
+
+    const exitEvent = () => {
+        router.push('/');
+    }
+
+    const finishEvent = () => {
+        update(ref(db, 'event/' + router.query["eventId"]),
+        {
+            status: 4
+        });
+    }
 
     return (
         <div className="flex flex-col px-3 gap-4">
@@ -60,7 +60,7 @@ export default function LuckySpinSetting() {
                     style={{"--background-size": "80%"}}
                     onInput={() => setBackgroundSize("sound")}></input>
             </div>
-            <SingleColorButton content={"THOÁT"} colorHex={"#FF6262"} />
+            <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={2} onClick={isAdmin?finishEvent:exitEvent} />
         </div>
     )
 }
