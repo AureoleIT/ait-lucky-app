@@ -77,15 +77,19 @@ export default function LuckySpinAdmin() {
                     val.ID = Object.keys(rawData)[idx];
                     get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
                         if (snapshot.exists()) {
-                            val.pic = snapshot.val().pic;
+                            val['pic'] = snapshot.val().pic;
+                            val.bug = true
                         }
                     })
                 })
-                const online = data.filter(val => val.status === 1).length;
-                const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-                setPlayerList(rawData);
-                setRemainPlayerList(filted);
-                setOnlinePlayerAmount(online);
+                setTimeout(function()
+                {
+                    const online = data.filter(val => val.status === 1).length;
+                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+                    setPlayerList(rawData);
+                    setRemainPlayerList(filted);
+                    setOnlinePlayerAmount(online);
+                }, 100)
             }
         });
     }
@@ -142,7 +146,6 @@ export default function LuckySpinAdmin() {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
-                    console.log(remainPlayerList[randomNum].ID);
                     updateFB('event_participants/'+ remainPlayerList[randomNum].ID, { idReward: idRewardChosing });
                     updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
                     setSpinClicked(false);

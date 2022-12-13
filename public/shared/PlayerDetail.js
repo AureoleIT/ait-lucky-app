@@ -5,13 +5,8 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import RewardList from "./RewardList";
 import CloseButton from "./CloseButton";
-import OverlayBlock from "./OverlayBlock";
 
 export default function PlayerDetail({player, reward}) {
-
-    useEffect(() => {
-        console.log(reward);
-    }, [])
 
     const content = (
         <div className="absolute bottom-0 left-0 h-[70%] w-full bg-white rounded-t-2xl p-4 z-50"

@@ -93,11 +93,14 @@ export default function LuckySpin() {
                         }
                     })
                 })
-                const online = data.filter(val => val.status === 1).length;
-                const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-                setPlayerList(rawData);
-                setRemainPlayerList(filted);
-                setOnlinePlayerAmount(online);
+                setTimeout(function()
+                {
+                    const online = data.filter(val => val.status === 1).length;
+                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+                    setPlayerList(rawData);
+                    setRemainPlayerList(filted);
+                    setOnlinePlayerAmount(online);
+                }, 100)
             }
         });
     }

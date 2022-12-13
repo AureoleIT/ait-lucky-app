@@ -48,9 +48,10 @@ const cssSet = [
 ]
 
 export default function Spin({listPlayer}) {
+    const [showcase, setShowcase] = useState([...listPlayer])
 
     useEffect(() => {
-        console.log(listPlayer);
+        setShowcase([...listPlayer]);
     }, [listPlayer])
     
     const listPlayerShowcase = (
@@ -63,14 +64,14 @@ export default function Spin({listPlayer}) {
                         <div key={idx} className="h-0" style={cssSet[idx]} id={"spin-idx-"+idx}>
                             <div className="bg-[#E9E9E9] h-28 -translate-y-[50%] flex items-center rounded-lg shadow-[0_0_10px_0_rgba(0,0,0,0.25)] py-4 px-6 gap-2">
                                 {
-                                    listPlayer.length &&
+                                    showcase.length?
                                     <>
                                         <img className="h-20 w-20 object-cover rounded-full border-2"
-                                            src={listPlayer[idx].pic}
-                                            alt={listPlayer[idx].nameDisplay} />
-                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer[idx].nameDisplay}</p>
-                                        <p className="text-center grow font-bold text-[20px] truncate">{listPlayer.length}</p>
-                                    </>
+                                            src={showcase[idx].pic}
+                                            alt={showcase[idx].nameDisplay} />
+                                        <p className="text-center grow font-bold text-[20px] truncate">{showcase[idx].nameDisplay}</p>
+                                    </>:
+                                    <></>
                                 }
                             </div>
                         </div>
