@@ -12,7 +12,7 @@ import BorderText from "public/shared/BorderText";
 //import gif
 import nyancat from "public/img/nyancat.gif";
 import { useUserPackageHook } from "public/redux/hooks";
-import { useSelector } from "react-redux";
+import router from "next/router";
 
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
@@ -21,8 +21,7 @@ export default function Dashboard() {
   // const [currentId, setcurentId] = useState([]);
 
   const currentUser = useUserPackageHook();
-  console.log(currentUser);
-  console.log(useSelector((state) => state));
+
 
   const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
   const queID = query(
@@ -30,7 +29,9 @@ export default function Dashboard() {
     orderByChild("createBy"),
     equalTo(String(currentUser.userId))
   );
-
+  const checkAuth = () => {
+    router.push("/auth/login");
+  };
   // get(child(ref(db), `event`))
   // .then((snapshot) => {
   //   const res = snapshot.val() ?? [];
@@ -187,24 +188,32 @@ export default function Dashboard() {
       ></BorderText>
     );
   }, [arrID]);
+
   return (
     <>
-      {/* header */}
+      {currentUser.userId == null ? (
+        checkAuth()
+      ) : (
+        <div>
+          {renderHeader}
 
-      {renderHeader}
+          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
+            {/* participate in event */}
 
-      <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
-        {/* participate in event */}
+            {renderJoinEvent}
 
-        {renderJoinEvent}
+            {/* create a event */}
 
-        {/* create a event */}
+            {renderCreateEvent}
 
-        {renderCreateEvent}
-
-        {/* show events */}
-        {renderShowEvent}
-      </section>
+            {/* show events */}
+            {renderShowEvent}
+          </section>
+        </div>
+      )}
     </>
   );
+
+  // } else return {authNavigation};
+  // } else return window.location.href = '/auth/login';
 }
