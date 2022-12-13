@@ -1,0 +1,24 @@
+export const selectUserReducer = (state) => {
+    return state.userReducer
+}
+export const userEventSelector = (state) => {
+    return selectUserReducer(state).event
+}
+export const userPackageSelector = (state) => {
+    return selectUserReducer(state).user
+}
+export const userParticipantSelector = (state) => {
+    return selectUserReducer(state).participant
+}
+export const userRewardSelector = (state) => {
+    return selectUserReducer(state).reward
+}
+export const userCurrentEventSelector = (state) => {
+    return selectUserReducer(state).currEvent
+}
+export const userEventCreatingSelector = (state) => {
+    return selectUserReducer(state).currEventCreating
+}
+export const userRewardCreatingSelector = (state) => {
+    return selectUserReducer(state).currRewardCreating
+}
