@@ -1,0 +1,24 @@
+LƯU Ý: sử dụng primaryColor và secondaryColor sẽ tạo ra màu Gradient
+  import { LEFT_COLOR, RIGHT_COLOR} from "public/util/colors";
+  < 
+    primaryColor={LEFT_COLOR}
+    secondaryColor={RIGHT_COLOR}
+  />
+
+Button.js sẽ thay thế cho các component sau: 
+  - BgBlueButton.js
+  - BgRedButton.js
+  - BgWhiteButton.js
+  - ButtonAndIcon.js
+  - ConfirmButton.js
+  - SingleColorButton.js
+
+Input.js sẽ thay thế cho các component sau:
+  - AuthInput.js
+  - TextNoLabel.js
+  - BorderText.js (truyền children)
+  
+Line.js sẽ thay thế cho các component sau:
+  - LineGradient.js
+  - GradientLine.js
+  - LineWithText.js
