@@ -1,10 +1,7 @@
-import Auth from "layouts/Auth.js";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Header from "public/shared/Header";
-import AuthInput from "public/shared/AuthInput";
-import BgBlueButton from "public/shared/BgBlueButton";
-import Link from "next/link";
-import { messagesError, messagesSuccess } from "public/util/messages"
+import router from "next/router";
+
+//firebase
 import {
     ref,
     child,
@@ -18,17 +15,29 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { v4 } from "uuid";
+
+//component
+import Header from "public/shared/Header";
+import Button from "public/shared/Button";
+import Input from "public/shared/Input";
+import OverlayBlock from "public/shared/OverlayBlock";
+
+// util
+import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
-import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
+
+//redux
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
-import router from "next/router";
+
 export default function Setting() {
+    //redux
     const [user, setUser] = useState(useUserPackageHook());
     const dispatch = useDispatch();
+
     // normal state
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -82,7 +91,7 @@ export default function Setting() {
             router.push("/");
             return;
         }
-        
+
         fetchDb();
     }, [])
 
@@ -163,23 +172,26 @@ export default function Setting() {
         );
     }
 
-    //avoid re-render
+    //prevent re-render
     const usernameData = useCallback(
         (e) => {
-            setUsername(e?.target?.value.replace(/^\s+|\s+$/gm,''));
+            setUsername(e?.target?.value.replace(/^\s+|\s+$/gm, ''));
         },
         [setUsername]
     );
 
     const renderUsername = useMemo(() => {
         return (
-            <AuthInput
+            <Input
                 content={"Tên đăng nhập"}
+                placeHolder={"Tên đăng nhập"}
                 type={"text"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+                isTextGradient={true}
+                primaryColor={LEFT_COLOR}
+                secondaryColor={!hasWhiteSpaceAndValidLength(username) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+                value={username}
                 onChange={usernameData}
-                value={username} />
+            />
         )
     }, [username, usernameData])
 
@@ -192,9 +204,7 @@ export default function Setting() {
 
     const renderEmail = useMemo(() => {
         return (
-            <div
-                className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
-            >
+            <div className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}>
                 <div className="h-full">
                     <input
                         type={"email"}
@@ -207,8 +217,7 @@ export default function Setting() {
                     <div className="bg-white absolute w-full top-0">
                         <label
                             htmlFor=""
-                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
-                        >
+                            className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0">
                             <p style={contentCSS} className="font-bold text-base">
                                 {"Email"}
                             </p>
@@ -218,9 +227,25 @@ export default function Setting() {
             </div>)
     }, [email, emailData])
 
-    const renderButton = useMemo(() => {
+    const renderButtonSave = useMemo(() => {
         return (
-            <BgBlueButton content={"LƯU"} onClick={() => { handleSaveInfo(username) }} />
+            <Button content={"LƯU"}
+                primaryColor={LEFT_COLOR}
+                secondaryColor={RIGHT_COLOR}
+                onClick={() => { handleSaveInfo(username) }}
+            />
+        )
+    }, [handleSaveInfo, username])
+
+    const renderButtonNavi = useMemo(() => {
+        return (
+            <Button content={"ĐỔI MẬT KHẨU"}
+                primaryColor={"bg-white"}
+                secondaryColor={RIGHT_COLOR}
+                isTextGradient={true}
+                onClick={() => { router.push("/auth/change-password") }}
+
+            />
         )
     }, [handleSaveInfo, username])
 
@@ -242,42 +267,28 @@ export default function Setting() {
     return (
         <section className="h-screen w-screen overflow-y-hidden">
             <Header />
-            <div className=" relative h-full w-full">
-                <div
-                    className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
-                >
-                    <div className="flex flex-col w-full max-w-md w-3/4  md:mb-0">
-                        <div className="absolute top-1 w-full max-w-md w-3/4 mb-10 h-[30%] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat">
+            <div className="relative h-full w-full">
+                <div className="flex justify-center items-center h-full">
+                    <div className="flex flex-col w-full max-w-md md:mb-0">
+                        <div className="absolute top-1 w-full max-w-md mb-10 h-[30%] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat">
                             <div className="flex flex-col justify-center items-center">
                                 <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">THÔNG TIN CÁ NHÂN</p>
                             </div>
                             <div className="flex flex-col items-center justify-center h-full">
                                 <img src={img}
-
                                     onClick={(e) => getImage(e)}
                                     alt="" className="w-[100px] h-[100px] rounded object-cover " />
                                 <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
                             </div>
                         </div>
 
-                        <div className="">
-                            {renderUsername}
-                            {renderEmail}
-                            {renderButton}
-                        </div>
+                        {renderUsername}
+                        {renderEmail}
+                        {renderButtonSave}
 
-                        <div className="absolute bottom-20 w-full max-w-md w-3/4  text-center lg:text-left ">
-                            <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-[2px]">
-                                <Link href={"/auth/change-password"}>
-
-                                    <button className="w-full h-full rounded-[48px] bg-white flex items-center justify-center gap-[10px]">
-                                        <p className="font-[600] text-[20px] text-[#004599]">ĐỔI MẬT KHẨU</p>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="lightblue" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                        </svg>
-
-                                    </button>
-                                </Link>
+                        <div className="absolute bottom-20 w-full max-w-md text-center lg:text-left ">
+                            <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
+                                {renderButtonNavi}
                             </div>
                         </div>
                     </div>
@@ -288,5 +299,3 @@ export default function Setting() {
 
     );
 }
-
-Setting.layout = Auth;
