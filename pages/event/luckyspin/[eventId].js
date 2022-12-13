@@ -13,11 +13,10 @@ import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
 import { useRouter } from "next/router";
+import { usePlayerEventHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
-
-const EventID = "EV20221101";
 
 export default function LuckySpin() {
     const router = useRouter();
@@ -45,6 +44,14 @@ export default function LuckySpin() {
     const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
+
+    // thông tin người chơi
+    const currEvent = usePlayerEventHook();
+
+    // Memo
+    const spinBlock = useMemo(() => {
+        return <Spin listPlayer={playerShowList} />
+    }, [playerShowList])
 
     // Firebase
     const dbRef = ref(db);
@@ -100,7 +107,7 @@ export default function LuckySpin() {
                     setPlayerList(rawData);
                     setRemainPlayerList(filted);
                     setOnlinePlayerAmount(online);
-                }, 100)
+                }, 200)
             }
         });
     }
@@ -113,7 +120,6 @@ export default function LuckySpin() {
     }
 
     const spining = () => {
-        console.log(lastAwardedIndex);
         if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
@@ -164,31 +170,8 @@ export default function LuckySpin() {
     
     useEffect(() => {
         fetchDB();
+        console.log("Info: ", currEvent);
     }, [])
-
-    // useEffect(() => {
-    //     // Cập nhật dữ liệu realtime của event reward
-    //     return onValue(dbRef, (snapshot) => {
-    //         const data = snapshot.val();
-    //         const eventRewards = Object.values(data['event_rewards']);
-    //         eventRewards.sort(compare);
-    //         const eventData = data["event"][EventID]['playingData'];
-    //         const isSpining = eventData.isSpinning;
-    //         const rewardChosingIndex = eventData.rewardChosingIndex;
-    //         const lastAwardedIndex = eventData.lastAwardedIndex;
-    //         setSpinClicked(isSpining);
-
-    //         if (snapshot.exists()) {
-    //             setRewardList(eventRewards.filter((val) => val.eventId === EventID));
-    //             setRemainRewardList(eventRewards.filter((reward) => reward.quantityRemain > 0 && reward.eventId === EventID));
-    //             if (!spinClicked && isSpining) {
-    //                 setSpinClicked(isSpining);
-    //                 spining(lastAwardedIndex);
-    //             };
-    //             if (rewardChosing !== rewardChosingIndex && rewardChosingIndex) setRewardChosing(rewardChosingIndex);
-    //         }
-    //     });
-    // }, [rewardList])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -250,7 +233,7 @@ export default function LuckySpin() {
                             </span>
                         </div>
                     </div>
-                    <Spin listPlayer={playerShowList} />
+                    {spinBlock}
                     <div className="w-full mb-12">
                       <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                       <div className="h-44 px-4 py-2 relative">

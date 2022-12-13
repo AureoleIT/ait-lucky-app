@@ -12,6 +12,7 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import { useRouter } from "next/router";
+import { usePlayerEventHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
@@ -40,6 +41,14 @@ export default function LuckySpinAdmin() {
     const [spinClicked, setSpinClicked] = useState(false);
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
+
+    // thông tin người chơi
+    const currEvent = usePlayerEventHook();
+
+    // Memo
+    const spinBlock = useMemo(() => {
+        return <Spin listPlayer={playerShowList} />
+    }, [playerShowList])
     
     // Firebase
     const dbRef = ref(db)
@@ -89,7 +98,7 @@ export default function LuckySpinAdmin() {
                     setPlayerList(rawData);
                     setRemainPlayerList(filted);
                     setOnlinePlayerAmount(online);
-                }, 100)
+                }, 200)
             }
         });
     }
@@ -186,6 +195,7 @@ export default function LuckySpinAdmin() {
 
     useEffect(() => {
         fetchDB();
+        console.log("Info: ", currEvent);
     }, [])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
@@ -240,7 +250,7 @@ export default function LuckySpinAdmin() {
                             </span>
                         </div>
                     </div>
-                    <Spin listPlayer={playerShowList}></Spin>
+                    {spinBlock}
                     <div className="w-full mb-12">
                         <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                         <div className="h-44 px-4 py-2 relative">
@@ -266,7 +276,7 @@ export default function LuckySpinAdmin() {
                                                         style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
                                                         onClick={() => {chooseReward(idx)}}>
                                                         <span className="ml-3 block truncate">{reward.nameReward}</span>
-                                                        <span className="ml-3 block truncate">Số lượng: {reward.quantityRemain}</span>
+                                                        <span className="ml-3 block truncate">Số lượng còn lại: {reward.quantityRemain}</span>
                                                     </li>
                                                 )
                                             }):<></>
