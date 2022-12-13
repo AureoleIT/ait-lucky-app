@@ -1,12 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
 
-import BgBlueButton from "public/shared/BgBlueButton";
-import GradientLine from "public/shared/GradientLine";
-import RewardList from "public/shared/RewardList";
-import PlayerList from "public/shared/PlayerList";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+//firebase
 import { db } from "src/firebase";
 import { onValue, query, ref, orderByChild, equalTo } from "firebase/database";
-import { useRouter } from "next/router";
+//components
+import RewardList from "public/shared/RewardList";
+import PlayerList from "public/shared/PlayerList";
+import Button from "public/shared/Button";
+import Line from "public/shared/Line";
+//colors
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+
 
 export default function EventResult() {
   // Dynamic link
@@ -45,8 +50,12 @@ export default function EventResult() {
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
 
-      setListPlayer(values);
+      setListPlayer(values)
     })
+  }
+
+  const handleExit = () => {
+    router.push("/");
   }
 
   useEffect(() => {
@@ -57,8 +66,8 @@ export default function EventResult() {
     fetchDb();
   }, []);
 
+  //prevent re-render
   const renderRewardList = useMemo(() => {
-    console.log(1)
     return (
       <RewardList
         listReward={listReward}
@@ -70,12 +79,24 @@ export default function EventResult() {
   }, [listPlayer, listReward])
 
   const renderPlayerList = useMemo(() => {
-    console.log(2);
     return (
       <PlayerList listPlayer={listPlayer} listReward={listReward} />
     )
   }, [listPlayer, listReward])
 
+
+  const renderLine = useMemo(() => {
+    return (
+      <Line />
+    )
+  }, [])
+
+  const renderButton = useMemo(() => {
+    return (
+      <Button content={"Thoát"} primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} onClick={handleExit} />
+    )
+  }, [handleExit])
+  
   return (
     <section className="overflow-hidden flex flex-col justify-evenly h-screen">
       <div className="flex flex-col items-center justify-center h-full">
@@ -86,7 +107,7 @@ export default function EventResult() {
           thông tin giải thưởng
         </h1>
         <div className="w-full max-w-md">
-          <GradientLine color1="#003B93" color2="#00F0FF" />
+          {renderLine}
         </div>
 
         <div className="flex flex-col items-center justify-center w-full overflow-y-auto h-[40%]">
@@ -101,14 +122,14 @@ export default function EventResult() {
         </h1>
 
         <div className="flex flex-col grow w-full max-w-md h-[30%] overflow-y-auto">
-          <div className="w-full max-w-md my-2">
-            <GradientLine color1="#003B93" color2="#00F0FF" />
+          <div className="w-full max-w-md">
+            {renderLine}
           </div>
           {renderPlayerList}
         </div>
 
         <div className="content-end py-3 w-full max-w-md px-5">
-          <BgBlueButton content={"Thoát"} />
+          {renderButton}
         </div>
       </div>
     </section>
