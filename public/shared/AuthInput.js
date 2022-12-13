@@ -1,15 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 
-export default function AuthInput({
-  content,
-  type,
-  onChange,
-  value,
-  min,
-  name,
-  rightColor,
-  leftColor,
-}) {
+function AuthInput(props, ref) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
     WebkitBackgroundClip: "text",
@@ -18,14 +9,15 @@ export default function AuthInput({
 
   return (
     <div
-      className={`bg-gradient-to-r from-[${leftColor}] to-[${rightColor}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
+      className={`bg-gradient-to-r from-[${props.leftColor}] to-[${props.rightColor}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}
     >
       <div className="h-full">
         <input
-          type={type}
+          ref={ref}
+          type={props.type}
           className="h-full w-full rounded-lg text-lg px-4 outline-none border-none"
-          onChange={onChange}
-          value={value}
+          onChange={props.onChange}
+          value={props.value}
           required
         />
         <div className="bg-white absolute w-full top-0">
@@ -34,7 +26,7 @@ export default function AuthInput({
             className="absolute px-[10px] mx-[15px] bg-white transform translate-y-[-50%] left-0"
           >
             <p style={contentCSS} className="font-bold text-base">
-              {content}
+              {props.content}
             </p>
           </label>
         </div>
@@ -42,3 +34,5 @@ export default function AuthInput({
     </div>
   );
 }
+
+export default forwardRef(AuthInput)

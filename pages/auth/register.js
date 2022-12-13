@@ -25,8 +25,10 @@ import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
-import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import { hidden, show, successIcon, failIcon, ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
+import { useDispatch } from "react-redux";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -37,40 +39,37 @@ export default function Register() {
   const [rePassword, setRePassword] = useState("");
   const [email, setEmail] = useState("");
   const [check, setCheck] = useState(false);
-  const [textState, setTextState] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isHidden, setHidden] = useState(hidden);
 
-  const showMethod = useMemo(() => (message, isShow, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(isShow);
-  }, [])
+  const message = usePopUpMessageHook();
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook();
 
-  function signUpSubmit(name, email, password) {
+  const dispatch = useDispatch();
+
+  const signUpSubmit = useCallback((name, email, password) => {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      showMethod(messagesError.E0004, show, false);
+      ShowMethod(dispatch, messagesError.E0004, false);
       return;
     }
     if (!isEmail(email)) {
-      showMethod(messagesError.E0003("Email"), show, false);
+      ShowMethod(dispatch, messagesError.E0003("Email"), false);
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("username"), show, false);
+      ShowMethod(dispatch, messagesError.E0005("username"), false);
       return;
     }
     if (password.length < 6) {
-      showMethod(messagesError.E0002("password", 6), show, false);
+      ShowMethod(dispatch, messagesError.E0002("password", 6), false);
       return;
     }
     if (!check) {
-      showMethod(messagesError.E0006, show, false);
+      ShowMethod(dispatch, messagesError.E0006, false);
       return;
     }
-    if ( password !== rePassword ){
-      showMethod(messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), show, false);
+    if (password !== rePassword) {
+      ShowMethod(dispatch, messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), false);
       return;
     }
 
@@ -94,7 +93,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        showMethod(messagesError.E0007("username", "email"), show, false);
+        ShowMethod(dispatch, messagesError.E0007("username", "email"), false);
         return;
       }
       var newUser = {
@@ -106,15 +105,16 @@ export default function Register() {
         createAt: new Date().getTime(),
       }
       set(ref(db, `users/${id}/`), newUser).then(() => {
-        showMethod(messagesSuccess.I0001, show, true);
+        ShowMethod(dispatch, messagesSuccess.I0001, true);
       });
 
       setTimeout(() => {
         router.push("/auth/login");
       }, 3000);
     });
-  }
-  async function signUpAuth() {
+  }, [check, dispatch, rePassword])
+
+  const signUpAuth = useCallback(() => {
     signOut(auth)
       .then(async () => {
         var id = uuid.v4();
@@ -142,11 +142,11 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                showMethod(messagesError.E0008("Email"), show, false);
+                ShowMethod(dispatch, messagesError.E0008("Email"), false);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                showMethod(messagesSuccess.I0001, show, true);
+                ShowMethod(dispatch, messagesSuccess.I0001, true);
               });
               setTimeout(() => {
                 router.push("/auth/login");
@@ -155,18 +155,14 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            showMethod(messagesError.E4444, show, false);
+            ShowMethod(dispatch, messagesError.E4444, false);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        showMethod(messagesError.E4444, show, false);
+        ShowMethod(dispatch, dispatch, dispatch, dispatch, messagesError.E4444, false);
       });
-  }
-
-  const closePopup = (e) => {
-    setHidden(hidden);
-  };
+  }, [dispatch])
 
   const setEmailData = useCallback(
     (e) => {
@@ -174,105 +170,181 @@ export default function Register() {
     },
     [setEmail]
   );
+
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);
     },
     [setName]
   );
+
   const setPassData = useCallback(
     (e) => {
       setPassword(e?.target?.value);
     },
     [setPassword]
   );
+
   const setRePassData = useCallback(
     (e) => {
       setRePassword(e?.target?.value);
     },
     [setRePassword]
   );
-  const isCheckPrivacy = () => setCheck(!check);
+
+  const isCheckPrivacy = useCallback(() => setCheck(!check), [check]);
+
+  const renderTitle = useMemo(() => {
+    return (
+      <Title title="ĐĂNG KÝ" />
+    )
+  }, [])
+
+  const renderName = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Tên đăng nhập"}
+        leftColor={LEFT_COLOR}
+        rightColor={
+          hasWhiteSpaceAndValidLength(name)
+            ? FAIL_RIGHT_COLOR
+            : RIGHT_COLOR
+        }
+        type={"text"}
+        onChange={setNameData}
+      />
+    )
+  }, [name, setNameData])
+
+  const renderMail = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Email"}
+        leftColor={LEFT_COLOR}
+        rightColor={!isEmail(email) ? FAIL_RIGHT_COLOR : RIGHT_COLOR}
+        type={"email"}
+        onChange={setEmailData}
+      />
+    )
+  }, [email, setEmailData])
+
+  const renderPassword = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Mật khẩu"}
+        type={"password"}
+        leftColor={LEFT_COLOR}
+        rightColor={
+          enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+        }
+        onChange={setPassData}
+      />
+    )
+  }, [password, setPassData])
+
+  const renderRetypePassword = useMemo(() => {
+    return (
+      <AuthInput
+        content={"Nhập lại mật khẩu"}
+        type={"password"}
+        leftColor={LEFT_COLOR}
+        rightColor={
+          enoughNumCountPass(rePassword) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+        }
+        onChange={setRePassData}
+      />
+    )
+  }, [rePassword, setRePassData])
+
+  const renderPrivacy = useMemo(() => {
+    return (
+      <Privacy onChange={isCheckPrivacy} />
+    )
+  }, [isCheckPrivacy])
+
+  const renderConfirmButton = useMemo(() => {
+    return (
+      <ConfirmButton
+        text="Đăng ký"
+        onClick={() => {
+          signUpSubmit(name, email, password);
+        }}
+      />
+    )
+  }, [email, name, password, signUpSubmit])
+
+  const renderFirstLine = useMemo(() => {
+    return (
+      <GradientLine
+        color1={LEFT_COLOR}
+        color2={RIGHT_COLOR}
+        content="hoặc"
+      />
+    )
+  }, [])
+
+  const renderAuthButton = useMemo(() => {
+    return (
+      <BgWhiteButton
+        content="ĐĂNG KÝ VỚI"
+        onClick={() => {
+          signUpAuth();
+        }}
+      />
+    )
+  }, [signUpAuth])
+
+  const renderSecondLine = useMemo(() => {
+    return (
+      <GradientLine color1={LEFT_COLOR} color2={RIGHT_COLOR} />
+    )
+  }, [])
+
+  const renderFooter = useMemo(() => {
+    return (
+      <AuthFooter
+        normalContent="Đã có tài khoản?"
+        boldContent="Đăng nhập luôn!"
+        href="/auth/login"
+      />
+    )
+  }, [])
+
+  const renderPopUp = useMemo(() => {
+    return (
+      <div className={visible}>
+        <PopUp
+          text={message}
+          status={status}
+          isWarning={!status}
+        />
+      </div>
+    )
+  }, [visible, status, message])
+
   return (
     <>
       <section className="h-screen mx-auto flex justify-center items-center">
         <div
           className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}
         >
-          <Title title="ĐĂNG KÝ" />
+          {renderTitle}
           <div>
-            <AuthInput
-              content={"Tên đăng nhập"}
-              leftColor={LEFT_COLOR}
-              rightColor={
-                hasWhiteSpaceAndValidLength(name)
-                  ? FAIL_RIGHT_COLOR
-                  : RIGHT_COLOR
-              }
-              type={"text"}
-              onChange={setNameData}
-            />
-            <AuthInput
-              content={"Email"}
-              leftColor={LEFT_COLOR}
-              rightColor={!isEmail(email) ? FAIL_RIGHT_COLOR : RIGHT_COLOR}
-              type={"email"}
-              onChange={setEmailData}
-            />
-            <AuthInput
-              content={"Mật khẩu"}
-              type={"password"}
-              leftColor={LEFT_COLOR}
-              rightColor={
-                enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
-              }
-              onChange={setPassData}
-            />
-            <AuthInput
-              content={"Nhập lại mật khẩu"}
-              type={"password"}
-              leftColor={LEFT_COLOR}
-              rightColor={
-                enoughNumCountPass(rePassword) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
-              }
-              onChange={setRePassData}
-            />
+            {renderName}
+            {renderMail}
+            {renderPassword}
+            {renderRetypePassword}
           </div>
-          <Privacy onChange={isCheckPrivacy} />
-          <ConfirmButton
-            text="Đăng ký"
-            onClick={() => {
-              signUpSubmit(name, email, password);
-            }}
-          />
+          {renderPrivacy}
+          {renderConfirmButton}
           <div>
-            <GradientLine
-              color1={LEFT_COLOR}
-              color2={RIGHT_COLOR}
-              content="hoặc"
-            />
-            <BgWhiteButton
-              content="ĐĂNG KÝ VỚI"
-              onClick={() => {
-                signUpAuth();
-              }}
-            />
-            <GradientLine color1={LEFT_COLOR} color2={RIGHT_COLOR} />
+            {renderFirstLine}
+            {renderAuthButton}
+            {renderSecondLine}
           </div>
-          <AuthFooter
-            normalContent="Đã có tài khoản?"
-            boldContent="Đăng nhập luôn!"
-            href="/auth/login"
-          />
+          {renderFooter}
         </div>
-        <div className={isHidden}>
-          <PopUp
-            text={textState}
-            icon={isSuccess ? successIcon : failIcon}
-            close={closePopup}
-            isWarning={!isSuccess}
-          />
-        </div>
+        {renderPopUp}
       </section>
     </>
   );
