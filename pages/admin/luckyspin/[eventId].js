@@ -7,7 +7,8 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import { useRouter } from "next/router";
-import { usePlayerEventHook } from "public/redux/hooks";
+import { usePlayerUserHook } from "public/redux/hooks";
+import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
@@ -38,7 +39,7 @@ export default function LuckySpinAdmin() {
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
 
     // thông tin người chơi
-    const currEvent = usePlayerEventHook();
+    const currEvent = usePlayerUserHook();
 
     // Memo
     const spinBlock = useMemo(() => {
@@ -191,7 +192,15 @@ export default function LuckySpinAdmin() {
 
     useEffect(() => {
         fetchDB();
-        console.log("Info: ", currEvent);
+
+        window.addEventListener('beforeunload',
+            () => updateFB('event/' + EventID + '/playingData', {isSpinning: false}));
+
+        return () => {
+            updateFB('event/' + EventID + '/playingData', {isSpinning: false});
+            window.removeEventListener('beforeunload',
+                () => updateFB('event/' + EventID + '/playingData', {isSpinning: false}));
+        }
     }, [])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh

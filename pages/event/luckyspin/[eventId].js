@@ -7,23 +7,29 @@ import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
 import { useRouter } from "next/router";
-import { usePlayerEventHook } from "public/redux/hooks";
+import { useUserPackageHook } from "public/redux/hooks";
+import { usePlayerUserHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
+
 
 export default function LuckySpin() {
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
+    // thông tin người chơi
+    const currEvent = useUserPackageHook();
+    // Mã người chơi
+    const participantId = "0a4c1257-aa60-4685-8226-4b2be61c09d5"; // Dự định sử dụng lấy từ redux
+    
     // Danh sách giải thưởng
     const [rewardList, setRewardList] = useState([]);
     // Index giải thưởng đang được chọn
     const [rewardChosing, setRewardChosing] = useState(0);
-    // ID của giải thưởng được chọn
-    const [idRewardChosing, setIDRewardChosing] = useState("");
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState(rewardList);
+    
     // Danh sách người chơi
     const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
@@ -39,9 +45,6 @@ export default function LuckySpin() {
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
 
-    // thông tin người chơi
-    const currEvent = usePlayerEventHook();
-
     // Memo
     const spinBlock = useMemo(() => {
         return <Spin listPlayer={playerShowList} />
@@ -55,8 +58,9 @@ export default function LuckySpin() {
         onValue(que3, (snapshot) => {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
-                if (data["status"] < 3) router.push('/');
-                if (data["status"] > 3) router.push('/event/event-result/' + EventID);
+                if (data["status"] === 1) router.push('/');
+                if (data["status"] === 2) router.push('/');
+                if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const isSpining = data['playingData']['isSpinning'];
                 const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
@@ -161,10 +165,24 @@ export default function LuckySpin() {
     )
 
     // ------------------------------------------------------------------------ UseEffect
-    
+    // Real time
     useEffect(() => {
         fetchDB();
-        console.log("Info: ", currEvent);
+        
+        const setOnlineStatus = (status) => {
+            update(ref(db, 'event_participants/' + participantId),
+                {
+                    status: status
+                });
+        }
+
+        setInterval(() => setOnlineStatus(1), 1000);
+        window.addEventListener('beforeunload', () => setOnlineStatus(0));
+
+        return () => {
+            setOnlineStatus(0);
+            window.removeEventListener('beforeunload', () => setOnlineStatus(0));
+        }
     }, [])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
@@ -183,15 +201,6 @@ export default function LuckySpin() {
     useEffect(() => {
         setEditedPlayerList([...remainPlayerList]);
     }, [remainPlayerList])
-
-    // Điều chỉnh danh sách giải thưởng còn lại
-    useEffect(() => {
-    //     if ([...remainRewardList].filter((reward) => reward.quantityRemain <= 0).length > 0)
-    //         {
-    //             setRemainRewardList((list) => list.filter((reward) => reward.quantityRemain > 0));
-    //         }
-        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-    }, [remainRewardList])
 
     useEffect(() => {
         if (spinClicked) spining();

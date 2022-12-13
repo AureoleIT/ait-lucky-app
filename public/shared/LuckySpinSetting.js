@@ -60,7 +60,7 @@ export default function LuckySpinSetting({router}) {
                     style={{"--background-size": "80%"}}
                     onInput={() => setBackgroundSize("sound")}></input>
             </div>
-            <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={2} onClick={isAdmin?finishEvent:exitEvent} />
+            <Button content={isAdmin?"KẾT THÚC SỰ KIỆN":"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={2} onClick={isAdmin?finishEvent:exitEvent} />
         </div>
     )
 }
