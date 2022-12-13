@@ -71,10 +71,6 @@ export default function Setting() {
 
     //get auth profile
     function fetchDb() {
-        if (user === undefined) {
-            router.push("/");
-            return;
-        }
         setUsername(user.name);
         setEmail(user.email);
         if (user.pic !== "")
@@ -82,6 +78,11 @@ export default function Setting() {
     }
 
     useEffect(() => {
+        if (user === undefined || user.name === undefined) {
+            router.push("/");
+            return;
+        }
+        
         fetchDb();
     }, [])
 
