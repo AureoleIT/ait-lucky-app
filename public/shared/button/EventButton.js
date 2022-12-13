@@ -1,20 +1,24 @@
 import React from "react";
 
-export default function EventButton(props) {
+export default function EventButton({title, id, userJoined, status, onclick}) { 
   return (
-    <a href={`${setLink(props.status)}`} className="flex flex-col w-full">
-      <button className={`rounded-[5px] mx-2 ${setColor(props.status)}`}>
+    <a href={`${setLink(status)}`} className="flex flex-col w-full">
+      <button className={`rounded-[5px] mx-2 ${setColor(status)}`} onClick={onclick}>
         <div className="flex justify-between items-center mx-4 text-white h-10 font-[Nunito Sans]">
           <div className="justify-center items-center text-left font-bold text-sm uppercase truncate flex-1">
-            {props.title}
+            {title}
           </div>
           <div className="text-xs flex flex-col text-right w-1/2">
-            {props.id ? <div>{props.id}</div> : <></>}
-            {props.user_joined ? (
-              <div>{props.user_joined} người tham gia</div>
+            {id ? (
+              <div className="truncate">{id}</div>
             ) : (
               <></>
             )}
+            {userJoined >= 0 ? (
+              <div>{userJoined} người tham gia</div>
+            ) : (
+              <></>
+            )}           
           </div>
         </div>
       </button>
@@ -40,17 +44,14 @@ function setColor(status) {
 function setLink(status) {
   switch (status) {
     case 1:
-      return "/event/event-detail";
+      return "/admin/event/event-detail";   
     case 2:
-      return "/event/countdown-checkin";
-
+      return "/admin/event/countdown-checkin";
     case 3:
-      return "/event/lucky_spin";
-
+      return "/admin/luckyspin";
     case 4:
-      return "/_eventresult";
-
+      return "/event/event-result";
     default:
-      return "/event/event-detail";
+      return "/admin/event/event-detail";
   }
 }

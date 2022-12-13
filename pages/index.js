@@ -15,37 +15,43 @@ import LineWithText from "public/shared/LineWithText";
 import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
-import { hidden, show, successIcon, failIcon } from "public/util/popup";
+import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent } from "public/redux/actions";
 import Logo from "public/shared/Logo";
+<<<<<<< HEAD
 import Webcam from "react-webcam";
 import QrReader from 'react-qr-scanner'
 
+=======
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+>>>>>>> 94d3374583e39defab9c1af2d9a79af278262fcc
 
 export default function Index() {
-  const BG_COLOR =
-    "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
-
   const [pin, setPin] = useState("");
+<<<<<<< HEAD
   const [textState, setTextState] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isHidden, setHidden] = useState(hidden);
   const [isShown, setIsShown] = useState(false);
   const [scanResultWebCam, setScanResultWebCam ] = useState('');
+=======
+>>>>>>> 94d3374583e39defab9c1af2d9a79af278262fcc
 
+  const message = usePopUpMessageHook();
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook();
+
+  //Call dispatch from redux
+  const dispatch = useDispatch();
+  var BG_COLOR =
+    "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   var [event, setEvent] = useState({});
-
-  const showMethod = useCallback((message, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(show);
-  }, [])
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
-      showMethod(messagesError.E2002, false);
+      ShowMethod(dispatch, messagesError.E2002, false);
       return;
     }
     get(child(ref(db), "event/")).then((snapshot) => {
@@ -53,19 +59,16 @@ export default function Index() {
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined) {
-        showMethod(messagesError.E2004, false);
+        ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
       setEvent(currEvent);
-      showMethod(messagesSuccess.I0008(currEvent.title), true);
+      ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
       setTimeout(() => {
         router.push("/event/info");
       }, 1000);
     });
-  }, [pin, showMethod]);
-
-  //Call dispatch from redux
-  const dispatch = useDispatch();
+  }, [dispatch, pin]);
 
   /* Export current event to redux for another access */
   useEffect(() => {
@@ -83,12 +86,6 @@ export default function Index() {
     (e) => {
       setPin(e?.target?.value);
     }, [setPin]
-  );
-
-  const closePopup = useCallback(
-    () => {
-      setHidden(hidden);
-    }, []
   );
 
   const renderLogo = useMemo(() => {
@@ -151,20 +148,23 @@ export default function Index() {
 
   const renderPopUp = useMemo(() => {
     return (
-      <div className={isHidden}>
+      <div className={visible}>
         <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
+          text={message}
+          status={status}
+          isWarning={!status}
         />
       </div>
     )
+<<<<<<< HEAD
   }, [closePopup, isHidden, isSuccess, textState])
 // ------------------------------------------------------
 const handleClick = event => {
   setIsShown(current => !current);
 };
+=======
+  }, [visible, status, message])
+>>>>>>> 94d3374583e39defab9c1af2d9a79af278262fcc
 
 
 
