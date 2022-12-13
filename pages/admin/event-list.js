@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Header from "public/shared/Header";
 import AuthInput from "public/shared/AuthInput";
 import EventButton from "public/shared/button/EventButton";
@@ -50,18 +50,28 @@ export default function EventList() {
       : item.title.toLowerCase().includes(searchContent);
   });
 
+  const renderHeader = useMemo(() => {
+    return <Header />;
+  }, []);
+
+  const renderTitle = useMemo(() => {
+    return (
+      <h1 className="uppercase font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
+        danh sách sự kiện
+      </h1>
+    );
+  }, []);
+
   if (!currentUser.userId) {
     return router.push("/auth/login").then;
   }
 
   return (
     <>
-      <Header />
+      {renderHeader}
       <section className="h-screen max-w-md mx-auto flex flex-col justify-center items-center">
         <div className="flex flex-col px-3 py-5 w-full h-full items-center">
-          <h1 className="uppercase font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
-            danh sách sự kiện
-          </h1>
+          {renderTitle}
           <div className="max-w-md flex flex-col w-full gap-y-[19px] mt-[19px]">
             <div id="search" className="flex flex-col mx-2">
               <AuthInput
