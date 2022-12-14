@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 //firebase
 import { db } from "src/firebase";
-import { onValue, query, ref, orderByChild, equalTo } from "firebase/database";
+import { onValue, query, ref, orderByChild, equalTo, get, child } from "firebase/database";
 //components
 import RewardList from "public/shared/RewardList";
 import PlayerList from "public/shared/PlayerList";
@@ -47,10 +47,22 @@ export default function EventResult() {
 
     const que3 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventId));
     onValue(que3, (snapshot) => {
-      const data = snapshot.val() ?? [];
-      const values = Object.values(data);
+      const rawData = snapshot.val();
 
-      setListPlayer(values)
+      const data = Object.values(rawData);
+      data.forEach((val, idx) => {
+        val.ID = Object.keys(rawData)[idx];
+        get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+          if (snapshot.exists()) {
+            val.pic = snapshot.val().pic;
+          }
+        })
+      })
+
+      setTimeout(() => {
+
+        setListPlayer(Object.values(rawData))
+      }, 200);
     })
   }
 
@@ -72,9 +84,8 @@ export default function EventResult() {
       <RewardList
         listReward={listReward}
         showRemain={false}
-        showAwardedPaticipant={true}
         eventPaticipant={listPlayer}
-      />
+      >{console.log(listReward, listPlayer)}</RewardList>
     )
   }, [listPlayer, listReward])
 
@@ -96,7 +107,7 @@ export default function EventResult() {
       <Button content={"Thoát"} primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} onClick={handleExit} />
     )
   }, [handleExit])
-  
+
   return (
     <section className="overflow-hidden flex flex-col justify-evenly h-screen">
       <div className="flex flex-col items-center justify-center h-full">
@@ -110,7 +121,7 @@ export default function EventResult() {
           {renderLine}
         </div>
 
-        <div className="flex flex-col items-center justify-center w-full overflow-y-auto h-[40%]">
+        <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto h-[40%]">
           {renderRewardList}
         </div>
 
