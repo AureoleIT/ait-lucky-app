@@ -117,21 +117,21 @@ export default function ChangePassword() {
   //prevent re-render
   const oldPassData = useCallback(
     (e) => {
-      setOld(e?.target?.value)
+      setOld(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     },
     [setOld]
   )
 
   const newPassData = useCallback(
     (e) => {
-      setNew(e?.target?.value)
+      setNew(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     },
     [setNew]
   )
 
   const repeatPassData = useCallback(
     (e) => {
-      setRepeat(e?.target?.value)
+      setRepeat(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     },
     [setRepeat]
   )
