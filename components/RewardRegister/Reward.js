@@ -14,19 +14,29 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
         id.current = rewardId
     }
     else {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() =>
         {
             id.current = uuid.v4()
         },[])
     }
 
+    let initImage
+
+    imageList ? initImage = imageList : initImage = []
+
     const [imgList, setImgList] = useState([])
-    const [img, setImg] = useState([])
+    const [img, setImg] = useState(initImage)
     const [file, setFile] = useState([])
     const [count, setCount] = useState(amount || 1)
     const [name, setName] = useState(rewardName || "")
     const [value, setValue] = useState({})
     const [storageImg, setStorageImg] = useState([])
+
+    // useEffect(() =>
+    // {
+    //     console.log(img);
+    // },[img])
 
     const iconStyle = {
         color:"white",

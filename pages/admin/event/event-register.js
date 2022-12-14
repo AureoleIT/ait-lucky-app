@@ -4,7 +4,7 @@ import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Header from "public/shared/Header";
-import { failIcon, hidden, show, successIcon } from "public/util/popup";
+import { ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import CheckBox from "public/shared/CheckBox";
 import { db } from "src/firebase";
@@ -12,17 +12,18 @@ import { set, ref } from "firebase/database";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { useDispatch } from "react-redux"
-import { userCurrentHostingEvent } from "public/redux/actions"
+import { userCurrentHostingEvent} from "public/redux/actions"
+import { useUserPackageHook } from "public/redux/hooks";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks"
+
 const uuid = require("uuid");
 
 export default function EventRegister() {
   // router
   const router = useRouter();
-
+  // get user id from redux
+  const user = useUserPackageHook()
   // state
-  const [textState, setTextState] = useState("");
-  const [isHidden, setHidden] = useState(hidden);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -35,66 +36,61 @@ export default function EventRegister() {
     WebkitTextFillColor: "transparent",
   };
   // message
-  const showMethod = useCallback((message, isTrue) => {
-    setTextState(message);
-    setIsSuccess(isTrue);
-    setHidden(show);
-  }, [])
+
+  const message = usePopUpMessageHook()
+  const status = usePopUpStatusHook()
+  const visible = usePopUpVisibleHook()
 
   // set event id to redux
   let id = useRef()
 
   useEffect(() =>
   { 
-    id = uuid.v4()
+    id.current = uuid.v4()
   },[])
 
   const dispatch = useDispatch()
   useEffect(() =>
   {
-    dispatch(userCurrentHostingEvent(id))
-  },[dispatch, id])
+    dispatch(userCurrentHostingEvent(id.current))
+  },[dispatch, id.current])
   
   // handle submit button
   const handleSubmit = useCallback((title, description, maxTicket, publicFlag) =>
   {
     if (title === "" || description === "" || maxTicket === "") {
-      showMethod(messagesError.E0004, false)  
+      ShowMethod(dispatch, messagesError.E0004, false)  
       return;
     }
       
       if (title !== "" && description !== "" && maxTicket !== "") {
           const newEvent = {
-              eventId: id,
+              eventId: id.current,
               publicFlag: publicFlag ? 1 : 0,
               title: title,
               description: description,
               maxTicket: maxTicket,
               createAt: new Date().getTime(),
-              createBy: "iasd-asda123-asd1-asd123",
-              waitingTime: 300,
-              userJoined: 20,
-              pinCode: id.slice(0,6),
+              createBy: user.userId,
+              waitingTime: 0,
+              userJoined: 0,
+              pinCode: id.current.slice(0,6),
               status: 1,
               delFlag: false,
       };
-      set(ref(db, `event/${id}`), newEvent)
+      set(ref(db, `event/${id.current}`), newEvent)
         .then(() => {
-            showMethod(messagesSuccess.I0007("sự kiện"), true)
+            ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true)
           })
           .catch((e) => {
-              showMethod(messagesError.E4444, false)
+              ShowMethod(dispatch, messagesError.E4444, false)
             });
           
           setTimeout(() => {
             router.push("/admin/event/reward-register");
           }, 2000);
         }
-      },[showMethod])
-
-  const closePopup = useCallback(() => {
-    setHidden(hidden);
-  }, []);
+      },[dispatch])
 
   const onChangeTitle = useCallback(
     (e) => {
@@ -224,16 +220,15 @@ export default function EventRegister() {
 
   const renderPopUp = useMemo(() => {
     return (
-      <div className={isHidden}>
+      <div className={visible}>
         <PopUp
-          text={textState}
-          icon={isSuccess ? successIcon : failIcon}
-          close={closePopup}
-          isWarning={!isSuccess}
+          text={message}
+          status={status}
+          isWarning={!status}
         />
       </div>
     )
-  }, [closePopup, isHidden, isSuccess, textState])
+  }, [visible, status, message])
 
 
 

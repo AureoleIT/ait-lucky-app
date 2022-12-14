@@ -9,11 +9,18 @@ import BgBlueButton from "public/shared/BgBlueButton";
 import SingleColorButton from "public/shared/SingleColorButton";
 import Title from "public/shared/Title";
 import CheckBox from "public/shared/CheckBox";
+import { messagesError, messagesSuccess } from "public/util/messages"
 
 import { db } from "src/firebase"
-import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, set, onValue, query, orderByChild, equalTo, update} from "firebase/database"
+import { storage } from "src/firebase"
+import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import { useUserCurrEventHook } from "public/redux/hooks";
+import { failIcon, hidden, show, successIcon } from "public/util/popup";
+
+import {v4 as uuidv4} from "uuid"
+import PopUp from "public/shared/PopUp";
 
 function EditEventRewardRegister() {
     // router
@@ -23,11 +30,14 @@ function EditEventRewardRegister() {
     // state
     const [event, setEvent] = useState({})
     const [rewards, setRewards] = useState([])
-    const [newRewards, setNewRewards] = useState([])
-    const [updateRewads, setUpdateRewards] = useState([])
     const [nameEvent, setNameEvent] = useState("")
     const [description, setDescription] = useState("")
     const [maxTicket, setMaxTicket] = useState("")
+
+    const [textState, setTextState] = useState("");
+    const [isHidden, setHidden] = useState(hidden);
+    const [isSuccess, setIsSuccess] = useState(false);
+  
 
     const [rewardId, setRewardId] = useState([])
     const [nameReward, setNameReward] = useState([])
@@ -39,6 +49,7 @@ function EditEventRewardRegister() {
     const [rewardCount, setRewardCount] = useState([])
 
     let uniqueKey = [] // uniqueKey store local id of reward
+    let diffKey = useRef([])
 
     // message
     const showMethod = useCallback((message, isTrue) => {
@@ -46,6 +57,10 @@ function EditEventRewardRegister() {
         setIsSuccess(isTrue);
         setHidden(show);
     }, [])
+
+    const closePopup = useCallback(() => {
+        setHidden(hidden);
+      }, []);
     
     // ref
     const checkBoxRef = useRef()
@@ -68,7 +83,7 @@ function EditEventRewardRegister() {
                 setNameEvent(Object.values(data)[0].title)
                 setDescription(Object.values(data)[0].description)
                 setMaxTicket(Object.values(data)[0].maxTicket)
-                Object.values(data)[0].publicFlag == 1 ? (checkBoxRef.current.checked = true) : (checkBoxRef.current.checked = false)
+                Object.values(data)[0].publicFlag === 1 ? (checkBoxRef.current.checked = true) : (checkBoxRef.current.checked = false)
                 setEvent(Object.values(data)[0])
             }
         })
@@ -126,67 +141,159 @@ function EditEventRewardRegister() {
                 uniqueKey.push(item)
             }
         })
-        
     },[key])
 
-    const handleNavigate = () => {
-        // router.push("/admin/event/event-detail");
-        console.log("name event: ", nameEvent);
-        console.log("description: ", description);
-        console.log("max ticket: ", maxTicket);
-        console.log("value: ", value);
-        console.log("public flag: ", checkBoxRef.current.checked);
-        console.log("uniqueKey: ", uniqueKey);
-        console.log("rewardId: ", rewardId);
+    useEffect(() =>
+    {
+        diffKey.current = uniqueKey.filter(x => rewardId.indexOf(x) === -1)
+    },[uniqueKey])
+
+    const handleNavigate = useCallback(() => {
+        if(nameEvent !== "" && description !== "" && maxTicket !== "")
+        {
+            update(ref(db, `event/${eventID}`),
+            {
+                eventId: eventID,
+                publicFlag: checkBoxRef.current.checked ? 1 : 0,
+                title: nameEvent,
+                description: description,
+                maxTicket: maxTicket,
+            })
+            .then(() =>
+            {
+                showMethod(messagesSuccess.I0007("sự kiện"), true)
+            })
+            .catch((e) =>
+            {
+                showMethod(messagesError.E4444, false)
+            })
+        }
 
         let valueLength = value.length - 1
         let lastValue = value[valueLength]
 
         if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined")
         {
-            uniqueKey.map((item, index) =>
+            let beforeSortNoLength = rewardId.length
+            rewardId.map((item, index) =>
             {
                 for(let tempValueLength = valueLength; tempValueLength > 0; tempValueLength --)
                 {
                     let tempValue = value[tempValueLength]
                     let tempItem = tempValue[0] ?? []
                     let tempId = tempItem.id
-                    let tempName = tempItem.name 
+                    let tempName = tempItem.name
                     let tempAmount = tempItem.amount
                     let tempImg = tempItem.image
+                    let updateImg = []
 
                     if(tempId === item)
                     {
-                        setNewRewards(prev => [...prev, 
+                        let imgLength = tempImg.length - 1
+                        for(let index = 1; index <= imgLength; index++)
+                        {
+                            if(typeof tempImg[index] === "object" && tempImg[index].length !== 0)
+                            {
+                                updateImg.push(tempImg[index])
+                                let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[index] + uuidv4()}`);
+                                uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                    getDownloadURL(snapshot.ref)
+                                        .then((url) =>
+                                        {
+                                            set(ref(db,`event_rewards/${tempId}/imgUrl/${index}`),url)
+                                                .catch((err) => showMethod(messagesError.E4444, false))
+                                        })
+                                })
+                            }
+                            else if (typeof tempImg[index] !== "undefined" && typeof tempImg[index] !== "object")
+                            {
+                                updateImg.push(tempImg[index])
+                                let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[index] + uuidv4()}`);
+                                uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                    getDownloadURL(snapshot.ref)
+                                        .then((url) =>
+                                        {
+                                            set(ref(db,`event_rewards/${tempId}/imgUrl/${index}`),url)
+                                                .catch((err) => showMethod(messagesError.E4444, false))
+                                        })
+                                })
+                            }
+                        }
+                        update(ref(db, `event_rewards/${tempId}`),
                         {
                             idReward: tempId,
                             nameReward:tempName,
                             eventId:eventID,
                             quantity: tempAmount,
                             sortNo:index,
-                            quantityRemain:"",
-                            imgUrl: tempImg
-                        }])
+                            quantityRemain:tempAmount,
+                            imgUrl: updateImg
+                        })
                         break;
                     }
                 }
                 return <></>
             })
+
+            diffKey.current.map((item, index) =>
+            {
+                for(let tempValueLength = valueLength; tempValueLength > 0; tempValueLength --)
+                {
+                    let tempValue = value[tempValueLength]
+                    let tempItem = tempValue[0] ?? []
+                    let tempId = tempItem.id
+                    let tempName = tempItem.name
+                    let tempAmount = tempItem.amount
+                    let tempImg = tempItem.image
+
+                    if(tempId === item)
+                    {
+                        let imgLength = tempImg.length - 1
+                        for(let index = 1; index <= imgLength; index++)
+                        {
+                            let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[index] + uuidv4()}`);
+                            uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                getDownloadURL(snapshot.ref)
+                                    .then((url) =>
+                                    {
+                                        set(ref(db,`event_rewards/${tempId}/imgUrl/${index}`),url)
+                                            .catch((err) => showMethod(messagesError.E4444, false))
+                                    })
+                            })
+                        }
+
+                        const newReward = {
+                            idReward: tempId,
+                            nameReward:tempName,
+                            eventId:eventID,
+                            quantity: tempAmount,
+                            sortNo:index + beforeSortNoLength,
+                            quantityRemain:"",
+                            imgUrl: tempImg
+                        }
+                        set(ref(db, `event_rewards/${tempId}`),newReward)
+                            .then(() =>
+                            {
+                                showMethod(messagesSuccess.I0001, true)
+                            })
+                            .catch((err) =>
+                            {
+                                showMethod(messagesError.E4444, false)
+                            })
+                        break;
+                    }
+                }
+                return <></>
+            })
+            setTimeout(() =>
+            {
+                router.push("/admin/event/event-detail");
+            },[2000])
         }
-        else {
+        else{
             showMethod(messagesError.E0001("Tên giải thưởng"), false)
         }
-    };
-
-    useEffect(() =>
-    {
-        console.log("new: ",newRewards);
-    },[newRewards])
-
-    // useEffect(() =>
-    // {
-    //     console.log("update: ",updateRewads);
-    // },[updateRewads])
+    });
 
     const handleAdd = useCallback(() =>
     {
@@ -329,8 +436,21 @@ function EditEventRewardRegister() {
         )
     },[handleNavigate])
 
+    const renderPopUp = useMemo(() => {
+        return (
+          <div className={isHidden}>
+            <PopUp
+              text={textState}
+              icon={isSuccess ? successIcon : failIcon}
+              close={closePopup}
+              isWarning={!isSuccess}
+            />
+          </div>
+        )
+      }, [closePopup, isHidden, isSuccess, textState])
+
     return (
-        <div className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
+        <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
             {renderHeader}
             <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
                 {renderTitle}
@@ -346,8 +466,8 @@ function EditEventRewardRegister() {
                 {renderAddButton}
             </div>
             {renderEditButton}
-            
-        </div>
+            {renderPopUp}
+        </section>
     );
 }
 

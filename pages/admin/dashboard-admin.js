@@ -152,7 +152,7 @@ export default function Dashboard() {
                   "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
                 }
               </p>
-              <a href="/event/event-register">
+              <a href="/admin/event/event-register">
                 <BgBlueButton content={"BẮT ĐẦU NGAY"} />
               </a>
             </div>

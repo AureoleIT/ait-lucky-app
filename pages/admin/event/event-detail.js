@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import BgBlueButton from "public/shared/BgBlueButton";
@@ -69,7 +68,7 @@ function EventDetail() {
         setCountdown(select);
     };
 
-    const handlePrepare = () => {
+    const handlePrepare = useCallback(() => {
         router.push({
         pathname:"/admin/event/countdown-checkin",
         query:
@@ -77,12 +76,12 @@ function EventDetail() {
             countdown
         }
         })
-    };
+    },[countdown, router]);
 
-    const handleEditPageNavigation = () => {
+    const handleEditPageNavigation = useCallback(() => {
         router.push("/admin/event/edit-event-reward-register");
         
-    };
+    },[router]);
 
     const renderTitle = useMemo(() =>
     {
