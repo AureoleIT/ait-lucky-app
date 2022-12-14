@@ -25,10 +25,12 @@ import { ref, set, child, get } from "firebase/database";
 import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
-import { hidden, show, successIcon, failIcon, ShowMethod } from "public/util/popup";
+import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Button from "public/shared/Button";
+import Input from "public/shared/Input";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -202,15 +204,16 @@ export default function Register() {
 
   const renderName = useMemo(() => {
     return (
-      <AuthInput
-        content={"Tên đăng nhập"}
-        leftColor={LEFT_COLOR}
-        rightColor={
+      <Input
+        type="text"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={
           hasWhiteSpaceAndValidLength(name)
             ? FAIL_RIGHT_COLOR
             : RIGHT_COLOR
         }
-        type={"text"}
+        content={"Tên đăng nhập"}
         onChange={setNameData}
       />
     )
@@ -218,11 +221,12 @@ export default function Register() {
 
   const renderMail = useMemo(() => {
     return (
-      <AuthInput
+      <Input
+        type="text"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!isEmail(email) ? FAIL_RIGHT_COLOR : RIGHT_COLOR}
         content={"Email"}
-        leftColor={LEFT_COLOR}
-        rightColor={!isEmail(email) ? FAIL_RIGHT_COLOR : RIGHT_COLOR}
-        type={"email"}
         onChange={setEmailData}
       />
     )
@@ -230,13 +234,14 @@ export default function Register() {
 
   const renderPassword = useMemo(() => {
     return (
-      <AuthInput
-        content={"Mật khẩu"}
-        type={"password"}
-        leftColor={LEFT_COLOR}
-        rightColor={
+      <Input
+        type="password"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={
           enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
         }
+        content={"Mật khẩu"}
         onChange={setPassData}
       />
     )
@@ -244,13 +249,14 @@ export default function Register() {
 
   const renderRetypePassword = useMemo(() => {
     return (
-      <AuthInput
-        content={"Nhập lại mật khẩu"}
-        type={"password"}
-        leftColor={LEFT_COLOR}
-        rightColor={
+      <Input
+        type="password"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={
           enoughNumCountPass(rePassword) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
         }
+        content={"Nhập lại mật khẩu"}
         onChange={setRePassData}
       />
     )
@@ -264,11 +270,14 @@ export default function Register() {
 
   const renderConfirmButton = useMemo(() => {
     return (
-      <ConfirmButton
-        text="Đăng ký"
+      <Button
+        content="đăng ký"
         onClick={() => {
           signUpSubmit(name, email, password);
         }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+        marginY={2}
       />
     )
   }, [email, name, password, signUpSubmit])
@@ -285,11 +294,15 @@ export default function Register() {
 
   const renderAuthButton = useMemo(() => {
     return (
-      <BgWhiteButton
-        content="ĐĂNG KÝ VỚI"
+      <Button
+        content="đăng ký với"
         onClick={() => {
           signUpAuth();
         }}
+        isTextGradient={true}
+        logoGg={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
       />
     )
   }, [signUpAuth])
@@ -329,12 +342,10 @@ export default function Register() {
           className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}
         >
           {renderTitle}
-          <div>
-            {renderName}
-            {renderMail}
-            {renderPassword}
-            {renderRetypePassword}
-          </div>
+          {renderName}
+          {renderMail}
+          {renderPassword}
+          {renderRetypePassword}
           {renderPrivacy}
           {renderConfirmButton}
           <div>

@@ -12,6 +12,10 @@ import {
     USER_CURR_HOSTING_EVENT,
     USER_EVENT_CREATING,
     USER_REWARD_CREATING,
+    USER_UPDATE_EVENT,
+    USER_UPDATE_PARTICIPANT,
+    USER_UPDATE_REWARD,
+    USER_UPDATE_REWARD_CREATING,
     POPUP_MESSAGE,
     POPUP_STATUS,
     POPUP_VISIBLE
@@ -89,6 +93,46 @@ export const userReducer = (state = userState, action) => {
         }
         case USER_REWARD_CREATING: {
             return { ...state, currRewardCreating: [...state.currRewardCreating, ...action.payload] }
+        }
+        case USER_UPDATE_EVENT: {
+            var object = state.event.map((item, index) => {
+                if (item.eventId === action.payload.eventId) {
+                    state.event[index] = action.payload;
+                    return state.event;
+                }
+                return [...state.event, ...action.payload];
+            })
+            return { ...state, event: object }
+        }
+        case USER_UPDATE_PARTICIPANT: {
+            object = state.participant.map((item, index) => {
+                if (item.participantId === action.payload.participantId) {
+                    state.participant[index] = action.payload;
+                    return state.participant;
+                }
+                return [...state.participant, ...action.payload];
+            })
+            return { ...state, participant: object }
+        }
+        case USER_UPDATE_REWARD: {
+            object = state.reward.map((item, index) => {
+                if (item.idReward === action.payload.idReward) {
+                    state.reward[index] = action.payload;
+                    return state.reward;
+                }
+                return [...state.reward, ...action.payload];
+            })
+            return { ...state, reward: object }
+        }
+        case USER_UPDATE_REWARD_CREATING: {
+            object = state.currRewardCreating.map((item, index) => {
+                if (item.idReward === action.payload.idReward) {
+                    state.currRewardCreating[index] = action.payload;
+                    return state.currRewardCreating;
+                }
+                return [...state.currRewardCreating, ...action.payload];
+            })
+            return { ...state, currRewardCreating: object }
         }
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")
