@@ -1,43 +1,59 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
-import { failIcon, hidden, show, successIcon } from "public/util/popup";
+import { ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Reward from "components/RewardRegister/Reward";
+import { messagesError, messagesSuccess } from "public/util/messages"
+
+import {v4 as uuidv4} from "uuid"
+
+import { db } from "src/firebase"
+import { storage } from "src/firebase"
+import { set, ref } from "firebase/database"
+import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
+
+import { useUserCurrEventHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useDispatch } from "react-redux"
 
 function RewardRegister() {
     // router
     const router = useRouter();
+    // eventID
+    const eventID = useUserCurrEventHook()
     // state
-    const [textState, setTextState] = useState("")
-    const [isSuccess, setIsSuccess] = useState(false)
-    const [isHidden, setIsHidden] = useState(hidden)
     const [key, setKey] = useState([])
     const [rewardCount, setRewardCount] = useState([])
     // state store data
-    const [data, setData] = useState([{}]) // data store array of object of reward
     const [value, setValue] = useState([]) // value store object of reward when typing
     // ref store data
     const refs = useRef()
 
-    let uniqueKey = []// uniqueKey store local id of reward
+    let uniqueKey = [] // uniqueKey store local id of reward
 
     const wrap = {
         height:"100%",
         zIndex: "20",
     }
 
+    // message pop up
+    const message = usePopUpMessageHook()
+    const status = usePopUpStatusHook()
+    const visible = usePopUpVisibleHook()
+
+    const dispatch = useDispatch()
+
     // idea: each reward has its own id (render in the first time component called by uuid)
     // idea: output of reward data is array of object and it's update when has change with the key is id render by uuid
     // idea: so we only get the last value of reward of each id
 
     // get value of reward realtime
-    const handleReceiveData = (data) =>
+    const handleReceiveData = useCallback((data) =>
     {
         setValue(prev => [...prev, data])
-    }
+    })
 
     // get array of reward id (has duplicate)
     useEffect(() =>
@@ -60,12 +76,10 @@ function RewardRegister() {
                 uniqueKey.push(item)
             }
         })
-    },[key, uniqueKey])
-
-    const closePopup = (e) => { setIsHidden(hidden) }
+    },[key])
 
     // add reward
-    const handleAdd = () =>
+    const handleAdd = useCallback(() =>
     {
         if(rewardCount.length > 0)
         {
@@ -78,96 +92,151 @@ function RewardRegister() {
             }
             else 
             {
-                setTextState("Vui long nhap ten giai thuong !")
-                setIsSuccess(false)
-                setIsHidden(show)
+                ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
             }
         }
         else if(rewardCount.length === 0)
         {
             setRewardCount(prev => [...prev, 1])
         }
-    }
+    },[rewardCount, value, dispatch])
     
     // navigate to event detail, push data to firebase and add to redux
-    const handleNavigate = () =>
+    const handleNavigate = useCallback(() =>
     {
         let valueLength = value.length - 1
         let lastValue = value[valueLength]
 
-        if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined") {
-            setTextState("Da dang ky su kien !")
-            setIsSuccess(true)
-            setIsHidden(show)
-
-            setTimeout(() =>
-            {
-                router.push("/admin/event/event-detail")
-            },2000)
+        if(uniqueKey.length === 0)
+        {
+            ShowMethod(dispatch, messagesError.E0001("Phần thưởng"), false)
         }
         else {
-            setTextState("Vui long nhap ten giai thuong !")
-            setIsSuccess(false)
-            setIsHidden(show)
+            if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined") {
+                // save value to data
+                uniqueKey.map((item, index) =>
+                {
+                    for(let tempValueLength = valueLength; tempValueLength > 0; tempValueLength --)
+                    {
+                        const id = uuidv4()
+                        let tempValue = value[tempValueLength]
+                        let tempItem = tempValue[0] ?? []
+                        let tempId = tempItem.id
+                        let tempName = tempItem.name 
+                        let tempAmount = tempItem.amount
+                        let tempImg = tempItem.image
+
+                        if(tempId === item)
+                        {
+                            let imgLength = tempImg.length - 1
+                            for(let index = 1; index <= imgLength; index++)
+                            {
+                                let imageRef = refStorage(storage, `rewards_image/${eventID}/${id}/${tempImg[index] + uuidv4()}`);
+                                uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                    getDownloadURL(snapshot.ref)
+                                        .then((url) =>
+                                        {
+                                            set(ref(db,`event_rewards/${id}/imgUrl/${index}`),url)
+                                                .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                        })
+                                })
+                            }
+
+                            const newReward = {
+                                idReward: id,
+                                nameReward:tempName,
+                                eventId:eventID,
+                                quantity: tempAmount,
+                                sortNo:index,
+                                quantityRemain:tempAmount,
+                                imgUrl: tempImg
+                            }
+                            set(ref(db, `event_rewards/${id}`),newReward)
+                                .then(() =>
+                                {
+                                    ShowMethod(dispatch, messagesSuccess.I0001, true)
+                                })
+                                .catch((err) =>
+                                {
+                                    ShowMethod(dispatch, messagesError.E4444, false)
+                                })
+                            break;
+                        }
+                    }
+                    return <></>
+                })
+                setTimeout(() =>
+                {
+                    router.push("/admin/event/event-detail")
+                },2000)
+            }
+            else {
+                ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
+            }
         }
-        // setData(prev => [...prev, value])
-    }
+    },[dispatch, value, uniqueKey])
 
-    // useEffect(() =>
-    // {
-    //     const size = data.length-1;
-    //     const temp = data[size];
-    //     const length = temp.length;
-    //     const last =  temp[length-1];
-    //     const arr = last ?? [];
-    //     console.log({length});
-    //     console.log({last});
-    //     console.log(arr[0]);
-    //     // console.log({data})
-    // })
-
-    // useEffect(() =>
-    // {
-    //     console.log(uniqueKey);
-    // },[uniqueKey])
-
-    useEffect(() =>
-    {   
-        console.log(rewardCount.length);
+    // render component
+    const renderReward = useMemo(() =>
+    {
+        return (
+            <div className="w-full flex flex-col items-center justify-center">
+                {
+                    rewardCount.map((item, index) =>
+                    {
+                        return (
+                            <div key={index} className="flex w-full justify-center items-center">
+                                <Reward
+                                    ref={refs}
+                                    id={index}
+                                    inputId={index}
+                                    fileID={`file${index}`}
+                                    toggleID={`toggle${index}`}
+                                    receiveData={handleReceiveData}
+                                /> 
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        )
     },[rewardCount])
+
+    const renderAddRewardButton = useMemo(() =>
+    {
+        return (
+            <div className="w-full">
+                <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
+            </div>
+        )
+    },[handleAdd])
+
+    const renderRewardRegisterButton = useMemo(() =>
+    {
+        return (
+            <div className="pb-4 w-4/5 drop-shadow-lg max-w-xl">
+                <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} onClick={() => handleNavigate(value, uniqueKey)} />
+            </div>
+        )
+    },[handleNavigate, value, uniqueKey])
+
+    const renderPopUp = useMemo(() =>
+    {
+        return (
+            <div className={visible} style={wrap}>
+                <PopUp text={message} status={status} isWarning={!status} />
+            </div>
+        )
+    },[visible, message, status])
 
     return (
         <section className="flex flex-col items-center justify-between w-screen h-screen">
             <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
-                <div className="w-full flex flex-col items-center justify-center">
-                    {
-                        rewardCount.map((item, index) =>
-                        {
-                            return (
-                                <div key={index} className="flex w-full justify-center items-center">
-                                    <Reward
-                                        ref={refs}
-                                        id={index}
-                                        inputId={index}
-                                        fileID={`file${index}`}
-                                        toggleID={`toggle${index}`}
-                                        receiveData={handleReceiveData}
-                                    /> 
-                                </div>
-                            )
-                        })
-                    }
-                </div>
-                <div className="w-full">
-                    <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
-                </div>
+                {renderReward}
+                {renderAddRewardButton}
             </div>
-            <div className="pb-4 w-4/5 drop-shadow-lg max-w-xl">
-                <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} onClick={handleNavigate} />
-            </div>
-            <div className={isHidden} style={wrap}>
-                <PopUp text={textState} icon={isSuccess ? successIcon : failIcon} close={closePopup} isWarning={!isSuccess} />
-            </div>
+            {renderRewardRegisterButton}
+            {renderPopUp}
         </section>
   );
 }
