@@ -1,29 +1,39 @@
-import Auth from "layouts/Auth.js";
-import React, { useState, useEffect, useMemo } from "react";
-import AuthInput from "public/shared/AuthInput";
-import BgBlueButton from "public/shared/BgBlueButton";
-import GradientLine from "public/shared/GradientLine";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { useAuth } from "src/context/AuthContext";
+import router from "next/router";
+
+//fiebase
 import {
   ref,
+  get,
   query,
   orderByChild,
   equalTo,
   update,
   onValue,
 } from "firebase/database";
+import { db } from "src/firebase";
+
+//util
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
-import OverlayBlock from "public/shared/OverlayBlock";
 import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { db } from "src/firebase";
+
+//component
+import OverlayBlock from "public/shared/OverlayBlock";
+import Input from "public/shared/Input";
+import Title from "public/shared/Title";
+import AuthFooter from "public/shared/AuthFooter";
+import Button from "public/shared/Button";
+import Line from "public/shared/Line";
+
 export default function ForgotPassword() {
-  const authContext = useAuth();
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [newPass, setNew] = useState("");
+  const [repeatPass, setRepeat] = useState("");
+  const [flagReset, setFlagReset] = useState(false);
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -35,8 +45,18 @@ export default function ForgotPassword() {
     setIsHidden(isHidden);
   }, [])
 
-  const handleForgot = (email) => {
+  const handleCheck = (name, email) => {
     // validation
+    if (hasWhiteSpaceAndValidLength(name)) {
+      showMethod(messagesError.E0005("Tên đăng nhập"), false, false);
+      return;
+    }
+
+    if (isEmpty(name)) {
+      showMethod(messagesError.E0001("Tên đăng nhập"), false, false);
+      return;
+    }
+
     if (isEmpty(email)) {
       showMethod(messagesError.E0001("Email"), false, false);
       return;
@@ -58,12 +78,19 @@ export default function ForgotPassword() {
         const record = snapshot.val() ?? [];
         const values = Object.values(record);
 
-        if (values.length == 0) {
+        if (values.length === 0) {
           showMethod(messagesError.E0009, false, false);
           return;
+        }
+        if (values[0].name !== name) {
+          showMethod(messagesError.E0011("Tên đăng nhập"), false, false);
+          return;
+        }
+        if (values[0].email !== email) {
+          showMethod(messagesError.E0011("Email"), false, false);
+          return;
         } else {
-          showMethod(messagesSuccess.I0003, true, false)
-          //authContext.resetPassword(email);
+          setFlagReset(true);
           return;
         }
       })
@@ -72,6 +99,49 @@ export default function ForgotPassword() {
       return;
     }
   };
+
+  const handleReset = () => {
+    if (isEmpty(newPass) || isEmpty(repeatPass)) {
+      showMethod(messagesError.E0004, false, false);
+      return;
+    }
+
+    if (hasWhiteSpaceAndValidLength(newPass)) {
+      showMethod(messagesError.E0005("mật khẩu mới"), false, false);
+      return;
+    }
+
+    if (hasWhiteSpaceAndValidLength(repeatPass)) {
+      showMethod(messagesError.E0005("nhập lại mật khẩu"), false, false);
+      return;
+    }
+
+    if (newPass != repeatPass) {
+      showMethod(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"), false, false);
+      return;
+    }
+
+    const que = query(ref(db, "users"), orderByChild("email"), equalTo(email));
+    get(que).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+
+      update(ref(db, 'users/' + values[0].userId),
+        {
+          password: newPass
+        }).then(() => {
+          showMethod(messagesSuccess.I0003, true, false);
+          setFlagReset(false);
+          router.push("auth/login")
+          return;
+        })
+        .catch((error) => {
+          showMethod(error, false, false);
+          return;
+        });
+
+    })
+  }
 
   // show popup
   useEffect(() => {
@@ -87,7 +157,36 @@ export default function ForgotPassword() {
   }, [isHidden])
 
 
-  const popupNoti = () => {
+  //useCallback
+  const nameData = useCallback(
+    (e) => {
+      setName(e?.target?.value)
+    }, [setName]
+  )
+
+  const emailData = useCallback(
+    (e) => {
+      setEmail(e?.target?.value)
+    }, [setEmail]
+  )
+
+
+  const newPassData = useCallback(
+    (e) => {
+      setNew(e?.target?.value)
+    },
+    [setNew]
+  )
+
+  const repeatPassData = useCallback(
+    (e) => {
+      setRepeat(e?.target?.value)
+    },
+    [setRepeat]
+  )
+
+  //useMemo
+  const popupNoti = useMemo(() => {
     return (
       <div className="flex flex-col items-center">
         <div className="text-center text-[#004599]">
@@ -101,31 +200,128 @@ export default function ForgotPassword() {
         ></img>
       </div>
     )
-  }
+  }, [])
+
+  const renderName = useMemo(() => {
+    return (
+      <Input
+        content={"Tên đăng nhập"}
+        type={"text"}
+        isTextGradient={true}
+        onChange={nameData}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} />
+    )
+  }, [name, setName])
+
+  const renderEmailInput = useMemo(() => {
+    return (
+      <Input
+        content={"Email"}
+        type={"email"}
+        isTextGradient={true}
+        onChange={emailData}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} />
+    )
+  }, [email, setEmail])
+
+  const renderNewPass = useMemo(() => {
+    return (
+      <Input
+        content={"Mật khẩu mới"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={newPassData}
+        value={newPass} />
+    )
+  }, [newPass, newPassData])
+
+  const renderRepeatPass = useMemo(() => {
+    return (
+      <Input
+        content={"Nhập lại mật khẩu"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={repeatPassData}
+        value={repeatPass} />
+    )
+  }, [repeatPass, repeatPassData]
+  )
+
+  const renderTitle = useMemo(() => {
+    return (
+      <Title title="QUÊN MẬT KHẨU" />
+    )
+  }, [])
+
+  const renderButtonCheck = useMemo(() => {
+    return (
+      <Button
+        content="GỬI"
+        onClick={() => {
+          handleCheck(name, email);
+        }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+      />
+    )
+  }, [handleCheck])
+
+  const renderButtonReset = useMemo(() => {
+    return (
+      <Button
+        content="GỬI"
+        onClick={() => {
+          handleReset();
+        }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+      />
+    )
+  }, [handleReset])
+
+  const renderLine = useMemo(() => {
+    return (
+      <Line />
+    )
+  }, [])
+
+  const renderFooter = useMemo(() => {
+    return (
+      <AuthFooter
+        normalContent="Chưa có tài khoản?"
+        boldContent="Đăng kí ngay!!!"
+        href="/auth/register"
+      />
+    )
+  }, [])
 
   return (
     <>
       <section className="h-screen flex justify-center items-center">
         <div className="f-full flex flex-col justify-center items-center w-full h-full">
           <div className="relative mb-5">
-            <Title title="QUÊN MẬT KHẨU" />
+            {renderTitle}
           </div>
-          <div className="w-3/4 max-w-md mx-0">
-            <AuthInput
-              content={"Email"}
-              type={"email"}
-              onChange={(e) => setEmail(e.target.value)}
-              leftColor={LEFT_COLOR}
-              rightColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-            />
-          </div>
-          <div className="w-3/4 max-w-md">
-            <BgBlueButton
-              content="GỬI"
-              onClick={() => {
-                handleForgot(email);
-              }}
-            />
+          {!flagReset ?
+
+            <div className="w-3/4 max-w-md mx-0">
+              {renderName}
+              {renderEmailInput}
+              {renderButtonCheck}
+            </div>
+            : <div className="w-3/4 max-w-md mx-0">
+              {renderNewPass}
+              {renderRepeatPass}
+              {renderButtonReset}
+            </div>
+          }
+          <div className="w-3/4 max-w-md mt-2">
             <Link href={"/auth/login"} className="my-0">
               <button className="w-full ">
                 <div className="font-[600] text-[16px] text-[#004599]">
@@ -133,20 +329,14 @@ export default function ForgotPassword() {
                 </div>
               </button>
             </Link>
-            <GradientLine color1="#003B93" color2="#00F0FF" content="" />
+            {renderLine}
           </div>
           <div className="absolute bottom-20">
-            <AuthFooter
-              normalContent="Chưa có tài khoản?"
-              boldContent="Đăng kí ngay!!!"
-              href="/auth/register"
-            />
+            {renderFooter}
           </div>
-          <OverlayBlock childDiv={popupNoti()} id={"forgotOverlay"} />
+          <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
         </div>
       </section>
     </>
   );
 }
-
-ForgotPassword.layout = Auth;
