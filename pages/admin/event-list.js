@@ -17,6 +17,8 @@ import { useUserPackageHook } from "public/redux/hooks";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { userCurrentHostingEvent } from "public/redux/actions";
+import Title from "public/shared/Title";
+import Input from "public/shared/Input";
 
 export default function EventList() {
   const dispatch = useDispatch();
@@ -55,11 +57,7 @@ export default function EventList() {
   }, []);
 
   const renderTitle = useMemo(() => {
-    return (
-      <h1 className="uppercase font-extrabold text-[#004599] text-[30px] text-center font-[Nunito Sans] leading-[46.5px]">
-        danh sách sự kiện
-      </h1>
-    );
+    return <Title title={"danh sách sự kiện"} fontSize={30} />;
   }, []);
 
   if (!currentUser.userId) {
@@ -74,12 +72,13 @@ export default function EventList() {
           {renderTitle}
           <div className="max-w-md flex flex-col w-full gap-y-[19px] mt-[19px]">
             <div id="search" className="flex flex-col mx-2">
-              <AuthInput
+              <Input
                 content={"Tên sự kiện"}
                 type={"text"}
                 onChange={(e) => setSearchContent(e.target.value)}
-                leftColor={LEFT_COLOR}
-                rightColor={RIGHT_COLOR}
+                primaryColor={LEFT_COLOR}
+                secondaryColor={RIGHT_COLOR}
+                isTextGradient={true}
               />
             </div>
             <div className="flex flex-col gap-y-[7px] font-[Nunito Sans] font-bold overflow-auto max-h-[700px] mb-3">
