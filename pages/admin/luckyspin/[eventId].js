@@ -66,7 +66,9 @@ export default function LuckySpinAdmin() {
                 // Nếu không phải admin sự kiện, đưa về trang chủ.
                 if (adminId !== data.createBy) router.push('/');
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
-                if (rewardChosing !== rewardChosingIndex) setRewardChosing(rewardChosingIndex);
+                const rewardChosingId = data['playingData']['rewardChosingId'];
+                setRewardChosing(rewardChosingIndex);
+                setIDRewardChosing(rewardChosingId);
             } else {
                 router.back();
             }
@@ -180,7 +182,7 @@ export default function LuckySpinAdmin() {
         toggleSelectMenu();
         update(ref(db, 'event/' + EventID + '/playingData'),
             {
-                rewardChosingIndex: idx
+                rewardChosingId: remainRewardList[idx].idReward
             });
     }
 
@@ -228,11 +230,6 @@ export default function LuckySpinAdmin() {
     useEffect(() => {
         setEditedPlayerList([...remainPlayerList]);
     }, [remainPlayerList])
-
-    // Điều chỉnh danh sách giải thưởng còn lại
-    useEffect(() => {
-        setIDRewardChosing(remainRewardList.length > 0?remainRewardList[rewardChosing].idReward:"NONE");
-    }, [remainRewardList])
 
     // -------------------------------------------------------------------- useMemo
     const spinBlock = useMemo(() => {
