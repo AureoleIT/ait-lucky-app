@@ -10,6 +10,7 @@ Input.js sẽ thay thế cho các component sau:
   - AuthInput.js
   - TextNoLabel.js
   - BorderText.js (truyền children)
+  - TextArea.js
   
 Line.js sẽ thay thế cho các component sau:
   - LineGradient.js

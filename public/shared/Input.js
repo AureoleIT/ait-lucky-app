@@ -3,7 +3,7 @@ import { LEFT_COLOR, RIGHT_COLOR} from "public/util/colors";
 
 export default function Input({
   content, // Nội dung hiển thị trên Input
-  isTextGradient = false,
+  isTextGradient = true,
   labelFor, // Nội dung được điền vào input sẽ được gán cho label này
   noContent = false, // Nếu là True thì Input sẽ không có label và placeHolder được hiển thị ở giữa Input
   placeHolder = "", // Mô tả/giải thích cho nội dung được nhập vào input
@@ -12,9 +12,9 @@ export default function Input({
   secondaryColor = RIGHT_COLOR, // Thay thế cho rightColor ở component AuthInput cũ
   value,
   onChange,
-  row,
+  row = 1,
   children,
-  is
+  isMultiLine = false
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -23,17 +23,25 @@ export default function Input({
   };
   return (
     <div
-      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] py-[2px] my-4 outline-none relative flex flex-col`}
+      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] my-4 outline-none relative flex flex-col`}
     >
       <div className="h-full grow flex flex-col">
         <input
           type={type}
-          className={`grow min-h-full w-full rounded-lg text-lg px-4 outline-none border-none ${
-            noContent ? "text-center" : ""
-          } ${children ? "hidden" : ""}`}
+          className={`min-h-[60px] w-full rounded-lg text-lg px-4 outline-none border-none 
+          ${noContent ? "text-center" : ""} 
+          ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`} 
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
+          required
+        />
+        <textarea
+          className={`min-h-[60px] w-full rounded-lg px-4 py-4 text-lg outline-none border-none 
+          ${isMultiLine ? "" : "hidden"} `}
+          rows={row}
+          value={value}
+          onChange={onChange}
           required
         />
         <div className="bg-white absolute w-full top-0">
