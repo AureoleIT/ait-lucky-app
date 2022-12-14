@@ -66,10 +66,6 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
         if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
     }, [playerChosing])
 
-    useEffect(() => {
-        console.log(listReward);
-    }, [listReward]);
-
     return (
         <>
             {changeButton?
