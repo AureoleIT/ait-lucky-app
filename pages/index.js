@@ -18,7 +18,7 @@ import { isEmpty } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent } from "public/redux/actions";
+import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import Logo from "public/shared/Logo";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
@@ -34,6 +34,7 @@ export default function Index() {
   var BG_COLOR =
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   var [event, setEvent] = useState({});
+  var [user, setUser] = useState({});
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -48,18 +49,25 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      get(child(ref(db), "users/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currUser = values.find((item) => item.userId === event.createBy);
+        setUser(currUser);
+      });
       setEvent(currEvent);
       ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
       setTimeout(() => {
         router.push("/event/info");
       }, 1000);
     });
-  }, [dispatch, pin]);
+  }, [dispatch, event.createBy, pin]);
 
   /* Export current event to redux for another access */
   useEffect(() => {
     dispatch(incognitoEvent(event));
-  }, [dispatch, event])
+    dispatch(incognitoUser(user));
+  }, [dispatch, event, user])
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {

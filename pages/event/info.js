@@ -46,6 +46,7 @@ export default function Info() {
       participantId: id,
       createAt: new Date().getTime(),
       status: 2,
+      nameDisplay: name,
       idReward: "",
       eventId: currEvent.eventId,
     };
