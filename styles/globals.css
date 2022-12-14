@@ -43,3 +43,26 @@ input[type='range'].muteInput::-webkit-slider-thumb {
   margin-top: -5px;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
 }
+
+.logoLoading path {
+  fill: transparent;
+  stroke-width: 10;
+  stroke-dasharray: 4000;
+  stroke-dashoffset: 4000;
+  stroke: #004599;
+  animation: animate-loading-logo 1.5s linear infinite;
+}
+
+@keyframes animate-loading-logo {
+  0% {
+    stroke-dashoffset: 4000;
+  }
+  45% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    fill: #004599;
+  }
+}

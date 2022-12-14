@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 export default function PageLoading() {
     return (
         <section className="relative h-screen px-5 py-5 mx-auto flex flex-col justify-center items-center w-full bg-gradient-to-t from-[#003B93] to-[#00F0FF]">
-            <div className="flex mb-2">
+            <div className="flex mb-5 logoLoading">
                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                     width="170.000000pt" height="163.000000pt" viewBox="0 0 170.000000 163.000000"
                     preserveAspectRatio="xMidYMid meet"
@@ -24,11 +24,11 @@ export default function PageLoading() {
             <div className="flex">
 
                 <p className="text-white font-bold text-2xl">
-                    LOADING
+                    ĐANG TẢI
                 </p>
-                <span><p className="animate-[bounce_0.75s_linear_infinite] delay-200 ml-1 text-white font-[900] text-2xl">.</p></span>
-                <span><p className="animate-[bounce_0.75s_linear_infinite_0.25s] ml-1 text-white font-[900] text-2xl">.</p></span>
-                <span><p className="animate-[bounce_0.75s_linear_infinite_0.5s] ml-1 text-white font-[900] text-2xl">.</p></span>
+                <span><p className="animate-[bounce_0.75s_ease-in-out_infinite] delay-200 ml-1 text-white font-[900] text-2xl">.</p></span>
+                <span><p className="animate-[bounce_0.75s_ease-in-out_infinite_0.25s] ml-1 text-white font-[900] text-2xl">.</p></span>
+                <span><p className="animate-[bounce_0.75s_ease-in-out_infinite_0.5s] ml-1 text-white font-[900] text-2xl">.</p></span>
             </div>
         </section>
     )

@@ -110,7 +110,7 @@ export default function LuckySpinAdmin() {
                 }, 200)
             }
         });
-        setTimeout(() => setLoadedData(true), 1000)
+        setTimeout(() => setLoadedData(true), 1500)
     }
 
     // ------------------------------------------------ Function
