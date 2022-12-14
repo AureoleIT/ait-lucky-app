@@ -100,7 +100,7 @@ export default function EventResult() {
   return (
     <section className="overflow-hidden flex flex-col justify-evenly h-screen">
       <div className="flex flex-col items-center justify-center h-full">
-        <h1 className="uppercase text-4xl py-0 font-bold text-[#004599]">
+        <h1 className="uppercase text-4xl py-0 font-bold text-[#004599] mt-2">
           tiệc cuối năm
         </h1>
         <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]">
