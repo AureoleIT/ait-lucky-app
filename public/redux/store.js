@@ -1,11 +1,13 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux'
-import { addReducer } from './reducer'
+import { userReducer, playerReducer, popUpReducer } from './reducer'
 import thunk from 'redux-thunk'
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 const reducers = combineReducers({
-	addReducer: addReducer,
+	userReducer: userReducer,
+	playerReducer: playerReducer,
+	popUpReducer: popUpReducer,
 });
 
 const persistConfig = {

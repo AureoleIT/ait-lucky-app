@@ -1,30 +1,129 @@
+import { hidden } from "public/util/popup"
 import {
-    ADD_EVENT,
-    ADD_USER,
-    ADD_PARTICIPANT,
-    ADD_REWARD,
-} from "./actions";
+    INCOGNITO_PARTICIPANT,
+    INCOGNITO_EVENT,
+    INCOGNITO_USER,
+    INCOGNITO_REWARD,
+    USER_PARTICIPANT,
+    USER_EVENT,
+    USER_PACKAGE,
+    USER_REWARD,
+    REMOVE_STATE,
+    USER_CURR_HOSTING_EVENT,
+    USER_EVENT_CREATING,
+    USER_REWARD_CREATING,
+    POPUP_MESSAGE,
+    POPUP_STATUS,
+    POPUP_VISIBLE
+} from "./constants"
 
-const initState = {
+const joinState = {
     event: {},
     user: {},
     reward: {},
     participant: {}
 }
 
-export const addReducer = (state = initState, action) => {
+const userState = {
+    event: [],
+    user: {},
+    reward: [],
+    participant: [],
+    currEvent: {},
+    currEventCreating: {},
+    currRewardCreating: [],
+}
+
+const popUpState = {
+    message: "",
+    status: false,
+    visible: hidden
+}
+
+export const playerReducer = (state = joinState, action) => {
     switch (action.type) {
-        case ADD_EVENT: {
+        case INCOGNITO_EVENT: {
             return { ...state, event: action.payload }
         }
-        case ADD_PARTICIPANT: {
+        case INCOGNITO_PARTICIPANT: {
             return { ...state, participant: action.payload }
         }
-        case ADD_USER: {
+        case INCOGNITO_USER: {
             return { ...state, user: action.payload }
         }
-        case ADD_REWARD: {
+        case INCOGNITO_REWARD: {
             return { ...state, reward: action.payload }
+        }
+        case REMOVE_STATE: {
+            console.log("REMOVE STATE PLAYER")
+            return {
+                event: {},
+                user: {},
+                reward: {},
+                participant: {}
+            };
+        }
+        default:
+            return state
+    }
+}
+export const userReducer = (state = userState, action) => {
+    switch (action.type) {
+        case USER_EVENT: {
+            return { ...state, event: [...state.event, ...action.payload] }
+        }
+        case USER_PARTICIPANT: {
+            return { ...state, participant: [...state.participant, ...action.payload] }
+        }
+        case USER_PACKAGE: {
+            return { ...state, user: action.payload }
+        }
+        case USER_REWARD: {
+            return { ...state, reward: [...state.reward, ...action.payload] }
+        }
+        case USER_CURR_HOSTING_EVENT: {
+            return { ...state, currEvent: action.payload }
+        }
+        case USER_EVENT_CREATING: {
+            return { ...state, currEventCreating: action.payload }
+        }
+        case USER_REWARD_CREATING: {
+            return { ...state, currRewardCreating: [...state.currRewardCreating, ...action.payload] }
+        }
+        case REMOVE_STATE: {
+            console.log("REMOVE STATE USER")
+            return {
+                event: [],
+                user: {},
+                reward: [],
+                participant: [],
+                currEvent: {},
+                currEventCreating: {},
+                currRewardCreating: [],
+            };
+        }
+        default:
+            return state
+    }
+}
+export const popUpReducer = (state = popUpState, action) => {
+    switch (action.type) {
+        case POPUP_MESSAGE: {
+            return { ...state, message: action.payload }
+        }
+        case POPUP_STATUS: {
+            return { ...state, status: action.payload }
+        }
+        case POPUP_VISIBLE: {
+            return { ...state, visible: action.payload }
+        }
+        case REMOVE_STATE: {
+            console.log("REMOVE STATE POPUP")
+            return {
+                message: "",
+                status: false,
+                visible: hidden
+            };
         }
         default:
             return state
