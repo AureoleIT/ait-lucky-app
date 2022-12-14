@@ -76,6 +76,9 @@ module.exports = {
           "0%": { zIndex: 7 },
           "100%": { zIndex: 6, transform: "translateY(120px) scale(0.8)" },
         },
+        logoAnimation: {
+          
+        }
       },
     },
   },
