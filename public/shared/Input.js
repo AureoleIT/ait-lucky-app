@@ -1,4 +1,5 @@
 import React from "react";
+import { LEFT_COLOR, RIGHT_COLOR} from "public/util/colors";
 
 export default function Input({
   content, // Nội dung hiển thị trên Input
@@ -7,11 +8,13 @@ export default function Input({
   noContent = false, // Nếu là True thì Input sẽ không có label và placeHolder được hiển thị ở giữa Input
   placeHolder = "", // Mô tả/giải thích cho nội dung được nhập vào input
   type, // Loại input
-  primaryColor, // Thay thế cho leftColor ở component AuthInput cũ
-  secondaryColor, // Thay thế cho rightColor ở component AuthInput cũ
+  primaryColor = LEFT_COLOR, // Thay thế cho leftColor ở component AuthInput cũ
+  secondaryColor = RIGHT_COLOR, // Thay thế cho rightColor ở component AuthInput cũ
   value,
   onChange,
+  row,
   children,
+  is
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
