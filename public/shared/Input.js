@@ -20,12 +20,12 @@ export default function Input({
   };
   return (
     <div
-      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] py-[2px] my-4 outline-none relative`}
+      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] py-[2px] my-4 outline-none relative flex flex-col`}
     >
-      <div className="h-full">
+      <div className="h-full grow flex flex-col">
         <input
           type={type}
-          className={`min-h-full w-full rounded-lg text-lg px-4 outline-none border-none ${
+          className={`grow min-h-full w-full rounded-lg text-lg px-4 outline-none border-none ${
             noContent ? "text-center" : ""
           } ${children ? "hidden" : ""}`}
           placeholder={placeHolder}
