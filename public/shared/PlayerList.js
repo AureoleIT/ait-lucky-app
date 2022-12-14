@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import PlayerDetail from "./PlayerDetail";
 import OverlayBlock from "./OverlayBlock";
+import ParticipantAvt from "./ParticipantAvatar";
 
 export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = []}) {
     const [typeList, setTypeList] = useState(listType);
@@ -17,9 +18,11 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                             <div className="transition-all relative h-16 w-20 group-hover:w-20 group-hover:h-20 group-hover:-ml-1">
                                 <span className="block absolute right-4 bottom-1 h-3 w-3 rounded-full group-hover:right-2 group-hover:bottom-2 group-hover:h-4 group-hover:w-4"
                                     style={{backgroundColor: (player.status === 1 ? "green" : "gray")}}></span>
-                                <img className="transition-all h-16 w-16 object-cover border-2 rounded-full group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.pic}
-                                    style={{borderColor: (player.idReward !== ""?"yellow":"gray")}} />
+                                <div className="transition-all h-16 w-16 border-2 rounded-full group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.pic}
+                                    style={{borderColor: (player.idReward !== ""?"yellow":"gray")}}>
+                                        <ParticipantAvt player={player} />
                                 </div>
+                            </div>
                             <div className="flex flex-col justify-center ">
                                 <p className="h-fit text-left uppercase font-bold mt-2 group-hover:mt-4">{player.nameDisplay}</p>
                                 {reward?<p className="h-fit text-left font-semibold">{reward.nameReward}</p>:<></>}

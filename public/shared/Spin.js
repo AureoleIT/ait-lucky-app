@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import ParticipantAvt from "./ParticipantAvatar";
 
 const cssSet = [
     {
@@ -40,8 +41,8 @@ export default function Spin({listPlayer}) {
     
     const listPlayerShowcase = (
         <div className="flex flex-col h-full justify-center w-full z-0 relative overflow-hidden">
-            <div className="animate-move-down-0 animate-move-down-1 animate-move-down-2 animate-move-down-3 animate-move-down-4 animate-move-down-5 animate-move-down-6 animate-move-down-7" />
-            <div className="animate-slow-move-down-0 animate-slow-move-down-1 animate-slow-move-down-2 animate-slow-move-down-3 animate-slow-move-down-4 animate-slow-move-down-5 animate-slow-move-down-6 animate-slow-move-down-7" />
+            {/* <div className="animate-move-down-0 animate-move-down-1 animate-move-down-2 animate-move-down-3 animate-move-down-4 animate-move-down-5 animate-move-down-6 animate-move-down-7" /> */}
+            {/* <div className="animate-slow-move-down-0 animate-slow-move-down-1 animate-slow-move-down-2 animate-slow-move-down-3 animate-slow-move-down-4 animate-slow-move-down-5 animate-slow-move-down-6 animate-slow-move-down-7" /> */}
             {
                 Array.from({length: 9}, (_, index) => index).map(idx => {
                     return (
@@ -50,9 +51,9 @@ export default function Spin({listPlayer}) {
                                 {
                                     showcase.length?
                                     <>
-                                        <img className="h-20 w-20 object-cover rounded-full border-2"
-                                            src={showcase[idx].pic}
-                                            alt={showcase[idx].nameDisplay} />
+                                        <div className="h-20 w-20">
+                                            <ParticipantAvt player={showcase[idx]} />
+                                        </div>
                                         <p className="text-center grow font-bold text-[20px] truncate">{showcase[idx].nameDisplay}</p>
                                     </>:
                                     <></>

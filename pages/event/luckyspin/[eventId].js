@@ -15,16 +15,16 @@ import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild
 import PageLoading from "public/shared/PageLoading";
 
 
-export default function LuckySpin({ props }) {
+export default function LuckySpin() {
     const [loadedData, setLoadedData] = useState(false);
 
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
     // Thông tin người chơi
-    const currUser = usePlayerParticipantHook();
+    const currPlayer = usePlayerParticipantHook();
     // Mã người chơi
-    const participantId = currUser.participantId;
+    const participantId = currPlayer.participantId;
     
     // Event
     const [eventInfo, setEventInfo] = useState({})
@@ -44,10 +44,13 @@ export default function LuckySpin({ props }) {
     const [editedPlayerList, setEditedPlayerList] = useState(remainPlayerList);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
     const [playerShowList, setPlayerShowList] = useState(Object.values(playerList).slice(0, 9));
+    
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     // Người nhận thưởng
     const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
+    // ID người nhận thưởng
+    const [lastAwardedId, setLastAwardedId] = useState("");
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
 
@@ -151,7 +154,7 @@ export default function LuckySpin({ props }) {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
                 const timeoutPhase3 = setTimeout(() => {
-                    document.getElementById("awardedOverlay").classList.toggle('hidden');
+                    document.getElementById("awardedOverlay").classList.remove('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
@@ -173,7 +176,6 @@ export default function LuckySpin({ props }) {
     // ------------------------------------------------------------------------ UseEffect
     // Real time
     useEffect(() => {
-        console.log(props);
         // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
         if (participantId === "") router.push('/');
 
@@ -224,15 +226,15 @@ export default function LuckySpin({ props }) {
     }, [playerShowList])
 
     const renderCurrEventDetail = useMemo(() => {
-        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true}>{console.log(1)}</CurrentEventDetail>
+        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true}></CurrentEventDetail>
     }, [playerList, rewardList]);
 
     const renderSetting = useMemo(() => {
-        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}>{console.log(2)}</OverlayBlock>
+        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}></OverlayBlock>
     }, []);
 
     const renderAwardNotification = useMemo(() => {
-        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}>{console.log(3)}</OverlayBlock>
+        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}></OverlayBlock>
     }, []);
 
     const renderRewardList = useMemo(() => {

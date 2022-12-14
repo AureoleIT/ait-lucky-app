@@ -5,6 +5,7 @@ import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
 import RewardList from "./RewardList";
 import CloseButton from "./CloseButton";
+import ParticipantAvt from "./ParticipantAvatar";
 
 export default function PlayerDetail({player, reward}) {
 
@@ -12,7 +13,9 @@ export default function PlayerDetail({player, reward}) {
         <div className="absolute bottom-0 left-0 h-[70%] w-full bg-white rounded-t-2xl p-4 z-50"
             onClick={(e) => e.stopPropagation()}>
             {player?<div>
-                <img className="mx-auto mb-4 h-20 w-20 object-cover rounded-full" src={player.pic} />
+                <div className="mx-auto mb-4 h-20 w-20 object-cover rounded-full" src={player.pic}>
+                    <ParticipantAvt player={player} />
+                </div>
                 <Title title={player.nameDisplay} fontSize="20" />
                 <GradientLine color1="#003B93" color2="#00F0FF" content="Giải thưởng" />
             </div>:<></>}

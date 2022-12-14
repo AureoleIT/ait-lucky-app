@@ -45,6 +45,7 @@ export default function LuckySpinAdmin() {
     const [editedPlayerList, setEditedPlayerList] = useState([]);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
     const [playerShowList, setPlayerShowList] = useState([]);
+    
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     // Số người chơi online
@@ -91,7 +92,6 @@ export default function LuckySpinAdmin() {
                     get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
                         if (snapshot.exists()) {
                             val['pic'] = snapshot.val().pic;
-                            val.bug = true
                         }
                     })
                 })
@@ -115,11 +115,12 @@ export default function LuckySpinAdmin() {
         return 0;
     }
 
-    const setSpinningFB = (statusSpin = false, awardIndex = 0) => {
+    const setSpinningFB = (statusSpin = false, awardIndex = 0, lastAwardedId="") => {
         update(ref(db, 'event/' + EventID + '/playingData'),
                         {
                             isSpinning: statusSpin,
-                            lastAwardedIndex: awardIndex
+                            lastAwardedIndex: awardIndex,
+                            lastAwardedId: lastAwardedId
                         });
     }
 
@@ -129,7 +130,7 @@ export default function LuckySpinAdmin() {
         setSpinClicked(true);
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        setSpinningFB(true, randomNum);
+        setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -155,7 +156,7 @@ export default function LuckySpinAdmin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
-                setSpinningFB(false, randomNum);
+                setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
