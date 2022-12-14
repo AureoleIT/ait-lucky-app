@@ -12,17 +12,19 @@ import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
+import PageLoading from "public/shared/PageLoading";
 
 export default function LuckySpinAdmin() {
+    const [loadedData, setLoadedData] = useState(false);
+
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
     // Thông tin admin
     const adminInfo = useUserPackageHook();
     // Mã admin
-    // const adminId = adminInfo.userId
-    const adminId = "cc4b1337-7c86-4fb8-a981-dd98f266e242"; // Dự định sử dụng lấy từ redux
-
+    const adminId = adminInfo.userId
+    
     // Event
     const [eventInfo, setEventInfo] = useState({})
     
@@ -108,6 +110,7 @@ export default function LuckySpinAdmin() {
                 }, 200)
             }
         });
+        setTimeout(() => setLoadedData(true), 1000)
     }
 
     // ------------------------------------------------ Function
@@ -237,6 +240,7 @@ export default function LuckySpinAdmin() {
 
     return (
         <>
+            {loadedData?
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
@@ -270,7 +274,7 @@ export default function LuckySpinAdmin() {
                         <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                         <div className="h-44 px-4 py-2 relative">
                             <div>
-                                <div className="relative mt-1 before:block before:absolute before:-inset-0.5 before:bg-pink-500 before:bg-gradient-to-r before:from-[#003B93] before:to-[#00F0FF] before:rounded-md">
+                                <div className="relative mt-1 before:block before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-[#003B93] before:to-[#00F0FF] before:rounded-md">
                                     <button type="button" className="relative w-full cursor-default rounded-md border border-gray-300 bg-white p-2 shadow-sm border-none sm:text-sm outline-0"
                                         aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label"
                                         onClick={!spinClicked?toggleSelectMenu:() => {}}>
@@ -314,6 +318,8 @@ export default function LuckySpinAdmin() {
                     <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} />
                 </div>
             </section>
+            :<PageLoading />
+        }
         </>
     );
 }

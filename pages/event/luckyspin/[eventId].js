@@ -6,22 +6,25 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useUserPackageHook } from "public/redux/hooks";
-import { usePlayerUserHook } from "public/redux/hooks";
+import { usePlayerParticipantHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
-import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push } from "firebase/database";
+import PageLoading from "public/shared/PageLoading";
 
 
-export default function LuckySpin() {
+export default function LuckySpin({ props }) {
+    const [loadedData, setLoadedData] = useState(false);
+
     const router = useRouter();
     // Mã event
     const EventID = router.query.eventId;
     // Thông tin người chơi
-    const currUser = useUserPackageHook();
+    const currUser = usePlayerParticipantHook();
     // Mã người chơi
-    const participantId = "0a4c1257-aa60-4685-8226-4b2be61c09d5"; // Dự định sử dụng lấy từ redux
+    const participantId = currUser.participantId;
     
     // Event
     const [eventInfo, setEventInfo] = useState({})
@@ -115,6 +118,7 @@ export default function LuckySpin() {
                 }, 200);
             }
         });
+        setTimeout(() => setLoadedData(true), 1000)
     }
 
     // ------------------------------------------------- Function
@@ -174,6 +178,7 @@ export default function LuckySpin() {
     // ------------------------------------------------------------------------ UseEffect
     // Real time
     useEffect(() => {
+        console.log(props);
         // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
         if (participantId === "") router.push('/');
 
@@ -184,14 +189,15 @@ export default function LuckySpin() {
                 {
                     status: status
                 });
+            if (status === 2) clearInterval(onlineStatus);
         }
 
-        setInterval(() => setOnlineStatus(1), 1000);
-        window.addEventListener('beforeunload', () => setOnlineStatus(0));
+        const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
+        window.addEventListener('beforeunload', () => setOnlineStatus(2));
 
         return () => {
-            setOnlineStatus(0);
-            window.removeEventListener('beforeunload', () => setOnlineStatus(0));
+            setOnlineStatus(2);
+            window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
     }, [])
     
@@ -218,6 +224,7 @@ export default function LuckySpin() {
 
     return (
         <>
+        {loadedData?
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
@@ -268,6 +275,8 @@ export default function LuckySpin() {
                     <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} />
                 </div>
             </section>
+            :<PageLoading />
+        }
         </>
     );
 }
