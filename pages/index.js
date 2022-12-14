@@ -5,10 +5,9 @@
 import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
-import { LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
-import TextNoLabel from "public/shared/TextNoLabel";
+import { LEFT_GRADIENT, RIGHT_GRADIENT, LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import Input from "public/shared/Input";
 import QrButton from "public/shared/QrButton";
-import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import router from "next/router";
 import LineWithText from "public/shared/LineWithText";
@@ -21,6 +20,8 @@ import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import Logo from "public/shared/Logo";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Button from "public/shared/Button";
+import Line from "public/shared/Line";
 
 export default function Index() {
   const [pin, setPin] = useState("");
@@ -96,11 +97,13 @@ export default function Index() {
 
   const renderInput = useMemo(() => {
     return (
-      <TextNoLabel
-        type="text"
-        id="idRoom"
-        placeholder="Mã pin"
+      <Input
+        placeHolder="Mã pin"
         onChange={pinData}
+        type="text"
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+        noContent={true}
       />
     )
   }, [pinData])
@@ -108,7 +111,12 @@ export default function Index() {
   const renderButton = useMemo(() => {
     return (
       <div className="w-full">
-        <BgBlueButton content="Tham gia" onClick={onJoinClick} />
+        <Button
+          content="Tham gia"
+          onClick={onJoinClick}
+          primaryColor={LEFT_COLOR}
+          secondaryColor={RIGHT_COLOR}
+        />
       </div>
     )
   }, [onJoinClick])

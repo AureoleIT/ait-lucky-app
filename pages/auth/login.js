@@ -3,9 +3,8 @@ import Auth from "layouts/Auth.js";
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import AuthInput from "public/shared/AuthInput";
 import TickBox from "public/shared/TickBox";
-import BgBlueButton from "public/shared/BgBlueButton";
-import BgWhiteButton from "public/shared/BgWhiteButton";
 import GradientLine from "public/shared/GradientLine";
+import LineWithText from "public/shared/LineWithText";
 import Title from "public/shared/Title";
 import AuthFooter from "public/shared/AuthFooter";
 import router from "next/router";
@@ -16,19 +15,21 @@ import {
 } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { ref, child, get } from "firebase/database";
-import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR, LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Button from "public/shared/Button";
+import Input from "public/shared/Input";
 
 export default function Login() {
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
-  
+
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
@@ -126,15 +127,16 @@ export default function Login() {
 
   const renderName = useMemo(() => {
     return (
-      <AuthInput
-        content={"Tên đăng nhập/Email"}
-        leftColor={LEFT_COLOR}
-        rightColor={
+      <Input
+        type="text"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={
           hasWhiteSpaceAndValidLength(name)
             ? FAIL_RIGHT_COLOR
             : RIGHT_COLOR
         }
-        type={"text"}
+        content={"Tên đăng nhập/Email"}
         onChange={nameData}
       />
     )
@@ -142,13 +144,16 @@ export default function Login() {
 
   const renderPassword = useMemo(() => {
     return (
-      <AuthInput
-        content={"Mật khẩu"}
-        leftColor={LEFT_COLOR}
-        rightColor={
-          enoughNumCountPass(pass) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
+      <Input
+        type="text"
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={
+          enoughNumCountPass(pass)
+            ? FAIL_RIGHT_COLOR
+            : RIGHT_COLOR
         }
-        type={"password"}
+        content={"Mật khẩu"}
         onChange={passData}
       />
     )
@@ -166,33 +171,46 @@ export default function Login() {
 
   const renderSubmitButton = useMemo(() => {
     return (
-      <BgBlueButton
-        content="ĐĂNG NHẬP"
+      <Button
+        content="Đăng nhập"
         onClick={() => {
           loginSubmit(name, pass);
         }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
       />
     )
   }, [loginSubmit, name, pass]);
 
   const renderFirstLine = useMemo(() => {
     return (
-      <GradientLine color1="#003B93" color2="#00F0FF" content="hoặc" />
+      <LineWithText
+        text="hoặc"
+        leftColor={LEFT_GRADIENT}
+        rightColor={RIGHT_GRADIENT}
+      />
     )
   }, [])
 
   const renderAuthInput = useMemo(() => {
     return (
-      <BgWhiteButton
-        content="ĐĂNG NHẬP BẰNG"
+      <Button
+        content="Đăng nhập bằng"
         onClick={() => loginAuth(name, pass)}
+        isTextGradient={true}
+        logoGg={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
       />
     )
   }, [loginAuth, name, pass]);
 
   const renderSecondLine = useMemo(() => {
     return (
-      <GradientLine color1="#003B93" color2="#00F0FF" content="" />
+      <LineWithText
+        leftColor={LEFT_GRADIENT}
+        rightColor={RIGHT_GRADIENT}
+      />
     )
   }, [])
 
@@ -223,10 +241,8 @@ export default function Login() {
       <section className="h-screen mx-auto w-full flex justify-center items-center">
         <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
           {renderTitle}
-          <div>
-            {renderName}
-            {renderPassword}
-          </div>
+          {renderName}
+          {renderPassword}
           <div className="flex flex-row">
             {renderPrivacy}
           </div>
