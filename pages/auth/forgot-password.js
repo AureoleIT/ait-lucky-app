@@ -160,27 +160,27 @@ export default function ForgotPassword() {
   //useCallback
   const nameData = useCallback(
     (e) => {
-      setName(e?.target?.value)
+      setName(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     }, [setName]
   )
 
   const emailData = useCallback(
     (e) => {
-      setEmail(e?.target?.value)
+      setEmail(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     }, [setEmail]
   )
 
 
   const newPassData = useCallback(
     (e) => {
-      setNew(e?.target?.value)
+      setNew(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     },
     [setNew]
   )
 
   const repeatPassData = useCallback(
     (e) => {
-      setRepeat(e?.target?.value)
+      setRepeat(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
     },
     [setRepeat]
   )
@@ -210,7 +210,8 @@ export default function ForgotPassword() {
         isTextGradient={true}
         onChange={nameData}
         primaryColor={LEFT_COLOR}
-        secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} />
+        secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        value={name} />
     )
   }, [name, setName])
 
@@ -218,11 +219,12 @@ export default function ForgotPassword() {
     return (
       <Input
         content={"Email"}
-        type={"email"}
+        type={"text"}
         isTextGradient={true}
         onChange={emailData}
         primaryColor={LEFT_COLOR}
-        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} />
+        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} 
+        value={email}/>
     )
   }, [email, setEmail])
 
