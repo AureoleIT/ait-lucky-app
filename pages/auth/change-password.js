@@ -1,108 +1,102 @@
-import React, { useState, useEffect } from "react";
-import Header from "public/shared/Header";
-import AuthInput from "public/shared/AuthInput";
-import BgBlueButton from "public/shared/BgBlueButton";
-import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+
+//firebase
 import {
-  getDatabase,
   ref,
   query,
   orderByChild,
   equalTo,
   update,
-  onValue,
-  DataSnapshot
+  get
 } from "firebase/database";
-import { useAuth } from "src/context/AuthContext";
-import { successIcon, failIcon } from "public/util/popup";
-import { isEmpty, enoughNumCountPass, hasWhiteSpaceAndValidLength } from "public/util/functions";
-import { messagesError, messagesSuccess } from "public/util/messages"
-import OverlayBlock from "public/shared/OverlayBlock";
+import { db } from "src/firebase";
 
+//redux
+import { useUserPackageHook } from "public/redux/hooks";
+
+//component
+import Header from "public/shared/Header";
+import OverlayBlock from "public/shared/OverlayBlock";
+import router from "next/router";
+import Input from "public/shared/Input";
+import Button from "public/shared/Button";
+
+//util
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import { successIcon, failIcon } from "public/util/popup";
+import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
+import { messagesError, messagesSuccess } from "public/util/messages"
 
 export default function ChangePassword() {
-  const db = getDatabase();
-  const auth = useAuth();
   const [oldPass, setOld] = useState("");
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
+  const user = useUserPackageHook();
 
   //validation const
   const [textState, setTextState] = useState("");
   const [isHidden, setIsHidden] = useState(true);
   const [isSuccess, setIsSuccess] = useState(true);
+  const showMethod = useMemo(() => (message, isSuccess, isHidden) => {
+    setTextState(message);
+    setIsSuccess(isSuccess);
+    setIsHidden(isHidden);
+  }, [])
 
-
+  //handle change password
   const changePassword = () => {
     if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
-      setTextState(messagesError.E0004);
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0004, false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(oldPass)) {
-      setTextState(messagesError.E0005("mật khẩu cũ"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("mật khẩu cũ"), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(newPass)) {
-      setTextState(messagesError.E0005("mật khẩu mới"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("mật khẩu mới"), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(repeatPass)) {
-      setTextState(messagesError.E0005("nhập lại mật khẩu"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0005("nhập lại mật khẩu"), false, false);
       return;
     }
 
     if (newPass != repeatPass) {
-      setTextState(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"));
-      setIsSuccess(false);
-      setIsHidden(false);
+      showMethod(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"), false, false);
       return;
     }
 
     // check old pass
-    const que = query(ref(db, "users"), orderByChild("email"), equalTo(auth.currentUser.email));
-    onValue(que, (snapshot) => {
+    const que = query(ref(db, "users"), orderByChild("email"), equalTo(user.email));
+    get(que).then((snapshot) => {
       const record = snapshot.val() ?? [];
       const values = Object.values(record);
 
       if (values[0].password != oldPass) {
-        setTextState(messagesError.E0011("Mật khẩu cũ"));
-        setIsSuccess(false);
-        setIsHidden(false);
+        showMethod(messagesError.E0011("Mật khẩu cũ"), false, false);
         return;
+      } else {
+        update(ref(db, 'users/' + values[0].userId),
+          {
+            password: newPass
+          }).then(() => {
+            showMethod(messagesSuccess.I0003, true, false);
+            return;
+          })
+          .catch((error) => {
+            showMethod(error, false, false);
+            return;
+          });
       }
-
-      update(ref(db, 'users/' + values[0].userId),
-        {
-          password: newPass
-        }).then(() => {
-          setTextState(messagesSuccess.I0003);
-          setIsSuccess(true);
-          setIsHidden(false);
-          return;
-        })
-        .catch((error) => {
-          setTextState(error);
-          setIsSuccess(false);
-          setIsHidden(false);
-          return;
-        });
     })
   }
 
   // show popup
   useEffect(() => {
-    console.log(isHidden)
     if (isHidden == false) {
       isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
       document.getElementById("textState").innerHTML = textState;
@@ -114,8 +108,72 @@ export default function ChangePassword() {
     }
   }, [isHidden])
 
+  //check user login
+  useEffect(() => {
+    if (Object.keys(user).length === 0)
+      router.push("/");
+  }, [])
 
-  const popupNoti = () => {
+  //prevent re-render
+  const oldPassData = useCallback(
+    (e) => {
+      setOld(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    },
+    [setOld]
+  )
+
+  const newPassData = useCallback(
+    (e) => {
+      setNew(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    },
+    [setNew]
+  )
+
+  const repeatPassData = useCallback(
+    (e) => {
+      setRepeat(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    },
+    [setRepeat]
+  )
+
+  const renderOldPass = useMemo(() => {
+    return (
+      <Input
+        content={"Mật khẩu cũ"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={oldPassData} />
+    )
+  }, [oldPass, oldPassData])
+
+  const renderNewPass = useMemo(() => {
+    return (
+      <Input
+        content={"Mật khẩu mới"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={newPassData} />
+    )
+  }, [newPass, newPassData])
+
+  const renderRepeatPass = useMemo(() => {
+    return (
+      <Input
+        content={"Nhập lại mật khẩu"}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={repeatPassData} />
+    )
+  }, [repeatPass, repeatPassData]
+  )
+
+  const popupNoti = useMemo(() => {
     return (
       <div className="flex flex-col items-center">
         <div className="text-center text-[#004599]">
@@ -129,7 +187,17 @@ export default function ChangePassword() {
         ></img>
       </div>
     )
-  }
+  }, [])
+
+  const renderButton = useMemo(() => {
+    return (
+      <Button
+        content={"LƯU"}
+        onClick={() => changePassword()}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR} />
+    )
+  }, [changePassword])
 
   return (
     <section className="h-screen overflow-y-hidden">
@@ -138,33 +206,21 @@ export default function ChangePassword() {
         <div
           className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
         >
-          <div className="absolute top-10 flex flex-col w-full max-w-md w-3/4 md:mb-0">
+          <div className="absolute top-10 flex flex-col w-full max-w-md md:mb-0">
             <div className="flex flex-col justify-center items-center">
               <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">ĐỔI MẬT KHẨU</p>
             </div>
 
-            <div className="">
-              <AuthInput content={"Mật khẩu cũ"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(oldPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setOld(e.target.value)} />
-              <AuthInput content={"Mật khẩu mới"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setNew(e.target.value)} />
-              <AuthInput content={"Nhập lại mật khẩu"} type={"password"}
-                leftColor={LEFT_COLOR}
-                rightColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-                onChange={(e) => setRepeat(e.target.value)} />
-              <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
-            </div>
+            {renderOldPass}
+            {renderNewPass}
+            {renderRepeatPass}
+            {renderButton}
           </div>
         </div>
       </div>
 
       <div className="">
-        <BgBlueButton content={"LƯU"} onClick={() => changePassword()} />
-        <OverlayBlock childDiv={popupNoti()} id={"changeOverlay"} />
+        <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
       </div>
     </section>
   );

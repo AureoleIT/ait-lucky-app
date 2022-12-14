@@ -30,3 +30,4 @@ package-lock.json
 out/
 
 commit.sh
+styles/tailwind.css
