@@ -12,7 +12,7 @@ import { set, ref } from "firebase/database";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { useDispatch } from "react-redux"
-import { userCurrentHostingEvent} from "public/redux/actions"
+import { userEventCreating } from "public/redux/actions"
 import { useUserPackageHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks"
 
@@ -73,15 +73,8 @@ export default function EventRegister() {
               status: 1,
               delFlag: false,
       };
-      dispatch(userCurrentHostingEvent(newEvent))
-      set(ref(db, `event/${id.current}`), newEvent)
-        .then(() => {
-            ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true)
-          })
-          .catch((e) => {
-              ShowMethod(dispatch, messagesError.E4444, false)
-            });
-          
+      dispatch(userEventCreating(newEvent))
+      ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true)
           setTimeout(() => {
             router.push("/admin/event/reward-register");
           }, 2000);
