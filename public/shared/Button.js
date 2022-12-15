@@ -26,7 +26,7 @@ export default function Button({
     <div
       className={`w-full h-[50px] p-[2px] flex justify-center items-center gap-x-[15px]
         ${margin}
-        ${!isSquare ? "rounded-[50px]" : "rounded-[5px]"}]
+        ${!isSquare ? "rounded-[50px]" : "rounded-[5px]"}
         ${
           !secondaryColor
             ? `bg-[${primaryColor}]`

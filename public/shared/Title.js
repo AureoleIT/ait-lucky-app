@@ -5,8 +5,6 @@ export default function Title({
   fontSize = "text-[36px]",
   fontWeight = "font-[900]",
 }) {
-  // font size (px) (default: 36px)
-
   return (
     <h1
       className={`${fontWeight} uppercase text-[#004599] ${fontSize} text-center mb-5`}
