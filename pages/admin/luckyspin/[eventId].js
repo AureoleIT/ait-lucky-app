@@ -7,7 +7,9 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import { useRouter } from "next/router";
-import { usePlayerUserHook } from "public/redux/hooks";
+
+import { useDispatch } from "react-redux";
+import { userEvent, incognitoEvent } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
@@ -16,6 +18,7 @@ import PageLoading from "public/shared/PageLoading";
 
 export default function LuckySpinAdmin() {
     const [loadedData, setLoadedData] = useState(false);
+    const dispatch = useDispatch()
 
     const router = useRouter();
     // Mã event
@@ -60,7 +63,7 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/');
+                if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 // Nếu không phải admin sự kiện, đưa về trang chủ.
@@ -107,7 +110,7 @@ export default function LuckySpinAdmin() {
                 }, 200)
             }
         });
-        setTimeout(() => setLoadedData(true), 1500)
+        setTimeout(() => setLoadedData(true), 3000)
     }
 
     // ------------------------------------------------ Function
@@ -200,7 +203,11 @@ export default function LuckySpinAdmin() {
     )
 
     // --------------------------------------------------- useEffect
-    // Real time 
+    // Real time
+    useEffect(() => {
+        dispatch(incognitoEvent({eventId: EventID}));
+    }, [dispatch])
+
     useEffect(() => {
         fetchDB();
 
@@ -237,15 +244,15 @@ export default function LuckySpinAdmin() {
     }, [playerShowList])
 
     const renderCurrEventDetail = useMemo(() => {
-        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true}>{console.log(1)}</CurrentEventDetail>
+        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true}></CurrentEventDetail>
     }, [playerList, rewardList]);
 
     const renderSetting = useMemo(() => {
-        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}>{console.log(2)}</OverlayBlock>
+        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}></OverlayBlock>
     }, []);
 
     const renderAwardNotification = useMemo(() => {
-        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}>{console.log(3)}</OverlayBlock>
+        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}></OverlayBlock>
     }, []);
 
     return (
@@ -313,7 +320,7 @@ export default function LuckySpinAdmin() {
                                     </ul>
                                 </div>
                             </div>
-                            <p className="w-full font-bold text-[#004599] text-center mt-2">Số lượng: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantityRemain:0}</p>
+                            <p className="w-full font-bold text-[#004599] text-center mt-2">Số lượng còn lại: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantityRemain:0}</p>
                             <Button content={"QUAY THƯỞNG"} onClick={!spinClicked?spining:() => {}} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
                         </div>
                     </div>

@@ -7,7 +7,9 @@ import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
 import router, { useRouter } from "next/router";
-import { useUserPackageHook } from "public/redux/hooks";
+
+import { useDispatch } from "react-redux";
+import { userEvent, incognitoEvent } from "public/redux/actions";
 import { usePlayerParticipantHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
@@ -17,6 +19,7 @@ import PageLoading from "public/shared/PageLoading";
 
 export default function LuckySpin() {
     const [loadedData, setLoadedData] = useState(false);
+    const dispatch = useDispatch()
 
     const router = useRouter();
     // Mã event
@@ -61,6 +64,31 @@ export default function LuckySpin() {
 
 
     const fetchDB = () => {
+        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que2, (snapshot) => {
+            if (snapshot.exists()) {
+                const rawData = snapshot.val();
+                if (!Object.keys(rawData).includes(participantId)) router.push('/event/info')
+                const data = Object.values(rawData);
+                data.forEach((val, idx) => {
+                    val.ID = Object.keys(rawData)[idx];
+                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            val.pic = snapshot.val().pic;
+                        }
+                    })
+                })
+                setTimeout(function()
+                {
+                    const online = data.filter(val => val.status === 1).length;
+                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+                    setPlayerList(rawData);
+                    setRemainPlayerList(filted);
+                    setOnlinePlayerAmount(online);
+                }, 200);
+            }
+        });
+
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
             if (snapshot.exists()) {
@@ -81,7 +109,7 @@ export default function LuckySpin() {
                 router.push('/');
             }
         });
-
+                
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
             if (snapshot.exists()) {
@@ -92,31 +120,7 @@ export default function LuckySpin() {
             }
         });
 
-        const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
-        onValue(que2, (snapshot) => {
-            if (snapshot.exists()) {
-                const rawData = snapshot.val();
-                if (!Object.keys(rawData).includes(participantId)) router.push('/')
-                const data = Object.values(rawData);
-                data.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val.pic = snapshot.val().pic;
-                        }
-                    })
-                })
-                setTimeout(function()
-                {
-                    const online = data.filter(val => val.status === 1).length;
-                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-                    setPlayerList(rawData);
-                    setRemainPlayerList(filted);
-                    setOnlinePlayerAmount(online);
-                }, 200);
-            }
-        });
-        setTimeout(() => setLoadedData(true), 1500)
+        setTimeout(() => setLoadedData(true), 3000)
     }
 
     // ------------------------------------------------- Function
@@ -176,9 +180,12 @@ export default function LuckySpin() {
     // ------------------------------------------------------------------------ UseEffect
     // Real time
     useEffect(() => {
-        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
-        if (participantId === "") router.push('/');
+        dispatch(incognitoEvent({eventId: EventID}));
+    }, [dispatch])
 
+    useEffect(() => {
+        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
+        if (participantId === "") router.push('/event/info');
         fetchDB();
         
         const setOnlineStatus = (status) => {
