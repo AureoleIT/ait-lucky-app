@@ -4,8 +4,8 @@
 import { React, useCallback, useState, useEffect, useMemo } from "react";
 import PopUp from "public/shared/PopUp";
 import Logo from "public/shared/Logo";
-import TextNoLabel from "public/shared/TextNoLabel";
-import BgBlueButton from "public/shared/BgBlueButton";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import Button from "public/shared/Button";
 import BigText from "public/shared/BigText";
 import { db } from "./../../src/firebase";
 import { ShowMethod } from "public/util/popup";
@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { incognitoParticipant } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Input from "public/shared/Input";
 
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -46,6 +47,7 @@ export default function Info() {
       participantId: id,
       createAt: new Date().getTime(),
       status: 2,
+      nameDisplay: name,
       idReward: "",
       eventId: currEvent.eventId,
     };
@@ -90,11 +92,13 @@ export default function Info() {
 
   const renderInput = useMemo(() => {
     return (
-      <TextNoLabel
-        type="text"
-        id="idRoom"
-        placeholder="Vui lòng nhập tên hiển thị"
+      <Input
+        placeHolder="Vui lòng nhập tên hiển thị"
         onChange={setNameData}
+        type="text"
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+        noContent={true}
       />
     )
   }, [setNameData])
@@ -102,7 +106,12 @@ export default function Info() {
   const renderButton = useMemo(() => {
     return (
       <div className="w-full mb-4">
-        <BgBlueButton content="Tham gia" onClick={onJoinClick} />
+        <Button 
+          content="Tham gia" 
+          onClick={onJoinClick} 
+          primaryColor={LEFT_COLOR} 
+          secondaryColor={RIGHT_COLOR} 
+        />
       </div>
     )
   }, [onJoinClick])

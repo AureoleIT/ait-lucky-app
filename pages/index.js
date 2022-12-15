@@ -5,10 +5,9 @@
 import { React, useCallback, useEffect, useMemo, useState } from "react";
 import PopUp from "public/shared/PopUp";
 import WayLog from "public/shared/WayLog";
-import { LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
-import TextNoLabel from "public/shared/TextNoLabel";
+import { LEFT_GRADIENT, RIGHT_GRADIENT, LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import Input from "public/shared/Input";
 import QrButton from "public/shared/QrButton";
-import BgBlueButton from "public/shared/BgBlueButton";
 import BigText from "public/shared/BigText";
 import router from "next/router";
 import LineWithText from "public/shared/LineWithText";
@@ -18,9 +17,11 @@ import { isEmpty } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent } from "public/redux/actions";
+import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import Logo from "public/shared/Logo";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Button from "public/shared/Button";
+import Line from "public/shared/Line";
 
 export default function Index() {
   const [pin, setPin] = useState("");
@@ -34,6 +35,7 @@ export default function Index() {
   var BG_COLOR =
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   var [event, setEvent] = useState({});
+  var [user, setUser] = useState({});
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -48,18 +50,25 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      get(child(ref(db), "users/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currUser = values.find((item) => item.userId === event.createBy);
+        setUser(currUser);
+      });
       setEvent(currEvent);
       ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
       setTimeout(() => {
         router.push("/event/info");
       }, 1000);
     });
-  }, [dispatch, pin]);
+  }, [dispatch, event.createBy, pin]);
 
   /* Export current event to redux for another access */
   useEffect(() => {
     dispatch(incognitoEvent(event));
-  }, [dispatch, event])
+    dispatch(incognitoUser(user));
+  }, [dispatch, event, user])
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {
@@ -88,19 +97,26 @@ export default function Index() {
 
   const renderInput = useMemo(() => {
     return (
-      <TextNoLabel
-        type="text"
-        id="idRoom"
-        placeholder="Mã pin"
+      <Input
+        placeHolder="Mã pin"
         onChange={pinData}
+        type="text"
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+        noContent={true}
       />
     )
   }, [pinData])
 
   const renderButton = useMemo(() => {
     return (
-      <div className="w-full mb-4">
-        <BgBlueButton content="Tham gia" onClick={onJoinClick} />
+      <div className="w-full">
+        <Button
+          content="Tham gia"
+          onClick={onJoinClick}
+          primaryColor={LEFT_COLOR}
+          secondaryColor={RIGHT_COLOR}
+        />
       </div>
     )
   }, [onJoinClick])
@@ -117,7 +133,7 @@ export default function Index() {
 
   const renderDirect = useMemo(() => {
     return (
-      <div className="mt-10">
+      <div>
         <WayLog
           action="Đăng nhập"
           title="để quản lý sự kiện?"
@@ -146,7 +162,7 @@ export default function Index() {
 
   return (
     <section
-      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
+      className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
     >
       <div
         className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}

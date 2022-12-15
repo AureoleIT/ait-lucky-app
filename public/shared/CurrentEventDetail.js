@@ -1,26 +1,11 @@
-// layout for page
-import Auth from "layouts/Auth.js";
 import React, { useEffect, useState } from "react";
-import { Link } from "next/link";
-import { useForm } from "react-hook-form";
-// import AuthContext from "../../src/context/AuthContext";
-// Components
-import Logotic from "public/shared/Logo";
-import AuthInput from "public/shared/AuthInput";
-import TickBox from "public/shared/TickBox";
-import BgBlueButton from "public/shared/BgBlueButton";
-import BgWhiteButton from "public/shared/BgWhiteButton";
-import GradientLine from "public/shared/GradientLine";
 import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import { useMemo } from "react/cjs/react.development";
 import RewardList from "public/shared/RewardList";
-import LineGradient from "./LineGradient";
-import PlayerDetail from "./PlayerDetail";
 import PlayerList from "./PlayerList";
 
 export default function CurrentEventDetail({listPlayer, listReward, remainReward = false}) {
     const [expand, setExpand] = useState(false);
+    if (typeof listPlayer === 'object') listPlayer = Object.values(listPlayer);
 
     const EventDetailExpand = (
         <div className="flex flex-col w-full h-[80%] absolute bg-[#40BEE5] rounded-t-2xl bottom-0" onClick={(e) => {e.stopPropagation();}}
@@ -43,7 +28,7 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
                 <div className="flex flex-col w-full grow px-5 mt-4 overflow-hidden">
                     <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="20" />
                     <div className="h-1 bg-white w-full -mt-4 mb-4 shrink-0"></div>
-                    <PlayerList listPlayer={listPlayer} />
+                    <PlayerList listPlayer={listPlayer} listReward={listReward} />
                 </div>
         </div>
     )

@@ -11,6 +11,10 @@ import {
     USER_CURR_HOSTING_EVENT,
     USER_EVENT_CREATING,
     USER_REWARD_CREATING,
+    USER_UPDATE_EVENT,
+    USER_UPDATE_PARTICIPANT,
+    USER_UPDATE_REWARD,
+    USER_UPDATE_REWARD_CREATING,
     POPUP_STATUS,
     POPUP_MESSAGE,
     POPUP_VISIBLE,
@@ -61,6 +65,22 @@ export const userCurrentHostingEvent = (event) => ({
 })
 export const userRewardCreating = (reward) => ({
     type: USER_REWARD_CREATING,
+    payload: reward,
+})
+export const userUpdateEvent = (event) => ({
+    type: USER_UPDATE_EVENT,
+    payload: event,
+})
+export const userUpdateParticipant = (participant) => ({
+    type: USER_UPDATE_PARTICIPANT,
+    payload: participant,
+})
+export const userUpdateReward = (reward) => ({
+    type: USER_UPDATE_REWARD,
+    payload: reward,
+})
+export const userUpdateRewardCreating = (reward) => ({
+    type: USER_UPDATE_REWARD_CREATING,
     payload: reward,
 })
 export const popUpMessage = (message) => ({
