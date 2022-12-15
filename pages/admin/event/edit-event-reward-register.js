@@ -16,7 +16,7 @@ import {ref, set, onValue, query, orderByChild, equalTo, update} from "firebase/
 import { storage } from "src/firebase"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHook } from "public/redux/hooks";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook } from "public/redux/hooks";
 import { ShowMethod } from "public/util/popup";
 
 import { useDispatch } from "react-redux"
@@ -28,7 +28,7 @@ function EditEventRewardRegister() {
     // router
     const router = useRouter();
     // eventID
-    const eventStore = useUserCurrEventHook()
+    const eventStore = useUserCurrEventCreatingHook()
     const eventID = eventStore.eventId
     // dispatch
     const dispatch = useDispatch()
