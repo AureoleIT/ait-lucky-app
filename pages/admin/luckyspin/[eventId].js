@@ -185,7 +185,8 @@ export default function LuckySpinAdmin() {
         toggleSelectMenu();
         update(ref(db, 'event/' + EventID + '/playingData'),
             {
-                rewardChosingId: remainRewardList[idx].idReward
+                rewardChosingId: remainRewardList[idx].idReward,
+                rewardChosingIndex: idx
             });
     }
 
