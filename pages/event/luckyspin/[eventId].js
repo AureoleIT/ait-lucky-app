@@ -181,7 +181,7 @@ export default function LuckySpin() {
     // Real time
     useEffect(() => {
         dispatch(incognitoEvent({eventId: EventID}));
-    }, [dispatch])
+    }, [])
 
     useEffect(() => {
         // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
@@ -189,6 +189,7 @@ export default function LuckySpin() {
         fetchDB();
         
         const setOnlineStatus = (status) => {
+            if (!participantId) return;
             update(ref(db, 'event_participants/' + participantId),
                 {
                     status: status
