@@ -9,24 +9,25 @@ export default function Line({
 }) {
   return (
     <div
-      className={`w-full justify-center items-center my-${marginY} flex flex-row`}
+      className={`w-full justify-center items-center flex flex-row
+        my-${marginY}`}
     >
       <div
         className={`flex-grow z-10 relative flex justify-center
-        ${lineWeight ? "h-[2px]" : "h-[1px]"}  
-        ${isLineWhite ? "bg-white" : LEFT_GRADIENT}`}
+          ${lineWeight ? "h-[2px]" : "h-[1px]"}  
+          ${isLineWhite ? "bg-white" : LEFT_GRADIENT}`}
       ></div>
       <span
         className={`mx-2 relative bottom-[3px] text-transparent text-base bg-clip-text font-semibold 
-        ${isLineWhite ? "bg-white" : LEFT_GRADIENT} 
-        ${content ? "" : "hidden"}`}
+          ${isLineWhite ? "bg-white" : LEFT_GRADIENT} 
+          ${content ? "" : "hidden"}`}
       >
         {content}
       </span>
       <div
         className={`flex-grow z-10 relative flex justify-center
-        ${lineWeight ? "h-[2px]" : "h-[1px]"}  
-        ${isLineWhite ? "bg-white" : RIGHT_GRADIENT}`}
+          ${lineWeight ? "h-[2px]" : "h-[1px]"}  
+          ${isLineWhite ? "bg-white" : RIGHT_GRADIENT}`}
       ></div>
     </div>
   );
