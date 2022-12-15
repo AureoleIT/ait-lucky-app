@@ -57,7 +57,7 @@ export default function EventList() {
   }, []);
 
   const renderTitle = useMemo(() => {
-    return <Title title={"danh sách sự kiện"} fontSize={30} />;
+    return <Title title={"danh sách sự kiện"} fontSize={"text-[33px]"} />;
   }, []);
 
   if (!currentUser.userId) {
@@ -70,7 +70,7 @@ export default function EventList() {
       <section className="h-screen max-w-md mx-auto flex flex-col justify-center items-center">
         <div className="flex flex-col px-3 py-5 w-full h-full items-center">
           {renderTitle}
-          <div className="max-w-md flex flex-col w-full gap-y-[19px] mt-[19px]">
+          <div className="max-w-md flex flex-col w-full gap-y-[19px]">
             <div id="search" className="flex flex-col mx-2">
               <Input
                 content={"Tên sự kiện"}
