@@ -15,7 +15,7 @@ import { storage } from "src/firebase"
 import { set, ref } from "firebase/database"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
-import { useUserCurrEventHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 import Header from "public/shared/Header";
 
@@ -23,7 +23,7 @@ function RewardRegister() {
     // router
     const router = useRouter();
     // eventID
-    const event = useUserCurrEventHook()
+    const event = useUserCurrEventCreatingHook()
     const eventID = event.eventId
     // state
     const [key, setKey] = useState([])
@@ -106,6 +106,11 @@ function RewardRegister() {
     // navigate to event detail, push data to firebase and add to redux
     const handleNavigate = useCallback(() =>
     {
+        set(ref(db, `event/${eventID}`), event)
+            .catch((e) => {
+                ShowMethod(dispatch, messagesError.E4444, false)
+            });
+
         let valueLength = value.length - 1
         let lastValue = value[valueLength]
 
@@ -245,15 +250,17 @@ function RewardRegister() {
 
     return (
         <section className="w-screen h-screen">
-            {renderHeader}
-            <div className="flex flex-col items-center justify-between h-[85%]">
-                <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
-                    {renderReward}
-                    {renderAddRewardButton}
+            <div className="flex flex-col items-center h-full">
+                {renderHeader}
+                <div className="flex flex-col items-center w-full justify-between h-[85%]">
+                    <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
+                        {renderReward}
+                        {renderAddRewardButton}
+                    </div>
+                    {renderRewardRegisterButton}
                 </div>
-                {renderRewardRegisterButton}
+                {renderPopUp}
             </div>
-            {renderPopUp}
         </section>
   );
 }
