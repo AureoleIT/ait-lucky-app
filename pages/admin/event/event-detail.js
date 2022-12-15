@@ -8,7 +8,7 @@ import Line from "public/shared/Line";
 
 import Title from "public/shared/Title";
 
-import { useUserCurrEventHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook } from "public/redux/hooks";
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
@@ -18,7 +18,7 @@ function EventDetail() {
     const router = useRouter();
     
     // eventID get from redux
-    const event = useUserCurrEventHook()
+    const event = useUserCurrEventCreatingHook()
     const beforeID = event.eventId
     const eventID = beforeID.slice(0,8)
 
@@ -142,7 +142,7 @@ function EventDetail() {
     const renderLine2 = useMemo(() =>
     {
         return (
-            <div className="w-4/5 max-w-xl"> <Line /> </div>
+            <div className="w-4/5 max-w-xl mb-2"> <Line /> </div>
         )
     },[])
 
