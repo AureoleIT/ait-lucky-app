@@ -201,7 +201,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
 
     const renderAddImageButton = useMemo(() => {
         return (
-            <div className="w-full">
+            <div className="w-full mb-2">
                 <button className="flex justify-evenly items-center w-full h-[35px] rounded-[5px]" style={buttonColor} onClick={getImage}>
                     <div className="font-[900] text-[24px] text-white">Thêm hình ảnh</div>
                     <i className="fas fa-image" style={iconStyle}></i>
@@ -215,7 +215,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     const renderLine1 = useMemo(() =>
     {
         return (
-            <div className="w-full flex mb-2">
+            <div className="w-full flex">
                 <Line content={"Hình ảnh giải thưởng"}/>
             </div>
         )
