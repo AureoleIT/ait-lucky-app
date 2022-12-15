@@ -1,5 +1,5 @@
 import React from "react";
-import { LEFT_COLOR, RIGHT_COLOR} from "public/util/colors";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 
 export default function Input({
   content, // Nội dung hiển thị trên Input
@@ -14,7 +14,7 @@ export default function Input({
   onChange,
   row = 1,
   children,
-  isMultiLine = false
+  isMultiLine = false,
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -23,14 +23,15 @@ export default function Input({
   };
   return (
     <div
-      className={`bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] p-[2px] rounded-[10px] w-full min-h-[60px] my-4 outline-none relative flex flex-col`}
+      className={`p-[2px] rounded-[10px] w-full min-h-[60px] my-4 outline-none relative flex flex-col
+      bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`}
     >
       <div className="h-full grow flex flex-col">
         <input
           type={type}
           className={`min-h-[60px] w-full rounded-lg text-lg px-4 outline-none border-none 
           ${noContent ? "text-center" : ""} 
-          ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`} 
+          ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`}
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
@@ -38,7 +39,7 @@ export default function Input({
         />
         <textarea
           className={`min-h-[60px] w-full rounded-lg px-4 py-4 text-lg outline-none border-none 
-          ${isMultiLine ? "" : "hidden"} `}
+            ${isMultiLine ? "" : "hidden"}`}
           rows={row}
           value={value}
           onChange={onChange}
@@ -51,7 +52,8 @@ export default function Input({
           >
             <p
               style={isTextGradient ? contentCSS : {}}
-              className={`font-bold text-base ${noContent ? "hidden" : ""}`}
+              className={`font-bold text-base 
+                ${noContent ? "hidden" : ""}`}
             >
               {content}
             </p>
