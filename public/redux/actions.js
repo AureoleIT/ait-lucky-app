@@ -8,7 +8,8 @@ import {
     USER_PACKAGE,
     USER_REWARD,
     REMOVE_STATE,
-    USER_CURR_EVENT,
+    USER_CURR_EVENT_HOSTING,
+    USER_CURR_EVENT_PLAYING,
     USER_EVENT_CREATING,
     USER_REWARD_CREATING,
     USER_UPDATE_EVENT,
@@ -68,9 +69,14 @@ export const userEventCreating = (event) => ({
     type: USER_EVENT_CREATING,
     payload: event,
 })
-// Event this user is hosting or joining
-export const userCurrentEvent = (event) => ({
-    type: USER_CURR_EVENT,
+// Event this user is hosting
+export const userCurrentEventHosting = (event) => ({
+    type: USER_CURR_EVENT_HOSTING,
+    payload: event,
+})
+// Event this user is playing
+export const userCurrentEventPlaying = (event) => ({
+    type: USER_CURR_EVENT_PLAYING,
     payload: event,
 })
 // Reward this user is creating through event

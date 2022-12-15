@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import {
-    userCurrentEventSelector,
+    userCurrentEventHostingSelector,
+    userCurrentEventPlayingSelector,
     userEventSelector,
     userPackageSelector,
     userParticipantSelector,
@@ -24,9 +25,13 @@ export const useUserParticipantHook = () => {
 export const useUserRewardHook = () => {
     return useSelector(userRewardSelector);
 }
-// Event that this user join or host
-export const useUserCurrEventHook = () => {
-    return useSelector(userCurrentEventSelector);
+// Event that this user host
+export const useUserCurrEventHostingHook = () => {
+    return useSelector(userCurrentEventHostingSelector);
+}
+// Event that this user join
+export const useUserCurrEventPlayingHook = () => {
+    return useSelector(userCurrentEventPlayingSelector);
 }
 // Event that this user is creating
 export const useUserCurrEventCreatingHook = () => {
