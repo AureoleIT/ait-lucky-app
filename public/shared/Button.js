@@ -23,39 +23,25 @@ export default function Button({
   };
 
   return (
-      <div className={`
-          w-full
-          h-[50px]
-          p-[2px]
-          flex
-          justify-center
-          items-center
-          my-${marginY}
-          gap-x-[15px]
-          rounded-[${!isSquare ? "50px" : "5px"}]
-          ${
-            !secondaryColor
-              ? `bg-[${primaryColor}]`
-              : `bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`
-          }
-      `}>
-      <button className={`
-          w-full 
-          h-full 
-          rounded-[48px] 
-          ${isTextGradient && "bg-white"} 
-          flex 
-          items-center 
-          justify-center 
-          gap-[10px]`}
-            onClick={onClick}
-          >
-      
+    <div
+      className={`w-full h-[50px] p-[2px] flex justify-center items-center gap-x-[15px]
+        my-${marginY}
+        rounded-[${!isSquare ? "50px" : "5px"}]
+        ${
+          !secondaryColor
+            ? `bg-[${primaryColor}]`
+            : `bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`
+        }`}
+    >
+      <button
+        className={`w-full h-full rounded-[48px] flex items-center justify-center gap-[10px]
+          ${isTextGradient && "bg-white"}`}
+        onClick={onClick}
+      >
         <div
-          className={`
+          className={`uppercase
             font-[${fontWeight}] 
-            text-[${fontSize}]
-            uppercase           
+            text-[${fontSize}]            
           `}
           style={isTextGradient ? gradientText : whiteText}
         >
@@ -63,14 +49,15 @@ export default function Button({
         </div>
         <i
           className={`relative top-[1px] text-2xl 
-            ${
-            !iconClass ? "hidden" : iconClass
-          }`} 
+            ${!iconClass ? "hidden" : iconClass}`}
           style={isTextGradient ? gradientText : whiteText}
         ></i>
-        <img src="../img/google.svg" className={`h-7 w-7 ${!logoGg && "hidden"}`} alt="" />
-        
+        <img
+          src="../img/google.svg"
+          className={`h-7 w-7 ${!logoGg && "hidden"}`}
+          alt=""
+        />
       </button>
-      </div>
+    </div>
   );
 }
