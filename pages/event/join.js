@@ -8,7 +8,7 @@ import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import Button from "public/shared/Button";
 import BigText from "public/shared/BigText";
 import { db } from "./../../src/firebase";
-import { ShowMethod } from "public/util/popup";
+import { HideMethod, ShowMethod } from "public/util/popup";
 import { isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { ref, set } from "firebase/database";
@@ -61,6 +61,7 @@ export default function Info() {
         ShowMethod(dispatch, messagesSuccess.I0009, true)
         setPlayer(newParticipant)
         setTimeout(() => {
+          HideMethod(dispatch)
           router.push("/admin/event/countdown-checkin");
         }, 2000);
       })
