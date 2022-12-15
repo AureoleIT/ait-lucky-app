@@ -82,7 +82,7 @@ export default function Dashboard() {
 
   const renderJoinEvent = useMemo(() => {
     return (
-      <Input content={""}>
+      <Input content={"Tham gia sự kiện"}>
         <div className="flex flex-col pb-4 pt-2">
           <div className="flex flex-col">
             <div className="flex flex-col flex-1">
@@ -93,27 +93,20 @@ export default function Dashboard() {
 
             <div className="flex justify-between items-end w-full">
               <p className="text-sm text-[#656565] mb-2">
-                {"hãy bắt đầu các sự kiện ngay nào!"}
+                {"hãy bắt đầu chơi các sự kiện ngay nào!"}
               </p>
               <img src={nyancat} className="md:w-1/5 md:h-min w-[30px] h-[20.7px]" alt="must be a nyancat gif"></img>
             </div>
           </div>
           <div className="w-full mb-2">
-            <Line marginY = {false}
-              
-            />
+            <Line marginY={false} />
           </div>
-          <p className="font-bold text-sm text-[#000000] ">
-            {"Tham gia sự kiện"}
-          </p>
-          <p className="text-sm text-[#656565]">
-            {
-              "Tham gia vào các sự kiện được tổ chức với tài khoản đăng nhập hiện tại của bạn."
-            }
+          <p className=" font-bold text-sm text-[#656565]">
+            {"Tham gia vào các sự kiện được tổ chức bằng mã pin."}
           </p>
           <a href="/">
             <Button
-              content={"CHƠI NÀO!!!"}
+              content={"CHƠI VỚI MÃ PIN!"}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
@@ -130,9 +123,10 @@ export default function Dashboard() {
             ) : (
               arrStatus.map((item, index) => (
                 <div key={index} className="flex flex-col">
-                  <EventButton
+                  <EventButton className="bg-[#40BEE5]"
                     title={item.title}
-                    user_joined={item.userJoined}
+                    userJoined={item.userJoined}
+                    status={item.status}
                   />
                 </div>
               ))
@@ -154,7 +148,7 @@ export default function Dashboard() {
           </p>
           <a href="/admin/event/event-register">
             <Button
-              content={"BẮT ĐẦU NGAY"}
+              content={"TẠO SỰ KIỆN NGAY"}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
@@ -167,7 +161,10 @@ export default function Dashboard() {
   const renderShowEvent = useMemo(() => {
     return (
       <Input content={"Danh sách sự kiện"} isTextGradient={true}>
-        <div className="flex flex-col pt-5 gap-y-[7px]">
+        <p className="font-bold text-sm text-[#656565] mt-3 mb-2">
+          {"Hiển thị các sự kiện của tôi đã tạo"}
+        </p>
+        <div className="flex flex-col gap-y-[7px]">
           {arrID.length === 0 ? (
             <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
               {" "}
@@ -199,7 +196,7 @@ export default function Dashboard() {
       ) : (
         <div>
           {renderHeader}
-          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
+          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
             {/* participate in event */}
             {renderJoinEvent}
             {/* create a event */}
