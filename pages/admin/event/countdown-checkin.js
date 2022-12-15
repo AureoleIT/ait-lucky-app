@@ -6,7 +6,6 @@ import BgBlueButton from "public/shared/BgBlueButton"
 import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
 import PinCode from "public/shared/PinCode"
-import testCoundown from "public/util/testCountdown"
 import PopUpQR from "public/shared/PopUpQR"
 import { ShowMethod, hidden, show } from "public/util/popup"
 import PopUp from "public/shared/PopUp"
@@ -19,7 +18,7 @@ import { useUserCurrEventHook, usePopUpMessageHook, usePopUpStatusHook, usePopUp
 
 import { useDispatch } from "react-redux"
 import { db } from "src/firebase"
-import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, get, child, onValue, query, orderByChild, equalTo} from "firebase/database"
 
 
 function CountDownCheckIn () 
@@ -35,8 +34,9 @@ function CountDownCheckIn ()
     // dispatch
     const dispatch = useDispatch()
     // eventID
-    const beforeID = useUserCurrEventHook()
-    const pinCode = beforeID.slice(0,6)
+    const event = useUserCurrEventHook()
+    const eventID = event.eventId 
+    const pinCode = eventID.slice(0,6)
 
     // state
     const [minutes, setMinutes] = useState(countdown)  // store minutes of countdown
@@ -46,9 +46,8 @@ function CountDownCheckIn ()
     const [isNavigateHidden, setIsNavigateHidden] = useState(hidden) // pop up navigate hidden state
     const [isActive, setIsActitve] = useState(true)
     const [isStop, setIsStop] = useState(false)
-    const [textState, setTextState] = useState("")
-    const [isSuccess, setIsSuccess] = useState(false)
     const [player, setPlayer] = useState(0)
+    const [playerList, setPlayerList] = useState([])
 
     const countDownNumber = {
         background: "#3B88C3"
@@ -67,48 +66,81 @@ function CountDownCheckIn ()
     const visible = usePopUpVisibleHook()
     const status = usePopUpStatusHook()
 
-    // countdown
+    // get participants from firebase
+    const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
     useEffect(() =>
     {
-        let date = new Date()
-        let deadline = date.getTime() + (minutes * 60 * 1000)
-
-        let countdown = null
-
-        if(isActive && isStop === false)
-        {
-            countdown = setInterval(() => {
-                let nowDate = new Date()
-                let left = deadline - nowDate
-
-
-                let nowSeconds = Math.floor((left / 1000) % 60);
-                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
-
-                if(nowMinutes === 0 && nowSeconds === 0)
+        onValue(que2, (snapshot) => {
+            if (snapshot.exists()) {
+                const rawData = snapshot.val();
+                const data = Object.values(rawData);
+                data.forEach((val, idx) => {
+                    val.ID = Object.keys(rawData)[idx];
+                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            val['pic'] = snapshot.val().pic;
+                        }
+                    })
+                })
+                setTimeout(function()
                 {
-                    clearInterval(countdown)
+                    const online = data.filter(val => val.status === 1).length;
+                    setPlayerList(Object.values(rawData));
+                    setPlayer(online);
+                }, 200)
+            }
+        });
+    })
 
-                    ShowMethod(dispatch, messagesSuccess.I0010, true)
+    // useEffect(() =>
+    // {
+    //     if(typeof playerList === "object") {
+    //         setPlayerList(Object.values(playerList))
+    //     }
+    // },[playerList])
 
-                    setTimeout(() =>
-                    {
-                        router.push("/adimin/luckyspin")
-                    },2000)
+    // countdown
+    // useEffect(() =>
+    // {
+    //     let date = new Date()
+    //     let deadline = date.getTime() + (minutes * 60 * 1000)
 
-                }
-                else {
-                    setMinutes(nowMinutes)
-                    setSeconds(nowSeconds)
-                }   
-            }, 1000)
-        }
-        else {
-            clearInterval(countdown)
-        }
+    //     let countdown = null
 
-        return () => clearInterval(countdown)
-    },[isActive, isStop, dispatch])
+    //     if(isActive && isStop === false)
+    //     {
+    //         countdown = setInterval(() => {
+    //             let nowDate = new Date()
+    //             let left = deadline - nowDate
+
+
+    //             let nowSeconds = Math.floor((left / 1000) % 60);
+    //             let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+
+    //             if(nowMinutes === 0 && nowSeconds === 0)
+    //             {
+    //                 clearInterval(countdown)
+
+    //                 ShowMethod(dispatch, messagesSuccess.I0010, true)
+
+    //                 setTimeout(() =>
+    //                 {
+    //                     router.push("/admin/luckyspin")
+    //                 },2000)
+
+    //             }
+    //             else {
+    //                 setMinutes(nowMinutes)
+    //                 setSeconds(nowSeconds)
+    //             }   
+    //         }, 1000)
+    //     }
+    //     else {
+    //         clearInterval(countdown)
+    //     }
+
+    //     return () => clearInterval(countdown)
+    // },[isActive, isStop, dispatch])
     
     // close pop up
     const closePopup = (e) => {
@@ -149,7 +181,7 @@ function CountDownCheckIn ()
 
         setTimeout(() =>
         {
-            router.push("/admin/luckyspin")
+            router.push(`/admin/luckyspin/${pinCode}`)
         }, 2000)
     })
 
@@ -157,11 +189,11 @@ function CountDownCheckIn ()
     {
         return (
             <>
-                <Title title={"tiệc cuối năm"}/>
+                <Title title={event.title}/>
                 <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
             </>
         )
-    },[])
+    },[event.title])
 
     const renderPinCode = useMemo(() =>
     {
@@ -256,13 +288,13 @@ function CountDownCheckIn ()
     const renderPlayer = useMemo(() =>
     {
         return (
-            <div className="max-w-xl w-4/5 max-h-[200px] overflow-x-hidden overflow-y-auto">
+            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto">
                 <div className="w-full h-full flex flex-col items-center">
-                    <PlayerList listPlayer={testCoundown.player} />
+                    <PlayerList listPlayer={playerList} />
                 </div>
             </div>
         )
-    },[])
+    },[playerList])
 
     const renderLine3 = useMemo(() =>
     {
