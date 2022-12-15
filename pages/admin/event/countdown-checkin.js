@@ -14,7 +14,7 @@ import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
 import { messagesError, messagesSuccess } from "public/util/messages"
 
-import { useUserCurrEventHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 
 import { useDispatch } from "react-redux"
 import { db } from "src/firebase"
@@ -34,7 +34,7 @@ function CountDownCheckIn ()
     // dispatch
     const dispatch = useDispatch()
     // eventID
-    const event = useUserCurrEventHook()
+    const event = useUserCurrEventCreatingHook()
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
 
@@ -92,55 +92,55 @@ function CountDownCheckIn ()
         });
     })
 
-    // useEffect(() =>
-    // {
-    //     if(typeof playerList === "object") {
-    //         setPlayerList(Object.values(playerList))
-    //     }
-    // },[playerList])
+    useEffect(() =>
+    {
+        if(typeof playerList === "object") {
+            setPlayerList(Object.values(playerList))
+        }
+    },[playerList])
 
-    // countdown
-    // useEffect(() =>
-    // {
-    //     let date = new Date()
-    //     let deadline = date.getTime() + (minutes * 60 * 1000)
+    countdown
+    useEffect(() =>
+    {
+        let date = new Date()
+        let deadline = date.getTime() + (minutes * 60 * 1000)
 
-    //     let countdown = null
+        let countdown = null
 
-    //     if(isActive && isStop === false)
-    //     {
-    //         countdown = setInterval(() => {
-    //             let nowDate = new Date()
-    //             let left = deadline - nowDate
+        if(isActive && isStop === false)
+        {
+            countdown = setInterval(() => {
+                let nowDate = new Date()
+                let left = deadline - nowDate
 
 
-    //             let nowSeconds = Math.floor((left / 1000) % 60);
-    //             let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+                let nowSeconds = Math.floor((left / 1000) % 60);
+                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
 
-    //             if(nowMinutes === 0 && nowSeconds === 0)
-    //             {
-    //                 clearInterval(countdown)
+                if(nowMinutes === 0 && nowSeconds === 0)
+                {
+                    clearInterval(countdown)
 
-    //                 ShowMethod(dispatch, messagesSuccess.I0010, true)
+                    ShowMethod(dispatch, messagesSuccess.I0010, true)
 
-    //                 setTimeout(() =>
-    //                 {
-    //                     router.push("/admin/luckyspin")
-    //                 },2000)
+                    setTimeout(() =>
+                    {
+                        router.push("/admin/luckyspin")
+                    },2000)
 
-    //             }
-    //             else {
-    //                 setMinutes(nowMinutes)
-    //                 setSeconds(nowSeconds)
-    //             }   
-    //         }, 1000)
-    //     }
-    //     else {
-    //         clearInterval(countdown)
-    //     }
+                }
+                else {
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
+                }   
+            }, 1000)
+        }
+        else {
+            clearInterval(countdown)
+        }
 
-    //     return () => clearInterval(countdown)
-    // },[isActive, isStop, dispatch])
+        return () => clearInterval(countdown)
+    },[isActive, isStop, dispatch])
     
     // close pop up
     const closePopup = (e) => {
@@ -218,16 +218,16 @@ function CountDownCheckIn ()
         return (
             <div className={isHidden} style={zIndex}>
                 <PopUpQR close={closePopup}>
-                    <div className="hidden mb-3 justify-center" id="qr_code">
-                        <div className="flex justify-center items-center">
-                            <div>
-                                <QRCodeCanvas id="qrCode" size={120} value={qrCodeValue} />
-                            </div>
-                            <div className="relative">
-                                <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
+                        <div className="hidden mb-3 justify-center" id="qr_code">
+                            <div className="flex justify-center items-center">
+                                <div>
+                                    <QRCodeCanvas id="qrCode" size={120} value={qrCodeValue} />
+                                </div>
+                                <div className="relative">
+                                        <i className="fas fa-download text-[20px] ml-3 absolute bottom-0" onClick={handleDownloadQR}></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </PopUpQR>
             </div>
         )
@@ -325,19 +325,19 @@ function CountDownCheckIn ()
 
     return (
         <section className="flex flex-col justify-center items-center h-screen w-screen">
-            {renderTitleandH1}
-            {/* id room */}
-            {renderPinCode}
-            {/* qr code */}
-            {renderButtonQRcode}
-            {renderQRPopup}
-            {renderCountdownTime}
-            {renderParticipants}
-            {renderH1andLine}
-            {renderPlayer}
-            {renderLine3}
-            {renderStartButton}
-            {renderPopup}
+                    {renderTitleandH1}
+                    {/* id room */}
+                    {renderPinCode}
+                    {/* qr code */}
+                    {renderButtonQRcode}
+                    {renderQRPopup}
+                    {renderCountdownTime}
+                    {renderParticipants}
+                    {renderH1andLine}
+                    {renderPlayer}
+                    {renderLine3}
+                    {renderStartButton}
+                    {renderPopup}
         </section>
     )
 }
