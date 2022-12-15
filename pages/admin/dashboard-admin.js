@@ -82,11 +82,7 @@ export default function Dashboard() {
 
   const renderJoinEvent = useMemo(() => {
     return (
-      <Input
-        content={""}
-        primaryColor={LEFT_COLOR}
-        secondaryColor={RIGHT_COLOR}
-      >
+      <Input content={""}>
         <div className="flex flex-col pb-4 pt-2">
           <div className="flex ">
             <div className="flex flex-col flex-1">
@@ -102,12 +98,10 @@ export default function Dashboard() {
               <img src={nyancat} alt="must be a nyancat gif"></img>
             </div>
           </div>
-          <div className="w-full mb-2">
-            <Line
-              content=""
-              primaryColor={LEFT_COLOR}
-              secondaryColor={RIGHT_COLOR}
-            ></Line>
+          <div className="w-full">
+            <Line marginY = {false}
+              
+            />
           </div>
           <p className="font-bold text-sm text-[#000000]">
             {"Tham gia sự kiện"}
@@ -151,12 +145,7 @@ export default function Dashboard() {
 
   const renderCreateEvent = useMemo(() => {
     return (
-      <Input
-        content={"Tạo sự kiện"}
-        primaryColor={LEFT_COLOR}
-        secondaryColor={RIGHT_COLOR}
-        isTextGradient={true}
-      >
+      <Input content={"Tạo sự kiện"} isTextGradient={true}>
         <div className="">
           <p className="text-sm text-[#656565] pt-5">
             {
@@ -177,12 +166,7 @@ export default function Dashboard() {
 
   const renderShowEvent = useMemo(() => {
     return (
-      <Input
-        content={"Danh sách sự kiện"}
-        primaryColor={LEFT_COLOR}
-        secondaryColor={RIGHT_COLOR}
-        isTextGradient={true}
-      >
+      <Input content={"Danh sách sự kiện"} isTextGradient={true}>
         <div className="flex flex-col pt-5 gap-y-[7px]">
           {arrID.length === 0 ? (
             <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
