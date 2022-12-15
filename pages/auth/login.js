@@ -33,6 +33,11 @@ export default function Login() {
   const dispatch = useDispatch()
   const dbRef = ref(db);
 
+  // const globalUser = useUserPackageHook();
+  // if ( globalUser.userId !== undefined || globalUser.userId !== null) {
+  //   router.push("/admin/dashboard-admin");
+  // }
+
   const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
       ShowMethod(dispatch, messagesError.E0004, false)

@@ -19,7 +19,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import Logo from "public/shared/Logo";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import Button from "public/shared/Button";
 import Line from "public/shared/Line";
 
@@ -36,6 +36,8 @@ export default function Index() {
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   var [event, setEvent] = useState({});
   var [user, setUser] = useState({});
+
+  const globalUser = useUserPackageHook().eventId;
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -128,7 +130,7 @@ export default function Index() {
   }, [])
 
   const renderDirect = useMemo(() => {
-    return (
+    return globalUser ? <></> : (
       <div>
         <WayLog
           action="Đăng nhập"
@@ -142,7 +144,7 @@ export default function Index() {
         />
       </div>
     )
-  }, [])
+  }, [globalUser])
 
   const renderPopUp = useMemo(() => {
     return (
