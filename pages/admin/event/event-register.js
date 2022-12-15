@@ -50,11 +50,6 @@ export default function EventRegister() {
   },[])
 
   const dispatch = useDispatch()
-  useEffect(() =>
-  {
-    dispatch(userCurrentHostingEvent(id.current))
-  },[dispatch, id.current])
-  
   // handle submit button
   const handleSubmit = useCallback((title, description, maxTicket, publicFlag) =>
   {
@@ -78,6 +73,7 @@ export default function EventRegister() {
               status: 1,
               delFlag: false,
       };
+      dispatch(userCurrentHostingEvent(newEvent))
       set(ref(db, `event/${id.current}`), newEvent)
         .then(() => {
             ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true)

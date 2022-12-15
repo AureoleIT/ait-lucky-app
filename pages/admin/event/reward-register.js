@@ -17,12 +17,14 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 
 import { useUserCurrEventHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
+import Header from "public/shared/Header";
 
 function RewardRegister() {
     // router
     const router = useRouter();
     // eventID
-    const eventID = useUserCurrEventHook()
+    const event = useUserCurrEventHook()
+    const eventID = event.eventId
     // state
     const [key, setKey] = useState([])
     const [rewardCount, setRewardCount] = useState([])
@@ -177,6 +179,18 @@ function RewardRegister() {
     },[dispatch, value, uniqueKey])
 
     // render component
+
+    const renderHeader = useMemo(() =>
+    {
+      return(
+        <>
+          <div className="w-full h-[12%]">
+            <Header />
+          </div>
+        </>
+      )
+    },[])
+
     const renderReward = useMemo(() =>
     {
         return (
@@ -230,12 +244,15 @@ function RewardRegister() {
     },[visible, message, status])
 
     return (
-        <section className="flex flex-col items-center justify-between w-screen h-screen">
-            <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
-                {renderReward}
-                {renderAddRewardButton}
+        <section className="w-screen h-screen">
+            {renderHeader}
+            <div className="flex flex-col items-center justify-between h-[85%]">
+                <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
+                    {renderReward}
+                    {renderAddRewardButton}
+                </div>
+                {renderRewardRegisterButton}
             </div>
-            {renderRewardRegisterButton}
             {renderPopUp}
         </section>
   );

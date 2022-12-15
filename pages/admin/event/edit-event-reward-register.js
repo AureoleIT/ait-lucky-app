@@ -28,7 +28,8 @@ function EditEventRewardRegister() {
     // router
     const router = useRouter();
     // eventID
-    const eventID = useUserCurrEventHook()
+    const eventStore = useUserCurrEventHook()
+    const eventID = eventStore.eventId
     // dispatch
     const dispatch = useDispatch()
     // message

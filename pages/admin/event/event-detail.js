@@ -18,7 +18,8 @@ function EventDetail() {
     const router = useRouter();
     
     // eventID get from redux
-    const beforeID = useUserCurrEventHook()
+    const event = useUserCurrEventHook()
+    const beforeID = event.eventId
     const eventID = beforeID.slice(0,8)
 
     // state
