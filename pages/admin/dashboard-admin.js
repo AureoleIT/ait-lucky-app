@@ -98,12 +98,12 @@ export default function Dashboard() {
               <img src={nyancat} alt="must be a nyancat gif"></img>
             </div>
           </div>
-          <div className="w-full">
+          <div className="w-full mb-2">
             <Line marginY = {false}
               
             />
           </div>
-          <p className="font-bold text-sm text-[#000000]">
+          <p className="font-bold text-sm text-[#000000] ">
             {"Tham gia sự kiện"}
           </p>
           <p className="text-sm text-[#656565]">
