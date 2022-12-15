@@ -6,6 +6,7 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
+import Button from "public/shared/Button";
 import router, { useRouter } from "next/router";
 
 import { useDispatch } from "react-redux";
@@ -52,10 +53,10 @@ export default function LuckySpin() {
     const [spinClicked, setSpinClicked] = useState(false);
     // Người nhận thưởng
     const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
-    // ID người nhận thưởng
-    const [lastAwardedId, setLastAwardedId] = useState("");
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
+    // Thời gian cho animate quay thưởng
+    const [spinTime, setSpinTime] = useState(4);
 
     // Firebase
     const dbRef = ref(db);
@@ -100,11 +101,13 @@ export default function LuckySpin() {
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const isSpining = data['playingData']['isSpinning'];
                 const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
+                const spinTime = data['playingData']['spinTime'];
                 if (!spinClicked && isSpining) {
                     setLastAwardedIndex(lastAwardedIndex);
                     setSpinClicked(isSpining);
                 };
                 setRewardChosing(rewardChosingIndex);
+                setSpinTime(spinTime);
             } else {
                 router.push('/');
             }
@@ -120,7 +123,7 @@ export default function LuckySpin() {
             }
         });
 
-        setTimeout(() => setLoadedData(true), 3000)
+        setTimeout(() => setLoadedData(true), 2500)
     }
 
     // ------------------------------------------------- Function
@@ -162,10 +165,10 @@ export default function LuckySpin() {
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
-                }, 1000)
-            }, 2000)
+                }, (1000))
+            }, ((spinTime*1000)*(3/4)))
 
-        }, 1000)
+        }, ((spinTime*1000)/4))
     }
 
     const awardNotification = (
@@ -226,7 +229,6 @@ export default function LuckySpin() {
     useEffect(() => {
         if (spinClicked) spining();
     }, [spinClicked])
-
     
     // ------------------------------------------------------------ useMemo
     const spinBlock = useMemo(() => {
@@ -239,6 +241,16 @@ export default function LuckySpin() {
 
     const renderSetting = useMemo(() => {
         return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}></OverlayBlock>
+    }, []);
+
+    const renderExitNotification = useMemo(() => {
+        return <OverlayBlock childDiv={<>
+            <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">thoát</span>?</p>
+            <div className="mt-2 w-full flex gap-4 px-2">
+                <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {router.push('/')}} />
+                <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+            </div>
+        </>}  id={"exitOverlay"}></OverlayBlock>
     }, []);
 
     const renderAwardNotification = useMemo(() => {
@@ -285,11 +297,12 @@ export default function LuckySpin() {
                         </div>
                     </div>
                     {spinBlock}
-                    <div className="w-full mb-12">
+                    <div className="w-full mb-20">
                       <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                       <div className="h-44 px-4 py-2 relative">
                         {renderRewardList}
                       </div>
+                      <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
                         onClick={() => {document.getElementById("settingOverlay").classList.toggle('hidden')}}>
@@ -300,6 +313,7 @@ export default function LuckySpin() {
                     {renderCurrEventDetail}
                     {renderSetting}
                     {renderAwardNotification}
+                    {renderExitNotification}
                 </div>
             </section>
             :<PageLoading />
