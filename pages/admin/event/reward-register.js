@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 
 import SingleColorButton from "public/shared/SingleColorButton";
-import { ShowMethod } from "public/util/popup";
+import { HideMethod, ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Reward from "components/RewardRegister/Reward";
@@ -174,6 +174,7 @@ function RewardRegister() {
                 })
                 setTimeout(() =>
                 {
+                    HideMethod(dispatch)
                     router.push("/admin/event/event-detail")
                 },2000)
             }

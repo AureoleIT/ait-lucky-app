@@ -17,7 +17,7 @@ import { storage } from "src/firebase"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook } from "public/redux/hooks";
-import { ShowMethod } from "public/util/popup";
+import { HideMethod, ShowMethod } from "public/util/popup";
 
 import { useDispatch } from "react-redux"
 
@@ -42,6 +42,7 @@ function EditEventRewardRegister() {
     const [nameEvent, setNameEvent] = useState("")  // name event state
     const [description, setDescription] = useState("")  // description state
     const [maxTicket, setMaxTicket] = useState("")  // maxTicket state
+    const [publicFlag, setPublicFlag] = useState(true)
 
     const [rewardId, setRewardId] = useState([])  // store id of rewards when get from firebase
     const [nameReward, setNameReward] = useState([])  //store name rewards get from firebase
@@ -80,7 +81,7 @@ function EditEventRewardRegister() {
                 setNameEvent(Object.values(data)[0].title)
                 setDescription(Object.values(data)[0].description)
                 setMaxTicket(Object.values(data)[0].maxTicket)
-                Object.values(data)[0].publicFlag === 1 ? (checkBoxRef.current.checked = true) : (checkBoxRef.current.checked = false)
+                Object.values(data)[0].publicFlag === 1 ? (setPublicFlag(true)) : (setPublicFlag(false))
                 setEvent(Object.values(data)[0])
             }
         })
@@ -152,7 +153,7 @@ function EditEventRewardRegister() {
             update(ref(db, `event/${eventID}`),
             {
                 eventId: eventID,
-                publicFlag: checkBoxRef.current.checked ? 1 : 0,
+                publicFlag: publicFlag ? 1 : 0,
                 title: nameEvent,
                 description: description,
                 maxTicket: maxTicket,
@@ -309,6 +310,7 @@ function EditEventRewardRegister() {
             ShowMethod(dispatch, messagesSuccess.I0003, true)
             setTimeout(() =>
             {
+                HideMethod(dispatch)
                 router.push("/admin/event/event-detail");
             },[2000])
         }
@@ -387,11 +389,11 @@ function EditEventRewardRegister() {
                     <p style={contentCSS} className="font-bold"> Cho phép người tham gia không cần đăng nhập </p>
                 </div>
                 <div className="w-[30%] flex items-center text-right">
-                    <CheckBox ref={checkBoxRef} />
+                    <CheckBox value={publicFlag} onChange={e => setPublicFlag(e?.target?.checked)}/>
                 </div>
             </div>
         )
-    },[checkBoxRef])
+    },[publicFlag, setPublicFlag])
 
     const renderReward = useMemo(() =>
     {

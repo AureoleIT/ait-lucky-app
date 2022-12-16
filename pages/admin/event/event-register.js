@@ -4,11 +4,9 @@ import TextArea from "public/shared/TextArea";
 import AuthInput from "public/shared/AuthInput";
 import BgBlueButton from "public/shared/BgBlueButton";
 import Header from "public/shared/Header";
-import { ShowMethod } from "public/util/popup";
+import { HideMethod, ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import CheckBox from "public/shared/CheckBox";
-import { db } from "src/firebase";
-import { set, ref } from "firebase/database";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { useDispatch } from "react-redux"
@@ -67,7 +65,6 @@ export default function EventRegister() {
               maxTicket: maxTicket,
               createAt: new Date().getTime(),
               createBy: user.userId,
-              waitingTime: 0,
               userJoined: 0,
               pinCode: id.current.slice(0,6),
               status: 1,
@@ -76,6 +73,7 @@ export default function EventRegister() {
       dispatch(userEventCreating(newEvent))
       ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true)
           setTimeout(() => {
+            HideMethod(dispatch)
             router.push("/admin/event/reward-register");
           }, 2000);
         }
