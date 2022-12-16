@@ -55,7 +55,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                                         <ParticipantAvt player={player} />
                                 </div>
                             </div>
-                            <p className="w-full text-center h-5 mt-2 text-[#004599] font-bold uppercase truncate">{player.nameDisplay?player.nameDisplay.split(" ").pop():""}</p>
+                            <p className="px-2 w-full text-center h-5 mt-2 text-[#004599] font-bold uppercase truncate">{player.nameDisplay?player.nameDisplay.split(" ").pop():""}</p>
                         </div>
                     )
                 }):<></>
