@@ -7,7 +7,7 @@ import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
 import PinCode from "public/shared/PinCode"
 import PopUpQR from "public/shared/PopUpQR"
-import { ShowMethod, hidden, show } from "public/util/popup"
+import { ShowMethod, hidden, show, HideMethod } from "public/util/popup"
 import PopUp from "public/shared/PopUp"
 import Title from "public/shared/Title"
 import { TEXT } from "public/util/colors"
@@ -18,7 +18,7 @@ import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, 
 
 import { useDispatch } from "react-redux"
 import { db } from "src/firebase"
-import {ref, get, child, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, get, update, child, onValue, query, orderByChild, equalTo} from "firebase/database"
 
 
 function CountDownCheckIn () 
@@ -39,7 +39,7 @@ function CountDownCheckIn ()
     const pinCode = eventID.slice(0,6)
 
     // state
-    const [minutes, setMinutes] = useState(countdown)  // store minutes of countdown
+    const [minutes, setMinutes] = useState(Math.floor(countdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [qrCodeValue, setQrCodeValue] = useState("")  // sotre qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
@@ -48,6 +48,7 @@ function CountDownCheckIn ()
     const [isStop, setIsStop] = useState(false)
     const [player, setPlayer] = useState(0)
     const [playerList, setPlayerList] = useState([])
+    const [countdownLeft, setCountdownLeft] = useState(countdown)
 
     const countDownNumber = {
         background: "#3B88C3"
@@ -92,14 +93,7 @@ function CountDownCheckIn ()
         });
     })
 
-    useEffect(() =>
-    {
-        if(typeof playerList === "object") {
-            setPlayerList(Object.values(playerList))
-        }
-    },[playerList])
-
-    countdown
+    //countdown
     useEffect(() =>
     {
         let date = new Date()
@@ -121,13 +115,17 @@ function CountDownCheckIn ()
                 {
                     clearInterval(countdown)
 
+                    update(ref(db,`event/${eventID}`),
+                    {
+                        status:3,
+                    })
+
                     ShowMethod(dispatch, messagesSuccess.I0010, true)
 
                     setTimeout(() =>
                     {
-                        router.push("/admin/luckyspin")
+                        router.push(`/admin/luckyspin/${pinCode}`)
                     },2000)
-
                 }
                 else {
                     setMinutes(nowMinutes)
@@ -141,6 +139,28 @@ function CountDownCheckIn ()
 
         return () => clearInterval(countdown)
     },[isActive, isStop, dispatch])
+
+    // update countdown time to firebase
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setCountdownLeft(prev => prev - 1);
+        }, 1000);
+        if(countdownLeft === 0)
+        {
+            return () => clearInterval(interval);
+        }
+    }, []);
+
+    useEffect(() =>
+    {
+        if(countdownLeft >= 0)
+        {
+            update(ref(db, `event/${eventID}`),
+            {
+                waitingTime: countdownLeft
+            })
+        }
+    },[countdownLeft])
     
     // close pop up
     const closePopup = (e) => {
@@ -150,7 +170,7 @@ function CountDownCheckIn ()
     // generate qr code
     const generateQRcode = useCallback(() =>
     {
-        setQrCodeValue(`http://localhost:3000/event/lucky_spin/${pinCode}`)
+        setQrCodeValue(`http://localhost:3000/event/luckyspin/${pinCode}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
         setIsHidden(show)
@@ -181,6 +201,7 @@ function CountDownCheckIn ()
 
         setTimeout(() =>
         {
+            HideMethod(dispatch)
             router.push(`/admin/luckyspin/${pinCode}`)
         }, 2000)
     })
@@ -193,7 +214,7 @@ function CountDownCheckIn ()
                 <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
             </>
         )
-    },[event.title])
+    },[])
 
     const renderPinCode = useMemo(() =>
     {
@@ -288,7 +309,7 @@ function CountDownCheckIn ()
     const renderPlayer = useMemo(() =>
     {
         return (
-            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto">
+            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide">
                 <div className="w-full h-full flex flex-col items-center">
                     <PlayerList listPlayer={playerList} />
                 </div>
