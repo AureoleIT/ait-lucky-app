@@ -4,7 +4,7 @@ import React, { useEffect, useCallback, useMemo, useState } from "react";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
 
-import { TickBox, Title, AuthFooter, Button, Input, Line } from "public/shared/_index"
+import { TickBox, Title, AuthFooter, Button, Input, Line } from "public/shared"
 
 import {
   hasWhiteSpaceAndValidLength,
