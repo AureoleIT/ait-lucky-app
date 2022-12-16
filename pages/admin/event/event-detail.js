@@ -11,7 +11,9 @@ import Title from "public/shared/Title";
 import { useUserCurrEventCreatingHook } from "public/redux/hooks";
 
 import { db } from "src/firebase"
-import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, set, onValue, query, orderByChild, equalTo, update} from "firebase/database"
+import { HideMethod } from "public/util/popup";
+import { useDispatch } from "react-redux"
 
 function EventDetail() {
     // router
@@ -21,9 +23,10 @@ function EventDetail() {
     const event = useUserCurrEventCreatingHook()
     const beforeID = event.eventId
     const eventID = beforeID.slice(0,8)
-
+    // dispatch
+    const dispatch = useDispatch()
     // state
-    const [countdown, setCountdown] = useState(5); // countdown time
+    const [countdown, setCountdown] = useState(300); // countdown time
     const [title, setTitle] = useState("") // name event
     const [rewards, setRewards] = useState([]) // store rewards get from firebase
 
@@ -72,20 +75,29 @@ function EventDetail() {
 
     // navigate to countdown-checkin
     const handlePrepare = useCallback(() => {
-        router.push({
-        pathname:"/admin/event/countdown-checkin",
-        query:
+        HideMethod(dispatch)
+        if(countdown !== undefined)
         {
-            countdown
+            update(ref(db, `event/${beforeID}`),
+            {
+                status: 2,
+                waitingTime: countdown
+            })
+            router.push({
+                pathname:"/admin/event/countdown-checkin",
+                query:
+                {
+                    countdown
+                }
+            })
         }
-        })
-    },[countdown, router]);
+    },[countdown, dispatch]);
 
     // navigate to edit-page
     const handleEditPageNavigation = useCallback(() => {
+        HideMethod(dispatch)
         router.push("/admin/event/edit-event-reward-register");
-        
-    },[router]);
+    },[router, dispatch]);
 
     // render component
     const renderTitle = useMemo(() =>
@@ -118,7 +130,7 @@ function EventDetail() {
     const renderAward = useMemo(() =>
     {
         return (
-            <div className="flex flex-col overflow-x-hidden overflow-y-auto justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
+            <div className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[350px]">
                     {
                         rewards.map((item, index) => {
@@ -160,15 +172,15 @@ function EventDetail() {
                         id={"timer"}
                         onChange={onSetCoundownTime}
                     >
-                        <option value={"5"}>5 phút</option>
-                        <option value={"10"}>10 phút</option>
-                        <option value={"15"}>15 phút</option>
-                        <option value={"20"}>20 phút</option>
+                        <option value={"300"}>5 phút</option>
+                        <option value={"600"}>10 phút</option>
+                        <option value={"900"}>15 phút</option>
+                        <option value={"1200"}>20 phút</option>
                     </select>
                 </div>
             </div>
         )
-    },[])
+    },[onSetCoundownTime])
 
     const renderPrepareButton = useMemo(() =>
     {
