@@ -16,6 +16,7 @@ import { usePlayerParticipantHook } from "public/redux/hooks";
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push } from "firebase/database";
 import PageLoading from "public/shared/PageLoading";
+import { render } from "react-dom";
 
 
 export default function LuckySpin() {
@@ -57,6 +58,8 @@ export default function LuckySpin() {
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
     // Thời gian cho animate quay thưởng
     const [spinTime, setSpinTime] = useState(4);
+    // Xác nhận trao thưởng
+    const [confirmStatus, setConfirmStatus] = useState(0);
 
     // Firebase
     const dbRef = ref(db);
@@ -102,12 +105,13 @@ export default function LuckySpin() {
                 const isSpining = data['playingData']['isSpinning'];
                 const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
                 const spinTime = data['playingData']['spinTime'];
+                setSpinTime(spinTime);
+                setConfirmStatus(data['playingData']['confirmStatus'])
                 if (!spinClicked && isSpining) {
                     setLastAwardedIndex(lastAwardedIndex);
                     setSpinClicked(isSpining);
                 };
                 setRewardChosing(rewardChosingIndex);
-                setSpinTime(spinTime);
             } else {
                 router.push('/');
             }
@@ -166,18 +170,13 @@ export default function LuckySpin() {
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
                 }, (1000))
-            }, ((spinTime*1000)*(3/4)))
+            }, ((spinTime-1)*750))
 
-        }, ((spinTime*1000)/4))
+        }, ((spinTime-1)*250))
     }
 
     const awardNotification = (
-        <div className="flex flex-col items-center text-center text-[#004599]">
-            <p className="font-semibold">Chúc mừng</p>
-            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-            <p className="font-semibold">đã nhận được giải:</p>
-            <p className="font-[900] text-lg" id="awaredRewardName"></p>
-        </div>
+        <div className="flex flex-col items-center text-center text-[#004599]" id="confirmAwardNotification"></div>
     )
 
     // ------------------------------------------------------------------------ UseEffect
@@ -229,6 +228,38 @@ export default function LuckySpin() {
     useEffect(() => {
         if (spinClicked) spining();
     }, [spinClicked])
+
+    useEffect(() => {
+        if (loadedData) {
+            render((<div className="text-[#004599] text-base text-center w-full font-bold flex flex-col items-center">
+                {confirmStatus === 0 && <>
+                    <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+                    <p className="font-semibold">sẽ nhận được giải:</p>
+                    <p className="font-[900] text-lg" id="awaredRewardName"></p>
+                    <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                    <p>Đang chờ xác nhận trao giải ...</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="#004599" className="w-10 h-10 loadingAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
+                    </svg>
+                </>}
+                {confirmStatus === 1 && <>
+                    <p className="text-green-600">Đã xác nhận trao giải!</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#00A44A" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
+                    </svg>
+                </>}
+                {confirmStatus === 2 && <>
+                    <p className="text-[#FF6262]">Đã hủy trao giải</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6262" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5" />
+                    </svg>
+                </>}
+                {console.log("!!!")}
+            </div>), document.getElementById("confirmAwardNotification"));
+        };
+    }, [confirmStatus, spinClicked])
     
     // ------------------------------------------------------------ useMemo
     const spinBlock = useMemo(() => {
@@ -255,7 +286,7 @@ export default function LuckySpin() {
 
     const renderAwardNotification = useMemo(() => {
         return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}></OverlayBlock>
-    }, []);
+    }, [confirmStatus]);
 
     const renderRewardList = useMemo(() => {
         return <RewardList

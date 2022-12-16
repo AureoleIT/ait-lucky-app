@@ -73,7 +73,8 @@ export default function LuckySpinAdmin() {
                             lastAwardedId: "",
                             rewardChosingId: "",
                             rewardChosingIndex: 0,
-                            spinTime: 4
+                            spinTime: 4,
+                            confirmStatus: 0 // 0: Waiting; 1: Confirm; 2: Cancel
                         });
             }})
         
@@ -89,10 +90,10 @@ export default function LuckySpinAdmin() {
                 if (adminId !== data.createBy) router.push('/');
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const rewardChosingId = data['playingData']['rewardChosingId'];
-                const spinTime = data['playingData']['spinTime'];
+                const spin_time = data['playingData']['spinTime'];
                 setRewardChosing(rewardChosingIndex);
                 setIDRewardChosing(rewardChosingId);
-                setSpinTime(spinTime);
+                setSpinTime(spin_time);
             } else {
                 router.back();
             }
@@ -156,6 +157,7 @@ export default function LuckySpinAdmin() {
         // ngăn sự kiện khi quay thưởng
         setSpinClicked(true);
         setAwardedId("");
+        updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
         setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
@@ -194,9 +196,9 @@ export default function LuckySpinAdmin() {
                     // updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
                     setSpinClicked(false);
                 }, (1000))
-            }, ((spinTime*1000)*(3/4)))
+            }, ((spinTime-1)*750))
 
-        }, ((spinTime*1000)/4))
+        }, ((spinTime-1)*250))
     }
 
     // Chọn phần quà
@@ -204,11 +206,10 @@ export default function LuckySpinAdmin() {
         setRewardChosing(idx);
         setIDRewardChosing(remainRewardList[idx].idReward);
         document.getElementById("selectRewardPopUp").classList.toggle("hidden");
-        update(ref(db, 'event/' + EventID + '/playingData'),
-            {
-                rewardChosingId: remainRewardList[idx].idReward,
-                rewardChosingIndex: idx
-            });
+        updateFB('event/' + EventID + '/playingData', {
+            rewardChosingId: remainRewardList[idx].idReward,
+            rewardChosingIndex: idx
+        });
     }
 
     const updateFB = (path, changeData) => {
@@ -252,9 +253,7 @@ export default function LuckySpinAdmin() {
     }, [remainPlayerList]);
 
     useEffect(() => {
-        update(ref(db, 'event/' + EventID + '/playingData'), {
-            spinTime: spinTime
-        });
+        updateFB('event/' + EventID + '/playingData', { spinTime: spinTime });
     }, [spinTime]);
 
     // -------------------------------------------------------------------- useMemo
@@ -275,10 +274,7 @@ export default function LuckySpinAdmin() {
             <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">kết thúc</span> sự kiện?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
-                    update(ref(db, 'event/' + router.query["eventId"]),
-                        {
-                            status: 4
-                        })
+                    updateFB('event/' + EventID, { status: 4 });
                 }} />
                 <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
             </div>
@@ -292,14 +288,13 @@ export default function LuckySpinAdmin() {
                 get(child(ref(db), "event/" + EventID + "/playingData")).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        console.log(data);
                         const rewardChosingId = data['rewardChosingId'];
                         const lastAwardedId = data['lastAwardedId'];
                         updateFB('event_participants/'+ lastAwardedId, { idReward: rewardChosingId });
+                        updateFB('event/' + EventID + '/playingData', { confirmStatus: 1 });
                         get(child(ref(db), "event_rewards/" + rewardChosingId)).then((snapshot) => {
                             if (snapshot.exists()) {
                                 const reward = snapshot.val();
-                                console.log(reward);
                                 updateFB('event_rewards/' + rewardChosingId, { quantityRemain: (reward.quantityRemain -= 1) });
                             }})
                     }})
@@ -311,15 +306,20 @@ export default function LuckySpinAdmin() {
         return <OverlayBlock childDiv={
             <div className="flex flex-col items-center text-center text-[#004599]">
                 <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-                <p className="font-semibold">đã nhận được giải:</p>
+                <p className="font-semibold">sẽ nhận được giải:</p>
                 <p className="font-[900] text-lg" id="awaredRewardName"></p>
-                <p className="mt-2 font-semibold">Xác nhận trao giải?</p>
+                <div className="mt-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                <p className="mt-2 font-bold">Xác nhận trao giải?</p>
                 <div className="mt-2 w-full flex gap-4 px-2">
                     {confirmButton}
-                    <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {document.getElementById("awardedOverlay").classList.toggle('hidden')}} />
+                    <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
+                        document.getElementById("awardedOverlay").classList.toggle('hidden');
+                        updateFB('event/' + EventID + '/playingData', { confirmStatus: 2 });
+                    }} />
                 </div>
             </div>
-        }  id={"awardedOverlay"}></OverlayBlock>
+        }  id={"awardedOverlay"}
+            clickOutClose={false}></OverlayBlock>
     }, [awardedId]);
 
     return (
@@ -391,14 +391,19 @@ export default function LuckySpinAdmin() {
                                     </ul>
                                 </div>
                             </div>
-                            <form className="flex justify-center h-fit items-center mt-4 gap-4">
+                            <div className="flex justify-center h-fit items-center mt-4 gap-4">
                                 <label className="font-bold text-[#004599]" htmlFor="spinTime">Thời gian animation: </label>
                                 <input id="spinTime" name="spinTime" defaultValue={spinTime} type={"number"} className={"text-sky-500 font-bold text-center w-20 h-10 border border-slate-300 rounded-md py-1 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"}
                                     onChange={() => {
-                                        setSpinTime(parseInt(document.getElementById("spinTime").value));
+                                        if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 0)
+                                            setSpinTime(parseInt(document.getElementById("spinTime").value));
+                                        else {
+                                            setSpinTime(0);
+                                            document.getElementById("spinTime").value = 0;
+                                        };
                                     }}></input>
                                 <p className="font-bold text-[#004599]">giây</p>
-                            </form>
+                            </div>
                             <Button content={"QUAY THƯỞNG"} onClick={!spinClicked?spining:() => {}} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
                             <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
                         </div>
