@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PlayerList from "./PlayerList";
+import OverlayBlock from "./OverlayBlock";
 
 export default function RewardList({listReward, showRemain = false, eventPaticipant, showDetail = false}) {
     const rewardList = [...listReward];
@@ -30,6 +31,22 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         )
     }
 
+    const openImage = (id) => {
+        document.getElementById(id).classList.toggle("hidden");
+    }
+
+    const ShowcaseImage = ({imgUrls}) => {
+        const [imgIdx, setImdIdx] = useState(0)
+
+        return (
+            <>
+                <div className="absolute h-screen w-full top-0 left-0">
+                    <img className="object-scale-down h-full w-full rounded-lg pointer-events-none" src={imgUrls[imgIdx]} alt={"lageImg"}/>
+                </div>
+            </>
+        )
+    }
+
     const getDetailFromReward = (reward) => {
         return (
             <div className="flex flex-col">
@@ -38,7 +55,8 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                         reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
                             return (
                                 <div key={idx} className="relative h-24 w-full flex">
-                                    <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}/>
+                                    <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}
+                                        onClick={() => openImage(reward.idReward)}/>
                                     {
                                         (reward.imgUrl.length > 3 && idx===2)?
                                         <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
@@ -50,6 +68,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             )
                         }):<></>
                     }
+                    <OverlayBlock childDiv={<ShowcaseImage imgUrls={reward.imgUrl} />} manual={true} id={reward.idReward} />
                 </div>
                 {eventPaticipant !== undefined?awradedPaticipantShowcase(reward.idReward):<></>}
             </div>
