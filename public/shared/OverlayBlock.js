@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import CloseButton from "public/shared/CloseButton";
 
-export default function OverlayBlock({closeButton = true, clickOutClose = true, childDiv, id, manual = false, background = true}) {
+export default function OverlayBlock({closeButton = true, clickOutClose = true, childDiv, id, manual = false, background = true, clickOutFunc}) {
     const blockID = id?id:"overlayBlock";
     
     const clickOutCloseOverlay = (e) => {
@@ -13,7 +13,10 @@ export default function OverlayBlock({closeButton = true, clickOutClose = true, 
         <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center z-50 hidden" id={blockID} onClick={clickOutCloseOverlay}
             style={{backgroundColor: background?"#00000080":""}}>
             {manual?
-                <div className="w-0 h-0" onClick={clickOutCloseOverlay}>
+                <div className="w-0 h-0" onClick={() => {
+                        clickOutCloseOverlay();
+                        if (clickOutFunc) clickOutFunc();
+                    }}>
                     {childDiv?childDiv:<div className="h-80 w-80"></div>}
                 </div>:
                 <div className="relative h-fit w-3/4 px-5 pt-8 pb-5 max-w-md bg-white shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle justify-between"
