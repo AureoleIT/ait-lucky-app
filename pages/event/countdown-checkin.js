@@ -1,30 +1,41 @@
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/router"
+
 import Line from "public/shared/Line";
 import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
-import Title from "public/shared/Title";
+import PlayerList from "public/shared/PlayerList";
+import { ShowMethod } from "public/util/popup";
+import { messagesSuccess } from "public/util/messages";
 
-import { useUserCurrEventCreatingHook } from "public/redux/hooks"
+import { usePlayerEventHook } from "public/redux/hooks"
+import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
-import {ref, get, child, onValue, query, orderByChild, equalTo} from "firebase/database"
-import PlayerList from "public/shared/PlayerList";
+import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
 
 function UserCountdownCheckin () {
 
+    // router
+    const router = useRouter()
+    // dispatch
+    const dispatch = useDispatch()
     // event object
-    const event = useUserCurrEventCreatingHook()
-    const eventName = event.title
-    const eventID = "4036f104-4ab2-4d4e-ae00-040b3eb88673"
-    const eventMaxTicket = event.maxTicket
-
-    let countdown
+    const event = usePlayerEventHook()  // event state that player join
+    const eventName = event.title  // event title
+    const eventID = event.eventId  // event id
+    const eventMaxTicket = event.maxTicket // max player
+    const pinCode = event.pinCode  // pin code
+    const countdown = event.waitingTime // countdown time
+    const deadline = event.startAt  // start at (time)
 
     // state
     const [minutes, setMinutes] = useState(0)  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [rewards, setRewards] = useState([]) // store rewards of event
-    const [player, setPlayer] = useState(0)
-    const [playerList, setPlayerList] = useState([])
+    const [player, setPlayer] = useState(0)  // number of player
+    const [playerList, setPlayerList] = useState([])  // list of plater
+    const isActive = true  // countdown
+    const [isStop, setIsStop] = useState(false)  // countdown
 
     // get reward from firebase
     const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(eventID))
@@ -41,56 +52,76 @@ function UserCountdownCheckin () {
         })
     },[])
 
-    // get participants from firebase
+    // get realtime number of player
+
+    const getNumberPlayer = query(ref(db, "event"), orderByChild("evenId"), equalTo(eventID))
+
+    useEffect(() =>
+    {
+        onValue(getNumberPlayer, (snapshot) =>
+        {
+            const data = snapshot.val()
+            if(data !== null)
+            {
+                const rawData  = Object.values(data)
+                setPlayer(rawData[0].userJoined)
+            }
+        })
+    })
+
+    // get realtime participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
     useEffect(() =>
     {
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
-                const data = Object.values(rawData);
-                data.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val['pic'] = snapshot.val().pic;
-                        }
-                    })
-                })
-                setTimeout(function()
-                {
-                    const online = data.filter(val => val.status === 1).length;
-                    setPlayerList(Object.values(rawData));
-                    setPlayer(online);
-                }, 200)
+                setPlayerList(Object.values(rawData));
+                const data = Object.values(rawData)
+                setPlayer(data.length)
             }
         });
     })
 
-    // get countdown from firebase
-
-    const getCountdown = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
-
+    //countdown
     useEffect(() =>
     {
-        onValue(getCountdown, (snapshot) =>
-        {
-            const data = snapshot.val()
-            if(data !== null)
-            {
-                let eventData = Object.values(data)[0]
-                countdown = eventData.waitingTime
-                setMinutes(Math.floor(countdown / 60))
-                setSeconds(countdown % 60)
-            }
+        let deadlineCountdown = deadline + (countdown * 1000)
+        let countdownTimer = null
 
-        })
-    })
+        if(isActive && isStop === false)
+        {
+            countdownTimer = setInterval(() => {
+                let nowDate = new Date()
+                let left = deadlineCountdown - nowDate
+                let nowSeconds = Math.floor((left / 1000) % 60);
+                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+                if(nowMinutes === 0 && nowSeconds === 0)
+                {
+                    clearInterval(countdownTimer)
+                    setIsStop(true)
+                    ShowMethod(dispatch, messagesSuccess.I0009, true)
+                    setTimeout(() => {
+                        router.push(`/event/luckyspin/${pinCode}`)
+                    },2000)
+                }
+                else {
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
+                }   
+            }, 1000)
+        }
+        else {
+            clearInterval(countdownTimer)
+        }
+        return () => clearInterval(countdownTimer)
+    },[isActive, isStop, dispatch])
 
     const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
     const countDownNumber = {background: "#3B88C3"}
 
+    // render component
     const renderTitle = useMemo(() =>
     {
         return (
