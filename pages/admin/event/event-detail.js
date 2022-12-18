@@ -5,15 +5,14 @@ import { useRouter } from "next/router";
 import BgBlueButton from "public/shared/BgBlueButton";
 import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
 import Line from "public/shared/Line";
-
+import { HideMethod } from "public/util/popup";
 import Title from "public/shared/Title";
 
 import { useUserCurrEventCreatingHook } from "public/redux/hooks";
+import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
-import {ref, set, onValue, query, orderByChild, equalTo, update} from "firebase/database"
-import { HideMethod } from "public/util/popup";
-import { useDispatch } from "react-redux"
+import {ref, onValue, query, orderByChild, equalTo, update} from "firebase/database"
 
 function EventDetail() {
     // router
@@ -30,15 +29,10 @@ function EventDetail() {
     const [title, setTitle] = useState("") // name event
     const [rewards, setRewards] = useState([]) // store rewards get from firebase
 
-    const optionStyles = {
-        background: "#40BEE5",
-    };
-
-    // logic
+    const optionStyles = { background: "#40BEE5" };
 
     // get name event from firebase
     const getName = query(ref(db, "event"), orderByChild("eventId"), equalTo(beforeID))
-
     useEffect(() =>
     {
         onValue(getName, (snapshot) =>
@@ -54,7 +48,6 @@ function EventDetail() {
 
     // get reward from firebase
     const reward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(beforeID))
-
     useEffect(() =>
     {
         onValue(reward,(snapshot) =>
@@ -81,14 +74,12 @@ function EventDetail() {
             update(ref(db, `event/${beforeID}`),
             {
                 status: 2,
-                waitingTime: countdown
+                waitingTime:countdown,
+                startAt: new Date().getTime()
             })
             router.push({
                 pathname:"/admin/event/countdown-checkin",
-                query:
-                {
-                    countdown
-                }
+                query: { countdown }
             })
         }
     },[countdown, dispatch]);
@@ -102,9 +93,7 @@ function EventDetail() {
     // render component
     const renderTitle = useMemo(() =>
     {
-        return (
-            <Title title={title}/>
-        )
+        return ( <Title title={title}/> )
     },[title])
 
     const renderEventID = useMemo(() =>
@@ -153,9 +142,7 @@ function EventDetail() {
 
     const renderLine2 = useMemo(() =>
     {
-        return (
-            <div className="w-4/5 max-w-xl mb-2"> <Line /> </div>
-        )
+        return ( <div className="w-4/5 max-w-xl mb-2"> <Line /> </div> )
     },[])
 
     const renderCheckinTime = useMemo(() =>
