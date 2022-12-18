@@ -12,13 +12,13 @@ import PopUp from "public/shared/PopUp"
 import Title from "public/shared/Title"
 import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
-import { messagesError, messagesSuccess } from "public/util/messages"
+import { messagesSuccess } from "public/util/messages"
 
 import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
-
 import { useDispatch } from "react-redux"
+
 import { db } from "src/firebase"
-import {ref, get, update, child, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, update, onValue, query, orderByChild, equalTo} from "firebase/database"
 
 
 function CountDownCheckIn () 
@@ -26,9 +26,7 @@ function CountDownCheckIn ()
     // router
     const router = useRouter()
 
-    const {
-        query: {countdown}
-    } = router
+    const { query: {countdown} } = router
 
     const props = {countdown}
     // dispatch
@@ -43,25 +41,14 @@ function CountDownCheckIn ()
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [qrCodeValue, setQrCodeValue] = useState("")  // sotre qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
-    const [isNavigateHidden, setIsNavigateHidden] = useState(hidden) // pop up navigate hidden state
-    const [isActive, setIsActitve] = useState(true)
-    const [isStop, setIsStop] = useState(false)
-    const [player, setPlayer] = useState(0)
-    const [playerList, setPlayerList] = useState([])
-    const [countdownLeft, setCountdownLeft] = useState(countdown)
+    const isActive = true  // countdown
+    const [isStop, setIsStop] = useState(false)  // countdown
+    const [player, setPlayer] = useState(0)  // number of player join
+    const [playerList, setPlayerList] = useState([])  // list of player join
 
-    const countDownNumber = {
-        background: "#3B88C3"
-    }
-
-    const zIndex = {
-        zIndex: "10",
-    }
-
-    const zIndexNaviagte = {
-        zIndex: "20",
-    }
-
+    const countDownNumber = { background: "#3B88C3" }
+    const zIndex = { zIndex: "10" }
+    const zIndexNaviagte = { zIndex: "20" }
     // message
     const message = usePopUpMessageHook()
     const visible = usePopUpVisibleHook()
@@ -74,21 +61,9 @@ function CountDownCheckIn ()
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
-                const data = Object.values(rawData);
-                data.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val['pic'] = snapshot.val().pic;
-                        }
-                    })
-                })
-                setTimeout(function()
-                {
-                    const online = data.filter(val => val.status === 1).length;
-                    setPlayerList(Object.values(rawData));
-                    setPlayer(online);
-                }, 200)
+                const data = Object.values(rawData)
+                setPlayerList(Object.values(rawData));
+                setPlayer(data.length)
             }
         });
     })
@@ -106,7 +81,6 @@ function CountDownCheckIn ()
             countdown = setInterval(() => {
                 let nowDate = new Date()
                 let left = deadline - nowDate
-
 
                 let nowSeconds = Math.floor((left / 1000) % 60);
                 let nowMinutes = Math.floor((left / 1000 / 60) % 60);
@@ -136,31 +110,8 @@ function CountDownCheckIn ()
         else {
             clearInterval(countdown)
         }
-
         return () => clearInterval(countdown)
     },[isActive, isStop, dispatch])
-
-    // update countdown time to firebase
-    useEffect(() => {
-        const interval = setInterval(() => {
-          setCountdownLeft(prev => prev - 1);
-        }, 1000);
-        if(countdownLeft === 0)
-        {
-            return () => clearInterval(interval);
-        }
-    }, []);
-
-    useEffect(() =>
-    {
-        if(countdownLeft >= 0)
-        {
-            update(ref(db, `event/${eventID}`),
-            {
-                waitingTime: countdownLeft
-            })
-        }
-    },[countdownLeft])
     
     // close pop up
     const closePopup = (e) => {
@@ -196,9 +147,7 @@ function CountDownCheckIn ()
     const handleStartEvent = useCallback(() =>
     {   
         setIsStop(true)
-
         ShowMethod(dispatch, messagesSuccess.I0010, true)
-
         setTimeout(() =>
         {
             HideMethod(dispatch)
