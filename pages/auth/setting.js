@@ -17,7 +17,7 @@ import {
 import { v4 } from "uuid";
 
 //component
-import { Header, Button, Input, OverlayBlock } from "public/shared";
+import { Header, Button, Input, OverlayBlock, PageLoading } from "public/shared";
 
 // util
 import { messagesError, messagesSuccess } from "public/util/messages"
@@ -40,6 +40,7 @@ export default function Setting() {
     const [email, setEmail] = useState("");
     const [img, setImg] = useState("http://www.gravatar.com/avatar/?d=retro&s=32");
     const [file, setFile] = useState(null);
+    const [loadedData, setLoadedData] = useState(false);
 
     // style css
     const contentCSS = {
@@ -85,11 +86,17 @@ export default function Setting() {
 
     useEffect(() => {
         if (user === undefined || user.name === undefined) {
-            router.push("/");
+            setTimeout(() => {
+                router.push("/");
+            }, 3000);
             return;
         }
 
-        fetchDb();
+        setTimeout(() => {
+            setLoadedData(true);
+            fetchDb();
+        }, 1200);
+
     }, [])
 
     //choose img
@@ -262,37 +269,43 @@ export default function Setting() {
     useEffect(() => dispatch(userPackage(user)), [user])
 
     return (
-        <section className="h-screen w-screen overflow-y-hidden">
-            <Header />
-            <div className="relative h-full w-full">
-                <div className="flex justify-center items-center h-full">
-                    <div className="flex flex-col w-full max-w-md md:mb-0">
-                        <div className="absolute top-1 w-full max-w-md mb-10 h-[30%] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat">
-                            <div className="flex flex-col justify-center items-center">
-                                <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">THÔNG TIN CÁ NHÂN</p>
-                            </div>
-                            <div className="flex flex-col items-center justify-center h-full">
-                                <img src={img}
-                                    onClick={(e) => getImage(e)}
-                                    alt="" className="w-[100px] h-[100px] rounded object-cover " />
-                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
+        <>
+            {
+                loadedData ?
+                    <section className="h-screen w-screen overflow-y-hidden">
+                        <Header />
+                        <div className="relative h-full w-full">
+                            <div className="flex justify-center items-center h-full">
+                                <div className="flex flex-col w-full max-w-md md:mb-0">
+                                    <div className="absolute top-1 w-full max-w-md mb-10 h-[30%] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat">
+                                        <div className="flex flex-col justify-center items-center">
+                                            <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">THÔNG TIN CÁ NHÂN</p>
+                                        </div>
+                                        <div className="flex flex-col items-center justify-center h-full">
+                                            <img src={img}
+                                                onClick={(e) => getImage(e)}
+                                                alt="" className="w-[100px] h-[100px] rounded object-cover " />
+                                            <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
+                                        </div>
+                                    </div>
+
+                                    {renderUsername}
+                                    {renderEmail}
+                                    {renderButtonSave}
+
+                                    <div className="absolute bottom-20 w-full max-w-md text-center lg:text-left ">
+                                        <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
+                                            {renderButtonNavi}
+                                        </div>
+                                    </div>
+                                </div>
+                                <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
                             </div>
                         </div>
-
-                        {renderUsername}
-                        {renderEmail}
-                        {renderButtonSave}
-
-                        <div className="absolute bottom-20 w-full max-w-md text-center lg:text-left ">
-                            <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
-                                {renderButtonNavi}
-                            </div>
-                        </div>
-                    </div>
-                    <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
-                </div>
-            </div>
-        </section>
+                    </section>
+                    : <PageLoading />
+            }
+        </>
 
     );
 }
