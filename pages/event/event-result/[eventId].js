@@ -5,10 +5,7 @@ import { useRouter } from "next/router";
 import { db } from "src/firebase";
 import { onValue, query, ref, orderByChild, equalTo, get, child } from "firebase/database";
 //components
-import RewardList from "public/shared/RewardList";
-import PlayerList from "public/shared/PlayerList";
-import Button from "public/shared/Button";
-import Line from "public/shared/Line";
+import { RewardList, PlayerList, Button, Line } from "public/shared"
 //colors
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 
@@ -133,7 +130,7 @@ export default function EventResult() {
         </h1>
 
         <div className="flex flex-col grow w-full max-w-md h-[30%] overflow-y-auto">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md mb-3">
             {renderLine}
           </div>
           {renderPlayerList}
