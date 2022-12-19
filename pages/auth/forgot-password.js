@@ -21,12 +21,7 @@ import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/funct
 import { messagesError, messagesSuccess } from "public/util/messages";
 
 //component
-import OverlayBlock from "public/shared/OverlayBlock";
-import Input from "public/shared/Input";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import Button from "public/shared/Button";
-import Line from "public/shared/Line";
+import { OverlayBlock, Input, Title, AuthFooter, Button, Line } from "public/shared";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
