@@ -54,7 +54,7 @@ export default function OverlayBlock({
         if (rerenderOnChange === undefined) return;
         render(overlayblock, document.getElementById(blockID+"wrapper"));
         // console.log("CHANGE:" + rerenderOnChange);
-    }, rerenderOnChange)
+    }, rerenderOnChange?rerenderOnChange:[])
     
     return (
         <></>
