@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { db } from "src/firebase";
 import { onValue, query, ref, orderByChild, equalTo, get, child } from "firebase/database";
 //components
-import { RewardList, PlayerList, Button, Line } from "public/shared"
+import { RewardList, PlayerList, Button, Line, PageLoading } from "public/shared"
 //colors
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 
@@ -20,14 +20,22 @@ export default function EventResult() {
   const [listReward, setListReward] = useState([]);
   const [listPlayer, setListPlayer] = useState([]);
   const [event, setEvent] = useState({});
+  const [loadedData, setLoadedData] = useState(false);
 
   // get db 
   const fetchDb = () => {
     const que1 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventId));
     onValue(que1, (snapshot) => {
+      console.log(snapshot.exists());
       // check id event
-      if (!snapshot.exists())
-        router.push("/");
+      if (!snapshot.exists()) {
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
+        return;
+      } else {
+        setLoadedData(true);
+      }
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
 
@@ -44,7 +52,7 @@ export default function EventResult() {
 
     const que3 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventId));
     onValue(que3, (snapshot) => {
-      const rawData = snapshot.val();
+      const rawData = snapshot.val() ?? [];
 
       const data = Object.values(rawData);
       data.forEach((val, idx) => {
@@ -61,6 +69,7 @@ export default function EventResult() {
         setListPlayer(Object.values(rawData))
       }, 200);
     })
+
   }
 
   const handleExit = () => {
@@ -106,40 +115,46 @@ export default function EventResult() {
   }, [handleExit])
 
   return (
-    <section className="overflow-hidden flex flex-col justify-evenly h-screen">
-      <div className="flex flex-col items-center justify-center h-full">
-        <h1 className="uppercase text-4xl py-0 font-bold text-[#004599] mt-2">
-          tiệc cuối năm
-        </h1>
-        <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]">
-          thông tin giải thưởng
-        </h1>
-        <div className="w-full max-w-md">
-          {renderLine}
-        </div>
+    <>
+      {
+        loadedData ?
+          <section className="overflow-hidden flex flex-col justify-evenly h-screen">
+            <div className="flex flex-col items-center justify-center h-full">
+              <h1 className="uppercase text-4xl py-0 font-bold text-[#004599] mt-2">
+                tiệc cuối năm
+              </h1>
+              <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]">
+                thông tin giải thưởng
+              </h1>
+              <div className="w-full max-w-md">
+                {renderLine}
+              </div>
 
-        <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto h-[40%]">
-          {renderRewardList}
-        </div>
+              <div className="flex flex-col items-center justify-center w-full max-w-md overflow-y-auto h-[40%]">
+                {renderRewardList}
+              </div>
 
-        <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]">
-          danh sách người chơi
-        </h1>
-        <h1 className="uppercase text-xl pt-2 font-semibold text-[#004599]">
-          số người tham gia: {countPlayer}/100
-        </h1>
+              <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]">
+                danh sách người chơi
+              </h1>
+              <h1 className="uppercase text-xl pt-2 font-semibold text-[#004599]">
+                số người tham gia: {countPlayer}/100
+              </h1>
 
-        <div className="flex flex-col grow w-full max-w-md h-[30%] overflow-y-auto">
-          <div className="w-full max-w-md mb-3">
-            {renderLine}
-          </div>
-          {renderPlayerList}
-        </div>
+              <div className="flex flex-col grow w-full max-w-md h-[30%] overflow-y-auto">
+                <div className="w-full max-w-md mb-3">
+                  {renderLine}
+                </div>
+                {renderPlayerList}
+              </div>
 
-        <div className="content-end py-3 w-full max-w-md px-5">
-          {renderButton}
-        </div>
-      </div>
-    </section>
+              <div className="content-end py-3 w-full max-w-md px-5">
+                {renderButton}
+              </div>
+            </div>
+          </section>
+          : <PageLoading />
+      }
+    </>
   );
 }
