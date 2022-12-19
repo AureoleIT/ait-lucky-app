@@ -18,8 +18,12 @@ export const userRewardSelector = (state) => {
     return selectUserReducer(state).reward
 }
 // Event object that this user click to hosting
-export const userCurrentEventSelector = (state) => {
-    return selectUserReducer(state).currEvent
+export const userCurrentEventHostingSelector = (state) => {
+    return selectUserReducer(state).currEventHosting
+}
+// Event object that this user click to playing
+export const userCurrentEventPlayingSelector = (state) => {
+    return selectUserReducer(state).currEventPlaying
 }
 // Event object this user is creating
 export const userEventCreatingSelector = (state) => {
