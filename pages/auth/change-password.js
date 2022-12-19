@@ -210,13 +210,13 @@ export default function ChangePassword() {
         loadedData ?
           <section className="h-screen overflow-y-hidden">
             <Header />
-            <div className="relative h-full ">
+            <div className="h-full w-[90%] mx-auto">
               <div
-                className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
+                className="flex xl:justify-center lg:justify-center justify-center h-full mt-4"
               >
-                <div className="absolute top-10 flex flex-col w-full max-w-md md:mb-0">
+                <div className="flex flex-col w-full max-w-md md:mb-0">
                   <div className="flex flex-col justify-center items-center">
-                    <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">ĐỔI MẬT KHẨU</p>
+                    <p className="text-lg font-bold text-[#004599] ">ĐỔI MẬT KHẨU</p>
                   </div>
 
                   {renderOldPass}
