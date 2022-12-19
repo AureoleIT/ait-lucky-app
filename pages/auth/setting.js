@@ -17,10 +17,7 @@ import {
 import { v4 } from "uuid";
 
 //component
-import Header from "public/shared/Header";
-import Button from "public/shared/Button";
-import Input from "public/shared/Input";
-import OverlayBlock from "public/shared/OverlayBlock";
+import { Header, Button, Input, OverlayBlock } from "public/shared";
 
 // util
 import { messagesError, messagesSuccess } from "public/util/messages"
