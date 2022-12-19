@@ -299,41 +299,36 @@ export default function ForgotPassword() {
   }, [])
 
   return (
-    <>
-      <section className="h-screen flex justify-center items-center">
-        <div className="f-full flex flex-col justify-center items-center w-full h-full">
-          <div className="relative mb-5">
-            {renderTitle}
-          </div>
-          {!flagReset ?
-
-            <div className="w-3/4 max-w-md mx-0">
-              {renderName}
-              {renderEmailInput}
-              {renderButtonCheck}
-            </div>
-            : <div className="w-3/4 max-w-md mx-0">
-              {renderNewPass}
-              {renderRepeatPass}
-              {renderButtonReset}
-            </div>
-          }
-          <div className="w-3/4 max-w-md mt-2">
-            <Link href={"/auth/login"} className="my-0">
-              <button className="w-full ">
-                <div className="font-[600] text-[16px] text-[#004599]">
-                  {"Trở lại Đăng nhập"}
-                </div>
-              </button>
-            </Link>
-            {renderLine}
-          </div>
-          <div className="absolute bottom-20">
-            {renderFooter}
-          </div>
-          <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+    <section className="h-screen overflow-y-hidden">
+      <div className="flex flex-col xl:justify-center lg:justify-center justify-center items-center mt-10">
+        <div className="relative mb-5">
+          {renderTitle}
         </div>
-      </section>
-    </>
+        {!flagReset ?
+
+          <div className="w-[90%] max-w-md mx-0">
+            {renderName}
+            {renderEmailInput}
+            {renderButtonCheck}
+          </div>
+          : <div className="w-[90%] max-w-md mx-0">
+            {renderNewPass}
+            {renderRepeatPass}
+            {renderButtonReset}
+          </div>
+        }
+        <div className="w-[90%] max-w-md mt-4">
+          {renderLine}
+          <Link href={"/auth/login"} className="my-0">
+            <button className="w-full ">
+              <div className="font-[600] text-[16px] text-[#004599]">
+                {"Trở lại Đăng nhập"}
+              </div>
+            </button>
+          </Link>
+        </div>
+        <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+      </div>
+    </section>
   );
 }
