@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import router from "next/router";
 
 //firebase
 import {
@@ -15,11 +16,7 @@ import { db } from "src/firebase";
 import { useUserPackageHook } from "public/redux/hooks";
 
 //component
-import Header from "public/shared/Header";
-import OverlayBlock from "public/shared/OverlayBlock";
-import router from "next/router";
-import Input from "public/shared/Input";
-import Button from "public/shared/Button";
+import { Button, Header, Input, OverlayBlock } from "public/shared";
 
 //util
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
