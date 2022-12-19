@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PlayerList from "./PlayerList";
 import OverlayBlock from "./OverlayBlock";
+import CloseButton from "./CloseButton";
 
 export default function RewardList({listReward, showRemain = false, eventPaticipant, showDetail = false}) {
     const rewardList = [...listReward];
+    const [rewardIndex, setRewardIndex] = useState(0);
+    const [rewardImageIndex, setRewardImageIndex] = useState(0);
 
     function compare(a, b) {
         if (a.sortNo > b.sortNo) return 1;
@@ -13,7 +16,6 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
 
     useEffect(() => {
         rewardList.sort(compare);
-        console.log()
     }, [rewardList])
 
     const awradedPaticipantShowcase = (rewardID) => {
@@ -31,36 +33,67 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         )
     }
 
-    const openImage = (id) => {
-        document.getElementById(id).classList.toggle("hidden");
+    const openImage = (index, imgIdx) => {
+        document.getElementById("showImageOverlay").classList.toggle("hidden");
+        setRewardIndex(index);
+        setRewardImageIndex(imgIdx);
     }
 
-    const ShowcaseImage = ({imgUrls}) => {
-        const [imgIdx, setImdIdx] = useState(0)
+    const ShowcaseImage = ({imgUrls, imgIndex = 0}) => {
+        const [imgIdx, setImdIdx] = useState(imgIndex)
 
         return (
             <>
-                <div className="absolute h-screen w-full top-0 left-0">
-                    <img className="object-scale-down h-full w-full rounded-lg pointer-events-none" src={imgUrls[imgIdx]} alt={"lageImg"}/>
+                <div className="absolute flex items-center left-0 -translate-y-[50%]">
+                    {imgUrls && <img className="object-scale-down pointer-events-none" src={imgUrls[imgIdx]} alt={"lageImg"}/>}
                 </div>
+                <div className="absolute bottom-0 left-0 w-full flex flex-row justify-center px-1 opacity-50 translate-y-20 hover:opacity-100 hover:translate-y-0 transition-all bg-transparent hover:bg-gradient-to-t from-black to-[#00000080]">
+                    <div className="flex flex-row justify-center w-full pt-4 h-36 overflow-x-hidden overflow-y-hidden">
+                    {
+                        (imgUrls !== undefined && imgUrls !== [])?imgUrls.map((url, idx) => {
+                            const x = (idx - imgIdx)*110;
+                            return (
+                                <>
+                                   {idx !== imgIdx?
+                                        <div key={idx} className="relative h-0 w-0 mt-2 transition-all" style={{transform: `translate(${x}px, 0px)`}}>
+                                            <div className="absolute w-24 -translate-x-12">
+                                                <img className="object-cover h-20 w-24 rounded-lg drop-shadow-lg hover:brightness-90 brightness-50 cursor-pointer" src={url} alt={imgIndex+idx}
+                                                        onClick={() => setImdIdx(idx)}/>
+                                            </div>
+                                        </div>:
+                                        <div key={idx} className="relative h-0 w-0 transition-all" style={{transform: `translate(0px, 0px)`}}>
+                                            <div className="absolute w-28 -translate-x-14">
+                                                <img className="object-cover h-24 w-28 rounded-lg drop-shadow-lg brightness-100" src={url} alt={imgIndex+idx} />
+                                            </div>
+                                        </div>
+                                   } 
+                                </>
+                            )
+                        }):<></>
+                    }
+                    <p className="text-white text-lg font-semibold text-center w-full absolute bottom-0 left-0">{imgIdx+1} / {imgUrls.length}</p>
+                    </div>
+                </div>
+                <CloseButton parentDivID={"showImageOverlay"} fillColor={"#ffffff"} />
             </>
         )
     }
 
-    const getDetailFromReward = (reward) => {
+    const getDetailFromReward = (reward, index) => {
         return (
             <div className="flex flex-col">
                 <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                     {
-                        reward.imgUrl !== undefined?reward.imgUrl.slice(0, 3).map((url, idx) => {
+                        (reward.imgUrl !== undefined && reward.imgUrl !== [])?reward.imgUrl.slice(0, 3).map((url, idx) => {
                             return (
                                 <div key={idx} className="relative h-24 w-full flex">
-                                    <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75" src={url} alt={reward.nameReward + idx}
-                                        onClick={() => openImage(reward.idReward)}/>
+                                    <img className="object-cover h-full w-full rounded-lg drop-shadow-lg hover:brightness-75 cursor-pointer" src={url} alt={reward.nameReward + idx}
+                                        onClick={() => openImage(index, idx)}/>
                                     {
                                         (reward.imgUrl.length > 3 && idx===2)?
-                                        <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg">
-                                            <p className="w-full text-center font-bold text-white text-4xl">+{reward.imgUrl.length -3}</p>
+                                        <div className="h-24 w-full flex absolute right-0 z-10 bg-[#00000080] hover:bg-[#00000099] items-center rounded-lg"
+                                            onClick={() => openImage(index, 2)}>
+                                            <p className="w-full text-center font-bold text-white text-4xl cursor-pointer">+{reward.imgUrl.length -3}</p>
                                         </div>:
                                         <></>
                                     }
@@ -68,7 +101,6 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             )
                         }):<></>
                     }
-                    <OverlayBlock childDiv={<ShowcaseImage imgUrls={reward.imgUrl} />} manual={true} id={reward.idReward} />
                 </div>
                 {eventPaticipant !== undefined?awradedPaticipantShowcase(reward.idReward):<></>}
             </div>
@@ -91,7 +123,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none text-ellipsis">{reward.nameReward}</p>
                                 <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>
                             </div>
-                            {getDetailFromReward(reward)}
+                            {getDetailFromReward(reward, idx)}
                         </div>
                     )
                 })
@@ -103,6 +135,8 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         <>
             <div className="overflow-auto w-full grow">
                 {listRewardShowcase}
+                <OverlayBlock childDiv={<ShowcaseImage imgUrls={rewardList[rewardIndex]?rewardList[rewardIndex].imgUrl:[]} imgIndex={rewardImageIndex} />} manual={true} id={"showImageOverlay"}
+                    rerenderOnChange={[rewardImageIndex, rewardIndex]} backgroundColor={"#000000dd"} />
             </div>
         </>
     );
