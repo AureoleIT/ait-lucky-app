@@ -142,9 +142,11 @@ export default function LuckySpin() {
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
+        document.getElementById("gameSound").play();
         
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
+            document.getElementById("gameSound").play();
         }, 50);
         
         const timeoutPhase1 = setTimeout(() => {
@@ -154,9 +156,11 @@ export default function LuckySpin() {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
             })
+            document.getElementById("gameSound").play();
                         
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
+                document.getElementById("gameSound").play();
             }, 500);
 
             const timeoutPhase2 = setTimeout(() => {
@@ -164,15 +168,16 @@ export default function LuckySpin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
+                document.getElementById("gameSound").play();
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.remove('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
                 }, (1000))
-            }, ((spinTime-1)*750))
+            }, ((spinTime-1)*250))
 
-        }, ((spinTime-1)*250))
+        }, ((spinTime-1)*750))
     }
 
     const awardNotification = (
@@ -302,8 +307,8 @@ export default function LuckySpin() {
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
-                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"/>
-                        <Title title={eventInfo.title} fontSize="32" />
+                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"/>
+                        <Title title={eventInfo.title} fontSize="text-[32px]" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
@@ -333,7 +338,7 @@ export default function LuckySpin() {
                       <div className="h-44 px-4 py-2 relative">
                         {renderRewardList}
                       </div>
-                      <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+                      <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
                         onClick={() => {document.getElementById("settingOverlay").classList.toggle('hidden')}}>

@@ -164,9 +164,11 @@ export default function LuckySpinAdmin() {
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
+        document.getElementById("gameSound").play();
         
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
+            document.getElementById("gameSound").play();
         }, 50);
         
         const timeoutPhase1 = setTimeout(() => {
@@ -176,9 +178,11 @@ export default function LuckySpinAdmin() {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
             })
+            document.getElementById("gameSound").play();
                         
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
+                document.getElementById("gameSound").play();
             }, 500);
 
             const timeoutPhase2 = setTimeout(() => {
@@ -187,6 +191,8 @@ export default function LuckySpinAdmin() {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
                 setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
+                setSpinClicked(false);
+                document.getElementById("gameSound").play();
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
@@ -194,11 +200,11 @@ export default function LuckySpinAdmin() {
                     setAwardedId(remainPlayerList[randomNum].ID);
                     // updateFB('event_participants/'+ remainPlayerList[randomNum].ID, { idReward: idRewardChosing });
                     // updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
-                    setSpinClicked(false);
+                    document.getElementById("gameSound").pause();
                 }, (1000))
-            }, ((spinTime-1)*750))
+            }, ((spinTime-1)*250))
 
-        }, ((spinTime-1)*250))
+        }, ((spinTime-1)*750))
     }
 
     // Chọn phần quà
@@ -262,7 +268,7 @@ export default function LuckySpinAdmin() {
     }, [playerShowList])
 
     const renderCurrEventDetail = useMemo(() => {
-        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true}></CurrentEventDetail>
+        return <CurrentEventDetail listPlayer={playerList} listReward={rewardList} remainReward={true} isAdmin={true}></CurrentEventDetail>
     }, [playerList, rewardList]);
 
     const renderSetting = useMemo(() => {
@@ -328,8 +334,8 @@ export default function LuckySpinAdmin() {
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
-                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"></Title>
-                        <Title title={eventInfo.title} fontSize="32" />
+                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"></Title>
+                        <Title title={eventInfo.title} fontSize="text-[32px]" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
@@ -365,7 +371,7 @@ export default function LuckySpinAdmin() {
                                             () => document.getElementById("selectRewardPopUp").classList.toggle("hidden"):() => {}}>
                                         <div className="flex">
                                             <p className="text-[#004599] font-bold text-base text-left w-full ml-4 truncate">{remainRewardList.length > 0?remainRewardList[rewardChosing].nameReward:"KHÔNG CÓ"}</p>
-                                            <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">Số lượng còn lại: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantityRemain:0}</p>
+                                            <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">Còn lại: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantityRemain:0}</p>
                                         </div>
                                         <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
@@ -405,7 +411,7 @@ export default function LuckySpinAdmin() {
                                 <p className="font-bold text-[#004599]">giây</p>
                             </div>
                             <Button content={"QUAY THƯỞNG"} onClick={!spinClicked?spining:() => {}} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
-                            <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
+                            <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
                         </div>
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
