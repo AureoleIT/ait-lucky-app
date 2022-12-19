@@ -31,10 +31,12 @@ export default function EventResult() {
       if (!snapshot.exists()) {
         setTimeout(() => {
           router.push("/");
-        }, 2000);
+        }, 3000);
         return;
       } else {
-        setLoadedData(true);
+        setTimeout(() => {
+          setLoadedData(true);
+        }, 1200);
       }
       const data = snapshot.val() ?? [];
       const values = Object.values(data);
