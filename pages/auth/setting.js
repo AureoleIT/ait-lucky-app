@@ -208,7 +208,7 @@ export default function Setting() {
 
     const renderEmail = useMemo(() => {
         return (
-            <div className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] my-4 outline-none relative`}>
+            <div className={`bg-gradient-to-r from-[${LEFT_COLOR}] to-[${RIGHT_COLOR}] p-[2px] rounded-[10px] w-full h-[60px] py-[2px] mt-4 outline-none relative`}>
                 <div className="h-full">
                     <input
                         type={"email"}
@@ -274,34 +274,32 @@ export default function Setting() {
                 loadedData ?
                     <section className="h-screen w-screen overflow-y-hidden">
                         <Header />
-                        <div className="relative h-full w-full">
-                            <div className="flex justify-center items-center h-full">
-                                <div className="flex flex-col w-full max-w-md md:mb-0">
-                                    <div className="absolute top-1 w-full max-w-md mb-10 h-[30%] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat">
-                                        <div className="flex flex-col justify-center items-center">
-                                            <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">THÔNG TIN CÁ NHÂN</p>
-                                        </div>
-                                        <div className="flex flex-col items-center justify-center h-full">
-                                            <img src={img}
-                                                onClick={(e) => getImage(e)}
-                                                alt="" className="w-[100px] h-[100px] rounded object-cover " />
-                                            <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
-                                        </div>
-                                    </div>
+                        <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
+                            <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
+                                <div className="flex flex-col justify-center items-center">
+                                    <p className="text-lg mb-0 font-bold text-[#004599]">THÔNG TIN CÁ NHÂN</p>
+                                    <img src={img}
+                                        onClick={(e) => getImage(e)}
+                                        alt="" className="w-[100px] h-[100px] rounded object-cover mt-12" />
+                                    <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
+                                </div>
+                            </div>
 
-                                    {renderUsername}
-                                    {renderEmail}
-                                    {renderButtonSave}
+                            <div className="w-[90%] mx-auto my-10">
+                                {renderUsername}
+                                {renderEmail}
+                                {renderButtonSave}
+                            </div>
 
-                                    <div className="absolute bottom-20 w-full max-w-md text-center lg:text-left ">
-                                        <div className="w-full h-[50px] rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
-                                            {renderButtonNavi}
-                                        </div>
+                            <footer className="flex items-end h-full w-full">
+                                <div className="pb-24 w-full max-w-md text-center lg:text-left">
+                                    <div className="w-[90%] h-[50px] mx-auto rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
+                                        {renderButtonNavi}
                                     </div>
                                 </div>
-                                <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
-                            </div>
+                            </footer>
                         </div>
+                        <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
                     </section>
                     : <PageLoading />
             }
