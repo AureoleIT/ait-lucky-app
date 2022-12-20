@@ -91,11 +91,11 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between items-end w-full">
               <p className="text-sm text-[#656565] mb-2">
                 {"hãy bắt đầu các sự kiện ngay nào!"}
               </p>
-              <img src={nyancat} className="w-1/5" alt="must be a nyancat gif"></img>
+              <img src={nyancat} className="md:w-1/5 md:h-min w-[30px] h-[20.7px]" alt="must be a nyancat gif"></img>
             </div>
           </div>
           <div className="w-full mb-2">
