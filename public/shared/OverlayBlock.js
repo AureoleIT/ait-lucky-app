@@ -10,21 +10,23 @@ export default function OverlayBlock({
         manual = false, // Điều chỉnh thủ công
         backgroundColor = "#00000080", // Màu nền phía sau overlay
         clickOutFunc, // Hàm được thực hiện khi nhấp nền phía sau overlay
-        rerenderOnChange // childDiv được rerender khi dữ liệu này được thay đổi
+        rerenderOnChange, // childDiv được rerender khi dữ liệu này được thay đổi
+        zIndex = 50, // z index của component
+        Timeout = 0 // Timeout nếu có, sẽ thực hiện clickOutFunc
     }) {
     const blockID = id?id:"overlayBlock";
     const [wrapper, setWrapper] = useState(<></>)
     
-    const clickOutCloseOverlay = (e) => {
+    const clickOutCloseOverlay = () => {
         if (clickOutClose) document.getElementById(blockID).classList.add("hidden");
+        if (clickOutFunc !== undefined) clickOutFunc();
     }
     
     const overlayblock = (
-        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center z-50 hidden overflow-hidden" id={blockID} onClick={() => {
+        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center hidden overflow-hidden" id={blockID} onClick={() => {
                 clickOutCloseOverlay();
-                if (clickOutFunc !== undefined) clickOutFunc();
             }}
-            style={{backgroundColor: backgroundColor}}>
+            style={{backgroundColor: backgroundColor, zIndex: zIndex}}>
             {manual?
                 <div className="w-0 h-0" onClick={() => {
                         e.stopPropagation();
@@ -56,15 +58,18 @@ export default function OverlayBlock({
         
         render(overlayblock, document.getElementById(blockID+"wrapper"));
 
+        let timeoutClose = setTimeout(() => {}, 0);
+        if (Timeout !== 0) setTimeout(clickOutCloseOverlay, Timeout);
+
         return () => {
-            // if (wrapper) wrapper.remove();
+            clearTimeout(timeoutClose);
+            document.getElementById(blockID+"wrapper").remove;
         }
     }, [])
 
     useEffect(() => {
         if (rerenderOnChange === undefined) return;
         render(overlayblock, document.getElementById(blockID+"wrapper"));
-        console.log("CHANGE:" + rerenderOnChange);
     }, rerenderOnChange?rerenderOnChange:[])
     
     return (
