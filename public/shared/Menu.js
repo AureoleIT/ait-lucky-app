@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
 //Component
 import UserAvatar from "./UserAvatar";
+
+//Functions
+import { pressEscToClose } from "../util/functions"
 
 //Firebase
 import { auth } from "src/firebase";
@@ -32,6 +35,8 @@ export default function Menu(props) {
     const user = userData
     const router = useRouter()
     const defaultAvatar = props.defaultAvatar
+
+    pressEscToClose(setShowMenu, false)
     
     const RenderMenu = MenuList.map((item, index) => {
         return (
