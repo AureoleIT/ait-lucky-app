@@ -14,7 +14,7 @@ import { userEvent, incognitoEvent } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
-import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, remove } from "firebase/database";
 import { render } from "react-dom";
 
 export default function LuckySpinAdmin() {
@@ -59,7 +59,7 @@ export default function LuckySpinAdmin() {
     // Index người trúng thưởng
     const [awardedIdx, setAwardedIdx] = useState(0);
     // Thời gian cho animate quay thưởng
-    const [spinTime, setSpinTime] = useState(10);
+    const [spinTime, setSpinTime] = useState(4);
 
     const fetchDB = () => {
         // kiểm tra sự tồn tại trường dữ liệu playingData
@@ -67,14 +67,14 @@ export default function LuckySpinAdmin() {
             if (!snapshot.exists()) {
                 update(ref(db, "event/" + EventID + "/playingData"),
                         {
-                            isSpinning: false,
-                            lastAwardedIndex: 0,
-                            lastAwardedId: "",
-                            rewardChosingId: "",
-                            rewardChosingIndex: 0,
-                            spinTime: 4,
-                            confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
-                        });
+            isSpinning: false,
+            lastAwardedIndex: 0,
+            lastAwardedId: "",
+            rewardChosingId: "",
+            rewardChosingIndex: 0,
+            spinTime: spinTime,
+            confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
+        });
             }})
         
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
@@ -198,10 +198,10 @@ export default function LuckySpinAdmin() {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     setAwardedId(remainPlayerList[randomNum].ID);
                     document.getElementById("gameSound").pause();
-                }, (1000))
-            }, ((spinTime-1)*250))
+                }, (500))
+            }, (2000))
 
-        }, ((spinTime-1)*750))
+        }, ((spinTime-2)*1000))
     }
 
     // Chọn phần quà
@@ -278,8 +278,9 @@ export default function LuckySpinAdmin() {
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                     updateFB('event/' + EventID, { status: 4 });
+                    remove(child(ref(db), "event/" + EventID + "/playingData"));
                 }} />
-                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
             </div>
         </>}  id={"finishOverlay"}></OverlayBlock>
     }, []);
@@ -391,11 +392,11 @@ export default function LuckySpinAdmin() {
                                 <label className="font-bold text-[#004599]" htmlFor="spinTime">Thời gian animation: </label>
                                 <input id="spinTime" name="spinTime" defaultValue={spinTime} type={"number"} className={"text-sky-500 font-bold text-center w-20 h-10 border border-slate-300 rounded-md py-1 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"}
                                     onChange={() => {
-                                        if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 0)
+                                        if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 2)
                                             setSpinTime(parseInt(document.getElementById("spinTime").value));
                                         else {
-                                            setSpinTime(0);
-                                            document.getElementById("spinTime").value = 0;
+                                            setSpinTime(2);
+                                            document.getElementById("spinTime").value = 2;
                                         };
                                     }}></input>
                                 <p className="font-bold text-[#004599]">giây</p>

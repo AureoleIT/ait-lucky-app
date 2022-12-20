@@ -172,10 +172,10 @@ export default function LuckySpin() {
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.remove('hidden');
                     setSpinClicked(false);
-                }, (1000))
-            }, ((spinTime-1)*250))
+                }, (500))
+            }, (2000))
 
-        }, ((spinTime-1)*750))
+        }, ((spinTime-2)*1000))
     }
 
     const awardNotification = useMemo(() => {return (
@@ -217,7 +217,7 @@ export default function LuckySpin() {
                 </>}
             </div>}
         </div>
-    )}, [confirmStatus, loadedData])
+    )}, [confirmStatus, loadedData, spinClicked])
 
     // ------------------------------------------------------------------------ UseEffect
     // Real time
@@ -294,7 +294,7 @@ export default function LuckySpin() {
 
     const renderAwardNotification = useMemo(() => {
         return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} rerenderOnChange={[confirmStatus, loadedData]}></OverlayBlock>
-    }, [confirmStatus]);
+    }, [confirmStatus, spinClicked]);
 
     const renderRewardList = useMemo(() => {
         return <RewardList
