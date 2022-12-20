@@ -6,6 +6,7 @@ import Spin from "public/shared/Spin";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
+import PageLoading from "public/shared/PageLoading";
 import { useRouter } from "next/router";
 
 import { useDispatch } from "react-redux";
@@ -14,7 +15,6 @@ import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo } from "firebase/database";
-import PageLoading from "public/shared/PageLoading";
 import { render } from "react-dom";
 
 export default function LuckySpinAdmin() {
@@ -56,11 +56,10 @@ export default function LuckySpinAdmin() {
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
     // Id người trúng thưởng
     const [awardedId, setAwardedId] = useState("");
+    // Index người trúng thưởng
+    const [awardedIdx, setAwardedIdx] = useState(0);
     // Thời gian cho animate quay thưởng
-    const [spinTime, setSpinTime] = useState(4);
-
-    // Firebase
-    const dbRef = ref(db)
+    const [spinTime, setSpinTime] = useState(10);
 
     const fetchDB = () => {
         // kiểm tra sự tồn tại trường dữ liệu playingData
@@ -74,7 +73,7 @@ export default function LuckySpinAdmin() {
                             rewardChosingId: "",
                             rewardChosingIndex: 0,
                             spinTime: 4,
-                            confirmStatus: 0 // 0: Waiting; 1: Confirm; 2: Cancel
+                            confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
                         });
             }})
         
@@ -157,10 +156,11 @@ export default function LuckySpinAdmin() {
         // ngăn sự kiện khi quay thưởng
         setSpinClicked(true);
         setAwardedId("");
-        updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
+        updateFB('event/' + EventID + '/playingData', { confirmStatus: -1 });
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
         setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
+        setAwardedIdx(randomNum);
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
@@ -193,13 +193,10 @@ export default function LuckySpinAdmin() {
                 setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
                 setSpinClicked(false);
                 document.getElementById("gameSound").play();
+                updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[randomNum].nameDisplay;
-                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setAwardedId(remainPlayerList[randomNum].ID);
-                    // updateFB('event_participants/'+ remainPlayerList[randomNum].ID, { idReward: idRewardChosing });
-                    // updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
                     document.getElementById("gameSound").pause();
                 }, (1000))
             }, ((spinTime-1)*250))
@@ -282,7 +279,7 @@ export default function LuckySpinAdmin() {
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                     updateFB('event/' + EventID, { status: 4 });
                 }} />
-                <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
             </div>
         </>}  id={"finishOverlay"}></OverlayBlock>
     }, []);
@@ -290,30 +287,21 @@ export default function LuckySpinAdmin() {
     const confirmButton = useMemo(() => {
         return <>
             <Button fontSize={"20px"} content={"XÁC NHẬN"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {
+                if (awardedId === "" && idRewardChosing === "") return;
                 document.getElementById("awardedOverlay").classList.toggle('hidden');
-                get(child(ref(db), "event/" + EventID + "/playingData")).then((snapshot) => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        const rewardChosingId = data['rewardChosingId'];
-                        const lastAwardedId = data['lastAwardedId'];
-                        updateFB('event_participants/'+ lastAwardedId, { idReward: rewardChosingId });
-                        updateFB('event/' + EventID + '/playingData', { confirmStatus: 1 });
-                        get(child(ref(db), "event_rewards/" + rewardChosingId)).then((snapshot) => {
-                            if (snapshot.exists()) {
-                                const reward = snapshot.val();
-                                updateFB('event_rewards/' + rewardChosingId, { quantityRemain: (reward.quantityRemain -= 1) });
-                            }})
-                    }})
+                updateFB('event_participants/'+ awardedId, { idReward: idRewardChosing });
+                updateFB('event/' + EventID + '/playingData', { confirmStatus: 1 });
+                updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
             }}></Button>
         </>
-    }, [awardedId])
+    }, [awardedId, idRewardChosing])
 
     const renderAwardNotification = useMemo(() => {
         return <OverlayBlock childDiv={
             <div className="flex flex-col items-center text-center text-[#004599]">
-                <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+                <p className="font-[900] text-lg">{remainPlayerList[awardedIdx]?remainPlayerList[awardedIdx].nameDisplay:""}</p>
                 <p className="font-semibold">sẽ nhận được giải:</p>
-                <p className="font-[900] text-lg" id="awaredRewardName"></p>
+                <p className="font-[900] text-lg">{remainRewardList[rewardChosing]?remainRewardList[rewardChosing].nameReward:""}</p>
                 <div className="mt-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
                 <p className="mt-2 font-bold">Xác nhận trao giải?</p>
                 <div className="mt-2 w-full flex gap-4 px-2">
@@ -325,8 +313,10 @@ export default function LuckySpinAdmin() {
                 </div>
             </div>
         }  id={"awardedOverlay"}
-            clickOutClose={false}></OverlayBlock>
-    }, [awardedId]);
+            clickOutClose={false}
+            clickOutFunc={() => updateFB('event/' + EventID + '/playingData', { confirmStatus: 2 })}
+            rerenderOnChange={[awardedId]}></OverlayBlock>
+    }, [awardedId, awardedIdx, rewardChosing]);
 
     return (
         <>
