@@ -15,9 +15,8 @@ export default function PopUp({ text, status, isWarning }) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      close()
       HideMethod(dispatch)
-    }, 500)
+    }, 1)
     return () => { clearTimeout(timer) }
   }, [close, dispatch])
 
