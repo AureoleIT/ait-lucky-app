@@ -17,19 +17,22 @@ export default function PlayerDetail({player, reward, isAdmin = false}) {
     const renderCancelRewardNotification = useMemo(() => {
         return <OverlayBlock childDiv={reward !== undefined?
             <div className="flex flex-col items-center text-center text-[#004599]">
-                <p className="font-semibold">Xác nhận hủy giải</p>
+                <p className="font-semibold">Hủy bỏ giải thưởng</p>
                 <p className="font-[900] text-lg">{reward[0]?reward[0].nameReward:""}</p>
                 <p className="font-semibold">đã được trao cho</p>
-                <p className="font-[900] text-lg">{player.nameDisplay}<span className="font-semibold text-base">?</span></p>
-                <div className="mt-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
-                <div className="mt-2 w-full flex gap-4 px-2">
+                <p className="font-[900] text-lg">{player.nameDisplay}</p>
+                <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                <p className="font-bold">Xác nhận hủy giải?</p>
+                <div className="w-full flex gap-4 px-2">
                     <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                         document.getElementById("cancelRewardedOverlay").classList.toggle('hidden');
                         get(query(ref(db, "event_participants"), orderByChild("participantId"), equalTo(player.participantId))).then((snapshot) => {
                             if (snapshot.exists()) {
                                 update(ref(db, 'event_participants/'+ Object.keys(snapshot.val())[0]), { idReward: "" });
+                                update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
                             } else {
                                 update(ref(db, 'event_participants/'+ player.participantId), { idReward: "" });
+                                update(ref(db, 'event_participants/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
                             }})
                     }} />
                     <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("cancelRewardedOverlay").classList.toggle('hidden')}} />
@@ -47,7 +50,7 @@ export default function PlayerDetail({player, reward, isAdmin = false}) {
                     <ParticipantAvt player={player} />
                 </div>
                 <Title title={player.nameDisplay} fontSize={"text-[20px]"} />
-                {isAdmin?
+                {isAdmin && false?
                     <div className="h-14 w-60 mx-auto">
                         <Button content={"ĐUỔI KHỎI SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={false} margin={"my-2"} fontSize={"text-sm"} />
                     </div>:<></>}
