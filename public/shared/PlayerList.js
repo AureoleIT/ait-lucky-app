@@ -67,7 +67,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
         if (listPlayer[playerChosing] === undefined) return;
         const detail = (<PlayerDetail player={listPlayer[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} isAdmin={isAdmin} />);
         if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
-    }, [playerChosing])
+    }, [playerChosing, listPlayer])
 
     return (
         <>
@@ -87,7 +87,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
             <div className="overflow-auto grow">
                 {typeList==="List"?PlayerList_List:PlayerList_Menu}
             </div>
-            {listPlayer.length?<OverlayBlock childDiv={<div className="hidden" id="playerDetail"></div>} id={"playerDetailOverlay"} manual={true} />:<></>}
+            {listPlayer.length?<OverlayBlock childDiv={<div className="hidden" id="playerDetail"></div>} id={"playerDetailOverlay"} manual={true} zIndex={45} rerenderOnChange={[listPlayer]} />:<></>}
         </>
     )
 }
