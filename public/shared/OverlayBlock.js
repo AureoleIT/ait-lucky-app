@@ -13,47 +13,58 @@ export default function OverlayBlock({
         rerenderOnChange // childDiv được rerender khi dữ liệu này được thay đổi
     }) {
     const blockID = id?id:"overlayBlock";
+    const [wrapper, setWrapper] = useState(<></>)
     
     const clickOutCloseOverlay = (e) => {
         if (clickOutClose) document.getElementById(blockID).classList.add("hidden");
     }
     
     const overlayblock = (
-        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center z-50 hidden overflow-hidden" id={blockID} onClick={clickOutCloseOverlay}
+        <div className="absolute h-screen top-0 left-0 w-full flex justify-center items-center z-50 hidden overflow-hidden" id={blockID} onClick={() => {
+                clickOutCloseOverlay();
+                if (clickOutFunc !== undefined) clickOutFunc();
+            }}
             style={{backgroundColor: backgroundColor}}>
             {manual?
                 <div className="w-0 h-0" onClick={() => {
-                        clickOutCloseOverlay();
-                        if (clickOutFunc) clickOutFunc();
+                        e.stopPropagation();
                     }}>
                         <div onClick={(e) => e.stopPropagation()}>
                             {childDiv?childDiv:<div className="h-80 w-80"></div>}
                         </div>
                 </div>:
                 <div className="relative h-fit w-3/4 px-5 pt-8 pb-5 max-w-md bg-white shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle justify-between"
-                    onClick={(e) => {e.stopPropagation();}}>
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}>
                     {childDiv?childDiv:<div className="h-80 w-80"></div>}
-                    {closeButton?<CloseButton parentDivID={blockID} />:<></>}
+                    {closeButton?<CloseButton onClick={clickOutFunc} parentDivID={blockID} />:<></>}
                 </div>
             }
         </div>
     )
 
     useEffect(() => {
-        const fsOverlay = document.createElement('div');
-        fsOverlay.id=blockID+"wrapper";
-        document.getElementsByTagName('section')[0].appendChild(fsOverlay);
-        render(overlayblock, fsOverlay);
+        if (document.getElementById(blockID) === null) {
+            const fsOverlay = document.createElement('div');
+            fsOverlay.id=blockID+"wrapper";
+            document.getElementsByTagName('section')[0].appendChild(fsOverlay);
+            setWrapper(fsOverlay);
+        } else {
+            setWrapper(document.getElementById(blockID))
+        }
+        
+        render(overlayblock, document.getElementById(blockID+"wrapper"));
 
         return () => {
-            fsOverlay.remove();
+            // if (wrapper) wrapper.remove();
         }
     }, [])
 
     useEffect(() => {
         if (rerenderOnChange === undefined) return;
         render(overlayblock, document.getElementById(blockID+"wrapper"));
-        // console.log("CHANGE:" + rerenderOnChange);
+        console.log("CHANGE:" + rerenderOnChange);
     }, rerenderOnChange?rerenderOnChange:[])
     
     return (
