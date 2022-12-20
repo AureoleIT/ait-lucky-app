@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
 import Auth from "layouts/Auth.js";
 import React, { useEffect, useCallback, useMemo, useState } from "react";
-import TickBox from "public/shared/TickBox";
-import LineWithText from "public/shared/LineWithText";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
+
+import { TickBox, Title, AuthFooter, Button, Input, Line } from "public/shared"
+
 import {
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
@@ -20,10 +19,6 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
-import Button from "public/shared/Button";
-import Input from "public/shared/Input";
-import Line from "public/shared/Line";
-
 export default function Login() {
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()

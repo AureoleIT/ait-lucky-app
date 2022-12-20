@@ -40,10 +40,7 @@ export default function Button({
         onClick={onClick}
       >
         <div
-          className={`uppercase
-            font-[${fontWeight}] 
-            text-[${fontSize}]            
-          `}
+          className={`uppercase ${fontWeight} ${fontSize}  `}
           style={isTextGradient ? gradientText : whiteText}
         >
           {content}

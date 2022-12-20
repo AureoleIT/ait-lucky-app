@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+// Hiển thị màn hình chờ
+// Dùng khi chưa load được dữ liệu hoặc khi chưa muốn hiển thị nội dung trang
 
 export default function PageLoading() {
     return (
