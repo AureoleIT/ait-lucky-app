@@ -3,7 +3,7 @@ import PlayerList from "./PlayerList";
 import OverlayBlock from "./OverlayBlock";
 import CloseButton from "./CloseButton";
 
-export default function RewardList({listReward, showRemain = false, eventPaticipant, showDetail = false}) {
+export default function RewardList({listReward, showQuantity = true, showRemain = false, eventPaticipant, showDetail = false}) {
     const rewardList = [...listReward];
     const [rewardIndex, setRewardIndex] = useState(0);
     const [rewardImageIndex, setRewardImageIndex] = useState(0);
@@ -162,7 +162,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg cursor-pointer" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none text-ellipsis">{reward.nameReward}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>
+                                {showQuantity && <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>}
                             </div>
                             {getDetailFromReward(reward, idx)}
                         </div>

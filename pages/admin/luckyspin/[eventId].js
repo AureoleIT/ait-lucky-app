@@ -62,11 +62,7 @@ export default function LuckySpinAdmin() {
     const [spinTime, setSpinTime] = useState(4);
 
     const fetchDB = () => {
-        // kiểm tra sự tồn tại trường dữ liệu playingData
-        get(child(ref(db), "event/" + EventID + "/playingData")).then((snapshot) => {
-            if (!snapshot.exists()) {
-                update(ref(db, "event/" + EventID + "/playingData"),
-                        {
+        update(ref(db, "event/" + EventID + "/playingData"), {
             isSpinning: false,
             lastAwardedIndex: 0,
             lastAwardedId: "",
@@ -75,7 +71,6 @@ export default function LuckySpinAdmin() {
             spinTime: spinTime,
             confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
         });
-            }})
         
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
