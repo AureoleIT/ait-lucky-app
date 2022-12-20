@@ -6,9 +6,9 @@ export default function Button({
   secondaryColor, // nếu không truyền secondaryColor thì button chỉ có background 1 màu, truyền dưới dạng mã hex
   isTextGradient = false, // nếu là true thì chữ sẽ có màu gradient (xanh), nếu false thi chữ màu trắng
   isSquare = false, // nếu true thì button không có border-radius
-  fontSize = "24px",
-  marginY = 4, // Margin top và bottom
-  fontWeight = 900,
+  fontSize = "text-[24px]",
+  margin = "my-4", // Margin top và bottom
+  fontWeight = "font-[900]",
   iconClass = "", // Fontawesome Icon's class
   logoGg = false, // nếu true thì button có hình logo Google
   onClick, // xử lý event khi button được nhấn
@@ -25,8 +25,8 @@ export default function Button({
   return (
     <div
       className={`w-full h-[50px] p-[2px] flex justify-center items-center gap-x-[15px]
-        my-${marginY}
-        rounded-[${!isSquare ? "50px" : "5px"}]
+        ${margin}
+        ${!isSquare ? "rounded-[50px]" : "rounded-[5px]"}
         ${
           !secondaryColor
             ? `bg-[${primaryColor}]`
@@ -39,10 +39,7 @@ export default function Button({
         onClick={onClick}
       >
         <div
-          className={`uppercase
-            font-[${fontWeight}] 
-            text-[${fontSize}]            
-          `}
+          className={`uppercase ${fontWeight} ${fontSize}  `}
           style={isTextGradient ? gradientText : whiteText}
         >
           {content}

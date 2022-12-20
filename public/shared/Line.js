@@ -5,12 +5,12 @@ export default function Line({
   content, // nội dung được hiển thị trên Line
   isLineWhite = false, // nếu line màu trắng thì true
   lineWeight = true, // mặc đinh line dày 2px, nếu false thì dày 1px
-  marginY = 0, // marginY của line
+  margin = "", // truyền margin theo class tailwindcss
 }) {
   return (
     <div
       className={`w-full justify-center items-center flex flex-row
-        my-${marginY}`}
+        ${margin}`}
     >
       <div
         className={`flex-grow relative flex justify-center
