@@ -15,7 +15,7 @@ import { removeState } from "public/redux/actions";
 function MenuItem(props) {
     const router = useRouter()
     return (
-        <div className={`cursor-pointer flex w-full gap-x-4 items-center`}>
+        <div className={`cursor-pointer flex w-full gap-x-4 items-center hover:scale-125 hover:transform hover:translate-x-[40px] transition duration-150 linear hover:text-blue-600`}>
             {props.icon}
             <a onClick={() => {router.push(props.href)}}>
                 <p className="font-[900] text-[14px]">{props.name}</p>
@@ -60,7 +60,7 @@ export default function Menu(props) {
                 </div>
                 <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
                     {RenderMenu}
-                    <div className={`cursor-pointer flex w-full gap-x-4 items-center text-red-500`}>
+                    <div className={`cursor-pointer flex w-full gap-x-4 items-center text-red-500 hover:scale-125 hover:transform hover:translate-x-[40px] transition duration-150 linear hover:text-red-600`}>
                         {logout.icon}
                         <a onClick={() => {
                             auth.signOut()
