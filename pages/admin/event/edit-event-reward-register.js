@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import {v4 as uuidv4} from "uuid"
 
-import TextArea from "public/shared/TextArea";
-import AuthInput from "public/shared/AuthInput";
 import Header from "public/shared/Header";
 import Reward from "components/RewardRegister/Reward";
-import BgBlueButton from "public/shared/BgBlueButton";
-import SingleColorButton from "public/shared/SingleColorButton";
-import Title from "public/shared/Title";
 import CheckBox from "public/shared/CheckBox";
 import { messagesError, messagesSuccess } from "public/util/messages"
+import PopUp from "public/shared/PopUp";
+import { Button, Input, PageLoading } from "public/shared";
+import { HideMethod, ShowMethod } from "public/util/popup";
 
 import { db } from "src/firebase"
 import {ref, set, onValue, query, orderByChild, equalTo, update, remove} from "firebase/database"
@@ -17,12 +16,7 @@ import { storage } from "src/firebase"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook } from "public/redux/hooks";
-import { HideMethod, ShowMethod } from "public/util/popup";
-
 import { useDispatch } from "react-redux"
-
-import {v4 as uuidv4} from "uuid"
-import PopUp from "public/shared/PopUp";
 
 function EditEventRewardRegister() {
     // router
@@ -37,6 +31,7 @@ function EditEventRewardRegister() {
     const status = usePopUpStatusHook()
     const visible = usePopUpVisibleHook()
     // state
+    const [loadedData, setLoadedData] = useState(false)
     const [event, setEvent] = useState({})  // store event get from firebase
     const [rewards, setRewards] = useState([])  // store rewards get from firebase
     const [nameEvent, setNameEvent] = useState("")  // name event state
@@ -56,18 +51,16 @@ function EditEventRewardRegister() {
     let uniqueKey = [] // uniqueKey store local id of reward
     let diffKey = useRef([]) // store new rewards added id
 
-    // ref
-    const checkBoxRef = useRef() //  publicFlag ref
-
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
     };
 
-    const wrap = {
-        zIndex: "20",
-    }
+    const wrap = { zIndex: "20" }
+
+    setTimeout(() => setLoadedData(true), 2500)  // load page
+
     // get event from firebase
     const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
 
@@ -362,14 +355,14 @@ function EditEventRewardRegister() {
 
     const renderTitle = useMemo(() =>
     {
-        return ( <Title fontSize={"20"} title={event.title}/> )
+        return ( <h1 className="font-[900] uppercase text-[#004599] text-[30px] text-center mb-2"> {event.title} </h1> )
     },[event])
 
     const renderEventTitle = useMemo(() =>
     {
         return (
             <div className="w-full h-[70px]">
-                <TextArea content={"Tên sự kiện"} maxLength={"100"} value={nameEvent} onChange={(e) => setNameEvent(e.target.value)} />
+                <Input content={"Tên sự kiện"} maxLength={"100"} value={nameEvent} onChange={(e) => setNameEvent(e.target.value)} />
             </div>
         )
     },[setNameEvent, nameEvent])
@@ -378,7 +371,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
-                <TextArea content={"Mô tả sự kiện"} row={5} maxLength={"1000"} value={description} onChange={(e) => setDescription(e.target.value)} />
+                <Input isMultiLine={true} content={"Mô tả sự kiện"} row={4} maxLength={"1000"} value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
         )
     },[description, setDescription])
@@ -387,7 +380,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="w-full">
-                <AuthInput leftColor={"#003B93"} rightColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={maxTicket} onChange={(e) => setMaxTicket(e.target.value)} />
+                <Input primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={maxTicket} onChange={(e) => setMaxTicket(e.target.value)} />
             </div>
         )
     },[maxTicket, setMaxTicket])
@@ -458,7 +451,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="w-full">
-                <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
+                <Button content={"Thêm phần quà"} primaryColor={"#40BEE5"} onClick={handleAdd}/>
             </div>
         )
     },[handleAdd])
@@ -467,7 +460,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="py-3 w-4/5 max-w-xl">
-                <BgBlueButton content={"ĐIỀU CHỈNH"} onClick={handleNavigate} />
+                <Button primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={"ĐIỀU CHỈNH"} onClick={handleNavigate} />
             </div>
         )
     },[handleNavigate])
@@ -479,24 +472,34 @@ function EditEventRewardRegister() {
       }, [visible, message, status])
 
     return (
-        <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
-            {renderHeader}
-            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
-                {renderTitle}
-                {renderEventTitle}
-                {renderEventDescription}
-                {renderMaxTicket}
-                {renderCheckbox}
-            </div>
-
-            <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
-                {renderReward}
-                {renderNewReward}
-                {renderAddButton}
-            </div>
-            {renderEditButton}
-            {renderPopUp}
-        </section>
+        <>
+        {
+            loadedData ? 
+            (
+                <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
+                    {renderHeader}
+                    <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
+                        {renderTitle}
+                        {renderEventTitle}
+                        {renderEventDescription}
+                        {renderMaxTicket}
+                        {renderCheckbox}
+                    </div>
+                    <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
+                        {renderReward}
+                        {renderNewReward}
+                        {renderAddButton}
+                    </div>
+                    {renderEditButton}
+                    {renderPopUp}
+                </section>
+            )
+            :
+            (
+                <PageLoading />
+            )
+        }
+        </>
     );
 }
 
