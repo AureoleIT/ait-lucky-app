@@ -30,15 +30,10 @@ function RewardRegister() {
     const [rewardCount, setRewardCount] = useState([])
     // state store data
     const [value, setValue] = useState([]) // value store object of reward when typing
-    // ref store data
-    const refs = useRef()
 
     let uniqueKey = [] // uniqueKey store local id of reward
 
-    const wrap = {
-        height:"100%",
-        zIndex: "20",
-    }
+    const wrap = { height:"100%", zIndex: "20" }
 
     // message pop up
     const message = usePopUpMessageHook()
@@ -135,38 +130,41 @@ function RewardRegister() {
 
                         if(tempId === item)
                         {
-                            let imgLength = tempImg.length - 1
-                            for(let index = 1; index <= imgLength; index++)
+                            if(tempAmount > 0)
                             {
-                                let imageRef = refStorage(storage, `rewards_image/${eventID}/${id}/${tempImg[index] + uuidv4()}`);
-                                uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
-                                    getDownloadURL(snapshot.ref)
-                                        .then((url) =>
-                                        {
-                                            set(ref(db,`event_rewards/${id}/imgUrl/${index}`),url)
-                                                .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
-                                        })
-                                })
-                            }
+                                let imgLength = tempImg.length - 1
+                                for(let index = 1; index <= imgLength; index++)
+                                {
+                                    let imageRef = refStorage(storage, `rewards_image/${eventID}/${id}/${tempImg[index] + uuidv4()}`);
+                                    uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                        getDownloadURL(snapshot.ref)
+                                            .then((url) =>
+                                            {
+                                                set(ref(db,`event_rewards/${id}/imgUrl/${index}`),url)
+                                                    .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                            })
+                                    })
+                                }
 
-                            const newReward = {
-                                idReward: id,
-                                nameReward:tempName,
-                                eventId:eventID,
-                                quantity: tempAmount,
-                                sortNo:index,
-                                quantityRemain:tempAmount,
-                                imgUrl: tempImg
+                                const newReward = {
+                                    idReward: id,
+                                    nameReward:tempName,
+                                    eventId:eventID,
+                                    quantity: tempAmount,
+                                    sortNo:index,
+                                    quantityRemain:tempAmount,
+                                    imgUrl: tempImg
+                                }
+                                set(ref(db, `event_rewards/${id}`),newReward)
+                                    .then(() =>
+                                    {
+                                        ShowMethod(dispatch, messagesSuccess.I0001, true)
+                                    })
+                                    .catch((err) =>
+                                    {
+                                        ShowMethod(dispatch, messagesError.E4444, false)
+                                    })
                             }
-                            set(ref(db, `event_rewards/${id}`),newReward)
-                                .then(() =>
-                                {
-                                    ShowMethod(dispatch, messagesSuccess.I0001, true)
-                                })
-                                .catch((err) =>
-                                {
-                                    ShowMethod(dispatch, messagesError.E4444, false)
-                                })
                             break;
                         }
                     }
@@ -188,13 +186,7 @@ function RewardRegister() {
 
     const renderHeader = useMemo(() =>
     {
-      return(
-        <>
-          <div className="w-full h-[12%]">
-            <Header />
-          </div>
-        </>
-      )
+        return( <div className="w-full h-[12%]"> <Header /> </div> )
     },[])
 
     const renderReward = useMemo(() =>
@@ -207,9 +199,6 @@ function RewardRegister() {
                         return (
                             <div key={index} className="flex w-full justify-center items-center">
                                 <Reward
-                                    ref={refs}
-                                    id={index}
-                                    inputId={index}
                                     fileID={`file${index}`}
                                     toggleID={`toggle${index}`}
                                     receiveData={handleReceiveData}
@@ -243,9 +232,7 @@ function RewardRegister() {
     const renderPopUp = useMemo(() =>
     {
         return (
-            <div className={visible} style={wrap}>
-                <PopUp text={message} status={status} isWarning={!status} />
-            </div>
+            <div className={visible} style={wrap}> <PopUp text={message} status={status} isWarning={!status} /> </div>
         )
     },[visible, message, status])
 

@@ -12,7 +12,7 @@ import CheckBox from "public/shared/CheckBox";
 import { messagesError, messagesSuccess } from "public/util/messages"
 
 import { db } from "src/firebase"
-import {ref, set, onValue, query, orderByChild, equalTo, update} from "firebase/database"
+import {ref, set, onValue, query, orderByChild, equalTo, update, remove} from "firebase/database"
 import { storage } from "src/firebase"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
@@ -185,76 +185,83 @@ function EditEventRewardRegister() {
 
                     if(tempId === item)
                     {
-                        let imgLength = tempImg.length - 1
-                        let beforeImg = imageFB[index]?.length
-
-                        if(typeof beforeImg === "undefined")
+                        if(tempAmount > 0)
                         {
-                            for(let j = 1; j <= imgLength; j++)
-                            {
-                                if(typeof tempImg[j] !== "undefined")
+                            let imgLength = tempImg.length - 1
+                            let beforeImg = imageFB[index]?.length
+                            
+                                if(typeof beforeImg === "undefined")
                                 {
-                                    updateImg.push(tempImg[j])
-                                    let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[j] + uuidv4()}`);
-                                    uploadBytes(imageRef, tempImg[j]).then((snapshot) => {
-                                        getDownloadURL(snapshot.ref)
-                                            .then((url) =>
-                                            {
-                                                set(ref(db,`event_rewards/${tempId}/imgUrl/${j}`),url)
+                                    for(let j = 1; j <= imgLength; j++)
+                                    {
+                                        if(typeof tempImg[j] !== "undefined")
+                                        {
+                                            updateImg.push(tempImg[j])
+                                            let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[j] + uuidv4()}`);
+                                            uploadBytes(imageRef, tempImg[j]).then((snapshot) => {
+                                                getDownloadURL(snapshot.ref)
+                                                .then((url) =>
+                                                {
+                                                    set(ref(db,`event_rewards/${tempId}/imgUrl/${j}`),url)
                                                     .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                                })
                                             })
-                                    })
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        if(imgLength > beforeImg)
-                        {
-                            for(let j = 0; j < beforeImg; j++)
+                            if(imgLength > beforeImg)
                             {
-                                if(typeof tempImg[j] !== "undefined")
+                                for(let j = 0; j < beforeImg; j++)
                                 {
-                                    updateImg.push(tempImg[j])
+                                    if(typeof tempImg[j] !== "undefined")
+                                    {
+                                        updateImg.push(tempImg[j])
+                                    }
                                 }
-                            }
-
-                            for(let i = beforeImg + 1; i <= imgLength; i++)
-                            {
-                                if(typeof tempImg[i] !== "undefined")
+                                
+                                for(let i = beforeImg + 1; i <= imgLength; i++)
                                 {
-                                    updateImg.push(tempImg[i])
-                                    let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[i] + uuidv4()}`);
-                                    uploadBytes(imageRef, tempImg[i]).then((snapshot) => {
-                                        getDownloadURL(snapshot.ref)
+                                    if(typeof tempImg[i] !== "undefined")
+                                    {
+                                        updateImg.push(tempImg[i])
+                                        let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[i] + uuidv4()}`);
+                                        uploadBytes(imageRef, tempImg[i]).then((snapshot) => {
+                                            getDownloadURL(snapshot.ref)
                                             .then((url) =>
                                             {
                                                 set(ref(db,`event_rewards/${tempId}/imgUrl/${i}`),url)
-                                                    .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                                .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
                                             })
-                                    })
+                                        })
+                                    }
                                 }
                             }
+                            else 
+                            {
+                                for(let j = 0; j < beforeImg; j++)
+                                {
+                                    if(typeof tempImg[j] !== "undefined")
+                                    {
+                                        updateImg.push(tempImg[j])
+                                    }
+                                } 
+                            }
+                        
+                            update(ref(db, `event_rewards/${tempId}`),
+                            {
+                                idReward: tempId,
+                                nameReward:tempName,
+                                eventId:eventID,
+                                quantity: tempAmount,
+                                sortNo:index,
+                                quantityRemain:tempAmount,
+                                imgUrl: updateImg
+                            })
                         }
                         else 
                         {
-                            for(let j = 0; j < beforeImg; j++)
-                            {
-                                if(typeof tempImg[j] !== "undefined")
-                                {
-                                    updateImg.push(tempImg[j])
-                                }
-                            } 
+                            remove(ref(db, `event_rewards/${tempId}`))
                         }
-
-                        update(ref(db, `event_rewards/${tempId}`),
-                        {
-                            idReward: tempId,
-                            nameReward:tempName,
-                            eventId:eventID,
-                            quantity: tempAmount,
-                            sortNo:index,
-                            quantityRemain:tempAmount,
-                            imgUrl: updateImg
-                        })
                         break;
                     }
                 }
@@ -274,34 +281,38 @@ function EditEventRewardRegister() {
 
                     if(tempId === item)
                     {
-                        let imgLength = tempImg.length - 1
-                        for(let index = 1; index <= imgLength; index++)
+                        if(tempAmount > 0)
                         {
-                            let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[index] + uuidv4()}`);
-                            uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
-                                getDownloadURL(snapshot.ref)
+
+                            let imgLength = tempImg.length - 1
+                            for(let index = 1; index <= imgLength; index++)
+                            {
+                                let imageRef = refStorage(storage, `rewards_image/${eventID}/${tempId}/${tempImg[index] + uuidv4()}`);
+                                uploadBytes(imageRef, tempImg[index]).then((snapshot) => {
+                                    getDownloadURL(snapshot.ref)
                                     .then((url) =>
                                     {
                                         set(ref(db,`event_rewards/${tempId}/imgUrl/${index}`),url)
-                                            .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                        .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
                                     })
-                            })
-                        }
-
-                        const newReward = {
-                            idReward: tempId,
-                            nameReward:tempName,
-                            eventId:eventID,
-                            quantity: tempAmount,
-                            sortNo:index + beforeSortNoLength,
-                            quantityRemain:"",
-                            imgUrl: tempImg
-                        }
-                        set(ref(db, `event_rewards/${tempId}`),newReward)
+                                })
+                            }
+                        
+                            const newReward = {
+                                idReward: tempId,
+                                nameReward:tempName,
+                                eventId:eventID,
+                                quantity: tempAmount,
+                                sortNo:index + beforeSortNoLength,
+                                quantityRemain:"",
+                                imgUrl: tempImg
+                            }
+                            set(ref(db, `event_rewards/${tempId}`),newReward)
                             .catch((err) =>
                             {
                                 ShowMethod(dispatch, messagesError.E4444, false)
                             })
+                        }
                         break;
                     }
                 }
