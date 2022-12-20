@@ -14,7 +14,7 @@ import { userEvent, incognitoEvent } from "public/redux/actions";
 import { usePlayerParticipantHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
-import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push } from "firebase/database";
+import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push, startAfter } from "firebase/database";
 import PageLoading from "public/shared/PageLoading";
 import { render } from "react-dom";
 
@@ -60,12 +60,6 @@ export default function LuckySpin() {
     const [spinTime, setSpinTime] = useState(4);
     // Xác nhận trao thưởng
     const [confirmStatus, setConfirmStatus] = useState(0);
-
-    // Firebase
-    const dbRef = ref(db);
-
-    // Link
-
 
     const fetchDB = () => {
         const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
@@ -137,16 +131,22 @@ export default function LuckySpin() {
         return 0;
     }
 
+    const playSound = () => {
+        const gameSound = document.getElementById("gameSound");
+        if (gameSound.volume > 0) gameSound.play()
+    }
+
     const spining = () => {
         if (remainRewardList.length <= 0 || remainPlayerList.length <= 0) return;
+        
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
-        document.getElementById("gameSound").play();
+        playSound();
         
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
-            document.getElementById("gameSound").play();
+            playSound();
         }, 50);
         
         const timeoutPhase1 = setTimeout(() => {
@@ -156,11 +156,11 @@ export default function LuckySpin() {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
             })
-            document.getElementById("gameSound").play();
+            playSound();
                         
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
-                document.getElementById("gameSound").play();
+                playSound();
             }, 500);
 
             const timeoutPhase2 = setTimeout(() => {
@@ -168,7 +168,7 @@ export default function LuckySpin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
-                document.getElementById("gameSound").play();
+                playSound();
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.remove('hidden');
                     setSpinClicked(false);
