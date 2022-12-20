@@ -76,16 +76,16 @@ export const playerReducer = (state = joinState, action) => {
 export const userReducer = (state = userState, action) => {
     switch (action.type) {
         case USER_EVENT: {
-            return { ...state, event: [...state.event, ...action.payload] }
+            return { ...state, event: [...state.event, action.payload] }
         }
         case USER_PARTICIPANT: {
-            return { ...state, participant: [...state.participant, ...action.payload] }
+            return { ...state, participant: [...state.participant, action.payload] }
         }
         case USER_PACKAGE: {
             return { ...state, user: action.payload }
         }
         case USER_REWARD: {
-            return { ...state, reward: [...state.reward, ...action.payload] }
+            return { ...state, reward: [...state.reward, action.payload] }
         }
         case USER_CURR_EVENT_HOSTING: {
             return { ...state, currEventHosting: action.payload }
@@ -97,47 +97,67 @@ export const userReducer = (state = userState, action) => {
             return { ...state, currEventCreating: action.payload }
         }
         case USER_REWARD_CREATING: {
-            return { ...state, currRewardCreating: [...state.currRewardCreating, ...action.payload] }
+            return { ...state, currRewardCreating: [...state.currRewardCreating, action.payload] }
         }
         case USER_UPDATE_EVENT: {
-            var object = state.event.map((item, index) => {
-                if (item.eventId === action.payload.eventId) {
-                    state.event[index] = action.payload;
-                    return state.event;
-                }
-                return [...state.event, ...action.payload];
-            })
-            return { ...state, event: object }
+            return {
+                ...state,
+                event:
+                    () => {
+                        const pos = state.event.findIndex((value) => value.eventId === action.payload.eventId)
+                        return pos === -1
+                            ? state
+                            : {
+                                ...state,
+                                event: [state.event.slice(0, pos), action.payload, state.event.slice(pos + 1)]
+                            }
+                    }
+            }
         }
         case USER_UPDATE_PARTICIPANT: {
-            object = state.participant.map((item, index) => {
-                if (item.participantId === action.payload.participantId) {
-                    state.participant[index] = action.payload;
-                    return state.participant;
-                }
-                return [...state.participant, ...action.payload];
-            })
-            return { ...state, participant: object }
+            return {
+                ...state,
+                event:
+                    () => {
+                        const pos = state.participant.findIndex((value) => value.participantId === action.payload.participantId)
+                        return pos === -1
+                            ? state
+                            : {
+                                ...state,
+                                event: [state.participant.slice(0, pos), action.payload, state.participant.slice(pos + 1)]
+                            }
+                    }
+            }
         }
         case USER_UPDATE_REWARD: {
-            object = state.reward.map((item, index) => {
-                if (item.idReward === action.payload.idReward) {
-                    state.reward[index] = action.payload;
-                    return state.reward;
-                }
-                return [...state.reward, ...action.payload];
-            })
-            return { ...state, reward: object }
+            return {
+                ...state,
+                event:
+                    () => {
+                        const pos = state.reward.findIndex((value) => value.idReward === action.payload.idReward)
+                        return pos === -1
+                            ? state
+                            : {
+                                ...state,
+                                event: [state.reward.slice(0, pos), action.payload, state.reward.slice(pos + 1)]
+                            }
+                    }
+            }
         }
         case USER_UPDATE_REWARD_CREATING: {
-            object = state.currRewardCreating.map((item, index) => {
-                if (item.idReward === action.payload.idReward) {
-                    state.currRewardCreating[index] = action.payload;
-                    return state.currRewardCreating;
-                }
-                return [...state.currRewardCreating, ...action.payload];
-            })
-            return { ...state, currRewardCreating: object }
+            return {
+                ...state,
+                event:
+                    () => {
+                        const pos = state.currRewardCreating.findIndex((value) => value.idReward === action.payload.idReward)
+                        return pos === -1
+                            ? state
+                            : {
+                                ...state,
+                                event: [state.currRewardCreating.slice(0, pos), action.payload, state.currRewardCreating.slice(pos + 1)]
+                            }
+                    }
+            }
         }
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")
