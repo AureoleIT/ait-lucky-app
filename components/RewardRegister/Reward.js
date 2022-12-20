@@ -26,6 +26,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     imageList ? initImage = imageList : initImage = []
 
     const [imgList, setImgList] = useState([])
+    const [beforeImg, setBeforeImg] = useState(initImage)
     const [img, setImg] = useState(initImage)
     const [file, setFile] = useState([])
     const [count, setCount] = useState(amount || 1)
@@ -33,19 +34,9 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     const [value, setValue] = useState({})
     const [storageImg, setStorageImg] = useState([])
 
-    // useEffect(() =>
-    // {
-    //     console.log(img);
-    // },[img])
+    const iconStyle = { color:"white", fontSize:"24px" }
 
-    const iconStyle = {
-        color:"white",
-        fontSize:"24px"
-    }
-
-    const buttonColor = {
-        background:"#40BEE5"
-    }
+    const buttonColor = { background:"#40BEE5" }
    
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -53,30 +44,16 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
         WebkitTextFillColor: "transparent",
     }
    
-    const icon = {
-        width:"32px",
-        height:"32px",
-        margin:"0 12px",
-    }
+    const icon = { width:"32px",height:"32px",margin:"0 12px" }
 
     useEffect(() =>
     {
-        setImgList(prev => 
-            {
-                let newImgList = []
-                if(file !== undefined)
-                {
-                    newImgList = [...prev, <ImageCustom image={file}/>]
-                }
-                return newImgList
-        })
+        if(file !== undefined) { setImgList(prev => [...prev, file]) } // display
     },[file])
 
-    useEffect(() =>
-    {
-        setImg(prev => [...prev, storageImg])
-    },[storageImg])
+    useEffect(() => { setImg(prev => [...prev, storageImg])},[storageImg]) // upload to db
 
+    // set value to parent component (reward-register)
     useEffect(() =>
     {
         setValue(() => [{
@@ -87,19 +64,17 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
                     }])
     },[img, count, name])
 
-    useEffect(() =>
-    {
-        receiveData(value)
-    },[value])
+    useEffect(() => { receiveData(value) },[value])
 
+    // upload and preview image
     const handleChangeFile = useCallback((e) =>
     {
         if(e.target.files.length !== 0)
         {
             const upload = e.target.files[0]
-            setStorageImg(upload)
+            setStorageImg(upload)  // upload to db
     
-            setFile(URL.createObjectURL(upload))
+            setFile(upload)  // display
     
             let toggle = document.getElementById(toggleID)
             toggle.style.display = "flex"
@@ -111,20 +86,33 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
         if(imageList)
         {
             let toggle = document.getElementById(toggleID)
-            toggle.style.display = "flex" 
+            toggle.style.display = "flex"
         }
     },[])
 
-    const getImage = useCallback((e) =>
-    {
-        document.getElementById(fileID).click()
-    },[])
+    const getImage = useCallback((e) => { document.getElementById(fileID).click() },[])
 
+    // delete image
+    const handleDeleteImageHasBefore = (e) => 
+    { 
+        const remain = imageList.filter((item, index) => index !== e)
+        setBeforeImg(remain)
+        setImg(remain)
+    }
+
+    const handleDeleteImageNow = (e) =>
+    {
+        const remain = imgList.filter((item, index) => index !== e)
+        setImgList(remain)
+        setImg(remain)
+    }
+
+    // render component
     const renderInput = useMemo(() =>
     {
         return (
             <div className="flex w-full">
-                    <AuthInput value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} leftColor="#003B93" rightColor="#00F0FF" type={"text"} />
+                <AuthInput value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} leftColor="#003B93" rightColor="#00F0FF" type={"text"} />
             </div>
         )
     },[name, setName])
@@ -135,7 +123,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
             <div className="flex justify-evenly items-center w-full mt-1 mb-2 lg:justify-center">
                 <label className="font-bold" style={contentCSS}>Số lượng</label>
                 <div className="flex justify-between items-center text-lg font-bold" style={contentCSS}>
-                    <i className="fas fa-minus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setCount(prev => Math.max(prev -1, 1))}></i>
+                    <i className="fas fa-minus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setCount(prev => Math.max(prev -1, 0))}></i>
                     <label>{count}</label>
                     <i className="fas fa-plus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setCount(prev => prev + 1)}></i>
                 </div>
@@ -152,12 +140,11 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
                         imageList ? (
                             <>
                             {
-                                imageList.map((item, index) =>
+                                beforeImg.map((item, index) =>
                                 {
                                     return (
-                                        <div key={index} className="mx-2">
-                                            <ImageCustom image={item}/>
-                                        </div> )
+                                        <div key={index} className="mx-2"> <ImageCustom image={item} onClick={() => handleDeleteImageHasBefore(index)}/> </div> 
+                                    )
                                 })
                             }
                             {
@@ -169,9 +156,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
                                     }
                                     else {
                                         return (
-                                            <div key={index} className="mx-2">
-                                                {item}
-                                            </div>
+                                            <div key={index} className="mx-2"> <ImageCustom image={URL.createObjectURL(item)} onClick={() => handleDeleteImageNow(index)}/> </div>
                                         )
                                     }
                                 })
@@ -180,16 +165,13 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
                         ) : (
                             imgList.map((item,index) =>
                             {
-                                if(index === 0)
-                                    {
-                                        return <div key={index}></div>
-                                    }
-                                    else {
-                                        return (
-                                            <div key={index} className="mx-2">
-                                                {item}
-                                            </div>
-                                        )
+                                if(index === 0) {
+                                    return <div key={index}></div>
+                                }
+                                else {
+                                    return (
+                                        <div key={index} className="mx-2"> <ImageCustom image={URL.createObjectURL(item)} onClick={() => handleDeleteImageNow(index)}/> </div>
+                                    )
                                 }
                             })
                         )
@@ -197,7 +179,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
                 </div>
             </div>
         )
-    },[imgList])
+    },[imgList, beforeImg])
 
     const renderAddImageButton = useMemo(() => {
         return (
@@ -214,21 +196,10 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     
     const renderLine1 = useMemo(() =>
     {
-        return (
-            <div className="w-full flex">
-                <Line content={"Hình ảnh giải thưởng"}/>
-            </div>
-        )
+        return ( <div className="w-full flex"> <Line content={"Hình ảnh giải thưởng"}/> </div> )
     },[])
     
-    const renderLine2 = useMemo(() => 
-    {
-        return (
-            <div className="w-full flex mb-2">
-                <Line />
-            </div>
-        )
-    },[])
+    const renderLine2 = useMemo(() =>  { return ( <div className="w-full flex mb-2"> <Line /> </div> ) },[])
 
     return (
         <>
