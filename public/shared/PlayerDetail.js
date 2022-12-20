@@ -57,7 +57,7 @@ export default function PlayerDetail({player, reward, isAdmin = false}) {
             </div>:<></>}
             <Line content="Giải thưởng" margin="my-2" />
             {reward.length > 0 ? <>
-                <RewardList listReward={reward} />
+                <RewardList listReward={reward} showQuantity={false} />
                 {isAdmin?
                 <Button content={"HỦY GIẢI THƯỞNG"} primaryColor={"#FF6262"} isSquare={true} margin={"my-2"} fontSize={"text-lg"}
                     onClick={() => document.getElementById("cancelRewardedOverlay").classList.toggle('hidden')}/>:
