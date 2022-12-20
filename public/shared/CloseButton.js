@@ -3,11 +3,12 @@ import Auth from "layouts/Auth.js";
 import React, { useState, useEffect } from "react";
 
 
-export default function CloseButton({parentDivID, fillColor="#FF0000"}) {
+export default function CloseButton({parentDivID, fillColor="#FF0000", onClick}) {
     const closeParentDiv = (e) => {
         // console.log(parentDivID);
         if (parentDivID === undefined) e.target.parentNode.classList.add("hidden");
         else document.getElementById(parentDivID).classList.add("hidden");
+        if (onClick) onClick();
     }
 
     return (

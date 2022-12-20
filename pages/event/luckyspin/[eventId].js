@@ -171,8 +171,6 @@ export default function LuckySpin() {
                 document.getElementById("gameSound").play();
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.remove('hidden');
-                    document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
-                    document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
                 }, (1000))
             }, ((spinTime-1)*250))
@@ -180,9 +178,46 @@ export default function LuckySpin() {
         }, ((spinTime-1)*750))
     }
 
-    const awardNotification = (
-        <div className="flex flex-col items-center text-center text-[#004599]" id="confirmAwardNotification"></div>
-    )
+    const awardNotification = useMemo(() => {return (
+        <div className="flex flex-col items-center text-center text-[#004599]" id="confirmAwardNotification"
+            onClick={(e) => e.stopPropagation()}>
+            {loadedData && <div className="text-[#004599] text-base text-center w-full font-bold flex flex-col items-center">
+                {confirmStatus === -1 && <>
+                    <p className="font-semibold">Giải thưởng hiện tại:</p>
+                    <p className="font-[900] text-lg">{remainRewardList[rewardChosing].nameReward}</p>
+                    <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                    <p>Đang chờ quay thưởng ...</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
+                    </svg>
+                </>}
+                {confirmStatus === 0 && <>
+                    <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex].nameDisplay}</p>
+                    <p className="font-semibold">sẽ nhận được giải:</p>
+                    <p className="font-[900] text-lg">{remainRewardList[rewardChosing].nameReward}</p>
+                    <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                    <p>Đang chờ xác nhận trao giải ...</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
+                    </svg>
+                </>}
+                {confirmStatus === 1 && <>
+                    <p className="text-green-600">Chủ sự kiện đã xác nhận trao giải!</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#00A44A" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
+                    </svg>
+                </>}
+                {confirmStatus === 2 && <>
+                    <p className="text-[#FF6262]">Chủ sự kiện đã hủy trao giải</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6262" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5" />
+                    </svg>
+                </>}
+            </div>}
+        </div>
+    )}, [confirmStatus, loadedData])
 
     // ------------------------------------------------------------------------ UseEffect
     // Real time
@@ -233,38 +268,6 @@ export default function LuckySpin() {
     useEffect(() => {
         if (spinClicked) spining();
     }, [spinClicked])
-
-    useEffect(() => {
-        if (loadedData) {
-            render((<div className="text-[#004599] text-base text-center w-full font-bold flex flex-col items-center">
-                {confirmStatus === 0 && <>
-                    <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-                    <p className="font-semibold">sẽ nhận được giải:</p>
-                    <p className="font-[900] text-lg" id="awaredRewardName"></p>
-                    <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
-                    <p>Đang chờ xác nhận trao giải ...</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="#004599" className="w-10 h-10 loadingAnimate">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
-                    </svg>
-                </>}
-                {confirmStatus === 1 && <>
-                    <p className="text-green-600">Đã xác nhận trao giải!</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#00A44A" className="w-10 h-10 iconAnimate">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
-                    </svg>
-                </>}
-                {confirmStatus === 2 && <>
-                    <p className="text-[#FF6262]">Đã hủy trao giải</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6262" className="w-10 h-10 iconAnimate">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5" />
-                    </svg>
-                </>}
-                {console.log("!!!")}
-            </div>), document.getElementById("confirmAwardNotification"));
-        };
-    }, [confirmStatus, spinClicked])
     
     // ------------------------------------------------------------ useMemo
     const spinBlock = useMemo(() => {
@@ -290,7 +293,7 @@ export default function LuckySpin() {
     }, []);
 
     const renderAwardNotification = useMemo(() => {
-        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}></OverlayBlock>
+        return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"} rerenderOnChange={[confirmStatus, loadedData]}></OverlayBlock>
     }, [confirmStatus]);
 
     const renderRewardList = useMemo(() => {
