@@ -7,6 +7,7 @@ export default function Button({
   isTextGradient = false, // nếu là true thì chữ sẽ có màu gradient (xanh), nếu false thi chữ màu trắng
   isSquare = false, // nếu true thì button không có border-radius
   fontSize = "text-[24px]",
+  height = "h-[50px]", //Chiều cao của button, mặc định là 50px
   margin = "my-4", // Margin top và bottom
   fontWeight = "font-[900]",
   iconClass = "", // Fontawesome Icon's class
@@ -24,7 +25,7 @@ export default function Button({
 
   return (
     <div
-      className={`w-full h-[50px] p-[2px] flex justify-center items-center gap-x-[15px]
+      className={`w-full ${height} p-[2px] flex justify-center items-center gap-x-[15px]
         ${margin}
         ${!isSquare ? "rounded-[50px]" : "rounded-[5px]"}
         ${
