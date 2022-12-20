@@ -3,16 +3,14 @@ import Auth from "layouts/Auth.js";
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import router from "next/router";
 import { auth, db } from "../../src/firebase";
-
 import { TickBox, Title, AuthFooter, Button, Input, Line } from "public/shared"
-
 import {
   hasWhiteSpaceAndValidLength,
   enoughNumCountPass,
 } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { ref, child, get } from "firebase/database";
-import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR, LEFT_GRADIENT, RIGHT_GRADIENT } from "public/util/colors";
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { messagesError, messagesSuccess } from "public/util/messages";
@@ -34,10 +32,11 @@ export default function Login() {
   const dispatch = useDispatch()
   const dbRef = ref(db);
 
-  // const globalUser = useUserPackageHook();
-  // if ( globalUser.userId !== undefined || globalUser.userId !== null) {
-  //   router.push("/admin/dashboard-admin");
-  // }
+  const globalUser = useUserPackageHook();
+  console.log(globalUser.userId);
+  const checkExistedUser = () => {
+    router.push("/admin/dashboard-admin");
+  }
 
   const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
@@ -88,7 +87,7 @@ export default function Login() {
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
-          }, 4000);
+          }, 500);
         });
       })
       .catch((error) => {
@@ -100,7 +99,7 @@ export default function Login() {
   useEffect(() => dispatch(userPackage(user)), [dispatch, user])
 
   useEffect(() => {
-    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user));
+    window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user.userId));
   }, [user]);
 
   const nameData = useCallback(
@@ -184,7 +183,7 @@ export default function Login() {
 
   const renderFirstLine = useMemo(() => {
     return (
-      <Line content="hoặc"/>
+      <Line content="hoặc" />
     )
   }, [])
 
@@ -203,7 +202,7 @@ export default function Login() {
 
   const renderSecondLine = useMemo(() => {
     return (
-      <Line/>
+      <Line />
     )
   }, [])
 
