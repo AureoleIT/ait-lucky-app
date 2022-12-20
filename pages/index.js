@@ -11,8 +11,8 @@ import { isEmpty } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser } from "public/redux/actions";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
+import { incognitoEvent, incognitoUser, userEvent, userParticipant, userReward, userRewardCreating, userUpdateEvent, userUpdateRewardCreating } from "public/redux/actions";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrRewardCreatingHook, useUserEventHook, useUserPackageHook, useUserParticipantHook, useUserRewardHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 
 export default function Index() {
@@ -29,7 +29,7 @@ export default function Index() {
   var [event, setEvent] = useState({});
   var [user, setUser] = useState({});
 
-  const globalUser = useUserPackageHook().eventId;
+  const globalUser = useUserPackageHook();
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -122,20 +122,22 @@ export default function Index() {
   }, [])
 
   const renderDirect = useMemo(() => {
-    return globalUser ? <></> : (
-      <div>
-        <WayLog
-          action="Đăng nhập"
-          title="để quản lý sự kiện?"
-          path="/auth/login"
-        />
-        <WayLog
-          action="Đăng ký"
-          title="để tạo tài khoản."
-          path="/auth/register"
-        />
-      </div>
-    )
+    return globalUser.userId !== undefined 
+      ? (<div></div>)
+      : (
+        <div>
+          <WayLog
+            action="Đăng nhập"
+            title="để quản lý sự kiện?"
+            path="/auth/login"
+          />
+          <WayLog
+            action="Đăng ký"
+            title="để tạo tài khoản."
+            path="/auth/register"
+          />
+        </div>
+      )
   }, [globalUser])
 
   const renderPopUp = useMemo(() => {
