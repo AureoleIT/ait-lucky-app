@@ -32,8 +32,6 @@ export default function Info() {
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
 
-  const user = useUserPackageHook();
-
   useEffect(() => {
     if (currEvent.eventId === null || currEvent.eventId === undefined) {
       router.push("/");
@@ -47,7 +45,7 @@ export default function Info() {
     var id = uuid.v4();
     setName(name.trim());
     var newParticipant = {
-      participantId: user.userId === undefined ? id : user.userId,
+      participantId: id,
       createAt: new Date().getTime(),
       status: 2,
       nameDisplay: name,
@@ -66,7 +64,7 @@ export default function Info() {
       .catch((e) => {
         ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [currEvent.eventId, dispatch, name, user.userId]);
+  }, [currEvent.eventId, dispatch, name]);
 
   // Set and save new player object to redux
   useEffect(() => {
