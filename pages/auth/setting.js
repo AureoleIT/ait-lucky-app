@@ -253,6 +253,18 @@ export default function Setting() {
         )
     }, [handleSaveInfo, username])
 
+    const renderOverlayBlock = useMemo(() => {
+        return (
+            <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
+        )
+    }, [])
+
+    const renderPageLoading = useMemo(() => {
+        return (
+            <PageLoading />
+        )
+    }, [])
+
     // show popup
     useEffect(() => {
         if (isHidden == false) {
@@ -299,9 +311,9 @@ export default function Setting() {
                                 </div>
                             </footer>
                         </div>
-                        <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
+                        {renderOverlayBlock}
                     </section>
-                    : <PageLoading />
+                    : <>{renderPageLoading}</>
             }
         </>
 
