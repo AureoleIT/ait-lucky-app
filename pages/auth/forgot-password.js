@@ -218,8 +218,8 @@ export default function ForgotPassword() {
         isTextGradient={true}
         onChange={emailData}
         primaryColor={LEFT_COLOR}
-        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} 
-        value={email}/>
+        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        value={email} />
     )
   }, [email, setEmail])
 
@@ -288,19 +288,26 @@ export default function ForgotPassword() {
     )
   }, [])
 
-  const renderFooter = useMemo(() => {
+  const renderBackToLogin = useMemo(() => {
     return (
-      <AuthFooter
-        normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!!!"
-        href="/auth/register"
-      />
+      <Link href={"/auth/login"} className="my-0">
+        <button className="w-full ">
+          <div className="font-[600] text-[16px] text-[#004599]">
+            {"Trở lại Đăng nhập"}
+          </div>
+        </button>
+      </Link>
     )
   }, [])
 
+  const renderOverlayBlock = useMemo(() => {
+    return (
+      <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+    )
+  }, [])
   return (
     <section className="h-screen overflow-y-hidden">
-      <div className="flex flex-col xl:justify-center lg:justify-center justify-center items-center mt-10">
+      <div className="flex flex-col xl:justify-center lg:justify-center justify-center items-center mt-20">
         <div className="relative mb-5">
           {renderTitle}
         </div>
@@ -319,15 +326,9 @@ export default function ForgotPassword() {
         }
         <div className="w-[90%] max-w-md mt-4">
           {renderLine}
-          <Link href={"/auth/login"} className="my-0">
-            <button className="w-full ">
-              <div className="font-[600] text-[16px] text-[#004599]">
-                {"Trở lại Đăng nhập"}
-              </div>
-            </button>
-          </Link>
+          {renderBackToLogin}
         </div>
-        <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+        {renderOverlayBlock}
       </div>
     </section>
   );
