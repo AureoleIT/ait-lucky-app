@@ -265,6 +265,11 @@ export default function Setting() {
         )
     }, [])
 
+    const renderHeader = useMemo(() => {
+        return (
+            <Header />
+        )
+    }, [])
     // show popup
     useEffect(() => {
         if (isHidden == false) {
@@ -285,7 +290,7 @@ export default function Setting() {
             {
                 loadedData ?
                     <section className="h-screen w-screen overflow-y-hidden">
-                        <Header />
+                        {renderHeader}
                         <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
                             <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
                                 <div className="flex flex-col justify-center items-center">
