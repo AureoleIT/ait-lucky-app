@@ -46,6 +46,12 @@ export default function EventRegister() {
 
     setTimeout(() => setLoadedData(true), 2500)  // load page
 
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId === undefined || user.userId === null || user.userId === "" ) { router.push("/") }
+    },[])
+
     const dispatch = useDispatch();
     // handle submit button
     const handleSubmit = useCallback((title, description, maxTicket, publicFlag) => 
