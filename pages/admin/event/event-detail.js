@@ -7,7 +7,7 @@ import Line from "public/shared/Line";
 import { HideMethod } from "public/util/popup";
 import Title from "public/shared/Title";
 
-import { useUserCurrEventCreatingHook, useUserCurrEventHostingHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
@@ -17,10 +17,22 @@ import { Button, PageLoading } from "public/shared";
 function EventDetail() {
     // router
     const router = useRouter();
-    
+    // user
+    const user = useUserPackageHook()
     // eventID get from redux
-    const event = useUserCurrEventCreatingHook()
+    const { query: {statusEvent} } = router
+    const props = {statusEvent}
+    let event
+    if(statusEvent == 1)
+    {
+        event = useUserCurrEventCreatingHook()
+    }
+    else 
+    {
+        event = useUserCurrEventHostingHook()
+    }
     const beforeID = event.eventId
+    console.log(beforeID);
     const eventID = beforeID.slice(0,8)
     // dispatch
     const dispatch = useDispatch()
@@ -33,6 +45,12 @@ function EventDetail() {
     const optionStyles = { background: "#40BEE5" };
 
     setTimeout(() => setLoadedData(true), 2500)  // load page
+
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get name event from firebase
     const getName = query(ref(db, "event"), orderByChild("eventId"), equalTo(beforeID))
@@ -82,7 +100,7 @@ function EventDetail() {
             })
             router.push({
                 pathname:"/admin/event/countdown-checkin",
-                query: { countdown }
+                query: { countdown, statusEvent }
             })
         }
     },[countdown, dispatch]);
@@ -90,7 +108,10 @@ function EventDetail() {
     // navigate to edit-page
     const handleEditPageNavigation = useCallback(() => {
         HideMethod(dispatch)
-        router.push("/admin/event/edit-event-reward-register");
+        router.push({
+            pathname:"/admin/event/edit-event-reward-register",
+            query: {statusEvent}
+        });
     },[router, dispatch]);
 
     // render component
