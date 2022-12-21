@@ -8,6 +8,30 @@ export default function EventButton({
   status,
   onclick,
 }) {
+  const handleClick = () => {
+    const statusEvent = 2;
+    switch (status) {
+      case 1:
+        return router.push({
+          pathname: "/admin/event/event-detail",
+          query: { statusEvent },
+        });
+      case 2:
+        return router.push({
+          pathname: "/admin/event/countdown-checkin",
+          query: { statusEvent },
+        });
+      case 3:
+        return router.push(`/admin/luckyspin/${String(id).slice(0,6)}`);
+      case 4:
+        return router.push("/event/event-result");
+      default:
+        return router.push({
+          pathname: "/admin/event/event-detail",
+          query: { statusEvent },
+        });
+    }
+  }
   return (
     <div onClick={handleClick} className="flex flex-col w-full">
       <button
@@ -85,28 +109,5 @@ function setColor(status, id, userJoined) {
   }
 }
 
-function handleClick(status) {
-  const statusEvent = 2;
-  switch (status) {
-    case 1:
-      return router.push({
-        pathname: "/admin/event/event-detail",
-        query: { statusEvent },
-      });
-    case 2:
-      return router.push({
-        pathname: "/admin/event/countdown-checkin",
-        query: { statusEvent },
-      });
-    case 3:
-      return router.push("/admin/luckyspin");
-    case 4:
-      return router.push("/event/event-result");
-    default:
-      return router.push({
-        pathname: "/admin/event/event-detail",
-        query: { statusEvent },
-      });
-  }
-}
+
 // href={`${setLink(status)}`}
