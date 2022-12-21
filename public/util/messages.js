@@ -13,6 +13,7 @@ export const messagesSuccess = {
     return "Chào mừng đến với sự kiện " + a;
   },
   I0009: "Di chuyển đến hàng chờ",
+  I0010: "Bắt đầu sự kiện",
 };
 
 //Message lỗi
