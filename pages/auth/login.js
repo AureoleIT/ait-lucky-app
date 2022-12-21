@@ -58,8 +58,9 @@ export default function Login() {
         ShowMethod(dispatch, messagesError.E0009, false)
         return;
       }
-      setUser(values.find(item => item.name === name || item.email === name));
-
+      const currUser = values.find(item => item.name === name || item.email === name);
+      setUser(currUser);
+      dispatch(userPackage(currUser))
       ShowMethod(dispatch, messagesSuccess.I0002, true)
       //Go to admin dashboard
       router.push("/admin/dashboard-admin");
@@ -82,7 +83,9 @@ export default function Login() {
             ShowMethod(dispatch, messagesError.E0010, false);
             return;
           }
-          setUser(values.find(item => item.email === currEmail));
+          const currUser = values.find(item => item.email === currEmail);
+          setUser(currUser);
+          dispatch(userPackage(currUser))
           ShowMethod(dispatch, messagesSuccess.I0002, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
@@ -96,7 +99,6 @@ export default function Login() {
       });
   }, [dispatch])
 
-  useEffect(() => dispatch(userPackage(user)), [dispatch, user])
 
   useEffect(() => {
     window.localStorage.setItem('USER_LOGIN_STATE', JSON.stringify(user.userId));
