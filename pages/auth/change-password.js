@@ -204,6 +204,18 @@ export default function ChangePassword() {
     )
   }, [changePassword])
 
+  const renderOverlayBlock = useMemo(() => {
+    return (
+      <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
+    )
+  }, [])
+
+  const renderPageLoading = useMemo(() => {
+    return (
+      <PageLoading />
+    )
+  }, [])
+
   return (
     <>
       {
@@ -228,10 +240,10 @@ export default function ChangePassword() {
             </div>
 
             <div className="">
-              <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
+              {renderOverlayBlock}
             </div>
           </section>
-          : <PageLoading />
+          : <> {renderPageLoading}</>
       }
     </>
 
