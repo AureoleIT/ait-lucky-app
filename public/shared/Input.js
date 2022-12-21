@@ -10,6 +10,7 @@ export default function Input({
   type, // Loại input
   primaryColor = LEFT_COLOR, // Thay thế cho leftColor ở component AuthInput cũ
   secondaryColor = RIGHT_COLOR, // Thay thế cho rightColor ở component AuthInput cũ
+  maxLength = 100,
   value,
   onChange,
   row = 1,
@@ -35,6 +36,7 @@ export default function Input({
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
+          maxLength = {maxLength}
           required
         />
         <textarea
@@ -43,6 +45,7 @@ export default function Input({
           rows={row}
           value={value}
           onChange={onChange}
+          maxLength = {maxLength}
           required
         />
         <div className="bg-white absolute w-full top-0">

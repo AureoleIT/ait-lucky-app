@@ -6,17 +6,22 @@ import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
 import LuckySpinSetting from "public/shared/LuckySpinSetting";
 import RewardList from "public/shared/RewardList";
+import Button from "public/shared/Button";
 import router, { useRouter } from "next/router";
-import { useUserPackageHook } from "public/redux/hooks";
+
+import { useDispatch } from "react-redux";
+import { userEvent, incognitoEvent } from "public/redux/actions";
 import { usePlayerParticipantHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push } from "firebase/database";
 import PageLoading from "public/shared/PageLoading";
+import { render } from "react-dom";
 
 
 export default function LuckySpin() {
     const [loadedData, setLoadedData] = useState(false);
+    const dispatch = useDispatch()
 
     const router = useRouter();
     // Mã event
@@ -49,10 +54,12 @@ export default function LuckySpin() {
     const [spinClicked, setSpinClicked] = useState(false);
     // Người nhận thưởng
     const [lastAwardedIndex, setLastAwardedIndex] = useState(0);
-    // ID người nhận thưởng
-    const [lastAwardedId, setLastAwardedId] = useState("");
     // Số người chơi online
     const [onlinePlayerAmount, setOnlinePlayerAmount] = useState(0);
+    // Thời gian cho animate quay thưởng
+    const [spinTime, setSpinTime] = useState(4);
+    // Xác nhận trao thưởng
+    const [confirmStatus, setConfirmStatus] = useState(0);
 
     // Firebase
     const dbRef = ref(db);
@@ -61,42 +68,11 @@ export default function LuckySpin() {
 
 
     const fetchDB = () => {
-        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
-        onValue(que3, (snapshot) => {
-            if (snapshot.exists()) {
-                const data = Object.values(snapshot.val())[0];
-                if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/');
-                if (data["status"] === 4) router.push('/event/event-result/' + EventID);
-                setEventInfo(data);
-                const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
-                const isSpining = data['playingData']['isSpinning'];
-                const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
-                if (!spinClicked && isSpining) {
-                    setLastAwardedIndex(lastAwardedIndex);
-                    setSpinClicked(isSpining);
-                };
-                setRewardChosing(rewardChosingIndex);
-            } else {
-                router.push('/');
-            }
-        });
-
-        const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
-        onValue(que1, (snapshot) => {
-            if (snapshot.exists()) {
-                const data = Object.values(snapshot.val());
-                data.sort(compare);
-                setRewardList(data);
-                setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
-            }
-        });
-
         const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
-                if (!Object.keys(rawData).includes(participantId)) router.push('/')
+                if (!Object.keys(rawData).includes(participantId)) router.push('/event/info')
                 const data = Object.values(rawData);
                 data.forEach((val, idx) => {
                     val.ID = Object.keys(rawData)[idx];
@@ -116,7 +92,42 @@ export default function LuckySpin() {
                 }, 200);
             }
         });
-        setTimeout(() => setLoadedData(true), 1500)
+
+        const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que3, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = Object.values(snapshot.val())[0];
+                if (data["status"] === 1) router.push('/');
+                if (data["status"] === 2) router.push('/');
+                if (data["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(data);
+                const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
+                const isSpining = data['playingData']['isSpinning'];
+                const lastAwardedIndex = data['playingData']['lastAwardedIndex'];
+                const spinTime = data['playingData']['spinTime'];
+                setSpinTime(spinTime);
+                setConfirmStatus(data['playingData']['confirmStatus'])
+                if (!spinClicked && isSpining) {
+                    setLastAwardedIndex(lastAwardedIndex);
+                    setSpinClicked(isSpining);
+                };
+                setRewardChosing(rewardChosingIndex);
+            } else {
+                router.push('/');
+            }
+        });
+                
+        const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
+        onValue(que1, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = Object.values(snapshot.val());
+                data.sort(compare);
+                setRewardList(data);
+                setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
+            }
+        });
+
+        setTimeout(() => setLoadedData(true), 2500)
     }
 
     // ------------------------------------------------- Function
@@ -131,9 +142,11 @@ export default function LuckySpin() {
         Array.from({length: 9}, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
         })
+        document.getElementById("gameSound").play();
         
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
+            document.getElementById("gameSound").play();
         }, 50);
         
         const timeoutPhase1 = setTimeout(() => {
@@ -143,9 +156,11 @@ export default function LuckySpin() {
                 document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
                 document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
             })
+            document.getElementById("gameSound").play();
                         
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
+                document.getElementById("gameSound").play();
             }, 500);
 
             const timeoutPhase2 = setTimeout(() => {
@@ -153,35 +168,35 @@ export default function LuckySpin() {
                 Array.from({length: 9}, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
                 })
+                document.getElementById("gameSound").play();
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.remove('hidden');
                     document.getElementById("awaredPlayerName").innerHTML = remainPlayerList[lastAwardedIndex].nameDisplay;
                     document.getElementById("awaredRewardName").innerHTML = remainRewardList[rewardChosing].nameReward;
                     setSpinClicked(false);
-                }, 1000)
-            }, 2000)
+                }, (1000))
+            }, ((spinTime-1)*250))
 
-        }, 1000)
+        }, ((spinTime-1)*750))
     }
 
     const awardNotification = (
-        <div className="flex flex-col items-center text-center text-[#004599]">
-            <p className="font-semibold">Chúc mừng</p>
-            <p className="font-[900] text-lg" id="awaredPlayerName"></p>
-            <p className="font-semibold">đã nhận được giải:</p>
-            <p className="font-[900] text-lg" id="awaredRewardName"></p>
-        </div>
+        <div className="flex flex-col items-center text-center text-[#004599]" id="confirmAwardNotification"></div>
     )
 
     // ------------------------------------------------------------------------ UseEffect
     // Real time
     useEffect(() => {
-        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
-        if (participantId === "") router.push('/');
+        dispatch(incognitoEvent({eventId: EventID}));
+    }, [])
 
+    useEffect(() => {
+        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
+        if (participantId === "") router.push('/event/info');
         fetchDB();
         
         const setOnlineStatus = (status) => {
+            if (!participantId) return;
             update(ref(db, 'event_participants/' + participantId),
                 {
                     status: status
@@ -219,6 +234,37 @@ export default function LuckySpin() {
         if (spinClicked) spining();
     }, [spinClicked])
 
+    useEffect(() => {
+        if (loadedData) {
+            render((<div className="text-[#004599] text-base text-center w-full font-bold flex flex-col items-center">
+                {confirmStatus === 0 && <>
+                    <p className="font-[900] text-lg" id="awaredPlayerName"></p>
+                    <p className="font-semibold">sẽ nhận được giải:</p>
+                    <p className="font-[900] text-lg" id="awaredRewardName"></p>
+                    <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
+                    <p>Đang chờ xác nhận trao giải ...</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="#004599" className="w-10 h-10 loadingAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
+                    </svg>
+                </>}
+                {confirmStatus === 1 && <>
+                    <p className="text-green-600">Đã xác nhận trao giải!</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#00A44A" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
+                    </svg>
+                </>}
+                {confirmStatus === 2 && <>
+                    <p className="text-[#FF6262]">Đã hủy trao giải</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6262" className="w-10 h-10 iconAnimate">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5" />
+                    </svg>
+                </>}
+                {console.log("!!!")}
+            </div>), document.getElementById("confirmAwardNotification"));
+        };
+    }, [confirmStatus, spinClicked])
     
     // ------------------------------------------------------------ useMemo
     const spinBlock = useMemo(() => {
@@ -233,9 +279,19 @@ export default function LuckySpin() {
         return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}></OverlayBlock>
     }, []);
 
+    const renderExitNotification = useMemo(() => {
+        return <OverlayBlock childDiv={<>
+            <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">thoát</span>?</p>
+            <div className="mt-2 w-full flex gap-4 px-2">
+                <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {router.push('/')}} />
+                <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+            </div>
+        </>}  id={"exitOverlay"}></OverlayBlock>
+    }, []);
+
     const renderAwardNotification = useMemo(() => {
         return <OverlayBlock childDiv={awardNotification}  id={"awardedOverlay"}></OverlayBlock>
-    }, []);
+    }, [confirmStatus]);
 
     const renderRewardList = useMemo(() => {
         return <RewardList
@@ -251,8 +307,8 @@ export default function LuckySpin() {
             <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                 <div className="flex flex-col justify-start items-center w-full h-full">
                     <div className="flex flex-col w-full pt-5">
-                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="24" fontWeight="semibold"/>
-                        <Title title={eventInfo.title} fontSize="32" />
+                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"/>
+                        <Title title={eventInfo.title} fontSize="text-[32px]" />
                         <div className="flex w-full justify-between -mt-3 mb-1">
                             <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
                             <span className="flex gap-1">
@@ -277,11 +333,12 @@ export default function LuckySpin() {
                         </div>
                     </div>
                     {spinBlock}
-                    <div className="w-full mb-12">
+                    <div className="w-full mb-20">
                       <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                       <div className="h-44 px-4 py-2 relative">
                         {renderRewardList}
                       </div>
+                      <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
                         onClick={() => {document.getElementById("settingOverlay").classList.toggle('hidden')}}>
@@ -292,6 +349,7 @@ export default function LuckySpin() {
                     {renderCurrEventDetail}
                     {renderSetting}
                     {renderAwardNotification}
+                    {renderExitNotification}
                 </div>
             </section>
             :<PageLoading />

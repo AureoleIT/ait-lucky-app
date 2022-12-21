@@ -3,7 +3,7 @@ import Title from "public/shared/Title";
 import RewardList from "public/shared/RewardList";
 import PlayerList from "./PlayerList";
 
-export default function CurrentEventDetail({listPlayer, listReward, remainReward = false}) {
+export default function CurrentEventDetail({listPlayer, listReward, remainReward = false, isAdmin = false}) {
     const [expand, setExpand] = useState(false);
     if (typeof listPlayer === 'object') listPlayer = Object.values(listPlayer);
 
@@ -27,8 +27,8 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
                 </div>
                 <div className="flex flex-col w-full grow px-5 mt-4 overflow-hidden">
                     <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="20" />
-                    <div className="h-1 bg-white w-full -mt-4 mb-4 shrink-0"></div>
-                    <PlayerList listPlayer={listPlayer} listReward={listReward} />
+                    <div className="h-1 bg-white w-full -mt-4 mb-4"></div>
+                    <PlayerList listPlayer={listPlayer} listReward={listReward} isAdmin={isAdmin} />
                 </div>
         </div>
     )

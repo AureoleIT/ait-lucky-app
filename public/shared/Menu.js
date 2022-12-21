@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CloseIcon from "public/icons/close";
 import { useRouter } from "next/router";
 
 //Component
 import UserAvatar from "./UserAvatar";
+
+//Functions
+import { pressEscToClose } from "../util/functions"
 
 //Firebase
 import { auth } from "src/firebase";
@@ -15,7 +18,7 @@ import { removeState } from "public/redux/actions";
 function MenuItem(props) {
     const router = useRouter()
     return (
-        <div className={`cursor-pointer flex w-full gap-x-4 items-center`}>
+        <div className={`cursor-pointer flex w-full gap-x-4 items-center hover:scale-125 hover:transform hover:translate-x-[40px] transition duration-150 linear hover:text-blue-600`}>
             {props.icon}
             <a onClick={() => {router.push(props.href)}}>
                 <p className="font-[900] text-[14px]">{props.name}</p>
@@ -32,6 +35,8 @@ export default function Menu(props) {
     const user = userData
     const router = useRouter()
     const defaultAvatar = props.defaultAvatar
+
+    pressEscToClose(setShowMenu, false)
     
     const RenderMenu = MenuList.map((item, index) => {
         return (
@@ -60,7 +65,7 @@ export default function Menu(props) {
                 </div>
                 <div className="w-full mt-[35px] flex flex-col gap-y-4 ">
                     {RenderMenu}
-                    <div className={`cursor-pointer flex w-full gap-x-4 items-center text-red-500`}>
+                    <div className={`cursor-pointer flex w-full gap-x-4 items-center text-red-500 hover:scale-125 hover:transform hover:translate-x-[40px] transition duration-150 linear hover:text-red-600`}>
                         {logout.icon}
                         <a onClick={() => {
                             auth.signOut()
@@ -89,7 +94,7 @@ const MenuList = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
         </svg>,
         name: "Tạo sự kiện",
-        href: "/event/event-register"
+        href: "/admin/event/event-register"
     },
     {
         icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
