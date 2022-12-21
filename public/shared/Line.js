@@ -5,15 +5,15 @@ export default function Line({
   content, // nội dung được hiển thị trên Line
   isLineWhite = false, // nếu line màu trắng thì true
   lineWeight = true, // mặc đinh line dày 2px, nếu false thì dày 1px
-  marginY = 0, // marginY của line
+  margin = "", // truyền margin theo class tailwindcss
 }) {
   return (
     <div
       className={`w-full justify-center items-center flex flex-row
-        my-${marginY}`}
+        ${margin}`}
     >
       <div
-        className={`flex-grow z-10 relative flex justify-center
+        className={`flex-grow relative flex justify-center
           ${lineWeight ? "h-[2px]" : "h-[1px]"}  
           ${isLineWhite ? "bg-white" : LEFT_GRADIENT}`}
       ></div>
@@ -25,7 +25,7 @@ export default function Line({
         {content}
       </span>
       <div
-        className={`flex-grow z-10 relative flex justify-center
+        className={`flex-grow relative flex justify-center
           ${lineWeight ? "h-[2px]" : "h-[1px]"}  
           ${isLineWhite ? "bg-white" : RIGHT_GRADIENT}`}
       ></div>
