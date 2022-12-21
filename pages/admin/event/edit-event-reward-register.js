@@ -15,14 +15,26 @@ import {ref, set, onValue, query, orderByChild, equalTo, update, remove} from "f
 import { storage } from "src/firebase"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook } from "public/redux/hooks";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 function EditEventRewardRegister() {
     // router
     const router = useRouter();
+    // user
+    const user = useUserPackageHook()
     // eventID
-    const eventStore = useUserCurrEventCreatingHook()
+    const { query: {statusEvent} } = router
+    const props = {statusEvent}
+    let eventStore
+    if(statusEvent == 1)
+    {
+        eventStore = useUserCurrEventCreatingHook()
+    }
+    else 
+    {
+        eventStore = useUserCurrEventHostingHook()
+    }
     const eventID = eventStore.eventId
     // dispatch
     const dispatch = useDispatch()
@@ -60,6 +72,12 @@ function EditEventRewardRegister() {
     const wrap = { zIndex: "20" }
 
     setTimeout(() => setLoadedData(true), 2500)  // load page
+
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId !== eventStore.createBy) { router.push("/") }
+    },[])
 
     // get event from firebase
     const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
@@ -315,7 +333,10 @@ function EditEventRewardRegister() {
             setTimeout(() =>
             {
                 HideMethod(dispatch)
-                router.push("/admin/event/event-detail");
+                router.push({
+                    pathname:"/admin/event/event-detail",
+                    query: {statusEvent}
+                });
             },[2000])
         }
         else{
