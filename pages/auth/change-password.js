@@ -216,12 +216,18 @@ export default function ChangePassword() {
     )
   }, [])
 
+  const renderHeader = useMemo(() => {
+    return (
+      <Header />
+    )
+  }, [])
+
   return (
     <>
       {
         loadedData ?
           <section className="h-screen overflow-y-hidden">
-            <Header />
+            {renderHeader}
             <div className="h-full w-[90%] mx-auto">
               <div
                 className="flex xl:justify-center lg:justify-center justify-center h-full mt-4"
