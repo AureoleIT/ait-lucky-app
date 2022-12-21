@@ -13,7 +13,7 @@ import { storage } from "src/firebase"
 import { set, ref } from "firebase/database"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 import Header from "public/shared/Header";
 import { Button, PageLoading } from "public/shared";
@@ -21,6 +21,10 @@ import { Button, PageLoading } from "public/shared";
 function RewardRegister() {
     // router
     const router = useRouter();
+    // status to pass to event detail
+    const statusEvent = 1
+    // user
+    const user = useUserPackageHook()
     // eventID
     const event = useUserCurrEventCreatingHook()
     const eventID = event.eventId
@@ -47,6 +51,12 @@ function RewardRegister() {
     // idea: each reward has its own id (render in the first time component called by uuid)
     // idea: output of reward data is array of object and it's update when has change with the key is id render by uuid
     // idea: so we only get the last value of reward of each id
+
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get value of reward realtime
     const handleReceiveData = useCallback((data) =>
@@ -175,7 +185,10 @@ function RewardRegister() {
                 setTimeout(() =>
                 {
                     HideMethod(dispatch)
-                    router.push("/admin/event/event-detail")
+                    router.push({
+                        pathname:"/admin/event/event-detail",
+                        query: {statusEvent}
+                    })
                 },2000)
             }
             else {
