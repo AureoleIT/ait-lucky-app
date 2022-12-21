@@ -6,9 +6,6 @@ import {
   RIGHT_COLOR,
   FAIL_RIGHT_COLOR,
 } from "public/util/colors";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import Privacy from "public/shared/Privacy";
 import Auth from "layouts/Auth.js";
 import router from "next/router";
 import {
@@ -24,10 +21,8 @@ import PopUp from "public/shared/PopUp";
 import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
-import Button from "public/shared/Button";
-import Input from "public/shared/Input";
-import Line from "public/shared/Line";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
+import { Input, Title, Button, AuthFooter, Privacy, Line } from "public/shared";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -44,6 +39,12 @@ export default function Register() {
   const visible = usePopUpVisibleHook();
 
   const dispatch = useDispatch();
+
+  const globalUser = useUserPackageHook();
+
+  if ( globalUser.userId !== undefined ) {
+    router.push("/admin/dashboard-admin");
+  }
 
   const signUpSubmit = useCallback((name, email, password) => {
     var id = uuid.v4();

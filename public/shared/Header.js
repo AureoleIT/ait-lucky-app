@@ -29,7 +29,7 @@ export default function Header() {
           <button onClick={(e) => {setShowMenu(!showMenu)}}>
             <MenuIcon />
           </button>
-          <h1 className="text-2xl font-extrabold text-white">AIT LUCKY APP</h1>
+          <a href="/admin/dashboard-admin" className="text-2xl font-extrabold text-white">AIT LUCKY APP</a>
           <UserAvatar avatar={userData.pic || defaultAvatar} />
         </div>
       </div>

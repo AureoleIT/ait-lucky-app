@@ -84,18 +84,18 @@ export default function Dashboard() {
     return (
       <Input content={""}>
         <div className="flex flex-col pb-4 pt-2">
-          <div className="flex ">
+          <div className="flex flex-col">
             <div className="flex flex-col flex-1">
               <p className="font-bold text-sm text-[#656565] mt-2">
                 {"Chào mừng đến với AIT Lucky App,"}
               </p>
+            </div>
+
+            <div className="flex justify-between items-end w-full">
               <p className="text-sm text-[#656565] mb-2">
                 {"hãy bắt đầu các sự kiện ngay nào!"}
               </p>
-            </div>
-
-            <div className="w-1/5 flex self-end">
-              <img src={nyancat} alt="must be a nyancat gif"></img>
+              <img src={nyancat} className="md:w-1/5 md:h-min w-[30px] h-[20.7px]" alt="must be a nyancat gif"></img>
             </div>
           </div>
           <div className="w-full mb-2">
