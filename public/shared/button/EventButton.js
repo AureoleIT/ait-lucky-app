@@ -22,7 +22,7 @@ export default function EventButton({
           query: { statusEvent },
         });
       case 3:
-        return router.push(`/admin/luckyspin/${String(id).slice(0,6)}`);
+        return router.push(`/admin/luckyspin/${String(id)}`);
       case 4:
         return router.push("/event/event-result");
       default:
@@ -31,7 +31,7 @@ export default function EventButton({
           query: { statusEvent },
         });
     }
-  }
+  };
   return (
     <div onClick={handleClick} className="flex flex-col w-full">
       <button
@@ -40,7 +40,7 @@ export default function EventButton({
       >
         <div className="flex justify-between items-center ml-4 mr-2 text-white h-10 font-[Nunito Sans]">
           <div className="justify-center items-center text-left font-bold text-sm uppercase truncate w-1/2">
-            {title ? <> {title}</> : <> Title not available</>}
+            {title ? <> {title}</> : <>Title not available</>}
           </div>
           <div className="text-xs flex flex-col flex-1 text-right ml-10 items-right truncate break-words">
             {id === -1 ? (
@@ -108,6 +108,5 @@ function setColor(status, id, userJoined) {
     }
   }
 }
-
 
 // href={`${setLink(status)}`}
