@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo, update} from "firebase/database"
-import { Button, PageLoading } from "public/shared";
+import { Button, PageLoading, RewardList } from "public/shared";
 
 function EventDetail() {
     // router
@@ -32,7 +32,6 @@ function EventDetail() {
         event = useUserCurrEventHostingHook()
     }
     const beforeID = event.eventId
-    console.log(beforeID);
     const eventID = beforeID.slice(0,8)
     // dispatch
     const dispatch = useDispatch()
@@ -143,24 +142,11 @@ function EventDetail() {
     const renderAward = useMemo(() =>
     {
         return (
-            <div className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
+            <section className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[350px]">
-                    {
-                        rewards.map((item, index) => {
-                            return (
-                                <div key={index}>
-                                    <SpecialRewardInfo
-                                        rewardName={item.nameReward}
-                                        amount={item.quantity}
-                                        image={item.imgUrl}
-                                        color={"#52FF00"}
-                                    />
-                                </div>
-                            );
-                        })
-                    }
+                    <RewardList listReward={rewards}/>
                 </div>
-            </div>
+            </section>
         )
     },[rewards])
 
