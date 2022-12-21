@@ -230,7 +230,7 @@ export default function Login() {
 
   return (
     <>
-      <section className="h-screen mx-auto w-full flex justify-center items-center">
+      <section className="h-full mx-auto w-full flex justify-center items-center">
         <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
           {renderTitle}
           {renderName}
