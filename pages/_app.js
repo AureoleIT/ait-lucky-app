@@ -5,19 +5,19 @@ import Head from "next/head";
 import Router from "next/router";
 import { persistor, store } from "../public/redux/store"
 import { Provider } from "react-redux";
-import PageChange from "components/PageChange/PageChange.js";
 import { PersistGate } from "redux-persist/integration/react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "styles/tailwind.css";
 import "styles/globals.css";
+import { PageLoading } from "public/shared";
 
 Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
-  // document.body.classList.add("body-page-transition");
-  // ReactDOM.render(
-  //   <PageChange path={url} />,
-  //   document.getElementById("page-transition")
-  // );
+  document.body.classList.add("body-page-transition");
+  ReactDOM.render(
+    <PageLoading/>,
+    document.getElementById("page-transition")
+  );
 });
 Router.events.on("routeChangeComplete", () => {
   ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
