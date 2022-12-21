@@ -29,7 +29,7 @@ export default function LuckySpinAdmin() {
     const adminInfo = useUserPackageHook();
     // Mã admin
     const adminId = adminInfo.userId
-    
+
     // Event
     const [eventInfo, setEventInfo] = useState({})
 
@@ -41,7 +41,7 @@ export default function LuckySpinAdmin() {
     const [idRewardChosing, setIDRewardChosing] = useState("");
     // Danh sách phần quà còn lại
     const [remainRewardList, setRemainRewardList] = useState([]);
-    
+
     // Danh sách người chơi
     const [playerList, setPlayerList] = useState([]);
     // Danh sách người chơi quay thưởng
@@ -50,7 +50,7 @@ export default function LuckySpinAdmin() {
     const [editedPlayerList, setEditedPlayerList] = useState([]);
     // Danh sách người chơi dùng để hiển thị trên vòng quay
     const [playerShowList, setPlayerShowList] = useState([]);
-    
+
     // Đang quay thưởng
     const [spinClicked, setSpinClicked] = useState(false);
     // Số người chơi online
@@ -63,13 +63,16 @@ export default function LuckySpinAdmin() {
     const [spinTime, setSpinTime] = useState(4);
 
     const getEventID = () => {
+        console.log("Welcome admin ", adminId);
         console.log("Getting event with pincode:", pinCode);
         get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
             if (snapshot.exists()) {
                 setEventID(Object.keys(snapshot.val())[0]);
             } else {
+                console.log('Not found event');
                 router.back();
-            }})
+            }
+        })
     }
 
     const fetchDB = () => {
@@ -83,7 +86,7 @@ export default function LuckySpinAdmin() {
             spinTime: spinTime,
             confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
         });
-        
+
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
             if (snapshot.exists()) {
@@ -93,7 +96,10 @@ export default function LuckySpinAdmin() {
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 // Nếu không phải admin sự kiện, đưa về trang chủ.
-                if (adminId !== data.createBy) router.push('/');
+                if (adminId !== data.createBy) {
+                    console.log('No permission!')
+                    router.push('/');
+                };
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const rewardChosingId = data['playingData']['rewardChosingId'];
                 const spin_time = data['playingData']['spinTime'];
@@ -114,7 +120,7 @@ export default function LuckySpinAdmin() {
                 setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
             }
         });
-        
+
         const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
@@ -128,8 +134,7 @@ export default function LuckySpinAdmin() {
                         }
                     })
                 })
-                setTimeout(function()
-                {
+                setTimeout(function () {
                     const online = data.filter(val => val.status === 1).length;
                     const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                     setPlayerList(rawData);
@@ -148,13 +153,13 @@ export default function LuckySpinAdmin() {
         return 0;
     }
 
-    const setSpinningFB = (statusSpin = false, awardIndex = 0, lastAwardedId="") => {
+    const setSpinningFB = (statusSpin = false, awardIndex = 0, lastAwardedId = "") => {
         update(ref(db, 'event/' + EventID + '/playingData'),
-                        {
-                            isSpinning: statusSpin,
-                            lastAwardedIndex: awardIndex,
-                            lastAwardedId: lastAwardedId
-                        });
+            {
+                isSpinning: statusSpin,
+                lastAwardedIndex: awardIndex,
+                lastAwardedId: lastAwardedId
+            });
     }
 
     // Sử lý sự kiện quay
@@ -168,25 +173,25 @@ export default function LuckySpinAdmin() {
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
         setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
         setAwardedIdx(randomNum);
-        Array.from({length: 9}, (_, index) => index).forEach(idx => {
-            document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-"+idx)
+        Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
+            document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-" + idx)
         })
         document.getElementById("gameSound").play();
-        
+
         const phase1 = setInterval(() => {
             setPlayerShowList((list) => [list.pop(), ...list]);
             document.getElementById("gameSound").play();
         }, 50);
-        
+
         const timeoutPhase1 = setTimeout(() => {
             clearInterval(phase1);
             setPlayerShowList([...editedPlayerList, ...editedPlayerList, ...editedPlayerList].slice(randomNum, randomNum + 18))
-            Array.from({length: 9}, (_, index) => index).forEach(idx => {
-                document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-"+idx)
-                document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-"+idx)
+            Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
+                document.getElementById("spin-idx-" + idx).classList.remove("animate-move-down-" + idx)
+                document.getElementById("spin-idx-" + idx).classList.add("animate-slow-move-down-" + idx)
             })
             document.getElementById("gameSound").play();
-                        
+
             const phase2 = setInterval(() => {
                 setPlayerShowList((list) => [list.pop(), ...list]);
                 document.getElementById("gameSound").play();
@@ -194,8 +199,8 @@ export default function LuckySpinAdmin() {
 
             const timeoutPhase2 = setTimeout(() => {
                 clearInterval(phase2);
-                Array.from({length: 9}, (_, index) => index).forEach(idx => {
-                    document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-"+idx)
+                Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
+                    document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-" + idx)
                 })
                 setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
                 setSpinClicked(false);
@@ -208,7 +213,7 @@ export default function LuckySpinAdmin() {
                 }, (500))
             }, (2000))
 
-        }, ((spinTime-2)*1000))
+        }, ((spinTime - 2) * 1000))
     }
 
     // Chọn phần quà
@@ -229,7 +234,7 @@ export default function LuckySpinAdmin() {
     // --------------------------------------------------- useEffect
     // Real time
     useEffect(() => {
-        dispatch(incognitoEvent({eventId: EventID}));
+        dispatch(incognitoEvent({ eventId: EventID }));
     }, [dispatch])
 
     useEffect(() => {
@@ -242,12 +247,12 @@ export default function LuckySpinAdmin() {
         fetchDB();
 
         window.addEventListener('beforeunload',
-            () => updateFB('event/' + EventID + '/playingData', {isSpinning: false}));
+            () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
 
         return () => {
-            updateFB('event/' + EventID + '/playingData', {isSpinning: false});
+            updateFB('event/' + EventID + '/playingData', { isSpinning: false });
             window.removeEventListener('beforeunload',
-                () => updateFB('event/' + EventID + '/playingData', {isSpinning: false}));
+                () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
         }
     }, [EventID])
 
@@ -282,7 +287,7 @@ export default function LuckySpinAdmin() {
     }, [playerList, rewardList]);
 
     const renderSetting = useMemo(() => {
-        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />}  id={"settingOverlay"}></OverlayBlock>
+        return <OverlayBlock childDiv={<LuckySpinSetting router={router} />} id={"settingOverlay"}></OverlayBlock>
     }, []);
 
     const renderFinishNotification = useMemo(() => {
@@ -293,9 +298,9 @@ export default function LuckySpinAdmin() {
                     updateFB('event/' + EventID, { status: 4 });
                     remove(child(ref(db), "event/" + EventID + "/playingData"));
                 }} />
-                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
+                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
             </div>
-        </>}  id={"finishOverlay"}></OverlayBlock>
+        </>} id={"finishOverlay"}></OverlayBlock>
     }, []);
 
     const confirmButton = useMemo(() => {
@@ -303,7 +308,7 @@ export default function LuckySpinAdmin() {
             <Button fontSize={"20px"} content={"XÁC NHẬN"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {
                 if (awardedId === "" && idRewardChosing === "") return;
                 document.getElementById("awardedOverlay").classList.toggle('hidden');
-                updateFB('event_participants/'+ awardedId, { idReward: idRewardChosing });
+                updateFB('event_participants/' + awardedId, { idReward: idRewardChosing });
                 updateFB('event/' + EventID + '/playingData', { confirmStatus: 1 });
                 updateFB('event_rewards/' + idRewardChosing, { quantityRemain: (remainRewardList[rewardChosing].quantityRemain -= 1) });
             }}></Button>
@@ -313,9 +318,9 @@ export default function LuckySpinAdmin() {
     const renderAwardNotification = useMemo(() => {
         return <OverlayBlock childDiv={
             <div className="flex flex-col items-center text-center text-[#004599]">
-                <p className="font-[900] text-lg">{remainPlayerList[awardedIdx]?remainPlayerList[awardedIdx].nameDisplay:""}</p>
+                <p className="font-[900] text-lg">{remainPlayerList[awardedIdx] ? remainPlayerList[awardedIdx].nameDisplay : ""}</p>
                 <p className="font-semibold">sẽ nhận được giải:</p>
-                <p className="font-[900] text-lg">{remainRewardList[rewardChosing]?remainRewardList[rewardChosing].nameReward:""}</p>
+                <p className="font-[900] text-lg">{remainRewardList[rewardChosing] ? remainRewardList[rewardChosing].nameReward : ""}</p>
                 <div className="mt-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
                 <p className="mt-2 font-bold">Xác nhận trao giải?</p>
                 <div className="mt-2 w-full flex gap-4 px-2">
@@ -326,7 +331,7 @@ export default function LuckySpinAdmin() {
                     }} />
                 </div>
             </div>
-        }  id={"awardedOverlay"}
+        } id={"awardedOverlay"}
             clickOutClose={false}
             clickOutFunc={() => updateFB('event/' + EventID + '/playingData', { confirmStatus: 2 })}
             rerenderOnChange={[awardedId]}></OverlayBlock>
@@ -334,104 +339,104 @@ export default function LuckySpinAdmin() {
 
     return (
         <>
-            {loadedData?
-            <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
-                <div className="flex flex-col justify-start items-center w-full h-full">
-                    <div className="flex flex-col w-full pt-5">
-                        <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"></Title>
-                        <Title title={eventInfo.title} fontSize="text-[32px]" />
-                        <div className="flex w-full justify-between -mt-3 mb-1">
-                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
-                            <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
-                                    {Math.floor(onlinePlayerAmount/100)}
-                                </p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
-                                    {Math.floor((onlinePlayerAmount%100)/10)}
-                                </p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
-                                    {Math.floor((onlinePlayerAmount%100)%10)}
-                                </p>
-                            </span>
+            {loadedData ?
+                <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
+                    <div className="flex flex-col justify-start items-center w-full h-full">
+                        <div className="flex flex-col w-full pt-5">
+                            <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"></Title>
+                            <Title title={eventInfo.title} fontSize="text-[32px]" />
+                            <div className="flex w-full justify-between -mt-3 mb-1">
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
+                                <span className="flex gap-1">
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                        {Math.floor(onlinePlayerAmount / 100)}
+                                    </p>
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                        {Math.floor((onlinePlayerAmount % 100) / 10)}
+                                    </p>
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
+                                        {Math.floor((onlinePlayerAmount % 100) % 10)}
+                                    </p>
+                                </span>
+                            </div>
+                            <div className="flex w-full justify-between">
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
+                                <span className="flex gap-1">
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(remainPlayerList.length / 100)}</p>
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length % 100) / 10)}</p>
+                                    <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length % 100) % 10)}</p>
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex w-full justify-between">
-                            <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
-                            <span className="flex gap-1">
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(remainPlayerList.length/100)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length%100)/10)}</p>
-                                <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length%100)%10)}</p>
-                            </span>
-                        </div>
-                    </div>
-                    {spinBlock}
-                    <div className="w-full mb-16">
-                        <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
-                        <div className="h-50 px-4 py-2 relative">
-                            <div>
-                                <div className="relative mt-1 before:block before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-[#003B93] before:to-[#00F0FF] before:rounded-md">
-                                    <button type="button" className="relative w-full cursor-default rounded-md border border-gray-300 bg-white p-2 shadow-sm border-none sm:text-sm outline-0"
-                                        aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label"
-                                        onClick={!spinClicked?
-                                            () => document.getElementById("selectRewardPopUp").classList.toggle("hidden"):() => {}}>
-                                        <div className="flex">
-                                            <p className="text-[#004599] font-bold text-base text-left w-full ml-4 truncate">{remainRewardList.length > 0?remainRewardList[rewardChosing].nameReward:"KHÔNG CÓ"}</p>
-                                            <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">Còn lại: {remainRewardList.length > 0?remainRewardList[rewardChosing].quantityRemain:0}</p>
-                                        </div>
-                                        <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
-                                                <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clipRule="evenodd" />
-                                            </svg>
-                                        </span>
-                                    </button>
-                                    <ul className="absolute z-10 mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm hidden"
-                                        tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3" id="selectRewardPopUp">
-                                        {
-                                            remainRewardList.length>0?remainRewardList.map((reward, idx) => {
-                                                if (reward.quantityRemain === 0) return;
-                                                return (
-                                                    <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-"+idx} role="option"
-                                                        style={{background: (idx===rewardChosing?"#3B88C3":""), color: (idx===rewardChosing?"white":""), fontWeight: (idx===rewardChosing?"700":"")}}
-                                                        onClick={() => {chooseReward(idx)}}>
-                                                        <span className="ml-3 block truncate grow">{reward.nameReward}</span>
-                                                        <span className="min-w-[150px] ml-3 block truncate text-right">Số lượng còn lại: {reward.quantityRemain}</span>
-                                                    </li>
-                                                )
-                                            }):<></>
-                                        }
-                                    </ul>
+                        {spinBlock}
+                        <div className="w-full mb-16">
+                            <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
+                            <div className="h-50 px-4 py-2 relative">
+                                <div>
+                                    <div className="relative mt-1 before:block before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-[#003B93] before:to-[#00F0FF] before:rounded-md">
+                                        <button type="button" className="relative w-full cursor-default rounded-md border border-gray-300 bg-white p-2 shadow-sm border-none sm:text-sm outline-0"
+                                            aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label"
+                                            onClick={!spinClicked ?
+                                                () => document.getElementById("selectRewardPopUp").classList.toggle("hidden") : () => { }}>
+                                            <div className="flex">
+                                                <p className="text-[#004599] font-bold text-base text-left w-full ml-4 truncate">{remainRewardList.length > 0 ? remainRewardList[rewardChosing].nameReward : "KHÔNG CÓ"}</p>
+                                                <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">Còn lại: {remainRewardList.length > 0 ? remainRewardList[rewardChosing].quantityRemain : 0}</p>
+                                            </div>
+                                            <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
+                                                    <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clipRule="evenodd" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                        <ul className="absolute z-10 mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm hidden"
+                                            tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3" id="selectRewardPopUp">
+                                            {
+                                                remainRewardList.length > 0 ? remainRewardList.map((reward, idx) => {
+                                                    if (reward.quantityRemain === 0) return;
+                                                    return (
+                                                        <li key={idx} className="relative cursor-default select-none px-4 py-2 flex flex-row justify-between text-[#004599] font-normal hover:bg-[#40BEE5] hover:text-white hover:font-semibold" id={"listbox-option-" + idx} role="option"
+                                                            style={{ background: (idx === rewardChosing ? "#3B88C3" : ""), color: (idx === rewardChosing ? "white" : ""), fontWeight: (idx === rewardChosing ? "700" : "") }}
+                                                            onClick={() => { chooseReward(idx) }}>
+                                                            <span className="ml-3 block truncate grow">{reward.nameReward}</span>
+                                                            <span className="min-w-[150px] ml-3 block truncate text-right">Số lượng còn lại: {reward.quantityRemain}</span>
+                                                        </li>
+                                                    )
+                                                }) : <></>
+                                            }
+                                        </ul>
+                                    </div>
                                 </div>
+                                <div className="flex justify-center h-fit items-center mt-4 gap-4">
+                                    <label className="font-bold text-[#004599]" htmlFor="spinTime">Thời gian animation: </label>
+                                    <input id="spinTime" name="spinTime" defaultValue={spinTime} type={"number"} className={"text-sky-500 font-bold text-center w-20 h-10 border border-slate-300 rounded-md py-1 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"}
+                                        onChange={() => {
+                                            if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 2)
+                                                setSpinTime(parseInt(document.getElementById("spinTime").value));
+                                            else {
+                                                setSpinTime(2);
+                                                document.getElementById("spinTime").value = 2;
+                                            };
+                                        }}></input>
+                                    <p className="font-bold text-[#004599]">giây</p>
+                                </div>
+                                <Button content={"QUAY THƯỞNG"} onClick={!spinClicked ? spining : () => { }} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
+                                <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
                             </div>
-                            <div className="flex justify-center h-fit items-center mt-4 gap-4">
-                                <label className="font-bold text-[#004599]" htmlFor="spinTime">Thời gian animation: </label>
-                                <input id="spinTime" name="spinTime" defaultValue={spinTime} type={"number"} className={"text-sky-500 font-bold text-center w-20 h-10 border border-slate-300 rounded-md py-1 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"}
-                                    onChange={() => {
-                                        if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 2)
-                                            setSpinTime(parseInt(document.getElementById("spinTime").value));
-                                        else {
-                                            setSpinTime(2);
-                                            document.getElementById("spinTime").value = 2;
-                                        };
-                                    }}></input>
-                                <p className="font-bold text-[#004599]">giây</p>
-                            </div>
-                            <Button content={"QUAY THƯỞNG"} onClick={!spinClicked?spining:() => {}} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
-                            <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("finishOverlay").classList.toggle('hidden')}} />
                         </div>
+                        <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
+                            onClick={() => { document.getElementById("settingOverlay").classList.toggle('hidden') }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 fill-white  hover:animate-[spin_1s_linear]">
+                                <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        {renderCurrEventDetail}
+                        {renderSetting}
+                        {renderAwardNotification}
+                        {renderFinishNotification}
                     </div>
-                    <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
-                        onClick={() => {document.getElementById("settingOverlay").classList.toggle('hidden')}}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 fill-white  hover:animate-[spin_1s_linear]">
-                            <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-                    {renderCurrEventDetail}
-                    {renderSetting}
-                    {renderAwardNotification}
-                    {renderFinishNotification}
-                </div>
-            </section>
-            :<PageLoading />
-        }
+                </section>
+                : <PageLoading />
+            }
         </>
     );
 }

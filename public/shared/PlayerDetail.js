@@ -12,7 +12,7 @@ import { useMemo } from "react";
 import { db } from "src/firebase";
 import { ref, update, get, query, orderByChild, equalTo } from "firebase/database";
 
-export default function PlayerDetail({player, reward, isAdmin = false}) {
+export default function PlayerDetail({player, reward, isAdmin = false, playerID = ""}) {
 
     const renderCancelRewardNotification = useMemo(() => {
         return <OverlayBlock childDiv={reward !== undefined?
@@ -25,15 +25,11 @@ export default function PlayerDetail({player, reward, isAdmin = false}) {
                 <p className="font-bold">Xác nhận hủy giải?</p>
                 <div className="w-full flex gap-4 px-2">
                     <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
+                        console.log("Kick player has ID:". playerID);
                         document.getElementById("cancelRewardedOverlay").classList.toggle('hidden');
-                        get(query(ref(db, "event_participants"), orderByChild("participantId"), equalTo(player.participantId))).then((snapshot) => {
-                            if (snapshot.exists()) {
-                                update(ref(db, 'event_participants/'+ Object.keys(snapshot.val())[0]), { idReward: "" });
-                                update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
-                            } else {
-                                update(ref(db, 'event_participants/'+ player.participantId), { idReward: "" });
-                                update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
-                            }})
+                        if (playerID === "") return;
+                        update(ref(db, 'event_participants/'+ playerID), { idReward: "" });
+                        update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
                     }} />
                     <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("cancelRewardedOverlay").classList.toggle('hidden')}} />
                 </div>
@@ -53,14 +49,9 @@ export default function PlayerDetail({player, reward, isAdmin = false}) {
                 <div className="w-full flex gap-4 px-2">
                     <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                         document.getElementById("kickPlayerOverlay").classList.toggle('hidden');
-                        get(query(ref(db, "event_participants"), orderByChild("participantId"), equalTo(player.participantId))).then((snapshot) => {
-                            if (snapshot.exists()) {
-                                update(ref(db, 'event_participants/'+ Object.keys(snapshot.val())[0]), { idReward: "", status: 0 });
-                                if (reward[0] !== undefined) update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
-                            } else {
-                                update(ref(db, 'event_participants/'+ player.participantId), { idReward: "", status: 0 });
-                                if (reward[0] !== undefined) update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
-                            }})
+                        document.getElementById("playerDetailOverlay").classList.toggle('hidden');
+                        update(ref(db, 'event_participants/'+ playerID), { idReward: "", status: 0 });
+                        if (reward[0] !== undefined) update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
                     }} />
                     <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {document.getElementById("kickPlayerOverlay").classList.toggle('hidden')}} />
                 </div>

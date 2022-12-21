@@ -12,7 +12,6 @@ export default function OverlayBlock({
         clickOutFunc, // Hàm được thực hiện khi nhấp nền phía sau overlay
         rerenderOnChange, // childDiv được rerender khi dữ liệu này được thay đổi
         zIndex = 50, // z index của component
-        Timeout = 0, // Timeout nếu có, sẽ thực hiện clickOutFunc
         overlayIndex // Độ ưu tiên đóng khi nhấn "ESC"
     }) {
     const blockID = id?id:"overlayBlock";
@@ -83,9 +82,10 @@ export default function OverlayBlock({
         }
 
         return () => {
-            if (document.getElementById("overlayBlockArea").childNodes.length === 0)
+            if (document.getElementById("overlayBlockArea") && document.getElementById("overlayBlockArea").children.length === 0) {
                 document.removeEventListener('keydown', handler);
                 document.getElementById("overlayBlockArea").remove();
+            }
         }
     }, [])
 
@@ -101,12 +101,8 @@ export default function OverlayBlock({
         }
         
         render(overlayblock, document.getElementById(blockID+"wrapper"));
-        
-        let timeoutClose = setTimeout(() => {}, 0);
-        if (Timeout !== 0) setTimeout(clickOutCloseOverlay, Timeout);
 
         return () => {
-            clearTimeout(timeoutClose);
             if (document.getElementById(blockID+"wrapper")) document.getElementById(blockID+"wrapper").remove();
         }
     }, [])

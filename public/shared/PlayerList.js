@@ -7,17 +7,23 @@ import ParticipantAvt from "./ParticipantAvatar";
 export default function PlayerList({listPlayer = undefined, listType = "List", changeButton = true, listReward = [], isAdmin = false}) {
     const [typeList, setTypeList] = useState(listType);
     const [playerChosing, setPlayerChosing] = useState(undefined);
+    var keysPlayers = [];
+    if (typeof listPlayer === 'object') {
+        keysPlayers = [...Object.keys(listPlayer)];
+        listPlayer = [...Object.values(listPlayer)];
+    }
 
     const PlayerList_List = (
         <div className="flex flex-col divide-y divide-white/50">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
+                    if (player.status === 0 && !isAdmin) return;
                     const reward = listReward.find((val) => val.idReward === player.idReward);
                     return (
                         <div key={idx} className="relative group h-fit flex py-2 px-6 gap-4 text-[#004599] text-base hover:text-lg cursor-pointer" onClick={() => openPlayerDetailByIndex(idx)}>
                             <div className="transition-all relative h-16 w-20 group-hover:w-20 group-hover:h-20 group-hover:-ml-1">
                                 <span className="block absolute right-4 bottom-1 h-3 w-3 rounded-full group-hover:right-2 group-hover:bottom-2 group-hover:h-4 group-hover:w-4"
-                                    style={{backgroundColor: (player.status === 1 ? "green" : "gray")}}></span>
+                                    style={{backgroundColor: (player.status === 1 ? "green" : (player.status === 2 ? "gray" : "red"))}}></span>
                                 <div className="transition-all h-16 w-16 border-2 rounded-full group-hover:h-20 group-hover:w-20 group-hover:-ml-2" src={player.pic}
                                     style={{borderColor: (player.idReward !== ""?"yellow":"gray")}}>
                                         <ParticipantAvt player={player} />
@@ -45,11 +51,12 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
         <div className="grid grid-flow-row grid-cols-4 mt-2 grow min-h-fit h-28">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
+                    if (player.status === 0 && !isAdmin) return;
                     return (
                         <div key={idx} className="group min-h-26 w-full py-2 flex flex-col justify-start items-center cursor-pointer" onClick={() => openPlayerDetailByIndex(idx)}>
                             <div className="transition-all relative h-16 w-16 group-hover:w-16 group-hover:h-16 group-hover:-ml-1">
                                 <span className="block absolute right-1 bottom-1 h-3 w-3 rounded-full group-hover:right-0 group-hover:-bottom-1 group-hover:h-4 group-hover:w-4"
-                                    style={{backgroundColor: (player.status === 1 ? "green" : "gray")}}></span>
+                                    style={{backgroundColor: (player.status === 1 ? "green" : (player.status === 2 ? "gray" : "red"))}}></span>
                                 <div className="transition-all h-16 w-16 border-2 rounded-full group-hover:h-20 group-hover:w-20 group-hover:-ml-2 group-hover:-mt-2" src={player.pic}
                                     style={{borderColor: (player.idReward !== ""?"yellow":"gray")}}>
                                         <ParticipantAvt player={player} />
@@ -65,9 +72,9 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
 
     useEffect(() => {
         if (listPlayer[playerChosing] === undefined) return;
-        const detail = (<PlayerDetail player={listPlayer[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} isAdmin={isAdmin} />);
+        const detail = (<PlayerDetail player={listPlayer[playerChosing]} playerID={keysPlayers[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} isAdmin={isAdmin} />);
         if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
-    }, [playerChosing, listPlayer])
+    }, [playerChosing, listPlayer, keysPlayers])
 
     return (
         <>
