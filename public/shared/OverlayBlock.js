@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { render } from "react-dom";
 import CloseButton from "public/shared/CloseButton";
 
@@ -12,14 +12,42 @@ export default function OverlayBlock({
         clickOutFunc, // Hàm được thực hiện khi nhấp nền phía sau overlay
         rerenderOnChange, // childDiv được rerender khi dữ liệu này được thay đổi
         zIndex = 50, // z index của component
-        Timeout = 0 // Timeout nếu có, sẽ thực hiện clickOutFunc
+        Timeout = 0, // Timeout nếu có, sẽ thực hiện clickOutFunc
+        overlayIndex // Độ ưu tiên đóng khi nhấn "ESC"
     }) {
     const blockID = id?id:"overlayBlock";
-    const [wrapper, setWrapper] = useState(<></>)
     
     const clickOutCloseOverlay = () => {
         if (clickOutClose) document.getElementById(blockID).classList.add("hidden");
         if (clickOutFunc !== undefined) clickOutFunc();
+    }
+
+    const handler = useCallback((event) => {
+        switch (event.key) {
+            case "Escape":
+                pressESCClose()
+
+            default:
+                break;
+        }}, [])
+
+    const pressESCClose = () => {
+        const myNodeList = document.getElementById("overlayBlockArea").childNodes;
+        const myList = []
+        for (let x of myNodeList.values()) {
+            myList.push({"id": x.id,
+                "index": x.dataset.overlayIndex})
+        }
+        myList.sort((a, b) => b.index - a.index);
+        var closed = false;
+        myList.forEach((x, idx) => {
+            const blockID = x.id.substr(0, x.id.length-7);
+            const focusBlock = document.getElementById(blockID);
+            if (!focusBlock.classList.contains("hidden") && !closed) {
+                focusBlock.classList.add("hidden");
+                closed = true;
+            }
+        })
     }
     
     const overlayblock = (
@@ -47,23 +75,39 @@ export default function OverlayBlock({
     )
 
     useEffect(() => {
-        if (document.getElementById(blockID) === null) {
+        if (document.getElementById("overlayBlockArea") === null) {
+            const fsOverlay = document.createElement('div');
+            fsOverlay.id="overlayBlockArea";
+            document.getElementsByTagName('section')[0].appendChild(fsOverlay);
+            document.addEventListener('keydown', handler);
+        }
+
+        return () => {
+            if (document.getElementById("overlayBlockArea").childNodes.length === 0)
+                document.removeEventListener('keydown', handler);
+                document.getElementById("overlayBlockArea").remove();
+        }
+    }, [])
+
+    useEffect(() => {
+        if (document.getElementById(blockID+"wrapper") === null) {
             const fsOverlay = document.createElement('div');
             fsOverlay.id=blockID+"wrapper";
-            document.getElementsByTagName('section')[0].appendChild(fsOverlay);
-            setWrapper(fsOverlay);
-        } else {
-            setWrapper(document.getElementById(blockID))
+            const att = document.createAttribute("data-overlay-index");
+            if (overlayIndex) att.value = overlayIndex;
+            else att.value = document.getElementById("overlayBlockArea").childNodes.length;
+            fsOverlay.setAttributeNode(att);
+            document.getElementById("overlayBlockArea").appendChild(fsOverlay);
         }
         
         render(overlayblock, document.getElementById(blockID+"wrapper"));
-
+        
         let timeoutClose = setTimeout(() => {}, 0);
         if (Timeout !== 0) setTimeout(clickOutCloseOverlay, Timeout);
 
         return () => {
             clearTimeout(timeoutClose);
-            document.getElementById(blockID+"wrapper").remove;
+            document.getElementById(blockID+"wrapper").remove();
         }
     }, [])
 

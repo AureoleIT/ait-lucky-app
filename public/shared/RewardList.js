@@ -177,7 +177,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
             <div className="overflow-auto w-full grow">
                 {listRewardShowcase}
                 <OverlayBlock childDiv={<ShowcaseImage imgUrls={rewardList[rewardIndex]?rewardList[rewardIndex].imgUrl:[]} imgIndex={rewardImageIndex} />} manual={true} id={"showImageOverlay"}
-                    rerenderOnChange={[rewardImageIndex, rewardIndex]} backgroundColor={"#000000dd"} />
+                    rerenderOnChange={[rewardImageIndex, rewardIndex]} backgroundColor={"#000000dd"} overlayIndex={10} />
             </div>
         </>
     );
