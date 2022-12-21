@@ -15,6 +15,7 @@ export default function Input({
   onChange,
   row = 1,
   children,
+  margin = 2,
   isMultiLine = false,
 }) {
   const contentCSS = {
@@ -24,7 +25,7 @@ export default function Input({
   };
   return (
     <div
-      className={`p-[2px] rounded-[10px] w-full min-h-[60px] my-4 outline-none relative flex flex-col
+      className={`p-[2px] rounded-[10px] w-full min-h-[60px] my-${margin} outline-none relative flex flex-col
       bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`}
     >
       <div className="h-full grow flex flex-col">
