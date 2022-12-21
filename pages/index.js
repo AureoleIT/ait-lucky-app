@@ -8,8 +8,8 @@ import router from "next/router";
 import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
-import { ShowMethod } from "public/util/popup";
-import { messagesError, messagesSuccess } from "public/util/messages";
+import { ShowMethod, checkStatus } from "public/util/popup";
+import { messagesError } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
@@ -51,25 +51,7 @@ export default function Index() {
         setUser(currUser);
       });
       setEvent(currEvent);
-      switch (currEvent.status) {
-        case 1:
-          ShowMethod(dispatch, messagesError.E3001, false);
-          return;
-        case 2:
-          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-          setTimeout(() => {
-            router.push("/event/join");
-          }, 500);
-          return
-        case 3:
-          ShowMethod(dispatch, messagesError.E3002, false);
-          return;
-        case 4:
-          ShowMethod(dispatch, messagesError.E3003, false);
-          return;
-        default:
-          return;
-      }
+      checkStatus(dispatch, router, currEvent.title, currEvent.status);
     });
   }, [dispatch, event.createBy, pin]);
 
