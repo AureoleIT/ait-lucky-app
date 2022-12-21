@@ -1,14 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { db } from "src/firebase";
-import {
-  ref,
-  onValue,
-  query,
-  orderByChild,
-  equalTo,
-  // child, get
-} from "firebase/database";
+import { ref, onValue, query, orderByChild, equalTo } from "firebase/database";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
@@ -34,9 +27,14 @@ export default function EventList() {
   useEffect(() => {
     onValue(que, (snapshot) => {
       setEvents([]);
-      const data = snapshot.val();
-      if (data != null) {
-        setEvents(Object.values(data));
+      const record = snapshot.val();
+      if (record != null) {
+        const data = Object.values(record);
+        data.forEach((value) => {
+          if (value.delFlag === false) {
+            setEvents((prev) => [...prev, value]);
+          }
+        });
       }
     });
   }, [String(currentUser.userId)]);
