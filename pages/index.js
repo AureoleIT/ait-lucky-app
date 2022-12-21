@@ -11,8 +11,8 @@ import { isEmpty } from "public/util/functions";
 import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser, userEvent, userParticipant, userReward, userRewardCreating, userUpdateEvent, userUpdateRewardCreating } from "public/redux/actions";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrRewardCreatingHook, useUserEventHook, useUserPackageHook, useUserParticipantHook, useUserRewardHook } from "public/redux/hooks";
+import { incognitoEvent, incognitoUser } from "public/redux/actions";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 
 export default function Index() {
