@@ -40,7 +40,7 @@ export default function Index() {
       const record = snapshot.val() ?? [];
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
-      if (currEvent === undefined) {
+      if (currEvent === undefined || currEvent.delFlag === true) {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
@@ -51,10 +51,25 @@ export default function Index() {
         setUser(currUser);
       });
       setEvent(currEvent);
-      ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-      setTimeout(() => {
-        router.push("/event/join");
-      }, 500);
+      switch (currEvent.status) {
+        case 1:
+          ShowMethod(dispatch, messagesError.E3001, false);
+          return;
+        case 2:
+          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          setTimeout(() => {
+            router.push("/event/join");
+          }, 500);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesError.E3002, false);
+          return;
+        case 4:
+          ShowMethod(dispatch, messagesError.E3003, false);
+          return;
+        default:
+          return;
+      }
     });
   }, [dispatch, event.createBy, pin]);
 
@@ -122,7 +137,7 @@ export default function Index() {
   }, [])
 
   const renderDirect = useMemo(() => {
-    return globalUser.userId !== undefined 
+    return globalUser.userId !== undefined
       ? (<div></div>)
       : (
         <div>
@@ -152,23 +167,28 @@ export default function Index() {
     )
   }, [visible, status, message])
 
-  return (
-    <section
-      className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
-    >
-      <div
-        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+  if (globalUser.userId !== undefined) {
+    router.push("/admin/dashboard-admin")
+    return <></>;
+  } else {
+    return (
+      <section
+        className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
       >
-        {renderLogo}
-        {renderTitle}
-        {renderInput}
-        {renderButton}
-        {renderLine}
-        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
-        {/* Handle logic todo: go direct to open device's camera */}
-        {renderDirect}
-      </div>
-      {renderPopUp}
-    </section>
-  );
+        <div
+          className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+        >
+          {renderLogo}
+          {renderTitle}
+          {renderInput}
+          {renderButton}
+          {renderLine}
+          <QrButton onClick={() => alert("Please scan a QR code to join.")} />
+          {/* Handle logic todo: go direct to open device's camera */}
+          {renderDirect}
+        </div>
+        {renderPopUp}
+      </section>
+    );
+  }
 }

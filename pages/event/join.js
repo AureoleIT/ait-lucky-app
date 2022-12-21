@@ -10,7 +10,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
-import { incognitoParticipant } from "public/redux/actions";
+import { incognitoParticipant, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
@@ -69,7 +69,10 @@ export default function Info() {
   }, [currEvent.eventId, dispatch, name, user.userId]);
 
   // Set and save new player object to redux
-  useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
+  useEffect(() => {
+    dispatch(incognitoParticipant(player));
+    dispatch(userCurrentEventPlaying(currEvent));
+  }, [currEvent, dispatch, player]);
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {
