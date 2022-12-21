@@ -1,7 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Header from "public/shared/Header";
-import AuthInput from "public/shared/AuthInput";
-import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { db } from "src/firebase";
 import {
@@ -12,13 +9,11 @@ import {
   equalTo,
   // child, get
 } from "firebase/database";
-// import { useSelector } from "react-redux";
-import { useUserPackageHook } from "public/redux/hooks";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { userCurrentHostingEvent } from "public/redux/actions";
-import Title from "public/shared/Title";
-import Input from "public/shared/Input";
+import { useUserPackageHook } from "public/redux/hooks";
+import { userCurrentEventHosting } from "public/redux/actions";
+import { Header, EventButton, Title, Input } from "public/shared";
 
 export default function EventList() {
   const dispatch = useDispatch();
@@ -90,7 +85,7 @@ export default function EventList() {
                       id={item.eventId}
                       userJoined={item.userJoined}
                       status={item.status}
-                      onclick={() => dispatch(userCurrentHostingEvent(item))}
+                      onclick={() => dispatch(userCurrentEventHosting(item))}
                     />
                   </div>
                 ))

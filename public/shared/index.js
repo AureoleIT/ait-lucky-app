@@ -28,4 +28,5 @@ export { default as TickBox } from './TickBox'
 export { default as Title } from './Title'
 export { default as UserAvatar } from './UserAvatar'
 export { default as WayLog } from './WayLog'
+export { default as EventButton } from './button/EventButton'
 
