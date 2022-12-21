@@ -2,8 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { QRCodeCanvas } from "qrcode.react/lib"
 import { useRouter } from "next/router"
 
-import BgBlueButton from "public/shared/BgBlueButton"
-import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
 import PinCode from "public/shared/PinCode"
 import PopUpQR from "public/shared/PopUpQR"
@@ -14,7 +12,7 @@ import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
 import { messagesSuccess } from "public/util/messages"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
@@ -26,14 +24,23 @@ function CountDownCheckIn ()
 {
     // router
     const router = useRouter()
+    // user
+    const user = useUserPackageHook()
+    const { query: { countdown, statusEvent } } = router
 
-    const { query: {countdown} } = router
-
-    const props = {countdown}
+    const props = {countdown, statusEvent}
     // dispatch
     const dispatch = useDispatch()
     // eventID
-    const event = useUserCurrEventCreatingHook()
+    let event
+    if(statusEvent == 1)
+    {
+        event = useUserCurrEventCreatingHook()
+    }
+    else 
+    {
+        event = useUserCurrEventHostingHook()
+    }
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
 
@@ -54,6 +61,12 @@ function CountDownCheckIn ()
     const message = usePopUpMessageHook()
     const visible = usePopUpVisibleHook()
     const status = usePopUpStatusHook()
+
+    //  check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
