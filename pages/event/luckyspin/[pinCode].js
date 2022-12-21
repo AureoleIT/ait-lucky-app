@@ -24,13 +24,14 @@ export default function LuckySpin() {
     const dispatch = useDispatch()
 
     const router = useRouter();
+    const pinCode = router.query.pinCode
     // Mã event
-    const EventID = router.query.eventId;
+    const [EventID, setEventID] = useState("");
     // Thông tin người chơi
     const currPlayer = usePlayerParticipantHook();
     // Mã người chơi
     const participantId = currPlayer.participantId;
-    
+
     // Event
     const [eventInfo, setEventInfo] = useState({})
         
@@ -61,7 +62,18 @@ export default function LuckySpin() {
     // Xác nhận trao thưởng
     const [confirmStatus, setConfirmStatus] = useState(0);
 
+    const getEventID = () => {
+        console.log("Getting event with pincode:", pinCode);
+        get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
+            if (snapshot.exists()) {
+                setEventID(Object.keys(snapshot.val())[0]);
+            } else {
+                router.push('/');
+            }})
+    }
+
     const fetchDB = () => {
+        console.log(`Getting event ${EventID}'s data`);
         const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
@@ -121,7 +133,7 @@ export default function LuckySpin() {
             }
         });
 
-        setTimeout(() => setLoadedData(true), 2500)
+        setTimeout(() => setLoadedData(true), 1000)
     }
 
     // ------------------------------------------------- Function
@@ -226,6 +238,12 @@ export default function LuckySpin() {
     }, [])
 
     useEffect(() => {
+        getEventID()
+    }, [])
+
+    useEffect(() => {
+        if (EventID === "") return;
+
         // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
         if (participantId === "") router.push('/event/info');
         fetchDB();
@@ -246,7 +264,7 @@ export default function LuckySpin() {
             setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, [])
+    }, [EventID])
     
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -337,11 +355,11 @@ export default function LuckySpin() {
                     </div>
                     {spinBlock}
                     <div className="w-full mb-20">
-                      <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
-                      <div className="h-44 px-4 py-2 relative">
-                        {renderRewardList}
-                      </div>
-                      <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
+                        <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
+                        <div className="h-44 px-4 py-2 relative">
+                            {renderRewardList}
+                        </div>
+                        <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => {document.getElementById("exitOverlay").classList.toggle('hidden')}} />
                     </div>
                     <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
                         onClick={() => {document.getElementById("settingOverlay").classList.toggle('hidden')}}>

@@ -22,8 +22,9 @@ export default function LuckySpinAdmin() {
     const dispatch = useDispatch()
 
     const router = useRouter();
+    const pinCode = router.query.pinCode
     // Mã event
-    const EventID = router.query.eventId;
+    const [EventID, setEventID] = useState("");
     // Thông tin admin
     const adminInfo = useUserPackageHook();
     // Mã admin
@@ -61,7 +62,18 @@ export default function LuckySpinAdmin() {
     // Thời gian cho animate quay thưởng
     const [spinTime, setSpinTime] = useState(4);
 
+    const getEventID = () => {
+        console.log("Getting event with pincode:", pinCode);
+        get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
+            if (snapshot.exists()) {
+                setEventID(Object.keys(snapshot.val())[0]);
+            } else {
+                router.back();
+            }})
+    }
+
     const fetchDB = () => {
+        console.log(`Getting event ${EventID}'s data`);
         update(ref(db, "event/" + EventID + "/playingData"), {
             isSpinning: false,
             lastAwardedIndex: 0,
@@ -126,7 +138,7 @@ export default function LuckySpinAdmin() {
                 }, 200)
             }
         });
-        setTimeout(() => setLoadedData(true), 2500)
+        setTimeout(() => setLoadedData(true), 1000)
     }
 
     // ------------------------------------------------ Function
@@ -221,6 +233,12 @@ export default function LuckySpinAdmin() {
     }, [dispatch])
 
     useEffect(() => {
+        getEventID()
+    }, [])
+
+    useEffect(() => {
+        if (EventID === "") return;
+
         fetchDB();
 
         window.addEventListener('beforeunload',
@@ -231,7 +249,7 @@ export default function LuckySpinAdmin() {
             window.removeEventListener('beforeunload',
                 () => updateFB('event/' + EventID + '/playingData', {isSpinning: false}));
         }
-    }, [])
+    }, [EventID])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
