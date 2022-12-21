@@ -3,14 +3,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-target-blank */
 import { React, useCallback, useEffect, useMemo, useState } from "react";
-import PopUp from "public/shared/PopUp";
-import WayLog from "public/shared/WayLog";
-import { LEFT_GRADIENT, RIGHT_GRADIENT, LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
-import Input from "public/shared/Input";
-import QrButton from "public/shared/QrButton";
-import BigText from "public/shared/BigText";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
-import LineWithText from "public/shared/LineWithText";
 import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
@@ -18,10 +12,8 @@ import { ShowMethod } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser } from "public/redux/actions";
-import Logo from "public/shared/Logo";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
-import Button from "public/shared/Button";
-import Line from "public/shared/Line";
+import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
+import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 
 export default function Index() {
   const [pin, setPin] = useState("");
@@ -36,6 +28,8 @@ export default function Index() {
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
   var [event, setEvent] = useState({});
   var [user, setUser] = useState({});
+
+  const globalUser = useUserPackageHook();
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -72,7 +66,7 @@ export default function Index() {
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {
-    window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event));
+    window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event.eventId));
   }, [event]);
 
   console.log({ pin })
@@ -91,7 +85,7 @@ export default function Index() {
 
   const renderTitle = useMemo(() => {
     return (
-      <BigText font=" text-2xl" text="Mã pin sự kiện" />
+      <Title fontSize="text-2xl" fontWeight="font-bold" title="Mã pin sự kiện" />
     )
   }, [])
 
@@ -128,21 +122,23 @@ export default function Index() {
   }, [])
 
   const renderDirect = useMemo(() => {
-    return (
-      <div>
-        <WayLog
-          action="Đăng nhập"
-          title="để quản lý sự kiện?"
-          path="/auth/login"
-        />
-        <WayLog
-          action="Đăng ký"
-          title="để tạo tài khoản."
-          path="/auth/register"
-        />
-      </div>
-    )
-  }, [])
+    return globalUser.userId !== undefined 
+      ? (<div></div>)
+      : (
+        <div>
+          <WayLog
+            action="Đăng nhập"
+            title="để quản lý sự kiện?"
+            path="/auth/login"
+          />
+          <WayLog
+            action="Đăng ký"
+            title="để tạo tài khoản."
+            path="/auth/register"
+          />
+        </div>
+      )
+  }, [globalUser])
 
   const renderPopUp = useMemo(() => {
     return (
