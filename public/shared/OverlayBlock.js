@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { render } from "react-dom";
-import CloseButton from "public/shared/CloseButton";
+import CloseButton from "./CloseButton";
 
 export default function OverlayBlock({
         closeButton = true, // Hiển thị nút đóng overlay
@@ -107,7 +107,7 @@ export default function OverlayBlock({
 
         return () => {
             clearTimeout(timeoutClose);
-            document.getElementById(blockID+"wrapper").remove();
+            if (document.getElementById(blockID+"wrapper")) document.getElementById(blockID+"wrapper").remove();
         }
     }, [])
 
