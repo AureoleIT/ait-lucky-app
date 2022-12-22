@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router"
 
 import Line from "public/shared/Line";
-import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
 import PlayerList from "public/shared/PlayerList";
 import { ShowMethod } from "public/util/popup";
 import { messagesSuccess } from "public/util/messages";
@@ -12,6 +11,7 @@ import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import { RewardList } from "public/shared";
 
 function UserCountdownCheckin () {
 
@@ -86,35 +86,35 @@ function UserCountdownCheckin () {
     //countdown
     useEffect(() =>
     {
-        let deadlineCountdown = deadline + (countdown * 1000)
-        let countdownTimer = null
-
-        if(isActive && isStop === false)
-        {
-            countdownTimer = setInterval(() => {
-                let nowDate = new Date()
-                let left = deadlineCountdown - nowDate
-                let nowSeconds = Math.floor((left / 1000) % 60);
-                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
-                if(nowMinutes === 0 && nowSeconds === 0)
-                {
-                    clearInterval(countdownTimer)
-                    setIsStop(true)
-                    ShowMethod(dispatch, messagesSuccess.I0009, true)
-                    setTimeout(() => {
-                        router.push(`/event/luckyspin/${pinCode}`)
-                    },2000)
-                }
-                else {
-                    setMinutes(nowMinutes)
-                    setSeconds(nowSeconds)
-                }   
-            }, 1000)
-        }
-        else {
-            clearInterval(countdownTimer)
-        }
-        return () => clearInterval(countdownTimer)
+            let deadlineCountdown = deadline + ((countdown + 2) * 1000)
+            let countdownTimer = null
+    
+            if(isActive && isStop === false)
+            {
+                countdownTimer = setInterval(() => {
+                    let nowDate = new Date()
+                    let left = deadlineCountdown - nowDate
+                    let nowSeconds = Math.floor((left / 1000) % 60);
+                    let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+                    if(nowMinutes === 0 && nowSeconds === 0)
+                    {
+                        clearInterval(countdownTimer)
+                        setIsStop(true)
+                        ShowMethod(dispatch, messagesSuccess.I0009, true)
+                        setTimeout(() => {
+                            router.push(`/event/luckyspin/${pinCode}`)
+                        },2000)
+                    }
+                    else {
+                        setMinutes(nowMinutes)
+                        setSeconds(nowSeconds)
+                    }   
+                }, 1000)
+            }
+            else {
+                clearInterval(countdownTimer)
+            }
+            return () => clearInterval(countdownTimer)
     },[isActive, isStop, dispatch])
 
     const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -175,24 +175,11 @@ function UserCountdownCheckin () {
     const renderRewards = useMemo(() =>
     {
         return (
-            <div className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[300px] my-2">
+            <section className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[300px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[300px]">
-                    {
-                        rewards.map((item, index) => {
-                            return (
-                                <div key={index}>
-                                    <SpecialRewardInfo
-                                        rewardName={item.nameReward}
-                                        amount={item.quantity}
-                                        image={item.imgUrl}
-                                        color={"#52FF00"}
-                                    />
-                                </div>
-                            );
-                        })
-                    }
+                    <RewardList listReward={rewards}/>
                 </div>
-            </div>
+            </section>
         )
     },[rewards])
 

@@ -2,7 +2,8 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 
 import Line from "public/shared/Line";
 import ImageCustom from "public/shared/ImageCustom";
-import AuthInput from "public/shared/AuthInput";
+import { Input } from "public/shared";
+
 const uuid = require("uuid");
 
 function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, receiveData }) {
@@ -112,7 +113,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     {
         return (
             <div className="flex w-full">
-                <AuthInput value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} leftColor="#003B93" rightColor="#00F0FF" type={"text"} />
+                <Input value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} primaryColor="#003B93" secondaryColor="#00F0FF" type={"text"} />
             </div>
         )
     },[name, setName])

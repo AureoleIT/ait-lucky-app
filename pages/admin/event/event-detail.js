@@ -2,34 +2,56 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
-import BgBlueButton from "public/shared/BgBlueButton";
 import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
 import Line from "public/shared/Line";
 import { HideMethod } from "public/util/popup";
 import Title from "public/shared/Title";
 
-import { useUserCurrEventCreatingHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo, update} from "firebase/database"
+import { Button, PageLoading, RewardList } from "public/shared";
 
 function EventDetail() {
     // router
     const router = useRouter();
-    
+    // user
+    const user = useUserPackageHook()
     // eventID get from redux
-    const event = useUserCurrEventCreatingHook()
+    const { query: {statusEvent} } = router
+    const props = {statusEvent}
+    let event
+    const creatingEvent = useUserCurrEventCreatingHook()
+    const hostingEvent = useUserCurrEventHostingHook()
+    if(statusEvent === "1")
+    {
+        event = creatingEvent
+    }
+    else 
+    {
+        event = hostingEvent
+    }
     const beforeID = event.eventId
     const eventID = beforeID.slice(0,8)
     // dispatch
     const dispatch = useDispatch()
     // state
+    const [loadedData, setLoadedData] = useState(false)  // load page
     const [countdown, setCountdown] = useState(300); // countdown time
     const [title, setTitle] = useState("") // name event
     const [rewards, setRewards] = useState([]) // store rewards get from firebase
 
     const optionStyles = { background: "#40BEE5" };
+
+    setTimeout(() => setLoadedData(true), 2500)  // load page
+
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get name event from firebase
     const getName = query(ref(db, "event"), orderByChild("eventId"), equalTo(beforeID))
@@ -79,7 +101,7 @@ function EventDetail() {
             })
             router.push({
                 pathname:"/admin/event/countdown-checkin",
-                query: { countdown }
+                query: { countdown, statusEvent }
             })
         }
     },[countdown, dispatch]);
@@ -87,7 +109,10 @@ function EventDetail() {
     // navigate to edit-page
     const handleEditPageNavigation = useCallback(() => {
         HideMethod(dispatch)
-        router.push("/admin/event/edit-event-reward-register");
+        router.push({
+            pathname:"/admin/event/edit-event-reward-register",
+            query: {statusEvent}
+        });
     },[router, dispatch]);
 
     // render component
@@ -100,8 +125,8 @@ function EventDetail() {
     {
         return (
             <div className="flex justify-between w-4/5 max-w-xl text-lg">
-                <h1 className="uppercase py-2 mb-1 font-bold text-[#004599]">mã sự kiện</h1>
-                <h1 className="uppercase py-2 font-bold text-[#004599] tracking-[5px]">{eventID}</h1>
+                <h1 className="font-[700] uppercase text-[#004599] text-[18px] text-center mb-2">mã sự kiện</h1>
+                <h1 className="font-[700] uppercase text-[#004599] text-[18px] text-center mb-2 tracking-[5px]">{eventID}</h1>
             </div>
         )
     },[eventID])
@@ -110,7 +135,7 @@ function EventDetail() {
     {
         return (
             <>
-                <h1 className="uppercase text-[#004599] font-bold mb-1 text-[20px]">thông tin giải thưởng</h1>
+                <h1 className="font-[800] uppercase text-[#004599] text-[20px] text-center mb-2">thông tin giải thưởng</h1>
                 <div className="w-4/5 max-w-xl"> <Line /> </div>
             </>
         )
@@ -119,24 +144,11 @@ function EventDetail() {
     const renderAward = useMemo(() =>
     {
         return (
-            <div className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
+            <section className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[350px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[350px]">
-                    {
-                        rewards.map((item, index) => {
-                            return (
-                                <div key={index}>
-                                    <SpecialRewardInfo
-                                        rewardName={item.nameReward}
-                                        amount={item.quantity}
-                                        image={item.imgUrl}
-                                        color={"#52FF00"}
-                                    />
-                                </div>
-                            );
-                        })
-                    }
+                    <RewardList listReward={rewards}/>
                 </div>
-            </div>
+            </section>
         )
     },[rewards])
 
@@ -150,7 +162,7 @@ function EventDetail() {
         return (
             <div className="flex items-center w-4/5 max-w-xl justify-center mb-2">
                 <div className="flex items-center justify-center h-[40px]">
-                    <h1 className="uppercase text-[#004599] font-bold mb-1">thời gian check in</h1>
+                    <h1 className="font-[800] uppercase text-[#004599] text-[18px] text-center mb-2">thời gian check in</h1>
                 </div>
                 <div className="text-white font-bold ml-3 w-[110px] h-[40px] flex justify-center items-center rounded-[10px] " style={optionStyles}>
                     <select
@@ -173,7 +185,7 @@ function EventDetail() {
     {
         return (
             <div className="w-full mr-1 drop-shadow-lg">
-                <BgBlueButton content={"CHUẨN BỊ"} onClick={handlePrepare} />
+                <Button content={"CHUẨN BỊ"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={handlePrepare} />
             </div>
         )
     },[handlePrepare])
@@ -188,20 +200,31 @@ function EventDetail() {
     },[handleEditPageNavigation])
 
     return (
-        <div className="flex flex-col justify-evenly items-center h-screen w-screen">
-            {/* test event name */}
-            {renderTitle}
-            {renderEventID}
-            {/* rewards information */}
-            {renderH1andLine}
-            {renderAward}
-            {renderLine2}
-            {renderCheckinTime}
-            <div className="w-4/5 max-w-xl flex justify-center items-center">
-                {renderPrepareButton}
-                {renderEditPageButton}  
-            </div>
-        </div>
+        <>
+        {
+            loadedData ?
+            (
+                <div className="flex flex-col justify-evenly items-center h-screen w-screen">
+                    {/* test event name */}
+                    {renderTitle}
+                    {renderEventID}
+                    {/* rewards information */}
+                    {renderH1andLine}
+                    {renderAward}
+                    {renderLine2}
+                    {renderCheckinTime}
+                    <div className="w-4/5 max-w-xl flex justify-center items-center">
+                        {renderPrepareButton}
+                        {renderEditPageButton}
+                    </div>
+                </div>
+            )
+            :
+            (
+                <PageLoading />
+            )
+        }  
+        </>
     );
     }
 

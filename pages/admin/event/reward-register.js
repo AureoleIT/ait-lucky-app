@@ -1,11 +1,9 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 
-import SingleColorButton from "public/shared/SingleColorButton";
 import { HideMethod, ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
-import BgBlueButton from "public/shared/BgBlueButton";
-import Reward from "components/RewardRegister/Reward";
+import Reward from "public/shared/Reward";
 import { messagesError, messagesSuccess } from "public/util/messages"
 
 import {v4 as uuidv4} from "uuid"
@@ -15,19 +13,27 @@ import { storage } from "src/firebase"
 import { set, ref } from "firebase/database"
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 import Header from "public/shared/Header";
+import { Button, PageLoading } from "public/shared";
 
 function RewardRegister() {
     // router
     const router = useRouter();
+    // status to pass to event detail
+    const statusEvent = 1
+    // user
+    const user = useUserPackageHook()
     // eventID
     const event = useUserCurrEventCreatingHook()
     const eventID = event.eventId
     // state
+    const [loadedData, setLoadedData] = useState(false)  // load page
     const [key, setKey] = useState([])
     const [rewardCount, setRewardCount] = useState([])
+    
+    setTimeout(() => setLoadedData(true), 2500)  // load page
     // state store data
     const [value, setValue] = useState([]) // value store object of reward when typing
 
@@ -45,6 +51,12 @@ function RewardRegister() {
     // idea: each reward has its own id (render in the first time component called by uuid)
     // idea: output of reward data is array of object and it's update when has change with the key is id render by uuid
     // idea: so we only get the last value of reward of each id
+
+    // check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get value of reward realtime
     const handleReceiveData = useCallback((data) =>
@@ -173,7 +185,10 @@ function RewardRegister() {
                 setTimeout(() =>
                 {
                     HideMethod(dispatch)
-                    router.push("/admin/event/event-detail")
+                    router.push({
+                        pathname:"/admin/event/event-detail",
+                        query: {statusEvent}
+                    })
                 },2000)
             }
             else {
@@ -215,7 +230,7 @@ function RewardRegister() {
     {
         return (
             <div className="w-full">
-                <SingleColorButton content={"Thêm phần quà"} colorHex={"#40BEE5"} onClick={handleAdd}/>
+                <Button content={"Thêm phần quà"} primaryColor={"#40BEE5"} onClick={handleAdd}/>
             </div>
         )
     },[handleAdd])
@@ -224,7 +239,7 @@ function RewardRegister() {
     {
         return (
             <div className="pb-4 w-4/5 drop-shadow-lg max-w-xl">
-                <BgBlueButton content={"ĐĂNG KÝ SỰ KIỆN"} onClick={() => handleNavigate(value, uniqueKey)} />
+                <Button content={"ĐĂNG KÝ SỰ KIỆN"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={() => handleNavigate(value, uniqueKey)} />
             </div>
         )
     },[handleNavigate, value, uniqueKey])
@@ -237,19 +252,30 @@ function RewardRegister() {
     },[visible, message, status])
 
     return (
-        <section className="w-screen h-screen">
-            <div className="flex flex-col items-center h-full">
-                {renderHeader}
-                <div className="flex flex-col items-center w-full justify-between h-[85%]">
-                    <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
-                        {renderReward}
-                        {renderAddRewardButton}
+        <>
+        {
+            loadedData?
+            (
+                <section className="w-screen h-screen">
+                    <div className="flex flex-col items-center h-full">
+                        {renderHeader}
+                        <div className="flex flex-col items-center w-full justify-between h-[85%]">
+                            <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
+                                {renderReward}
+                                {renderAddRewardButton}
+                            </div>
+                            {renderRewardRegisterButton}
+                        </div>
+                        {renderPopUp}
                     </div>
-                    {renderRewardRegisterButton}
-                </div>
-                {renderPopUp}
-            </div>
-        </section>
+                </section>
+            )
+            :
+            (
+                <PageLoading />
+            )
+        }
+        </>
   );
 }
 

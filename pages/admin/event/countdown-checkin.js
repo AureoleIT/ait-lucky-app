@@ -2,8 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { QRCodeCanvas } from "qrcode.react/lib"
 import { useRouter } from "next/router"
 
-import BgBlueButton from "public/shared/BgBlueButton"
-import ButtonAndIcon from "public/shared/ButtonAndIcon"
 import Line from "public/shared/Line"
 import PinCode from "public/shared/PinCode"
 import PopUpQR from "public/shared/PopUpQR"
@@ -14,32 +12,44 @@ import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
 import { messagesSuccess } from "public/util/messages"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, update, onValue, query, orderByChild, equalTo} from "firebase/database"
+import { Button } from "public/shared"
 
 
 function CountDownCheckIn () 
 {
     // router
     const router = useRouter()
+    // user
+    const user = useUserPackageHook()
+    const { query: { countdown, statusEvent } } = router
 
-    const { query: {countdown} } = router
-
-    const props = {countdown}
+    const props = {countdown, statusEvent}
     // dispatch
     const dispatch = useDispatch()
     // eventID
-    const event = useUserCurrEventCreatingHook()
+    let event
+    const creatingEvent = useUserCurrEventCreatingHook()
+    const hostingEvent = useUserCurrEventHostingHook()
+    if(statusEvent === "1")
+    {
+        event = creatingEvent
+    }
+    else 
+    {
+        event = hostingEvent
+    }
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
 
     // state
     const [minutes, setMinutes] = useState(Math.floor(countdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
-    const [qrCodeValue, setQrCodeValue] = useState("")  // sotre qr code value
+    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown
@@ -53,6 +63,12 @@ function CountDownCheckIn ()
     const message = usePopUpMessageHook()
     const visible = usePopUpVisibleHook()
     const status = usePopUpStatusHook()
+
+    //  check admin
+    useEffect(() =>
+    {
+        if(user.userId !== event.createBy) { router.push("/") }
+    },[])
 
     // get participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
@@ -160,7 +176,7 @@ function CountDownCheckIn ()
         return (
             <>
                 <Title title={event.title}/>
-                <h1 className="uppercase text-xl py-2 font-bold text-[#004599]">mã pin sự kiện</h1> 
+                <h1 className="font-[900] uppercase text-[#004599] text-[22px] text-center mb-1">mã pin sự kiện</h1> 
             </>
         )
     },[])
@@ -168,7 +184,7 @@ function CountDownCheckIn ()
     const renderPinCode = useMemo(() =>
     {
         return (
-            <div className="w-4/5 max-w-xl h-[80px] mb-3 flex justify-center items-center">
+            <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center">
                 <PinCode length={6} value={pinCode} />
             </div> 
         )
@@ -178,7 +194,7 @@ function CountDownCheckIn ()
     {
         return (
             <div className="max-w-xl w-4/5 flex mb-3 drop-shadow-lg">
-                <ButtonAndIcon content={"TẠO MÃ QR"} classIcon={"fas fa-qrcode"} colorHex={"#40BEE5"} onClick={generateQRcode}/>
+                <Button content={"TẠO MÃ QR"} iconClass={"fas fa-qrcode"} primaryColor={"#40BEE5"} onClick={generateQRcode}/>
             </div>
         )
     },[generateQRcode])
@@ -232,7 +248,7 @@ function CountDownCheckIn ()
     {
         return (
             <div className="max-w-xl w-4/5 flex justify-between mb-2">
-                <p className={`text-[16px] text-[${TEXT}] font-bold self-center text-center`}>Số người tham gia</p>
+                <p className={`text-[16px] text-[${TEXT}] font-bold text-center`}>Số người tham gia</p>
                 <div className="flex">
                     <div className="w-[24px] h-[24px] rounded-[5px] text-white font-bold mr-1 flex justify-center items-center drop-shadow-lg" style={countDownNumber}>
                         {Math.floor(player / 10)}
@@ -268,9 +284,7 @@ function CountDownCheckIn ()
 
     const renderLine3 = useMemo(() =>
     {
-        return (
-            <div className="max-w-xl w-4/5 mb-4 z-0"> <Line /> </div>
-        )
+        return ( <div className="max-w-xl w-4/5 mb-4 z-0"> <Line /> </div> )
     },[])
 
     const renderStartButton = useMemo(() =>
@@ -278,7 +292,7 @@ function CountDownCheckIn ()
         return (
             <div className="max-w-xl w-4/5 flex justify-center items-center" onClick={handleStartEvent}>
                 <div className="w-full mr-1 drop-shadow-lg">
-                    <BgBlueButton content={"BẮT ĐẦU"}/>
+                    <Button content={"BẮT ĐẦU"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"}/>
                 </div>
             </div>
         )
@@ -287,9 +301,7 @@ function CountDownCheckIn ()
     const renderPopup = useMemo(() =>
     {
         return (
-            <div className={visible} style={zIndexNaviagte}>
-                <PopUp text={message} status={status} isWarning={!status} />
-            </div>
+            <div className={visible} style={zIndexNaviagte}> <PopUp text={message} status={status} isWarning={!status} /> </div>
         )
     },[status, message, visible])
 
