@@ -5,7 +5,12 @@ import {
     INCOGNITO_USER,
     INCOGNITO_REWARD,
     USER_PACKAGE,
-    REMOVE_STATE,
+    CLEAR,
+    REMOVE_PLAYER_STATE,
+    REMOVE_USER_STATE,
+    REMOVE_USER_PLAYING,
+    REMOVE_USER_CREATING,
+    REMOVE_USER_HOSTING,
     USER_CURR_EVENT_HOSTING,
     USER_CURR_EVENT_PLAYING,
     USER_EVENT_CREATING,
@@ -51,7 +56,15 @@ export const playerReducer = (state = joinState, action) => {
         case INCOGNITO_REWARD: {
             return { ...state, reward: action.payload }
         }
-        case REMOVE_STATE: {
+        case REMOVE_PLAYER_STATE: {
+            return {
+                event: {},
+                user: {},
+                reward: {},
+                participant: {}
+            };
+        }
+        case CLEAR: {
             console.log("REMOVE STATE PLAYER")
             return {
                 event: {},
@@ -96,7 +109,25 @@ export const userReducer = (state = userState, action) => {
                     }
             }
         }
-        case REMOVE_STATE: {
+        case REMOVE_USER_CREATING: {
+            return { ...state, currRewardCreating: [], currEventCreating: {} }
+        }
+        case REMOVE_USER_PLAYING: {
+            return { ...state, currEventPlaying: {} }
+        }
+        case REMOVE_USER_HOSTING: {
+            return { ...state, currEventHosting: {} }
+        }
+        case REMOVE_USER_STATE: {
+            return {
+                user: {},
+                currRewardCreating: [],
+                currEventHosting: {},
+                currEventPlaying: {},
+                currEventCreating: {},
+            };
+        }
+        case CLEAR: {
             console.log("REMOVE STATE USER")
             return {
                 user: {},
@@ -121,7 +152,7 @@ export const popUpReducer = (state = popUpState, action) => {
         case POPUP_VISIBLE: {
             return { ...state, visible: action.payload }
         }
-        case REMOVE_STATE: {
+        case CLEAR: {
             console.log("REMOVE STATE POPUP")
             return {
                 message: "",
