@@ -7,10 +7,10 @@ import { onValue, query, ref, orderByChild, equalTo, get, child } from "firebase
 //components
 import { RewardList, PlayerList, Button, Line, PageLoading } from "public/shared"
 //colors
-import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+import { LEFT_COLOR, RIGHT_COLOR, BG } from "public/util/colors";
 
 
-export default function EventResult() {
+export default function EventResult({ isAdmin = false }) {
   // Dynamic link
   const router = useRouter();
   const EventId = router.query.eventId;
@@ -75,7 +75,10 @@ export default function EventResult() {
   }
 
   const handleExit = () => {
-    router.push("/");
+    if (isAdmin)
+      router.push("/admin/dashboard-admin");
+    else
+      router.push("/");
   }
 
   useEffect(() => {
@@ -120,7 +123,7 @@ export default function EventResult() {
     <>
       {
         loadedData ?
-          <section className="overflow-hidden flex flex-col justify-evenly h-screen">
+          <section className={`overflow-hidden flex flex-col justify-evenly h-screen ${isAdmin ? "bg-white" : BG}`}>
             <div className="flex flex-col items-center justify-center h-full">
               <h1 className="uppercase text-4xl py-0 font-bold text-[#004599] mt-2">
                 tiệc cuối năm
