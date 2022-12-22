@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { HideMethod, ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
-import Reward from "components/RewardRegister/Reward";
+import Reward from "public/shared/Reward";
 import { messagesError, messagesSuccess } from "public/util/messages"
 
 import {v4 as uuidv4} from "uuid"

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import {v4 as uuidv4} from "uuid"
 
 import Header from "public/shared/Header";
-import Reward from "components/RewardRegister/Reward";
+import Reward from "public/shared/Reward";
 import CheckBox from "public/shared/CheckBox";
 import { messagesError, messagesSuccess } from "public/util/messages"
 import PopUp from "public/shared/PopUp";
