@@ -87,35 +87,35 @@ function UserCountdownCheckin () {
     //countdown
     useEffect(() =>
     {
-        let deadlineCountdown = deadline + (countdown * 1000)
-        let countdownTimer = null
-
-        if(isActive && isStop === false)
-        {
-            countdownTimer = setInterval(() => {
-                let nowDate = new Date()
-                let left = deadlineCountdown - nowDate
-                let nowSeconds = Math.floor((left / 1000) % 60);
-                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
-                if(nowMinutes === 0 && nowSeconds === 0)
-                {
-                    clearInterval(countdownTimer)
-                    setIsStop(true)
-                    ShowMethod(dispatch, messagesSuccess.I0009, true)
-                    setTimeout(() => {
-                        router.push(`/event/luckyspin/${pinCode}`)
-                    },2000)
-                }
-                else {
-                    setMinutes(nowMinutes)
-                    setSeconds(nowSeconds)
-                }   
-            }, 1000)
-        }
-        else {
-            clearInterval(countdownTimer)
-        }
-        return () => clearInterval(countdownTimer)
+            let deadlineCountdown = deadline + ((countdown + 2) * 1000)
+            let countdownTimer = null
+    
+            if(isActive && isStop === false)
+            {
+                countdownTimer = setInterval(() => {
+                    let nowDate = new Date()
+                    let left = deadlineCountdown - nowDate
+                    let nowSeconds = Math.floor((left / 1000) % 60);
+                    let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+                    if(nowMinutes === 0 && nowSeconds === 0)
+                    {
+                        clearInterval(countdownTimer)
+                        setIsStop(true)
+                        ShowMethod(dispatch, messagesSuccess.I0009, true)
+                        setTimeout(() => {
+                            router.push(`/event/luckyspin/${pinCode}`)
+                        },2000)
+                    }
+                    else {
+                        setMinutes(nowMinutes)
+                        setSeconds(nowSeconds)
+                    }   
+                }, 1000)
+            }
+            else {
+                clearInterval(countdownTimer)
+            }
+            return () => clearInterval(countdownTimer)
     },[isActive, isStop, dispatch])
 
     const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";

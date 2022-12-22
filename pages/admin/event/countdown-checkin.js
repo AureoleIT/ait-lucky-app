@@ -33,13 +33,15 @@ function CountDownCheckIn ()
     const dispatch = useDispatch()
     // eventID
     let event
-    if(statusEvent == 1)
+    const creatingEvent = useUserCurrEventCreatingHook()
+    const hostingEvent = useUserCurrEventHostingHook()
+    if(statusEvent === "1")
     {
-        event = useUserCurrEventCreatingHook()
+        event = creatingEvent
     }
     else 
     {
-        event = useUserCurrEventHostingHook()
+        event = hostingEvent
     }
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
@@ -47,7 +49,7 @@ function CountDownCheckIn ()
     // state
     const [minutes, setMinutes] = useState(Math.floor(countdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
-    const [qrCodeValue, setQrCodeValue] = useState("")  // sotre qr code value
+    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown

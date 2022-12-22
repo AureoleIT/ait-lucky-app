@@ -27,13 +27,15 @@ function EditEventRewardRegister() {
     const { query: {statusEvent} } = router
     const props = {statusEvent}
     let eventStore
-    if(statusEvent == 1)
+    const creatingEvent = useUserCurrEventCreatingHook()
+    const hostingEvent = useUserCurrEventHostingHook()
+    if(statusEvent === "1")
     {
-        eventStore = useUserCurrEventCreatingHook()
+        eventStore = creatingEvent
     }
     else 
     {
-        eventStore = useUserCurrEventHostingHook()
+        eventStore = hostingEvent
     }
     const eventID = eventStore.eventId
     // dispatch

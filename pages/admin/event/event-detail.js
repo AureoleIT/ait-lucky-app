@@ -23,13 +23,15 @@ function EventDetail() {
     const { query: {statusEvent} } = router
     const props = {statusEvent}
     let event
-    if(statusEvent == 1)
+    const creatingEvent = useUserCurrEventCreatingHook()
+    const hostingEvent = useUserCurrEventHostingHook()
+    if(statusEvent === "1")
     {
-        event = useUserCurrEventCreatingHook()
+        event = creatingEvent
     }
     else 
     {
-        event = useUserCurrEventHostingHook()
+        event = hostingEvent
     }
     const beforeID = event.eventId
     const eventID = beforeID.slice(0,8)
