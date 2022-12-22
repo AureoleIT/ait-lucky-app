@@ -21,12 +21,7 @@ import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/funct
 import { messagesError, messagesSuccess } from "public/util/messages";
 
 //component
-import OverlayBlock from "public/shared/OverlayBlock";
-import Input from "public/shared/Input";
-import Title from "public/shared/Title";
-import AuthFooter from "public/shared/AuthFooter";
-import Button from "public/shared/Button";
-import Line from "public/shared/Line";
+import { OverlayBlock, Input, Title, AuthFooter, Button, Line } from "public/shared";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -223,8 +218,8 @@ export default function ForgotPassword() {
         isTextGradient={true}
         onChange={emailData}
         primaryColor={LEFT_COLOR}
-        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR} 
-        value={email}/>
+        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        value={email} />
     )
   }, [email, setEmail])
 
@@ -293,52 +288,48 @@ export default function ForgotPassword() {
     )
   }, [])
 
-  const renderFooter = useMemo(() => {
+  const renderBackToLogin = useMemo(() => {
     return (
-      <AuthFooter
-        normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!!!"
-        href="/auth/register"
-      />
+      <Link href={"/auth/login"} className="my-0">
+        <button className="w-full ">
+          <div className="font-[600] text-[16px] text-[#004599]">
+            {"Trở lại Đăng nhập"}
+          </div>
+        </button>
+      </Link>
     )
   }, [])
 
+  const renderOverlayBlock = useMemo(() => {
+    return (
+      <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+    )
+  }, [])
   return (
-    <>
-      <section className="h-screen flex justify-center items-center">
-        <div className="f-full flex flex-col justify-center items-center w-full h-full">
-          <div className="relative mb-5">
-            {renderTitle}
-          </div>
-          {!flagReset ?
-
-            <div className="w-3/4 max-w-md mx-0">
-              {renderName}
-              {renderEmailInput}
-              {renderButtonCheck}
-            </div>
-            : <div className="w-3/4 max-w-md mx-0">
-              {renderNewPass}
-              {renderRepeatPass}
-              {renderButtonReset}
-            </div>
-          }
-          <div className="w-3/4 max-w-md mt-2">
-            <Link href={"/auth/login"} className="my-0">
-              <button className="w-full ">
-                <div className="font-[600] text-[16px] text-[#004599]">
-                  {"Trở lại Đăng nhập"}
-                </div>
-              </button>
-            </Link>
-            {renderLine}
-          </div>
-          <div className="absolute bottom-20">
-            {renderFooter}
-          </div>
-          <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+    <section className="h-screen overflow-y-hidden">
+      <div className="flex flex-col xl:justify-center lg:justify-center justify-center items-center mt-20">
+        <div className="relative mb-5">
+          {renderTitle}
         </div>
-      </section>
-    </>
+        {!flagReset ?
+
+          <div className="w-[90%] max-w-md mx-0">
+            {renderName}
+            {renderEmailInput}
+            {renderButtonCheck}
+          </div>
+          : <div className="w-[90%] max-w-md mx-0">
+            {renderNewPass}
+            {renderRepeatPass}
+            {renderButtonReset}
+          </div>
+        }
+        <div className="w-[90%] max-w-md mt-4">
+          {renderLine}
+          {renderBackToLogin}
+        </div>
+        {renderOverlayBlock}
+      </div>
+    </section>
   );
 }
