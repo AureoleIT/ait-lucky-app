@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-// import firebase
+import router from "next/router";
+// firebase
 import { db } from "src/firebase";
 import {
   ref,
@@ -9,33 +10,36 @@ import {
   onValue,
   limitToLast,
 } from "firebase/database";
-
+// redux
+import { useDispatch } from "react-redux";
+import { useUserPackageHook } from "public/redux/hooks";
+import { userCurrentEventHosting } from "public/redux/actions";
 // components
 import { Header, Input, Line, Button } from "public/shared";
 import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
-// import Input from "public/shared/Input";
-// import Line from "public/shared/Line";
-// import Button from "public/shared/Button";
-
-//import gif
+//gif
 import nyancat from "public/img/nyancat.gif";
-import { useUserPackageHook } from "public/redux/hooks";
-import router from "next/router";
 
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
-  // const [currentId, setcurentId] = useState([]);
+  const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
+  const status = 2;
+  const queStatus = query(
+    ref(db, "event"),
+    orderByChild("status"),
+    equalTo(status)
+  );
   const queID = query(
     ref(db, "event"),
     orderByChild("createBy"),
     limitToLast(4),
     equalTo(String(currentUser.userId))
   );
+  // authentication, only users can access this page
   const checkAuth = () => {
     router.push("/auth/login");
   };
@@ -49,7 +53,6 @@ export default function Dashboard() {
   //   alert(error.message);
   //   console.error(error);
   // });
-
   // useEffect(() => {
   //   onValue(child(ref(db), "event/"), (snapshot) => {
   //     const record = snapshot.val() ?? [];
@@ -63,7 +66,6 @@ export default function Dashboard() {
   //     console.log(queryStatus);
   //   });
   // }, []);
-
   useEffect(() => {
     onValue(queStatus, (snapshot) => {
       setArrStatus([]);
@@ -72,30 +74,27 @@ export default function Dashboard() {
       if (data != null) {
         values.forEach((value) => {
           if (value.delFlag === false) setArrStatus((prev) => [...prev, value]);
-          // if (value.delFlag === false) setArrStatus(values)
         });
       }
     });
-  }, [2]);
-
+  }, [status]);
   useEffect(() => {
     onValue(queID, (snapshot) => {
       setArrID([]);
       const data = snapshot.val();
       const values = Object.values(data);
-        if (data != null) {
-          values.forEach((value) => {
-          if (value.delFlag === false )
-          setArrID((prev) => [...prev, value]);
-          });
+      if (data != null) {
+        values.forEach((value) => {
+          if (value.delFlag === false) setArrID((prev) => [...prev, value]);
+        });
       }
-     });
+    });
   }, [String(currentUser.userId)]);
 
+  //render view
   const renderHeader = useMemo(() => {
     return <Header />;
   }, []);
-
   const renderWelcome = useMemo(() => {
     return (
       <div className="flex flex-col pb-4 pt-2">
@@ -156,10 +155,11 @@ export default function Dashboard() {
               arrStatus.map((item, index) => (
                 <div key={index} className="flex flex-col">
                   <EventButton
-                    className="bg-[#40BEE5]"
                     title={item.title}
+                    id={-1}
                     userJoined={item.userJoined}
                     status={item.status}
+                    onclick={() => dispatch(userCurrentEventHosting(item))}
                   />
                 </div>
               ))
@@ -205,7 +205,13 @@ export default function Dashboard() {
           ) : (
             arrID.map((item, index) => (
               <div key={index} className="flex flex-col">
-                <EventButton title={item.title} id={item.eventId} />
+                <EventButton
+                  title={item.title}
+                  id={item.eventId}
+                  status ={item.status}
+                  userJoined={-1}
+                  onclick={() => dispatch(userCurrentEventHosting(item))}
+                />
               </div>
             ))
           )}
@@ -226,21 +232,21 @@ export default function Dashboard() {
       {currentUser.userId == null ? (
         checkAuth()
       ) : (
-        <div>
-          {renderHeader}
-          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
-            {/* {welcome to AIT App} */}
-            {renderWelcome}
-            {/* participate in event */}
-            {renderJoinEvent}
-            {/* create a event */}
-            {renderShowCurrentEvent}
-            {/*  */}
-            {renderCreateEvent}
-            {/* show events */}
-            {renderShowCreateEvent}
-          </section>
-        </div>
+      <div>
+        {renderHeader}
+        <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
+          {/* {welcome to AIT App} */}
+          {renderWelcome}
+          {/* participate in event */}
+          {renderJoinEvent}
+          {/* create a event */}
+          {renderShowCurrentEvent}
+          {/*  */}
+          {renderCreateEvent}
+          {/* show events */}
+          {renderShowCreateEvent}
+        </section>
+      </div>
       )}
     </>
   );
