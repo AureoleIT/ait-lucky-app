@@ -42,7 +42,7 @@ export default function Register() {
 
   const globalUser = useUserPackageHook();
 
-  if ( globalUser.userId !== undefined ) {
+  if (globalUser.userId !== undefined) {
     router.push("/admin/dashboard-admin");
   }
 
@@ -282,7 +282,7 @@ export default function Register() {
 
   const renderFirstLine = useMemo(() => {
     return (
-      <Line content="hoặc"/>
+      <Line content="hoặc" />
     )
   }, [])
 
@@ -303,7 +303,7 @@ export default function Register() {
 
   const renderSecondLine = useMemo(() => {
     return (
-      <Line/>
+      <Line />
     )
   }, [])
 
@@ -331,10 +331,8 @@ export default function Register() {
 
   return (
     <>
-      <section className="h-screen mx-auto flex justify-center items-center">
-        <div
-          className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}
-        >
+      <section className="h-full w-full mx-auto flex justify-center items-center">
+        <div className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}>
           {renderTitle}
           {renderName}
           {renderMail}

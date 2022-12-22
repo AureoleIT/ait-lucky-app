@@ -10,7 +10,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
-import { incognitoParticipant } from "public/redux/actions";
+import { incognitoParticipant, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
@@ -32,8 +32,6 @@ export default function Info() {
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
 
-  const user = useUserPackageHook();
-
   useEffect(() => {
     if (currEvent.eventId === null || currEvent.eventId === undefined) {
       router.push("/");
@@ -47,7 +45,7 @@ export default function Info() {
     var id = uuid.v4();
     setName(name.trim());
     var newParticipant = {
-      participantId: user.userId === undefined ? id : user.userId,
+      participantId: id,
       createAt: new Date().getTime(),
       status: 2,
       nameDisplay: name,
@@ -66,10 +64,13 @@ export default function Info() {
       .catch((e) => {
         ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [currEvent.eventId, dispatch, name, user.userId]);
+  }, [currEvent.eventId, dispatch, name]);
 
   // Set and save new player object to redux
-  useEffect(() => dispatch(incognitoParticipant(player)), [dispatch, player])
+  useEffect(() => {
+    dispatch(incognitoParticipant(player));
+    dispatch(userCurrentEventPlaying(currEvent));
+  }, [currEvent, dispatch, player]);
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {

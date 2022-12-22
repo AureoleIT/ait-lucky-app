@@ -3,10 +3,7 @@ import {
     INCOGNITO_EVENT,
     INCOGNITO_USER,
     INCOGNITO_REWARD,
-    USER_PARTICIPANT,
-    USER_EVENT,
     USER_PACKAGE,
-    USER_REWARD,
     REMOVE_STATE,
     USER_CURR_EVENT_HOSTING,
     USER_CURR_EVENT_PLAYING,
@@ -44,25 +41,10 @@ export const incognitoReward = (reward) => ({
 export const removeState = () => ({
     type: REMOVE_STATE,
 })
-// All events from user
-export const userEvent = (event) => ({
-    type: USER_EVENT,
-    payload: event,
-})
 // User object that logged in
 export const userPackage = (user) => ({
     type: USER_PACKAGE,
     payload: user,
-})
-// All participants that link to all event user above create
-export const userParticipant = (participant) => ({
-    type: USER_PARTICIPANT,
-    payload: participant,
-})
-// All rewards that link to all event user above create
-export const userReward = (reward) => ({
-    type: USER_REWARD,
-    payload: reward,
 })
 // Event this user is creating
 export const userEventCreating = (event) => ({

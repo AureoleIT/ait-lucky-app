@@ -4,18 +4,12 @@ import {
     INCOGNITO_EVENT,
     INCOGNITO_USER,
     INCOGNITO_REWARD,
-    USER_PARTICIPANT,
-    USER_EVENT,
     USER_PACKAGE,
-    USER_REWARD,
     REMOVE_STATE,
     USER_CURR_EVENT_HOSTING,
     USER_CURR_EVENT_PLAYING,
     USER_EVENT_CREATING,
     USER_REWARD_CREATING,
-    USER_UPDATE_EVENT,
-    USER_UPDATE_PARTICIPANT,
-    USER_UPDATE_REWARD,
     USER_UPDATE_REWARD_CREATING,
     POPUP_MESSAGE,
     POPUP_STATUS,
@@ -30,14 +24,11 @@ const joinState = {
 }
 
 const userState = {
-    event: [],
     user: {},
-    reward: [],
-    participant: [],
+    currRewardCreating: [],
     currEventHosting: {},
     currEventPlaying: {},
     currEventCreating: {},
-    currRewardCreating: [],
 }
 
 const popUpState = {
@@ -75,17 +66,8 @@ export const playerReducer = (state = joinState, action) => {
 }
 export const userReducer = (state = userState, action) => {
     switch (action.type) {
-        case USER_EVENT: {
-            return { ...state, event: [...state.event, action.payload] }
-        }
-        case USER_PARTICIPANT: {
-            return { ...state, participant: [...state.participant, action.payload] }
-        }
         case USER_PACKAGE: {
             return { ...state, user: action.payload }
-        }
-        case USER_REWARD: {
-            return { ...state, reward: [...state.reward, action.payload] }
         }
         case USER_CURR_EVENT_HOSTING: {
             return { ...state, currEventHosting: action.payload }
@@ -99,62 +81,17 @@ export const userReducer = (state = userState, action) => {
         case USER_REWARD_CREATING: {
             return { ...state, currRewardCreating: [...state.currRewardCreating, action.payload] }
         }
-        case USER_UPDATE_EVENT: {
-            return {
-                ...state,
-                event:
-                    () => {
-                        const pos = state.event.findIndex((value) => value.eventId === action.payload.eventId)
-                        return pos === -1
-                            ? state
-                            : {
-                                ...state,
-                                event: [state.event.slice(0, pos), action.payload, state.event.slice(pos + 1)]
-                            }
-                    }
-            }
-        }
-        case USER_UPDATE_PARTICIPANT: {
-            return {
-                ...state,
-                event:
-                    () => {
-                        const pos = state.participant.findIndex((value) => value.participantId === action.payload.participantId)
-                        return pos === -1
-                            ? state
-                            : {
-                                ...state,
-                                event: [state.participant.slice(0, pos), action.payload, state.participant.slice(pos + 1)]
-                            }
-                    }
-            }
-        }
-        case USER_UPDATE_REWARD: {
-            return {
-                ...state,
-                event:
-                    () => {
-                        const pos = state.reward.findIndex((value) => value.idReward === action.payload.idReward)
-                        return pos === -1
-                            ? state
-                            : {
-                                ...state,
-                                event: [state.reward.slice(0, pos), action.payload, state.reward.slice(pos + 1)]
-                            }
-                    }
-            }
-        }
         case USER_UPDATE_REWARD_CREATING: {
             return {
                 ...state,
-                event:
+                currRewardCreating:
                     () => {
                         const pos = state.currRewardCreating.findIndex((value) => value.idReward === action.payload.idReward)
                         return pos === -1
                             ? state
                             : {
                                 ...state,
-                                event: [state.currRewardCreating.slice(0, pos), action.payload, state.currRewardCreating.slice(pos + 1)]
+                                currEventCreating: [state.currRewardCreating.slice(0, pos), action.payload, state.currRewardCreating.slice(pos + 1)]
                             }
                     }
             }
@@ -162,13 +99,11 @@ export const userReducer = (state = userState, action) => {
         case REMOVE_STATE: {
             console.log("REMOVE STATE USER")
             return {
-                event: [],
                 user: {},
-                reward: [],
-                participant: [],
-                currEvent: {},
-                currEventCreating: {},
                 currRewardCreating: [],
+                currEventHosting: {},
+                currEventPlaying: {},
+                currEventCreating: {},
             };
         }
         default:

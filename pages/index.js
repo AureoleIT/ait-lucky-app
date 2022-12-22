@@ -8,8 +8,8 @@ import router from "next/router";
 import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
-import { ShowMethod } from "public/util/popup";
-import { messagesError, messagesSuccess } from "public/util/messages";
+import { ShowMethod, checkStatus } from "public/util/popup";
+import { messagesError } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
@@ -40,7 +40,7 @@ export default function Index() {
       const record = snapshot.val() ?? [];
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
-      if (currEvent === undefined) {
+      if (currEvent === undefined || currEvent.delFlag === true) {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
@@ -51,10 +51,7 @@ export default function Index() {
         setUser(currUser);
       });
       setEvent(currEvent);
-      ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-      setTimeout(() => {
-        router.push("/event/join");
-      }, 500);
+      checkStatus(dispatch, router, currEvent.title, currEvent.status);
     });
   }, [dispatch, event.createBy, pin]);
 
@@ -122,7 +119,7 @@ export default function Index() {
   }, [])
 
   const renderDirect = useMemo(() => {
-    return globalUser.userId !== undefined 
+    return globalUser.userId !== undefined
       ? (<div></div>)
       : (
         <div>
@@ -152,23 +149,28 @@ export default function Index() {
     )
   }, [visible, status, message])
 
-  return (
-    <section
-      className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
-    >
-      <div
-        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+  if (globalUser.userId !== undefined) {
+    router.push("/admin/dashboard-admin")
+    return <></>;
+  } else {
+    return (
+      <section
+        className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
       >
-        {renderLogo}
-        {renderTitle}
-        {renderInput}
-        {renderButton}
-        {renderLine}
-        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
-        {/* Handle logic todo: go direct to open device's camera */}
-        {renderDirect}
-      </div>
-      {renderPopUp}
-    </section>
-  );
+        <div
+          className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+        >
+          {renderLogo}
+          {renderTitle}
+          {renderInput}
+          {renderButton}
+          {renderLine}
+          <QrButton onClick={() => alert("Please scan a QR code to join.")} />
+          {/* Handle logic todo: go direct to open device's camera */}
+          {renderDirect}
+        </div>
+        {renderPopUp}
+      </section>
+    );
+  }
 }

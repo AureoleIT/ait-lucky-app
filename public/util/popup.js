@@ -1,5 +1,5 @@
 import { popUpMessage, popUpStatus, popUpVisible } from "public/redux/actions";
-
+import { messagesError, messagesSuccess } from "./messages";
 const successIcon = require("../img/successIcon.png");
 const failIcon = require("../img/failIcon.png");
 const hidden = "h-screen hidden w-full fixed justify-center items-center";
@@ -13,4 +13,25 @@ const ShowMethod = (dispatch, message, status) => {
 const HideMethod = (dispatch) => {
   dispatch(popUpVisible(hidden));
 }
-export { successIcon, failIcon, hidden, show, ShowMethod, HideMethod };
+const checkStatus = (dispatch, router, title, status) => {
+  switch (status) {
+    case 1:
+      ShowMethod(dispatch, messagesError.E3001, false);
+      return;
+    case 2:
+      ShowMethod(dispatch, messagesSuccess.I0008(title), true);
+      setTimeout(() => {
+        router.push("/event/join");
+      }, 500);
+      return
+    case 3:
+      ShowMethod(dispatch, messagesError.E3002, false);
+      return;
+    case 4:
+      ShowMethod(dispatch, messagesError.E3003, false);
+      return;
+    default:
+      return;
+  }
+}
+export { successIcon, failIcon, hidden, show, checkStatus, ShowMethod, HideMethod };
