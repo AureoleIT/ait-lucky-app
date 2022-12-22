@@ -33,8 +33,8 @@ export default function Login() {
   const dbRef = ref(db);
 
   const globalUser = useUserPackageHook();
-  console.log(globalUser.userId);
-  const checkExistedUser = () => {
+
+  if (globalUser.userId !== undefined) {
     router.push("/admin/dashboard-admin");
   }
 
