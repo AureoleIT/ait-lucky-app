@@ -117,7 +117,7 @@ function EventDetail() {
     // render component
     const renderTitle = useMemo(() =>
     {
-        return ( <Title title={title}/> )
+        return ( <div className="w-4/5 max-w-xl"> <Title title={title}/> </div> )
     },[title])
 
     const renderEventID = useMemo(() =>
