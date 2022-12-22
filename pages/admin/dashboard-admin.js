@@ -70,8 +70,8 @@ export default function Dashboard() {
     onValue(queStatus, (snapshot) => {
       setArrStatus([]);
       const data = snapshot.val();
-      const values = Object.values(data);
       if (data != null) {
+        const values = Object.values(data);
         values.forEach((value) => {
           if (value.delFlag === false) setArrStatus((prev) => [...prev, value]);
         });
@@ -82,8 +82,8 @@ export default function Dashboard() {
     onValue(queID, (snapshot) => {
       setArrID([]);
       const data = snapshot.val();
-      const values = Object.values(data);
       if (data != null) {
+        const values = Object.values(data);
         values.forEach((value) => {
           if (value.delFlag === false) setArrID((prev) => [...prev, value]);
         });
@@ -99,16 +99,15 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col pb-4 pt-2">
         <div className="flex flex-col">
-          <div className="flex flex-col flex-1">
-            <p className="font-bold text-sm text-[#656565] mt-2">
-              {"Chào mừng đến với AIT Lucky App,"}
-            </p>
-          </div>
-
           <div className="flex justify-between items-end w-full">
-            <p className="text-sm text-[#656565] mb-2">
-              {"hãy bắt đầu chơi các sự kiện ngay nào!"}
-            </p>
+            <div className="flex flex-col flex-1">
+              <p className="font-bold text-sm text-[#656565] mt-2">
+                {"Chào mừng đến với AIT Lucky App,"}
+              </p>
+              <p className="text-sm text-[#656565] mb-2">
+                {"hãy bắt đầu chơi các sự kiện ngay nào!"}
+              </p>
+            </div>
             <img
               src={nyancat}
               className="w-1/5 min-h-min "
@@ -208,7 +207,7 @@ export default function Dashboard() {
                 <EventButton
                   title={item.title}
                   id={item.eventId}
-                  status ={item.status}
+                  status={item.status}
                   userJoined={-1}
                   onclick={() => dispatch(userCurrentEventHosting(item))}
                 />
@@ -232,21 +231,21 @@ export default function Dashboard() {
       {currentUser.userId == null ? (
         checkAuth()
       ) : (
-      <div>
-        {renderHeader}
-        <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
-          {/* {welcome to AIT App} */}
-          {renderWelcome}
-          {/* participate in event */}
-          {renderJoinEvent}
-          {/* create a event */}
-          {renderShowCurrentEvent}
-          {/*  */}
-          {renderCreateEvent}
-          {/* show events */}
-          {renderShowCreateEvent}
-        </section>
-      </div>
+        <div>
+          {renderHeader}
+          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
+            {/* {welcome to AIT App} */}
+            {renderWelcome}
+            {/* participate in event */}
+            {renderJoinEvent}
+            {/* create a event */}
+            {renderShowCurrentEvent}
+            {/*  */}
+            {renderCreateEvent}
+            {/* show events */}
+            {renderShowCreateEvent}
+          </section>
+        </div>
       )}
     </>
   );
