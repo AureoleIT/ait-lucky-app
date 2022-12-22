@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router"
 
 import Line from "public/shared/Line";
-import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
 import PlayerList from "public/shared/PlayerList";
 import { ShowMethod } from "public/util/popup";
 import { messagesSuccess } from "public/util/messages";
