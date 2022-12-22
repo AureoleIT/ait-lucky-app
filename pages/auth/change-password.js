@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import router from "next/router";
 
 //firebase
 import {
@@ -15,11 +16,7 @@ import { db } from "src/firebase";
 import { useUserPackageHook } from "public/redux/hooks";
 
 //component
-import Header from "public/shared/Header";
-import OverlayBlock from "public/shared/OverlayBlock";
-import router from "next/router";
-import Input from "public/shared/Input";
-import Button from "public/shared/Button";
+import { Button, Header, Input, OverlayBlock, PageLoading } from "public/shared";
 
 //util
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
@@ -32,6 +29,7 @@ export default function ChangePassword() {
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
   const user = useUserPackageHook();
+  const [loadedData, setLoadedData] = useState(false);
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -110,8 +108,15 @@ export default function ChangePassword() {
 
   //check user login
   useEffect(() => {
-    if (Object.keys(user).length === 0)
-      router.push("/");
+    if (Object.keys(user).length !== 0) {
+      setTimeout(() => {
+        setLoadedData(true);
+      }, 1200);
+    } else {
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
+    }
   }, [])
 
   //prevent re-render
@@ -199,29 +204,54 @@ export default function ChangePassword() {
     )
   }, [changePassword])
 
-  return (
-    <section className="h-screen overflow-y-hidden">
+  const renderOverlayBlock = useMemo(() => {
+    return (
+      <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
+    )
+  }, [])
+
+  const renderPageLoading = useMemo(() => {
+    return (
+      <PageLoading />
+    )
+  }, [])
+
+  const renderHeader = useMemo(() => {
+    return (
       <Header />
-      <div className="relative h-full ">
-        <div
-          className="flex xl:justify-center lg:justify-center justify-center items-center h-full"
-        >
-          <div className="absolute top-10 flex flex-col w-full max-w-md md:mb-0">
-            <div className="flex flex-col justify-center items-center">
-              <p className="text-lg mb-0 font-bold text-[#004599] mt-2 ">ĐỔI MẬT KHẨU</p>
+    )
+  }, [])
+
+  return (
+    <>
+      {
+        loadedData ?
+          <section className="h-screen overflow-y-hidden">
+            {renderHeader}
+            <div className="h-full w-[90%] mx-auto">
+              <div
+                className="flex xl:justify-center lg:justify-center justify-center h-full mt-4"
+              >
+                <div className="flex flex-col w-full max-w-md md:mb-0">
+                  <div className="flex flex-col justify-center items-center">
+                    <p className="text-lg font-bold text-[#004599] ">ĐỔI MẬT KHẨU</p>
+                  </div>
+
+                  {renderOldPass}
+                  {renderNewPass}
+                  {renderRepeatPass}
+                  {renderButton}
+                </div>
+              </div>
             </div>
 
-            {renderOldPass}
-            {renderNewPass}
-            {renderRepeatPass}
-            {renderButton}
-          </div>
-        </div>
-      </div>
+            <div className="">
+              {renderOverlayBlock}
+            </div>
+          </section>
+          : <> {renderPageLoading}</>
+      }
+    </>
 
-      <div className="">
-        <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
-      </div>
-    </section>
   );
 }
