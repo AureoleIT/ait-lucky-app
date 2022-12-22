@@ -106,7 +106,7 @@ function EditEventRewardRegister() {
         onValue(getReward, (snapshot) =>
         {
             const data = snapshot.val()
-            if (data !== undefined)
+            if (data !== undefined && data !== null)
             {
                 setRewards(Object.values(data))
             }   
