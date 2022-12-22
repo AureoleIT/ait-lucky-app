@@ -2,9 +2,9 @@ import { popUpMessage, popUpStatus, popUpVisible } from "public/redux/actions";
 import { messagesError, messagesSuccess } from "./messages";
 const successIcon = require("../img/successIcon.png");
 const failIcon = require("../img/failIcon.png");
-const hidden = "h-screen hidden w-full fixed justify-center items-center";
+const hidden = "h-screen h-min-screen hidden w-full fixed justify-center items-center";
 const show =
-  "h-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
+  "h-screen h-min-screen flex w-full fixed justify-center items-center bg-slate-600 bg-opacity-50";
 const ShowMethod = (dispatch, message, status) => {
   dispatch(popUpMessage(message));
   dispatch(popUpStatus(status));
