@@ -16,28 +16,31 @@ export default function PopUp({ text, status, isWarning }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       HideMethod(dispatch)
+      close()
     }, 1)
     return () => { clearTimeout(timer) }
   }, [close, dispatch])
 
   return (
     <div
-      className={`h-1/4 w-3/4 max-w-md bg-white border-4 p-5 pb-16 ${bg} 
-      shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle justify-between`}
+      className={`h-max-1/4 h-min-1/3 w-3/4 max-w-md bg-white border-4 p-2 ${bg} 
+      shadow-xl shadow-slate-500 rounded-3xl flex flex-col align-middle`}
     >
       <ClosePopUp closeAction={close} />
-      <span
-        className={`font-medium text-xl w-3/4 self-center
+      <div className="flex flex-col align-middle justify-between">
+        <span
+          className={`font-medium text-xl w-3/4 self-center
                text-[${TEXT}] text-center 
             flex justify-center`}
-      >
-        {text}
-      </span>
-      <img
-        alt="success"
-        src={status ? successIcon : failIcon}
-        className="self-center w-12"
-      ></img>
+        >
+          {text}
+        </span>
+        <img
+          alt="success"
+          src={status ? successIcon : failIcon}
+          className="self-center w-12"
+        ></img>
+      </div>
     </div>
   );
 }

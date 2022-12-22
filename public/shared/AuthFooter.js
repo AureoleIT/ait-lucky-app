@@ -7,7 +7,7 @@ export default function AuthFooter({ normalContent, boldContent, href }) {
       className={`text-[16px] text-[${TEXT}] self-center mt-8 text-center`}
     >
       <span>{normalContent + " "}</span>
-      <a href={href} className="font-bold">
+      <a href={href} className="font-bold underline">
         {boldContent}
       </a>
     </p>

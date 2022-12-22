@@ -1,18 +1,10 @@
-// layout for page
-import Auth from "layouts/Auth.js";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function ClosePopUp({
   addBackground = true,
   clickOutClose = true,
   closeAction,
 }) {
-  // const closeParentDiv = (e) => {
-  //   e.target.parentNode.parentNode.classList.remove("bg-slate-600");
-  //   e.target.parentNode.parentNode.classList.add("hidden");
-  //   document.getElementById("popUpBG").classList.add("hidden");
-  // };
-
   useEffect(() => {
     const popUpBG = document.createElement("div");
     popUpBG.classList = "absolute h-full w-full top-0 left-0 z-40 hidden";
