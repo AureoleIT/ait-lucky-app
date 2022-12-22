@@ -32,6 +32,9 @@ export default function Info() {
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
 
+  //Get current user logged in and play
+  const currUser = useUserPackageHook()
+
   useEffect(() => {
     if (currEvent.eventId === null || currEvent.eventId === undefined) {
       router.push("/");
@@ -46,8 +49,10 @@ export default function Info() {
     setName(name.trim());
     var newParticipant = {
       participantId: id,
+      createBy: currUser.userId === undefined ? "" : currUser.userId,
+      pic: currUser.pic === undefined ? "" : currUser.pic,
       createAt: new Date().getTime(),
-      status: 2,
+      status: 1,
       nameDisplay: name,
       idReward: "",
       eventId: currEvent.eventId,
@@ -58,13 +63,13 @@ export default function Info() {
         setPlayer(newParticipant)
         setTimeout(() => {
           HideMethod(dispatch)
-          router.push("/admin/event/countdown-checkin");
+          router.push("/event/countdown-checkin");
         }, 1000);
       })
       .catch((e) => {
         ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [currEvent.eventId, dispatch, name]);
+  }, [currEvent.eventId, currUser.pic, currUser.userId, dispatch, name]);
 
   // Set and save new player object to redux
   useEffect(() => {
@@ -135,10 +140,10 @@ export default function Info() {
 
   return (
     <section
-      className={`h-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
+      className={`h-screen h-min-full mx-auto flex justify-center items-center ${BG_COLOR}`}
     >
       <div
-        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
+        className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen`}
       >
         {renderLogo}
         {renderTitle}
