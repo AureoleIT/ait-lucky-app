@@ -29,6 +29,7 @@ function CountDownCheckIn ()
     const { query: { countdown, statusEvent } } = router
 
     const props = {countdown, statusEvent}
+    let initCountdown = countdown
     // dispatch
     const dispatch = useDispatch()
     // eventID
@@ -42,12 +43,14 @@ function CountDownCheckIn ()
     else 
     {
         event = hostingEvent
+        initCountdown = hostingEvent.waitingTime
+        
     }
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
 
     // state
-    const [minutes, setMinutes] = useState(Math.floor(countdown / 60))  // store minutes of countdown
+    const [minutes, setMinutes] = useState(Math.floor(initCountdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
@@ -55,6 +58,7 @@ function CountDownCheckIn ()
     const [isStop, setIsStop] = useState(false)  // countdown
     const [player, setPlayer] = useState(0)  // number of player join
     const [playerList, setPlayerList] = useState([])  // list of player join
+    const [eventName, setEventName] = useState(event.title)
 
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
@@ -63,12 +67,6 @@ function CountDownCheckIn ()
     const message = usePopUpMessageHook()
     const visible = usePopUpVisibleHook()
     const status = usePopUpStatusHook()
-
-    //  check admin
-    useEffect(() =>
-    {
-        if(user.userId !== event.createBy) { router.push("/") }
-    },[])
 
     // get participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
@@ -82,7 +80,22 @@ function CountDownCheckIn ()
                 setPlayer(data.length)
             }
         });
-    })
+    },[])
+
+    // get event name from firebase
+    const queryGetName = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
+    useEffect(() =>
+    {
+        onValue(queryGetName, (snapshot) =>
+        {
+            if(snapshot.exists())
+            {
+                const rawData = snapshot.val()
+                const data = Object.values(rawData)
+                setEventName(data[0].title)
+            }
+        })
+    },[])
 
     //countdown
     useEffect(() =>
@@ -169,17 +182,17 @@ function CountDownCheckIn ()
             HideMethod(dispatch)
             router.push(`/admin/luckyspin/${pinCode}`)
         }, 2000)
-    })
+    },[dispatch, pinCode])
 
     const renderTitleandH1 = useMemo(() =>
     {
         return (
             <>
-                <Title title={event.title}/>
+                <Title title={eventName}/>
                 <h1 className="font-[900] uppercase text-[#004599] text-[22px] text-center mb-1">mã pin sự kiện</h1> 
             </>
         )
-    },[])
+    },[eventName])
 
     const renderPinCode = useMemo(() =>
     {
@@ -274,8 +287,8 @@ function CountDownCheckIn ()
     const renderPlayer = useMemo(() =>
     {
         return (
-            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide">
-                <div className="w-full h-full flex flex-col items-center">
+            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide py-3">
+                <div className="w-full h-full flex flex-col items-center mb-3">
                     <PlayerList listPlayer={playerList} />
                 </div>
             </div>
@@ -284,7 +297,7 @@ function CountDownCheckIn ()
 
     const renderLine3 = useMemo(() =>
     {
-        return ( <div className="max-w-xl w-4/5 mb-4 z-0"> <Line /> </div> )
+        return ( <div className="max-w-xl w-4/5 mb-1 z-0"> <Line /> </div> )
     },[])
 
     const renderStartButton = useMemo(() =>
