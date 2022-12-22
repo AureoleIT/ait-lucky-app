@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import { RewardList } from "public/shared";
 
 function UserCountdownCheckin () {
 
@@ -175,24 +176,11 @@ function UserCountdownCheckin () {
     const renderRewards = useMemo(() =>
     {
         return (
-            <div className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[300px] my-2">
+            <section className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[300px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[300px]">
-                    {
-                        rewards.map((item, index) => {
-                            return (
-                                <div key={index}>
-                                    <SpecialRewardInfo
-                                        rewardName={item.nameReward}
-                                        amount={item.quantity}
-                                        image={item.imgUrl}
-                                        color={"#52FF00"}
-                                    />
-                                </div>
-                            );
-                        })
-                    }
+                    <RewardList listReward={rewards}/>
                 </div>
-            </div>
+            </section>
         )
     },[rewards])
 
