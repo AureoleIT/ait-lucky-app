@@ -1,33 +1,45 @@
 import React, { useState, useEffect, useMemo } from "react";
-// import firebase
-import { db } from "src/firebase";
-import { ref, orderByChild, equalTo, query, onValue } from "firebase/database";
-
-// components
-import Header from "public/shared/Header";
-import EventButton from "public/shared/button/EventButton";
-import Input from "public/shared/Input";
-import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
-import Line from "public/shared/Line";
-
-//import gif
-import nyancat from "public/img/nyancat.gif";
-import { useUserPackageHook } from "public/redux/hooks";
 import router from "next/router";
-import Button from "public/shared/Button";
+// firebase
+import { db } from "src/firebase";
+import {
+  ref,
+  orderByChild,
+  equalTo,
+  query,
+  onValue,
+  limitToLast,
+} from "firebase/database";
+// redux
+import { useDispatch } from "react-redux";
+import { useUserPackageHook } from "public/redux/hooks";
+import { userCurrentEventHosting } from "public/redux/actions";
+// components
+import { Header, Input, Line, Button } from "public/shared";
+import EventButton from "public/shared/button/EventButton";
+import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+//gif
+import nyancat from "public/img/nyancat.gif";
 
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
-  // const [currentId, setcurentId] = useState([]);
+  const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const queStatus = query(ref(db, "event"), orderByChild("status"), equalTo(2));
+  const status = 2;
+  const queStatus = query(
+    ref(db, "event"),
+    orderByChild("status"),
+    equalTo(status)
+  );
   const queID = query(
     ref(db, "event"),
     orderByChild("createBy"),
+    limitToLast(4),
     equalTo(String(currentUser.userId))
   );
+  // authentication, only users can access this page
   const checkAuth = () => {
     router.push("/auth/login");
   };
@@ -41,7 +53,6 @@ export default function Dashboard() {
   //   alert(error.message);
   //   console.error(error);
   // });
-
   // useEffect(() => {
   //   onValue(child(ref(db), "event/"), (snapshot) => {
   //     const record = snapshot.val() ?? [];
@@ -55,72 +66,85 @@ export default function Dashboard() {
   //     console.log(queryStatus);
   //   });
   // }, []);
-
   useEffect(() => {
     onValue(queStatus, (snapshot) => {
       setArrStatus([]);
       const data = snapshot.val();
+      const values = Object.values(data);
       if (data != null) {
-        setArrStatus(Object.values(data));
+        values.forEach((value) => {
+          if (value.delFlag === false) setArrStatus((prev) => [...prev, value]);
+        });
       }
     });
-  }, []);
-
+  }, [status]);
   useEffect(() => {
     onValue(queID, (snapshot) => {
       setArrID([]);
       const data = snapshot.val();
+      const values = Object.values(data);
       if (data != null) {
-        setArrID(Object.values(data));
+        values.forEach((value) => {
+          if (value.delFlag === false) setArrID((prev) => [...prev, value]);
+        });
       }
     });
   }, [String(currentUser.userId)]);
 
+  //render view
   const renderHeader = useMemo(() => {
     return <Header />;
   }, []);
+  const renderWelcome = useMemo(() => {
+    return (
+      <div className="flex flex-col pb-4 pt-2">
+        <div className="flex flex-col">
+          <div className="flex flex-col flex-1">
+            <p className="font-bold text-sm text-[#656565] mt-2">
+              {"Chào mừng đến với AIT Lucky App,"}
+            </p>
+          </div>
 
+          <div className="flex justify-between items-end w-full">
+            <p className="text-sm text-[#656565] mb-2">
+              {"hãy bắt đầu chơi các sự kiện ngay nào!"}
+            </p>
+            <img
+              src={nyancat}
+              className="w-1/5 min-h-min "
+              alt="must be a nyancat gif"
+            ></img>
+          </div>
+        </div>
+        <div className="w-full mb-2">
+          <Line marginY={false} />
+        </div>
+      </div>
+    );
+  }, []);
   const renderJoinEvent = useMemo(() => {
     return (
-      <Input content={""}>
+      <Input content={"Tham gia sự kiện"}>
         <div className="flex flex-col pb-4 pt-2">
-          <div className="flex flex-col">
-            <div className="flex flex-col flex-1">
-              <p className="font-bold text-sm text-[#656565] mt-2">
-                {"Chào mừng đến với AIT Lucky App,"}
-              </p>
-            </div>
-
-            <div className="flex justify-between items-end w-full">
-              <p className="text-sm text-[#656565] mb-2">
-                {"hãy bắt đầu các sự kiện ngay nào!"}
-              </p>
-              <img src={nyancat} className="md:w-1/5 md:h-min w-[30px] h-[20.7px]" alt="must be a nyancat gif"></img>
-            </div>
-          </div>
-          <div className="w-full mb-2">
-            <Line marginY = {false}
-              
-            />
-          </div>
-          <p className="font-bold text-sm text-[#000000] ">
-            {"Tham gia sự kiện"}
-          </p>
-          <p className="text-sm text-[#656565]">
-            {
-              "Tham gia vào các sự kiện được tổ chức với tài khoản đăng nhập hiện tại của bạn."
-            }
+          <p className=" f text-sm text-[#656565] my-2">
+            {"Tham gia vào các sự kiện được tổ chức bằng mã pin."}
           </p>
           <a href="/">
             <Button
-              content={"CHƠI NÀO!!!"}
+              margin={"my-0"}
+              content={"CHƠI VỚI MÃ PIN!"}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
           </a>
-          <p className="font-bold text-sm text-[#000000] pb-2">
-            {"Các sự kiện đang diễn ra"}
-          </p>
+        </div>
+      </Input>
+    );
+  }, []);
+  const renderShowCurrentEvent = useMemo(() => {
+    return (
+      <Input content={"Các sự kiện đang diễn ra"} isTextGradient={true}>
+        <div className="flex flex-col py-4">
           <div className="w-full flex flex-col gap-y-[7px] overflow-auto max-h-[188px] scrollbar-hide">
             {arrStatus.length === 0 ? (
               <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
@@ -132,7 +156,10 @@ export default function Dashboard() {
                 <div key={index} className="flex flex-col">
                   <EventButton
                     title={item.title}
-                    user_joined={item.userJoined}
+                    id={-1}
+                    userJoined={item.userJoined}
+                    status={item.status}
+                    onclick={() => dispatch(userCurrentEventHosting(item))}
                   />
                 </div>
               ))
@@ -142,7 +169,6 @@ export default function Dashboard() {
       </Input>
     );
   }, [arrStatus]);
-
   const renderCreateEvent = useMemo(() => {
     return (
       <Input content={"Tạo sự kiện"} isTextGradient={true}>
@@ -154,7 +180,7 @@ export default function Dashboard() {
           </p>
           <a href="/admin/event/event-register">
             <Button
-              content={"BẮT ĐẦU NGAY"}
+              content={"TẠO SỰ KIỆN NGAY"}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
@@ -164,25 +190,34 @@ export default function Dashboard() {
     );
   }, []);
 
-  const renderShowEvent = useMemo(() => {
+  const renderShowCreateEvent = useMemo(() => {
     return (
       <Input content={"Danh sách sự kiện"} isTextGradient={true}>
-        <div className="flex flex-col pt-5 gap-y-[7px]">
+        <p className=" text-sm text-[#656565] mt-5 mb-2">
+          {"Hiển thị các sự kiện của tôi đã tạo"}
+        </p>
+        <div className="flex flex-col gap-y-[7px]">
           {arrID.length === 0 ? (
             <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
               {" "}
               {"Không có dữ liệu"}
             </div>
           ) : (
-            arrID.slice(0, 4).map((item, index) => (
+            arrID.map((item, index) => (
               <div key={index} className="flex flex-col">
-                <EventButton title={item.title} id={item.eventId} />
+                <EventButton
+                  title={item.title}
+                  id={item.eventId}
+                  status ={item.status}
+                  userJoined={-1}
+                  onclick={() => dispatch(userCurrentEventHosting(item))}
+                />
               </div>
             ))
           )}
           <a href="event-list">
             <Button
-              content={"TẤT CẢ SỰ KIỆN"}
+              content={"Tất cả sự kiện"}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
@@ -197,17 +232,21 @@ export default function Dashboard() {
       {currentUser.userId == null ? (
         checkAuth()
       ) : (
-        <div>
-          {renderHeader}
-          <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center">
-            {/* participate in event */}
-            {renderJoinEvent}
-            {/* create a event */}
-            {renderCreateEvent}
-            {/* show events */}
-            {renderShowEvent}
-          </section>
-        </div>
+      <div>
+        {renderHeader}
+        <section className="h-full max-w-xl w-4/5 mx-auto flex flex-col justify-center items-center pt-2">
+          {/* {welcome to AIT App} */}
+          {renderWelcome}
+          {/* participate in event */}
+          {renderJoinEvent}
+          {/* create a event */}
+          {renderShowCurrentEvent}
+          {/*  */}
+          {renderCreateEvent}
+          {/* show events */}
+          {renderShowCreateEvent}
+        </section>
+      </div>
       )}
     </>
   );
