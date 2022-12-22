@@ -13,7 +13,7 @@ const ShowMethod = (dispatch, message, status) => {
 const HideMethod = (dispatch) => {
   dispatch(popUpVisible(hidden));
 }
-const checkStatus = (dispatch, router, title, status) => {
+const checkStatus = (dispatch, router, title, status, path) => {
   switch (status) {
     case 1:
       ShowMethod(dispatch, messagesError.E3001, false);
@@ -21,7 +21,7 @@ const checkStatus = (dispatch, router, title, status) => {
     case 2:
       ShowMethod(dispatch, messagesSuccess.I0008(title), true);
       setTimeout(() => {
-        router.push("/event/join");
+        router.push(path);
       }, 500);
       return
     case 3:
