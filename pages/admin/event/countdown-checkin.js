@@ -12,7 +12,7 @@ import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
 import { messagesSuccess } from "public/util/messages"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
@@ -25,7 +25,6 @@ function CountDownCheckIn ()
     // router
     const router = useRouter()
     // user
-    const user = useUserPackageHook()
     const { query: { countdown, statusEvent } } = router
 
     const props = {countdown, statusEvent}
@@ -201,7 +200,7 @@ function CountDownCheckIn ()
                 <PinCode length={6} value={pinCode} />
             </div> 
         )
-    },[])
+    },[pinCode])
 
     const renderButtonQRcode = useMemo(() =>
     {
