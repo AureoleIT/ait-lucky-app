@@ -14,6 +14,7 @@ export default function Input({
   value,
   onChange,
   row = 1,
+  min = 1,
   children,
   isMultiLine = false,
 }) {
@@ -37,6 +38,7 @@ export default function Input({
           onChange={onChange}
           value={value}
           maxLength = {maxLength}
+          min = {min}
           required
         />
         <textarea
@@ -55,7 +57,7 @@ export default function Input({
           >
             <p
               style={isTextGradient ? contentCSS : {}}
-              className={`font-bold text-base 
+              className={`font-bold text-base
                 ${noContent ? "hidden" : ""}`}
             >
               {content}
