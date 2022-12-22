@@ -31,7 +31,7 @@ export default function Input({
       <div className="h-full grow flex flex-col">
         <input
           type={type}
-          className={`min-h-[60px] w-full rounded-lg text-lg px-4 outline-none border-none 
+          className={`min-h-[56px] w-full rounded-lg text-lg px-4 outline-none border-none 
           ${noContent ? "text-center" : ""} 
           ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`}
           placeholder={placeHolder}
@@ -41,7 +41,7 @@ export default function Input({
           required
         />
         <textarea
-          className={`min-h-[60px] w-full rounded-lg px-4 py-4 text-lg outline-none border-none 
+          className={`min-h-[56px] w-full rounded-lg px-4 py-4 text-lg outline-none border-none 
             ${isMultiLine ? "" : "hidden"}`}
           rows={row}
           value={value}
@@ -63,7 +63,7 @@ export default function Input({
             </p>
           </label>
         </div>
-        <div className={children ? "bg-white rounded-lg px-5" : ""}>
+        <div className={children ? "min-h-[56px] bg-white rounded-lg px-5" : ""}>
           {children}
         </div>
       </div>
