@@ -48,16 +48,16 @@ export default function Menu(props) {
     }
 
     return (
-        <div className="h-screen w-full absolute z-10 left-0 flex justify-between">
+        <div className="h-screen w-full fixed z-10 left-0 flex justify-between">
             <div className="bg-slate-100/60 h-screen w-full absolute z-10 left-0 flex-1 justify-between" onClick={() => {setShowMenu(false)}}>
             </div>
-            <div className="bg-white h-screen w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
+            <div className="bg-white h-screen max-[299px]:w-[200px] min-[300px]:w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
                 <button className="absolute right-2 top-2" onClick={() => {setShowMenu(!showMenu)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-red-600">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <div className="flex gap-x-4 items-center mt-6">
+                <div className="flex max-[299px]:flex-col max-[299px]:items-start min-[300px]:flex-row gap-4 min-[300px]:items-center mt-6">
                     <UserAvatar avatar={!user.pic ? (!user.photoURL ? defaultAvatar : user.photoURL) : user.pic} width={40} height={40} />
                     <div className="font-[900]">
                         <h3 className="text-[14px]">{user.name || user.displayName}</h3>

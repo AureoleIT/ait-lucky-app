@@ -6,7 +6,7 @@ import PlayerList from "public/shared/PlayerList";
 import { ShowMethod } from "public/util/popup";
 import { messagesSuccess } from "public/util/messages";
 
-import { usePlayerEventHook } from "public/redux/hooks"
+import { usePlayerEventHook, usePlayerParticipantHook } from "public/redux/hooks"
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
@@ -20,22 +20,71 @@ function UserCountdownCheckin () {
     // dispatch
     const dispatch = useDispatch()
     // event object
-    const event = usePlayerEventHook()  // event state that player join
-    const eventName = event.title  // event title
-    const eventID = event.eventId  // event id
-    const eventMaxTicket = event.maxTicket // max player
-    const pinCode = event.pinCode  // pin code
-    const countdown = event.waitingTime // countdown time
-    const deadline = event.startAt  // start at (time)
+    // const event = usePlayerEventHook()  // event state that player join
+    // const eventName = event.title  // event title
+    // const eventID = event.eventId  // event id
+    const eventID = router.query.eventId
+    // const eventMaxTicket = event.maxTicket // max player
+    // const pinCode = event.pinCode  // pin code
+    // const countdown = event.waitingTime // countdown time
+    // const deadline = event.startAt  // start at (time)
+
+    // user
+    // const user = usePlayerParticipantHook()
+    // useEffect(() =>
+    // {
+    //     if(user.participantId === null || user.participantId === undefined)
+    //     {
+    //         router.push("./join.js")
+    //     }
+    //     else 
+    //     {
+    //         if(user.eventId !== eventID)
+    //         {
+    //             router.push("/")
+    //         }
+    //     }
+    // },[])
+
 
     // state
     const [minutes, setMinutes] = useState(0)  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [rewards, setRewards] = useState([]) // store rewards of event
+    const [event, setEvent] = useState({})
     const [player, setPlayer] = useState(0)  // number of player
     const [playerList, setPlayerList] = useState([])  // list of plater
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown
+    const [title, setTitle] = useState("")
+    const [pinCode, setPinCode] = useState("")
+    const [countdown, setCountdown] = useState()
+    const [deadline, setDeadline] = useState()
+    const [maxTicket, setMaxTicket] = useState()
+    const [eventId, setEventId] = useState("")
+
+    // get event
+    const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
+    useEffect(() =>
+    {
+        onValue(getEvent, (snapshot) =>{
+            const data = snapshot.val()
+            if(data !== null)
+            {
+                setEvent(Object.values(data)[0])
+            }
+        })
+    },[])
+
+    useEffect(() =>
+    {
+        setTitle(event.title)
+        setPinCode(event.pinCode)
+        setCountdown(event.waitingTime)
+        setDeadline(event.startAt)
+        setMaxTicket(event.maxTicket)
+        setEventId(event.eventId)
+    },[event])
 
     // get reward from firebase
     const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(eventID))
@@ -67,7 +116,7 @@ function UserCountdownCheckin () {
                 setPlayer(rawData[0].userJoined)
             }
         })
-    })
+    },[])
 
     // get realtime participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
@@ -102,7 +151,7 @@ function UserCountdownCheckin () {
                         setIsStop(true)
                         ShowMethod(dispatch, messagesSuccess.I0009, true)
                         setTimeout(() => {
-                            router.push(`/event/luckyspin/${pinCode}`)
+                            router.push(`/event/luckyspin/${eventId}`)
                         },2000)
                     }
                     else {
@@ -115,7 +164,7 @@ function UserCountdownCheckin () {
                 clearInterval(countdownTimer)
             }
             return () => clearInterval(countdownTimer)
-    },[isActive, isStop, dispatch])
+    },[isActive, isStop, dispatch, countdown, deadline])
 
     const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
@@ -126,11 +175,11 @@ function UserCountdownCheckin () {
     {
         return (
             <div className="flex flex-col">
-                <h1 className={`font-[900] uppercase text-[#004599] text-[36px] text-center`}>{eventName}</h1>
+                <h1 className={`font-[900] uppercase text-[#004599] text-[36px] text-center`}>{title}</h1>
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>bắt đầu sau ...</h1>
             </div>
         )
-    },[eventName])
+    },[title])
 
     const renderCountdownTime = useMemo(() =>
     {
@@ -188,10 +237,10 @@ function UserCountdownCheckin () {
         return (
             <div className="flex flex-col">    
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>danh sách người chơi</h1>
-                <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>{`số người tham gia: ${player}/${eventMaxTicket}`}</h1>
+                <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>{`số người tham gia: ${player}/${maxTicket}`}</h1>
             </div>
         )
-    },[player, eventMaxTicket])
+    },[player, maxTicket])
 
     const renderPlayerList = useMemo(() =>
     {

@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid #fff;
+  -webkit-text-fill-color: black;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+  box-shadow: 0 0 0px 1000px #fff inset;
+  transition: background-color 5000s ease-in-out 0s;
+  color: black;
+}
+
 input[type='range'],
 input[type='range']::-webkit-slider-runnable-track,
 input[type='range']::-webkit-slider-thumb {
@@ -117,17 +134,21 @@ input[type='range'].muteInput::-webkit-slider-thumb {
   0% {
     stroke-dashoffset: 65;
     rotate: 0deg;
+    stroke: #003B93;
   }
   50% {
-    stroke-dashoffset: 50;
+    stroke-dashoffset: 55;
     rotate: 180deg;
+    stroke: #40BEE5;
   }
-  90% {
-    stroke-dashoffset: 40;
-    rotate: 340deg;
+  80% {
+    stroke-dashoffset: 45;
+    rotate: 300deg;
+    stroke: #00F0FF;
   }
   100% {
     stroke-dashoffset: 65;
     rotate: 360deg;
+    stroke: #003B93;
   }
 }

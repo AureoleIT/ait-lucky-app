@@ -246,13 +246,13 @@ export default function Login() {
   }, [visible, status, message])
 
   return (
-    <>
-      <section className="pt-16 h-full mx-auto w-full flex justify-center items-center">
+    <div className="min-h-screen flex justify-center items-center">
+      <section className="py-16 h-full mx-auto w-full flex justify-center">
         <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
           {renderTitle}
           {renderName}
           {renderPassword}
-          <div className="flex flex-row justify-between">
+          <div className="flex max-[299px]:flex-col gap-1 min-[300px]:flex-row justify-between">
             {renderRemember}
             {renderForget}
           </div>
@@ -266,7 +266,7 @@ export default function Login() {
         </div>
         {renderPopUp}
       </section>
-    </>
+    </div>
   );
 }
 
