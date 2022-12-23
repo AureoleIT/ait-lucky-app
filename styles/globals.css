@@ -134,17 +134,21 @@ input[type='range'].muteInput::-webkit-slider-thumb {
   0% {
     stroke-dashoffset: 65;
     rotate: 0deg;
+    stroke: #003B93;
   }
   50% {
-    stroke-dashoffset: 50;
+    stroke-dashoffset: 55;
     rotate: 180deg;
+    stroke: #40BEE5;
   }
-  90% {
-    stroke-dashoffset: 40;
-    rotate: 340deg;
+  80% {
+    stroke-dashoffset: 45;
+    rotate: 300deg;
+    stroke: #00F0FF;
   }
   100% {
     stroke-dashoffset: 65;
     rotate: 360deg;
+    stroke: #003B93;
   }
 }
