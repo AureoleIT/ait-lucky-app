@@ -48,7 +48,7 @@ function CountDownCheckIn ()
         }
     }
     const eventID = event.eventId
-    const pinCode = eventID.slice(0,6)
+    const pinCode = event.pinCode
     const startingTime = event.startAt
 
     // state
@@ -234,7 +234,7 @@ function CountDownCheckIn ()
     {
         return (
             <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center">
-                <PinCode length={6} value={pinCode} />
+                <PinCode length={8} value={pinCode} />
             </div> 
         )
     },[pinCode])
