@@ -330,8 +330,8 @@ export default function Register() {
   }, [visible, status, message])
 
   return (
-    <>
-      <section className="pt-16 h-full w-full mx-auto flex justify-center items-center">
+    <div className="min-h-screen flex justify-center items-center">
+      <section className="py-16 h-full w-full mx-auto flex justify-center">
         <div className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}>
           {renderTitle}
           {renderName}
@@ -347,7 +347,7 @@ export default function Register() {
         </div>
         {renderPopUp}
       </section>
-    </>
+    </div>
   );
 }
 
