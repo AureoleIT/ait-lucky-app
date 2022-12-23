@@ -3,11 +3,11 @@ import { useRouter } from "next/router"
 
 import Line from "public/shared/Line";
 import PlayerList from "public/shared/PlayerList";
-import { ShowMethod } from "public/util/popup";
+import { HideMethod, ShowMethod } from "public/util/popup";
 import { messagesSuccess } from "public/util/messages";
 
-import { usePlayerEventHook, usePlayerParticipantHook } from "public/redux/hooks"
 import { useDispatch } from "react-redux"
+import { usePlayerParticipantHook } from "public/redux/hooks"
 
 import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
@@ -19,33 +19,24 @@ function UserCountdownCheckin () {
     const router = useRouter()
     // dispatch
     const dispatch = useDispatch()
-    // event object
-    // const event = usePlayerEventHook()  // event state that player join
-    // const eventName = event.title  // event title
-    // const eventID = event.eventId  // event id
     const eventID = router.query.eventId
-    // const eventMaxTicket = event.maxTicket // max player
-    // const pinCode = event.pinCode  // pin code
-    // const countdown = event.waitingTime // countdown time
-    // const deadline = event.startAt  // start at (time)
 
     // user
-    // const user = usePlayerParticipantHook()
-    // useEffect(() =>
-    // {
-    //     if(user.participantId === null || user.participantId === undefined)
-    //     {
-    //         router.push("./join.js")
-    //     }
-    //     else 
-    //     {
-    //         if(user.eventId !== eventID)
-    //         {
-    //             router.push("/")
-    //         }
-    //     }
-    // },[])
-
+    const user = usePlayerParticipantHook()
+    useEffect(() =>
+    {
+        if(user.participantId === null || user.participantId === undefined)
+        {
+            router.push("/event/join")
+        }
+        else 
+        {
+            if(user.eventId !== eventID)
+            {
+                router.push("/")
+            }
+        }
+    },[])
 
     // state
     const [minutes, setMinutes] = useState(0)  // store minutes of countdown
@@ -57,11 +48,11 @@ function UserCountdownCheckin () {
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown
     const [title, setTitle] = useState("")
-    const [pinCode, setPinCode] = useState("")
     const [countdown, setCountdown] = useState()
     const [deadline, setDeadline] = useState()
     const [maxTicket, setMaxTicket] = useState()
     const [eventId, setEventId] = useState("")
+    const [status, setStatus] = useState()
 
     // get event
     const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
@@ -72,6 +63,7 @@ function UserCountdownCheckin () {
             if(data !== null)
             {
                 setEvent(Object.values(data)[0])
+                setStatus(Object.values(data)[0].status) // get status to route to lucky spin if status of event equal to 3
             }
         })
     },[])
@@ -79,7 +71,6 @@ function UserCountdownCheckin () {
     useEffect(() =>
     {
         setTitle(event.title)
-        setPinCode(event.pinCode)
         setCountdown(event.waitingTime)
         setDeadline(event.startAt)
         setMaxTicket(event.maxTicket)
@@ -118,6 +109,19 @@ function UserCountdownCheckin () {
         })
     },[])
 
+    // check countdown end or not
+    useEffect(() =>
+    {
+        if((deadline + countdown * 1000) < new Date().getTime())
+        {
+            setTimeout(() =>
+            {
+                HideMethod(dispatch)
+                router.push(`/event/luckyspin/${eventId}`)
+            },2000)
+        }
+    },[deadline, countdown, dispatch])
+
     // get realtime participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
     useEffect(() =>
@@ -135,7 +139,7 @@ function UserCountdownCheckin () {
     //countdown
     useEffect(() =>
     {
-            let deadlineCountdown = deadline + ((countdown + 2) * 1000)
+            let deadlineCountdown = deadline + ((countdown + 3) * 1000)
             let countdownTimer = null
     
             if(isActive && isStop === false)
@@ -149,10 +153,6 @@ function UserCountdownCheckin () {
                     {
                         clearInterval(countdownTimer)
                         setIsStop(true)
-                        ShowMethod(dispatch, messagesSuccess.I0009, true)
-                        setTimeout(() => {
-                            router.push(`/event/luckyspin/${eventId}`)
-                        },2000)
                     }
                     else {
                         setMinutes(nowMinutes)
@@ -165,6 +165,19 @@ function UserCountdownCheckin () {
             }
             return () => clearInterval(countdownTimer)
     },[isActive, isStop, dispatch, countdown, deadline])
+
+    // route to lucky spin if status of event equal to 3
+    useEffect(() =>
+    {
+        if(status === 3)
+        {
+            ShowMethod(dispatch, messagesSuccess.I0010, true)
+            setTimeout(() =>
+            {
+                router.push(`/event/luckyspin/${eventId}`)
+            },2000)
+        }
+    },[status, dispatch, eventId])
 
     const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
