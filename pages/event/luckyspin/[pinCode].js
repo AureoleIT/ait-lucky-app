@@ -30,8 +30,8 @@ export default function LuckySpin() {
     // Thông tin người chơi
     const currPlayer = usePlayerParticipantHook();
     // Mã người chơi
-    // const participantId = currPlayer.participantId;
-    const participantId = "814c099f-7aac-4b8b-b0b4-35452e890695";
+    const participantId = currPlayer.participantId;
+    // const participantId = "814c099f-7aac-4b8b-b0b4-35452e890695";
 
     // Event
     const [eventInfo, setEventInfo] = useState({})

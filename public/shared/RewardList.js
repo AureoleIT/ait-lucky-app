@@ -66,7 +66,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
 
         return (
             <>
-                <div className="absolute flex items-center left-0 -translate-y-[50%]">
+                <div className="absolute flex items-center sm:left-0 -translate-y-[50%] w-fit mx-auto">
                     {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
                         onTouchStart={(e) => {
                             setTouchX(e.touches[0].clientX)

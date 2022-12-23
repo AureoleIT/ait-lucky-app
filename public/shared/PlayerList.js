@@ -91,7 +91,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                     </svg>
                 </span>
             </div>:<></>}
-            <div className="overflow-auto grow">
+            <div className="overflow-auto grow w-full">
                 {typeList==="List"?PlayerList_List:PlayerList_Menu}
             </div>
             {listPlayer.length?<OverlayBlock childDiv={<div className="hidden" id="playerDetail"></div>} id={"playerDetailOverlay"} manual={true} zIndex={45} rerenderOnChange={[listPlayer]} />:<></>}
