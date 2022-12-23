@@ -5,10 +5,13 @@ import { db } from "src/firebase";
 import {
   ref,
   orderByChild,
+  orderByKey,
   equalTo,
   query,
   onValue,
   limitToLast,
+  startAt ,
+  orderByValue
 } from "firebase/database";
 // redux
 import { useDispatch } from "react-redux";
@@ -27,17 +30,9 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const status = 2;
-  const queStatus = query(
+  const queDb = query(
     ref(db, "event"),
-    orderByChild("status"),
-    equalTo(status)
-  );
-  const queID = query(
-    ref(db, "event"),
-    orderByChild("createBy"),
-    limitToLast(4),
-    equalTo(String(currentUser.userId))
+    orderByChild("createAt")
   );
   // authentication, only users can access this page
   const checkAuth = () => {
@@ -67,25 +62,25 @@ export default function Dashboard() {
   //   });
   // }, []);
   useEffect(() => {
-    onValue(queStatus, (snapshot) => {
+    onValue(queDb, (snapshot) => {
       setArrStatus([]);
       const data = snapshot.val();
       if (data != null) {
         const values = Object.values(data);
         values.forEach((value) => {
-          if (value.delFlag === false) setArrStatus((prev) => [...prev, value]);
+          if (value.delFlag === false && (value.status === 1 || value.status === 2 || value.status === 3 ) && (value.createBy === currentUser.userId) ) setArrStatus((prev) => [...prev, value]);
         });
       }
     });
-  }, [status]);
+  }, []);
   useEffect(() => {
-    onValue(queID, (snapshot) => {
+    onValue(queDb, (snapshot) => {
       setArrID([]);
       const data = snapshot.val();
       if (data != null) {
         const values = Object.values(data);
         values.forEach((value) => {
-          if (value.delFlag === false) setArrID((prev) => [...prev, value]);
+          if ((value.delFlag === false) && (value.createBy === currentUser.userId)) setArrID((prev) => [...prev, value]);
         });
       }
     });
@@ -144,6 +139,9 @@ export default function Dashboard() {
     return (
       <Input content={"Các sự kiện đang diễn ra"} isTextGradient={true}>
         <div className="flex flex-col py-4">
+        <p className=" text-sm text-[#656565] mb-2">
+          {"Hiển thị các sự kiện đang diễn ra của tôi"}
+        </p>
           <div className="w-full flex flex-col gap-y-[7px] overflow-auto max-h-[188px] scrollbar-hide">
             {arrStatus.length === 0 ? (
               <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
@@ -172,7 +170,7 @@ export default function Dashboard() {
     return (
       <Input content={"Tạo sự kiện"} isTextGradient={true}>
         <div className="">
-          <p className="text-sm text-[#656565] pt-5">
+          <p className="text-sm text-[#656565] pt-4">
             {
               "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
             }
@@ -192,8 +190,8 @@ export default function Dashboard() {
   const renderShowCreateEvent = useMemo(() => {
     return (
       <Input content={"Danh sách sự kiện"} isTextGradient={true}>
-        <p className=" text-sm text-[#656565] mt-5 mb-2">
-          {"Hiển thị các sự kiện của tôi đã tạo"}
+        <p className=" text-sm text-[#656565] mt-4 mb-2">
+          {"Hiển thị các sự kiện gần đây của tôi đã tạo"}
         </p>
         <div className="flex flex-col gap-y-[7px]">
           {arrID.length === 0 ? (
@@ -202,7 +200,7 @@ export default function Dashboard() {
               {"Không có dữ liệu"}
             </div>
           ) : (
-            arrID.map((item, index) => (
+            arrID.slice(0,4).map((item, index) => (
               <div key={index} className="flex flex-col">
                 <EventButton
                   title={item.title}
