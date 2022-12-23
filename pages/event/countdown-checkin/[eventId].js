@@ -61,6 +61,7 @@ function UserCountdownCheckin () {
     const [countdown, setCountdown] = useState()
     const [deadline, setDeadline] = useState()
     const [maxTicket, setMaxTicket] = useState()
+    const [eventId, setEventId] = useState("")
 
     // get event
     const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
@@ -82,6 +83,7 @@ function UserCountdownCheckin () {
         setCountdown(event.waitingTime)
         setDeadline(event.startAt)
         setMaxTicket(event.maxTicket)
+        setEventId(event.eventId)
     },[event])
 
     // get reward from firebase
@@ -149,7 +151,7 @@ function UserCountdownCheckin () {
                         setIsStop(true)
                         ShowMethod(dispatch, messagesSuccess.I0009, true)
                         setTimeout(() => {
-                            router.push(`/event/luckyspin/${pinCode}`)
+                            router.push(`/event/luckyspin/${eventId}`)
                         },2000)
                     }
                     else {
