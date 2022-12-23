@@ -32,7 +32,7 @@ export default function Input({
       <div className="h-full grow flex flex-col">
         <input
           type={type}
-          className={`min-h-[56px] w-full rounded-lg text-lg px-4 outline-none border-none 
+          className={`min-h-[56px] autofill:!bg-white w-full rounded-lg text-lg px-4 outline-none border-none 
           ${noContent ? "text-center" : ""} 
           ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`}
           placeholder={placeHolder}
