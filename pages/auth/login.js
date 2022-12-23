@@ -246,27 +246,27 @@ export default function Login() {
   }, [visible, status, message])
 
   return (
-    // <>
-    <section className="pt-16 h-screen mx-auto w-full flex justify-center items-center">
-      <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
-        {renderTitle}
-        {renderName}
-        {renderPassword}
-        <div className="flex flex-row justify-between">
-          {renderRemember}
-          {renderForget}
+    <>
+      <section className="pt-16 h-full mx-auto w-full flex justify-center items-center">
+        <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
+          {renderTitle}
+          {renderName}
+          {renderPassword}
+          <div className="flex flex-row justify-between">
+            {renderRemember}
+            {renderForget}
+          </div>
+          <div>
+            {renderSubmitButton}
+            {renderFirstLine}
+            {renderAuthInput}
+            {renderSecondLine}
+          </div>
+          {renderFooter}
         </div>
-        <div>
-          {renderSubmitButton}
-          {renderFirstLine}
-          {renderAuthInput}
-          {renderSecondLine}
-        </div>
-        {renderFooter}
-      </div>
-      {renderPopUp}
-    </section>
-    // </>
+        {renderPopUp}
+      </section>
+    </>
   );
 }
 
