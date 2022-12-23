@@ -58,14 +58,14 @@ export default function Input({
           >
             <p
               style={isTextGradient ? contentCSS : {}}
-              className={`font-bold text-base
+              className={`font-bold max-[299px]:text-[14px] min-[300px]:text-base
                 ${noContent ? "hidden" : ""}`}
             >
               {content}
             </p>
           </label>
         </div>
-        <div className={children ? "min-h-[56px] bg-white rounded-lg px-5" : ""}>
+        <div className={children ? "min-h-[56px] bg-white rounded-lg max-[299px]:px-2 min-[300px]:px-5" : ""}>
           {children}
         </div>
       </div>

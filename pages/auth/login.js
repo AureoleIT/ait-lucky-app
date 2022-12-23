@@ -252,7 +252,7 @@ export default function Login() {
           {renderTitle}
           {renderName}
           {renderPassword}
-          <div className="flex flex-row justify-between">
+          <div className="flex max-[299px]:flex-col max-[299px]:gap-2 min-[300px]:flex-row justify-between">
             {renderRemember}
             {renderForget}
           </div>

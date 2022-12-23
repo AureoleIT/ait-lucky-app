@@ -25,8 +25,8 @@ export default function Button({
 
   return (
     <div
-      className={`w-full ${height} p-[2px] flex justify-center items-center gap-x-[15px]
-        ${margin}
+      className={`w-full ${height} max-[299px]:p-0 min-[300px]:p-[2px] flex justify-center items-center gap-x-[15px]
+        min-[300px]:${margin} mb-2
         ${!isSquare ? "rounded-[50px]" : "rounded-[5px]"}
         ${
           !secondaryColor

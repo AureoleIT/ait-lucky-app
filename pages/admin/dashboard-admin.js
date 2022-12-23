@@ -124,7 +124,7 @@ export default function Dashboard() {
   const renderJoinEvent = useMemo(() => {
     return (
       <Input content={"Tham gia sự kiện"}>
-        <div className="flex flex-col pb-4 pt-2">
+        <div className="flex flex-col pt-2">
           <p className=" f text-sm text-[#656565] my-2">
             {"Tham gia vào các sự kiện được tổ chức bằng mã pin."}
           </p>
@@ -143,7 +143,7 @@ export default function Dashboard() {
   const renderShowCurrentEvent = useMemo(() => {
     return (
       <Input content={"Các sự kiện đang diễn ra"} isTextGradient={true}>
-        <div className="flex flex-col py-4">
+        <div className="flex flex-col pt-4 py-2">
           <div className="w-full flex flex-col gap-y-[7px] overflow-auto max-h-[188px] scrollbar-hide">
             {arrStatus.length === 0 ? (
               <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">

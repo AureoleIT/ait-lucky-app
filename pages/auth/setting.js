@@ -289,9 +289,9 @@ export default function Setting() {
         <>
             {
                 loadedData ?
-                    <section className="h-screen w-screen overflow-y-hidden">
+                    <section className="min-h-screen w-screen overflow-y-hidden">
                         {renderHeader}
-                        <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
+                        <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto my-4">
                             <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
                                 <div className="flex flex-col justify-center items-center">
                                     <p className="text-lg mb-0 font-bold text-[#004599]">THÔNG TIN CÁ NHÂN</p>
@@ -309,7 +309,7 @@ export default function Setting() {
                             </div>
 
                             <footer className="flex items-end h-full w-full">
-                                <div className="pb-24 w-full max-w-md text-center lg:text-left">
+                                <div className=" w-full max-w-md text-center lg:text-left">
                                     <div className="w-[90%] h-[50px] mx-auto rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
                                         {renderButtonNavi}
                                     </div>

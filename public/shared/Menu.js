@@ -51,7 +51,7 @@ export default function Menu(props) {
         <div className="h-screen w-full fixed z-10 left-0 flex justify-between">
             <div className="bg-slate-100/60 h-screen w-full absolute z-10 left-0 flex-1 justify-between" onClick={() => {setShowMenu(false)}}>
             </div>
-            <div className="bg-white h-screen max-[299px]:w-[200px] min-[300px]:w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
+            <div className="bg-white h-screen max-[299px]:w-[240px] min-[300px]:w-[300px] px-[20px] py-[30px] absolute z-10 left-0">
                 <button className="absolute right-2 top-2" onClick={() => {setShowMenu(!showMenu)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-red-600">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
