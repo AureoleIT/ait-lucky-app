@@ -7,7 +7,7 @@ export default function EventButton({
   userJoined, // nếu muốn ẩn trường dữ liệu này thì truyền giá trị -1
   status,
   onclick,
-  db = false,
+  db = 0,
 }) {
   const handleClick = () => {
     const statusEvent = 2;
@@ -45,7 +45,7 @@ export default function EventButton({
             {title ? <> {title}</> : <>Title not available</>}
           </div>
           <div className="text-xs flex flex-col flex-1 text-right ml-10 items-right truncate break-words">
-            {db === true ? (
+            {db === 1 ? (
               <></>
             ) : (
               <>
@@ -57,10 +57,17 @@ export default function EventButton({
                 )}
               </>
             )}
-            {userJoined >= 0 ? (
-              <div>{userJoined} người tham gia </div>
+            {db === 2 ? (
+              <></>
             ) : (
-              <> {db === true ? <></> : <div>Players not available</div>} </>
+              <>
+                {" "}
+                {userJoined >= 0 ? (
+                  <div className="truncate">{userJoined} người tham gia </div>
+                ) : (
+                  <div className="truncate">Players not available</div>
+                )}{" "}
+              </>
             )}
           </div>
           <div className="ml-2">
@@ -86,7 +93,7 @@ export default function EventButton({
 }
 
 function setColor(status, db) {
-  if (db === true) {
+  if (db !== 0) {
     return "bg-[#40BEE5]";
   } else {
     switch (status) {
@@ -103,5 +110,3 @@ function setColor(status, db) {
     }
   }
 }
-
-// href={`${setLink(status)}`}
