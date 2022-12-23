@@ -47,8 +47,9 @@ function CountDownCheckIn ()
             initCountdown = hostingEvent.waitingTime
         }
     }
-    const eventID = event.eventId 
+    const eventID = event.eventId
     const pinCode = eventID.slice(0,6)
+    const startingTime = event.startAt
 
     // state
     const [loadedData, setLoadedData] = useState(false)
@@ -107,7 +108,15 @@ function CountDownCheckIn ()
         setTimeout(() =>
         {
             let date = new Date()
-            let deadline = date.getTime() + (minutes * 60 * 1000)
+            let deadline
+            if(startingTime !== undefined)
+            {
+                deadline = startingTime + (minutes * 60 * 1000)
+            }
+            else 
+            {
+                deadline = date.getTime() + (minutes * 60 * 1000)
+            }
     
             let countdown = null
     
@@ -157,7 +166,7 @@ function CountDownCheckIn ()
     // generate qr code
     const generateQRcode = useCallback(() =>
     {
-        setQrCodeValue(`http://localhost:3000/event/luckyspin/${pinCode}`)
+        setQrCodeValue(`http://localhost:3000/event/coutdown-checkin/${eventID}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
         setIsHidden(show)
