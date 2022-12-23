@@ -194,16 +194,17 @@ const renderQRscan = useMemo(() =>{
         {/* {isShown && <QrReader className="h-[120px]"     
         />} */}
         
-        {isShown && <QrReader className="h-[120px]"
+        {isShown && <QrReader 
           //  ref={qrRef}
            delay={300}
+           style={{ width:'180px'}}
            onError={handleErrorWebCam}
            onScan={handleScanWebCam}
         />}
         {/* {isShown && <BgBlueButton className="w-[200px]"  variant="contained" content="open file" onClick={onScanFile}/>} */}
         {isShown && (
         <div>
-        <h3> scan code: <a href="scanResultWebCam" target="_blank" onClick={handleClick}>{scanResultWebCam} </a></h3>
+        <h3> Scanned  Code: <a  href={scanResultWebCam}>{scanResultWebCam}</a></h3>
         </div>)}
       </div>
     )
