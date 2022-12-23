@@ -7,6 +7,7 @@ export default function EventButton({
   userJoined, // nếu muốn ẩn trường dữ liệu này thì truyền giá trị -1
   status,
   onclick,
+  db = false,
 }) {
   const handleClick = () => {
     const statusEvent = 2;
@@ -18,11 +19,11 @@ export default function EventButton({
         });
       case 2:
         return router.push({
-          pathname: "/admin/event/countdown-checkin",
+          pathname: `/admin/event/countdown-checkin`,
           query: { statusEvent },
         });
       case 3:
-        return router.push(`/admin/luckyspin/${String(id)}`);
+        return router.push(`/admin/luckyspin/${id}`);
       case 4:
         return router.push("/event/event-result");
       default:
@@ -32,10 +33,11 @@ export default function EventButton({
         });
     }
   };
+
   return (
     <div onClick={handleClick} className="flex flex-col w-full">
       <button
-        className={`rounded-[5px] mx-2 ${setColor(status, id, userJoined)}`}
+        className={`rounded-[5px] mx-2 ${setColor(status, db)}`}
         onClick={onclick}
       >
         <div className="flex justify-between items-center ml-4 mr-2 text-white h-10 font-[Nunito Sans]">
@@ -43,7 +45,7 @@ export default function EventButton({
             {title ? <> {title}</> : <>Title not available</>}
           </div>
           <div className="text-xs flex flex-col flex-1 text-right ml-10 items-right truncate break-words">
-            {id === -1 ? (
+            {db === true ? (
               <></>
             ) : (
               <>
@@ -58,14 +60,7 @@ export default function EventButton({
             {userJoined >= 0 ? (
               <div>{userJoined} người tham gia </div>
             ) : (
-              <>
-                {" "}
-                {userJoined === -1 ? (
-                  <></>
-                ) : (
-                  <div>Players not available</div>
-                )}{" "}
-              </>
+              <> {db === true ? <></> : <div>Players not available</div>} </>
             )}
           </div>
           <div className="ml-2">
@@ -90,8 +85,8 @@ export default function EventButton({
   );
 }
 
-function setColor(status, id, userJoined) {
-  if (id === -1 || userJoined === -1) {
+function setColor(status, db) {
+  if (db === true) {
     return "bg-[#40BEE5]";
   } else {
     switch (status) {
