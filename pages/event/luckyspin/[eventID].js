@@ -24,9 +24,11 @@ export default function LuckySpin() {
     const dispatch = useDispatch()
 
     const router = useRouter();
-    const pinCode = router.query.pinCode
+    // Pin code
+    // const pinCode = router.query.pinCode
     // Mã event
-    const [EventID, setEventID] = useState("");
+    const EventID = router.query.eventID
+    // const [EventID, setEventID] = useState("");
     // Thông tin người chơi
     const currPlayer = usePlayerParticipantHook();
     // Mã người chơi
@@ -66,15 +68,15 @@ export default function LuckySpin() {
     const getEventID = () => {
         console.log("Welcome player ", participantId);
         console.log("Player detail:", currPlayer)
-        console.log("Getting event with pincode:", pinCode);
-        get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
-            if (snapshot.exists()) {
-                setEventID(Object.keys(snapshot.val())[0]);
-            } else {
-                console.log('Not found event');
-                router.push('/');
-            }
-        })
+        console.log("Getting event with ID:", EventID);
+        // get(query(ref(db, "event"), orderByChild("eventId"), equalTo(pinCode))).then((snapshot) => {
+        //     if (snapshot.exists()) {
+        //         setEventID(Object.keys(snapshot.val())[0]);
+        //     } else {
+        //         console.log('Not found event');
+        //         router.push('/');
+        //     }
+        // })
         get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
             if (snapshot.exists()) {
                 if (snapshot.val() === 0) {

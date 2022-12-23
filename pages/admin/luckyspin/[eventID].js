@@ -22,9 +22,11 @@ export default function LuckySpinAdmin() {
     const dispatch = useDispatch()
 
     const router = useRouter();
-    const pinCode = router.query.pinCode
+    // Pin code
+    // const pinCode = router.query.pinCode
     // Mã event
-    const [EventID, setEventID] = useState("");
+    const EventID = router.query.eventID
+    // const [EventID, setEventID] = useState("");
     // Thông tin admin
     const adminInfo = useUserPackageHook();
     // Mã admin
@@ -64,10 +66,20 @@ export default function LuckySpinAdmin() {
 
     const getEventID = () => {
         console.log("Welcome admin ", adminId);
-        console.log("Getting event with pincode:", pinCode);
-        get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
+        console.log("Getting event with ID:", EventID);
+        get(query(ref(db, "event"), orderByChild("event"), equalTo(EventID))).then((snapshot) => {
             if (snapshot.exists()) {
-                setEventID(Object.keys(snapshot.val())[0]);
+                // setEventID(Object.keys(snapshot.val())[0]);
+                const data = Object.values(snapshot.val())[0];
+                if (data["status"] === 1) router.push('/');
+                if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
+                if (data["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(data);
+                // Nếu không phải admin sự kiện, đưa về trang chủ.
+                if (adminId !== data.createBy) {
+                    console.log('No permission!')
+                    router.push('/');
+                };
             } else {
                 console.log('Not found event');
                 router.back();
@@ -95,11 +107,11 @@ export default function LuckySpinAdmin() {
                 if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
-                // Nếu không phải admin sự kiện, đưa về trang chủ.
-                if (adminId !== data.createBy) {
-                    console.log('No permission!')
-                    router.push('/');
-                };
+                // // Nếu không phải admin sự kiện, đưa về trang chủ.
+                // if (adminId !== data.createBy) {
+                //     console.log('No permission!')
+                //     router.push('/');
+                // };
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const rewardChosingId = data['playingData']['rewardChosingId'];
                 const spin_time = data['playingData']['spinTime'];
