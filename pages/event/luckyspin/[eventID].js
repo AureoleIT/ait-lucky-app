@@ -122,7 +122,7 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/');
+                if (data["status"] === 2) router.push('/event/countdown-checkin');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
