@@ -52,6 +52,12 @@ function EventDetail() {
         if(user.userId !== event.createBy) { router.push("/") }
     },[])
 
+    const compare = (a, b) => {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+
     // get name event from firebase
     const getName = query(ref(db, "event"), orderByChild("eventId"), equalTo(beforeID))
     useEffect(() =>
@@ -76,7 +82,9 @@ function EventDetail() {
                 const data = snapshot.val()
                 if(data !== null)
                 {
-                    setRewards(Object.values(data))
+                    const rw = Object.values(data)
+                    rw.sort(compare)
+                    setRewards(rw)
                 }
         })
     },[])
