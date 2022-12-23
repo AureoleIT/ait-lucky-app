@@ -128,7 +128,7 @@ export default function LuckySpinAdmin() {
                 const data = Object.values(rawData);
                 data.forEach((val, idx) => {
                     val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
                         if (snapshot.exists()) {
                             val['pic'] = snapshot.val().pic;
                         }
@@ -341,7 +341,7 @@ export default function LuckySpinAdmin() {
         <>
             {loadedData ?
                 <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
-                    <div className="flex flex-col justify-start items-center w-full h-full">
+                    <div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
                         <div className="flex flex-col w-full pt-5">
                             <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"></Title>
                             <Title title={eventInfo.title} fontSize="text-[32px]" />

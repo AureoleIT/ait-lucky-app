@@ -65,6 +65,7 @@ export default function LuckySpin() {
 
     const getEventID = () => {
         console.log("Welcome player ", participantId);
+        console.log("Player detail:", currPlayer)
         console.log("Getting event with pincode:", pinCode);
         get(query(ref(db, "event"), orderByChild("pinCode"), equalTo(pinCode))).then((snapshot) => {
             if (snapshot.exists()) {
@@ -98,7 +99,7 @@ export default function LuckySpin() {
                 }
                 data.forEach((val, idx) => {
                     val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.participantId)).then((snapshot) => {
+                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
                         if (snapshot.exists()) {
                             val.pic = snapshot.val().pic;
                         }
@@ -363,7 +364,7 @@ export default function LuckySpin() {
         <>
             {loadedData ?
                 <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
-                    <div className="flex flex-col justify-start items-center w-full h-full">
+                    <div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
                         <div className="flex flex-col w-full pt-5">
                             <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold" />
                             <Title title={eventInfo.title} fontSize="text-[32px]" />
