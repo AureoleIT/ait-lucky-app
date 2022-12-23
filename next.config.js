@@ -6,7 +6,7 @@ module.exports = withImages({
     return config;
   },
   // comment below when building on localhost
-  
+
   // trailingSlash: true,
   // exportTrailingSlash: true,
   // exportPathMap: async function (
@@ -28,6 +28,5 @@ module.exports = withImages({
   // swcMinify: true,
   // images: {
   //   domains: ["s120-ava-talk.zadn.vn", "blob"],
-  //   },
   // },
-});
+},);

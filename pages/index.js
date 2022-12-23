@@ -343,5 +343,4 @@ export default function Index() {
       {renderPopUp}
     </section>
   );
-  // }
 }
