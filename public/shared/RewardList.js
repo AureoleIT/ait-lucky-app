@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import PlayerList from "./PlayerList";
 import OverlayBlock from "./OverlayBlock";
 import CloseButton from "./CloseButton";
 
-export default function RewardList({listReward, showRemain = false, eventPaticipant, showDetail = false}) {
+export default function RewardList({listReward, showQuantity = true, showRemain = false, eventPaticipant, showDetail = false}) {
     const rewardList = [...listReward];
     const [rewardIndex, setRewardIndex] = useState(0);
     const [rewardImageIndex, setRewardImageIndex] = useState(0);
@@ -43,9 +43,30 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
         const [imgIdx, setImdIdx] = useState(imgIndex);
         const [touchX, setTouchX] = useState(0);
 
+        const handler = useCallback((event) => {
+            switch (event.key) {
+                case "ArrowRight":
+                    if (imgIdx < imgUrls.length - 1) setImdIdx(imgIdx => imgIdx+1)
+                    break;
+                
+                case "ArrowLeft":
+                    if (imgIdx > 0) setImdIdx(imgIdx => imgIdx-1)
+                    break;
+
+                default:
+                    break;
+            }}, [imgIdx])
+
+        useEffect(() => {
+            document.addEventListener('keydown', handler);
+            return () => {
+                document.removeEventListener('keydown', handler);
+            }
+        }, [imgIdx])
+
         return (
             <>
-                <div className="absolute flex items-center left-0 -translate-y-[50%]">
+                <div className="absolute flex items-center sm:left-0 -translate-y-[50%] w-fit mx-auto">
                     {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
                         onTouchStart={(e) => {
                             setTouchX(e.touches[0].clientX)
@@ -54,6 +75,18 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             if (e.changedTouches[0].clientX - touchX > 10 && imgIdx > 0) setImdIdx(imgIdx => imgIdx-1);
                             if (e.changedTouches[0].clientX - touchX < -10 && imgIdx < imgUrls.length - 1) setImdIdx(imgIdx => imgIdx+1);
                         }}/>}
+                    {imgIdx > 0 && <div className="absolute left-0 w-[10%] text-white h-full flex items-center transition-all bg-transparent hover:bg-gradient-to-r from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
+                        onClick={() => setImdIdx(imgIdx => imgIdx-1)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                            <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clipRule="evenodd" />
+                        </svg>
+                    </div>}
+                    {imgIdx < imgUrls.length - 1 && <div className="absolute right-0 w-[10%] text-white h-full flex justify-end items-center transition-all bg-transparent hover:bg-gradient-to-l from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
+                        onClick={() => setImdIdx(imgIdx => imgIdx+1)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                           <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clipRule="evenodd" />
+                        </svg>
+                    </div>}
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row justify-center px-1 opacity-50 translate-y-20 hover:opacity-100 hover:translate-y-0 transition-all bg-transparent hover:bg-gradient-to-t from-black to-[#00000080]">
                     <div className="flex flex-row justify-center w-full pt-4 h-36 overflow-x-hidden overflow-y-hidden">
@@ -129,7 +162,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg cursor-pointer" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none text-ellipsis">{reward.nameReward}</p>
-                                <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>
+                                {showQuantity && <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>}
                             </div>
                             {getDetailFromReward(reward, idx)}
                         </div>
@@ -144,7 +177,7 @@ export default function RewardList({listReward, showRemain = false, eventPaticip
             <div className="overflow-auto w-full grow">
                 {listRewardShowcase}
                 <OverlayBlock childDiv={<ShowcaseImage imgUrls={rewardList[rewardIndex]?rewardList[rewardIndex].imgUrl:[]} imgIndex={rewardImageIndex} />} manual={true} id={"showImageOverlay"}
-                    rerenderOnChange={[rewardImageIndex, rewardIndex]} backgroundColor={"#000000dd"} />
+                    rerenderOnChange={[rewardImageIndex, rewardIndex]} backgroundColor={"#000000dd"} overlayIndex={10} />
             </div>
         </>
     );
