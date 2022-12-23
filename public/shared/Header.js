@@ -4,9 +4,6 @@ import React, { useEffect, useState } from "react";
 import UserAvatar from "./UserAvatar";
 import Menu from "./Menu";
 
-// Icons
-import MenuIcon from "public/Icons/menu";
-
 // Redux
 import { useUserPackageHook } from "public/redux/hooks";
 
@@ -27,7 +24,9 @@ export default function Header() {
       <div className="w-full bg-[#40BEE5]">
         <div className="flex justify-between items-center px-[20px] py-[15px] w-full max-w-6xl mx-auto">
           <button onClick={(e) => {setShowMenu(!showMenu)}}>
-            <MenuIcon />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white font-bold">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+            </svg>
           </button>
           <a href="/admin/dashboard-admin" className="text-2xl font-extrabold text-white">AIT LUCKY APP</a>
           <UserAvatar avatar={userData.pic || defaultAvatar} />
