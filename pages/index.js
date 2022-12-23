@@ -26,8 +26,6 @@ export default function Index() {
   const dispatch = useDispatch();
   var BG_COLOR =
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
-  var [event, setEvent] = useState({});
-  var [user, setUser] = useState({});
 
   const globalUser = useUserPackageHook();
   const userHostingEvent = useUserCurrEventHostingHook();
@@ -38,41 +36,43 @@ export default function Index() {
   const participant = usePlayerParticipantHook();
   const playerEvent = usePlayerEventHook();
 
-  if (participant.participant && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
-    get(child(ref(db), "event/")).then((snapshot) => {
-      const record = snapshot.val() ?? [];
-      const values = Object.values(record);
-      var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
-      if (currEvent === undefined || currEvent.delFlag === true) {
-        ShowMethod(dispatch, messagesError.E2004, false);
-        return;
-      }
-      switch (currEvent.status) {
-        case 1:
-          dispatch(removePlayerState());
-          dispatch(removeUserPlaying());
+  useEffect(() => {
+    if (participant.participantId && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
+      get(child(ref(db), "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
+        if (currEvent === undefined || currEvent.delFlag === true) {
+          ShowMethod(dispatch, messagesError.E2004, false);
           return;
-        case 2:
-          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-          setTimeout(() => {
-            router.push("event/countdown-checkin");
-          }, 500);
-          return
-        case 3:
-          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-          setTimeout(() => {
-            router.push("event/luckyspin/" + currEvent.eventId);
-          }, 500);
-          return;
-        case 4:
-          dispatch(removePlayerState());
-          dispatch(removeUserPlaying());
-          return;
-        default:
-          return;
-      }
-    });
-  }
+        }
+        switch (currEvent.status) {
+          case 1:
+            dispatch(removePlayerState());
+            dispatch(removeUserPlaying());
+            return;
+          case 2:
+            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            setTimeout(() => {
+              router.push("event/countdown-checkin");
+            }, 500);
+            return
+          case 3:
+            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            setTimeout(() => {
+              router.push("event/luckyspin/" + currEvent.eventId);
+            }, 500);
+            return;
+          case 4:
+            dispatch(removePlayerState());
+            dispatch(removeUserPlaying());
+            return;
+          default:
+            return;
+        }
+      });
+    }
+  })
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -87,35 +87,21 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
-      setEvent(currEvent);
-console.log({event})
+      dispatch(incognitoEvent(currEvent));
+      window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
+      if (globalUser.userId) {
+        dispatch(userCurrentEventPlaying(currEvent));
+      }
       get(child(ref(db), "users/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
         const values = Object.values(record);
-        var currUser = values.find((item) => item.userId === event.createBy);
-        setUser(currUser);
+        var currUser = values.find((item) => item.userId === currEvent.createBy);
+        dispatch(incognitoUser(currUser));
       });
-console.log({user});
       const path = "/event/join";
       checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
     });
-  }, [dispatch, event.createBy, pin]);
-
-  /* Export current event to redux for another access */
-  useEffect(() => {
-    dispatch(incognitoEvent(event));
-    dispatch(incognitoUser(user));
-    if (globalUser.userId) {
-      dispatch(userCurrentEventPlaying(event));
-    }
-  }, [dispatch, event, globalUser.userId, user])
-
-  /*localStorage is here to track what has been saved*/
-  useEffect(() => {
-    window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event.eventId));
-  }, [event]);
-
-  console.log({ pin })
+  }, [dispatch, globalUser.userId, pin]);
 
   const pinData = useCallback(
     (e) => {
