@@ -142,7 +142,7 @@ function CountDownCheckIn ()
     
                         setTimeout(() =>
                         {
-                            router.push(`/admin/luckyspin/${pinCode}`)
+                            router.push(`/admin/luckyspin/${eventID}`)
                         },2000)
                     }
                     else {
@@ -196,9 +196,9 @@ function CountDownCheckIn ()
         setTimeout(() =>
         {
             HideMethod(dispatch)
-            router.push(`/admin/luckyspin/${pinCode}`)
+            router.push(`/admin/luckyspin/${eventID}`)
         }, 2000)
-    },[dispatch, pinCode])
+    },[dispatch, eventID])
 
     const renderTitleandH1 = useMemo(() =>
     {
