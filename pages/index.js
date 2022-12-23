@@ -9,10 +9,10 @@ import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { ShowMethod, checkStatus } from "public/util/popup";
-import { messagesError } from "public/util/messages";
+import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser } from "public/redux/actions";
-import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
+import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
+import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 
 export default function Index() {
@@ -30,6 +30,19 @@ export default function Index() {
   var [user, setUser] = useState({});
 
   const globalUser = useUserPackageHook();
+  const eventUserPlaying = useUserCurrEventPlayingHook();
+  const participant = usePlayerParticipantHook();
+  const playerEvent = usePlayerEventHook();
+  const userHostingEvent = useUserCurrEventHostingHook();
+
+  // const userId = globalUser.userId;
+  // const eventUserPlayingId = eventUserPlaying.eventId;
+  // const playerCreatedById = participant.createdBy;
+  // const eventParticipant = playerEvent.eventId;
+  // const statusEventUser = eventUserPlaying.status;
+  // const statusEventPlayer = playerEvent.status;
+  // const ownerEventUser = eventUserPlaying.createBy;
+  // const ownerEventParticipant = playerEvent.createBy;
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -51,7 +64,8 @@ export default function Index() {
         setUser(currUser);
       });
       setEvent(currEvent);
-      checkStatus(dispatch, router, currEvent.title, currEvent.status);
+      const path = "/event/join";
+      checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
     });
   }, [dispatch, event.createBy, pin]);
 
@@ -59,7 +73,10 @@ export default function Index() {
   useEffect(() => {
     dispatch(incognitoEvent(event));
     dispatch(incognitoUser(user));
-  }, [dispatch, event, user])
+    if (globalUser.userId) {
+      dispatch(userCurrentEventPlaying(event));
+    }
+  }, [dispatch, event, globalUser.userId, user])
 
   /*localStorage is here to track what has been saved*/
   useEffect(() => {
@@ -160,6 +177,79 @@ export default function Index() {
     )
   }, [visible, status, message])
 
+  // if (playerCreatedById === userId
+  //   && eventUserPlayingId === eventParticipant
+  //   && statusEventPlayer === statusEventUser
+  //   && ownerEventUser !== ownerEventParticipant) {
+  //   get(child(ref(db), "event/")).then((snapshot) => {
+  //     const record = snapshot.val() ?? [];
+  //     const values = Object.values(record);
+  //     var currEvent = values.find((item) => item.eventId === eventUserPlayingId);
+  //     if (currEvent === undefined || currEvent.delFlag === true) {
+  //       ShowMethod(dispatch, messagesError.E2004, false);
+  //       return;
+  //     }
+  //     switch (currEvent.status) {
+  //       case 1:
+  //         dispatch(removePlayerState());
+  //         dispatch(removeUserPlaying());
+  //         ShowMethod(dispatch, messagesError.E3001, false);
+  //         return;
+  //       case 2:
+  //         ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+  //         setTimeout(() => {
+  //           router.push("event/countdown-checkin");
+  //         }, 500);
+  //         return
+  //       case 3:
+  //         dispatch(removePlayerState());
+  //         dispatch(removeUserPlaying());
+  //         ShowMethod(dispatch, messagesError.E3002, false);
+  //         return;
+  //       case 4:
+  //         dispatch(removePlayerState());
+  //         dispatch(removeUserPlaying());
+  //         ShowMethod(dispatch, messagesError.E3003, false);
+  //         return;
+  //       default:
+  //         return;
+  //     }
+  //   });
+  // } else if (ownerEventUser === ownerEventParticipant) {
+  //   get(child(ref(db), "event/")).then((snapshot) => {
+  //     const record = snapshot.val() ?? [];
+  //     const values = Object.values(record);
+  //     var currEvent = values.find((item) => item.eventId === userHostingEvent.eventId);
+  //     if (currEvent === undefined || currEvent.delFlag === true) {
+  //       ShowMethod(dispatch, messagesError.E2004, false);
+  //       return;
+  //     }
+  //     switch (currEvent.status) {
+  //       case 1:
+  //         setTimeout(() => {
+  //           router.push("/admin/event/event-detail");
+  //         }, 500);
+  //         return;
+  //       case 2:
+  //         setTimeout(() => {
+  //           router.push("/admin/countdown-checkin");
+  //         }, 500);
+  //         return
+  //       case 3:
+  //         setTimeout(() => {
+  //           router.push("/admin/luckyspin/" + currEvent.eventId);
+  //         }, 500);
+  //         return;
+  //       case 4:
+  //         dispatch(removePlayerState());
+  //         dispatch(removeUserHosting())
+  //         ShowMethod(dispatch, messagesError.E3003, false);
+  //         return;
+  //       default:
+  //         return;
+  //     }
+  //   });
+  // } else {
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
@@ -175,4 +265,5 @@ export default function Index() {
       {renderPopUp}
     </section>
   );
+  // }
 }
