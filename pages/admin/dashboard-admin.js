@@ -2,17 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import router from "next/router";
 // firebase
 import { db } from "src/firebase";
-import {
-  ref,
-  orderByChild,
-  orderByKey,
-  equalTo,
-  query,
-  onValue,
-  limitToLast,
-  startAt ,
-  orderByValue
-} from "firebase/database";
+import { ref, orderByChild, query, onValue } from "firebase/database";
 // redux
 import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
@@ -30,10 +20,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const queDb = query(
-    ref(db, "event"),
-    orderByChild("createAt")
-  );
+  const queDb = query(ref(db, "event"), orderByChild("createAt"));
   // authentication, only users can access this page
   const checkAuth = () => {
     router.push("/auth/login");
@@ -68,7 +55,12 @@ export default function Dashboard() {
       if (data != null) {
         const values = Object.values(data);
         values.forEach((value) => {
-          if (value.delFlag === false && (value.status === 1 || value.status === 2 || value.status === 3 ) && (value.createBy === currentUser.userId) ) setArrStatus((prev) => [...prev, value]);
+          if (
+            value.delFlag === false &&
+            (value.status === 1 || value.status === 2 || value.status === 3) &&
+            value.createBy === currentUser.userId
+          )
+            setArrStatus((prev) => [...prev, value]);
         });
       }
     });
@@ -80,7 +72,8 @@ export default function Dashboard() {
       if (data != null) {
         const values = Object.values(data);
         values.forEach((value) => {
-          if ((value.delFlag === false) && (value.createBy === currentUser.userId)) setArrID((prev) => [...prev, value]);
+          if (value.delFlag === false && value.createBy === currentUser.userId)
+            setArrID((prev) => [...prev, value]);
         });
       }
     });
@@ -139,9 +132,9 @@ export default function Dashboard() {
     return (
       <Input content={"Các sự kiện đang diễn ra"} isTextGradient={true}>
         <div className="flex flex-col py-4">
-        <p className=" text-sm text-[#656565] mb-2">
-          {"Hiển thị các sự kiện đang diễn ra của tôi"}
-        </p>
+          <p className=" text-sm text-[#656565] mb-2">
+            {"Hiển thị các sự kiện đang diễn ra của tôi"}
+          </p>
           <div className="w-full flex flex-col gap-y-[7px] overflow-auto max-h-[188px] scrollbar-hide">
             {arrStatus.length === 0 ? (
               <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
@@ -153,9 +146,10 @@ export default function Dashboard() {
                 <div key={index} className="flex flex-col">
                   <EventButton
                     title={item.title}
-                    id={-1}
+                    id={item.eventId}
                     userJoined={item.userJoined}
                     status={item.status}
+                    db={true}
                     onclick={() => dispatch(userCurrentEventHosting(item))}
                   />
                 </div>
@@ -200,13 +194,14 @@ export default function Dashboard() {
               {"Không có dữ liệu"}
             </div>
           ) : (
-            arrID.slice(0,4).map((item, index) => (
+            arrID.slice(0, 4).map((item, index) => (
               <div key={index} className="flex flex-col">
                 <EventButton
                   title={item.title}
                   id={item.eventId}
                   status={item.status}
-                  userJoined={-1}
+                  userJoined={item.userJoined}
+                  db={true}
                   onclick={() => dispatch(userCurrentEventHosting(item))}
                 />
               </div>
@@ -236,11 +231,11 @@ export default function Dashboard() {
             {renderWelcome}
             {/* participate in event */}
             {renderJoinEvent}
-            {/* create a event */}
+            {/* show my curent event */}
             {renderShowCurrentEvent}
-            {/*  */}
+            {/* create new event  */}
             {renderCreateEvent}
-            {/* show events */}
+            {/* show all my event */}
             {renderShowCreateEvent}
           </section>
         </div>
