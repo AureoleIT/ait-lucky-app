@@ -67,7 +67,7 @@ export default function LuckySpinAdmin() {
     const getEventID = () => {
         console.log("Welcome admin ", adminId);
         console.log("Getting event with ID:", EventID);
-        get(query(ref(db, "event"), orderByChild("event"), equalTo(EventID))).then((snapshot) => {
+        get(query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID))).then((snapshot) => {
             if (snapshot.exists()) {
                 // setEventID(Object.keys(snapshot.val())[0]);
                 const data = Object.values(snapshot.val())[0];
