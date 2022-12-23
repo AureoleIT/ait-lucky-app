@@ -22,7 +22,6 @@ import { incognitoEvent } from "public/redux/actions";
 import Logo from "public/shared/Logo";
 import QrReader from 'react-qr-scanner'
 
-
 export default function Index() {
   const BG_COLOR =
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -159,17 +158,53 @@ export default function Index() {
       </div>
     )
   }, [closePopup, isHidden, isSuccess, textState])
-// ------------------------------------------------------
+// -------------------Scan QR-----------------------------------
 const handleClick = event => {
   setIsShown(current => !current);
 };
 
+  // const [scanResultFile, setScanResultFile] = useState('');
+  // const qrRef = useRef(null)
+
+  //  const handleErrorFile = (error) => {
+  //      alert(error)
+  //   }
+  //   const  handleScanFile = (result) => {
+  //     if  (result) {
+  //        setScanResultFile(result)
+  //     }
+  //   }
+  // const onScanFile = () => {
+  //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
+  // }
+  const [scanResultWebCam, setScanResultWebCam] =  useState('');
+
+  const handleErrorWebCam = (error) => {
+    alert("not connect camera");
+  }
+  const handleScanWebCam = (result) => {
+    if (result){
+        setScanResultWebCam(result);
+    }
+  }
 const renderQRscan = useMemo(() =>{
     return(
       <div className="flex flex-col justify-center items-center">
         <QrButton onClick={handleClick} />
-        {isShown && <QrReader className="h-[120px]"     
+        {/* {isShown && <QrReader className="h-[120px]"     
+        />} */}
+        
+        {isShown && <QrReader className="h-[120px]"
+          //  ref={qrRef}
+           delay={300}
+           onError={handleErrorWebCam}
+           onScan={handleScanWebCam}
         />}
+        {/* {isShown && <BgBlueButton className="w-[200px]"  variant="contained" content="open file" onClick={onScanFile}/>} */}
+        {isShown && (
+        <div>
+        <h3> scan code: <a href="scanResultWebCam" target="_blank" onClick={handleClick}>{scanResultWebCam} </a></h3>
+        </div>)}
       </div>
     )
 },[handleClick,isShown])
