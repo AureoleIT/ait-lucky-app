@@ -11,7 +11,7 @@ import { ref, set } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
 import { incognitoParticipant, userCurrentEventPlaying } from "public/redux/actions";
-import { usePlayerEventHook, usePlayerUserHook } from "public/redux/hooks";
+import { usePlayerEventHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
 
@@ -35,8 +35,6 @@ export default function Info() {
   //Get current user logged in and play
   const currUser = useUserPackageHook()
 console.log(currEvent)
-const curruserhost = usePlayerUserHook()
-console.log(curruserhost)
   useEffect(() => {
     if (!currEvent.eventId) {
       router.push("/");
