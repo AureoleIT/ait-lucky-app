@@ -149,7 +149,7 @@ export default function Dashboard() {
                     id={item.eventId}
                     userJoined={item.userJoined}
                     status={item.status}
-                    db={true}
+                    db={1}
                     onclick={() => dispatch(userCurrentEventHosting(item))}
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function Dashboard() {
                   id={item.eventId}
                   status={item.status}
                   userJoined={item.userJoined}
-                  db={true}
+                  db={2}
                   onclick={() => dispatch(userCurrentEventHosting(item))}
                 />
               </div>
