@@ -62,6 +62,7 @@ function CountDownCheckIn ()
     const [player, setPlayer] = useState(0)  // number of player join
     const [playerList, setPlayerList] = useState([])  // list of player join
     const [eventName, setEventName] = useState(event.title)
+    const [statusOfEvent, setStatusOfEvent] = useState()
 
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
@@ -98,8 +99,28 @@ function CountDownCheckIn ()
                 const rawData = snapshot.val()
                 const data = Object.values(rawData)
                 setEventName(data[0].title)
+                setStatusOfEvent(data[0].status)
             }
         })
+    },[])
+
+    useEffect(() =>
+    {
+        if(statusOfEvent === 3) { router.push(`/admin/luckyspin/${eventID}`) }
+    },[statusOfEvent, eventID])
+
+    // check countdown end or not
+    useEffect(() =>
+    {
+        if((startingTime + (minutes * 60 * 1000)) < new Date().getTime())
+        {
+            update(ref(db,`event/${eventID}`), { status:3 })
+            setTimeout(() =>
+            {
+                HideMethod(dispatch)
+                router.push(`/admin/luckyspin/${eventID}`)
+            },2000)
+        }
     },[])
 
     //countdown
@@ -159,9 +180,7 @@ function CountDownCheckIn ()
     },[isActive, isStop, dispatch])
     
     // close pop up
-    const closePopup = (e) => {
-        setIsHidden(hidden);
-    };
+    const closePopup = (e) => { setIsHidden(hidden) };
 
     // generate qr code
     const generateQRcode = useCallback(() =>
@@ -192,6 +211,7 @@ function CountDownCheckIn ()
     const handleStartEvent = useCallback(() =>
     {   
         setIsStop(true)
+        update(ref(db,`event/${eventID}`), { status:3 })
         ShowMethod(dispatch, messagesSuccess.I0010, true)
         setTimeout(() =>
         {
@@ -354,11 +374,7 @@ function CountDownCheckIn ()
                             {renderStartButton}
                             {renderPopup}
                 </section>
-            )
-            :
-            (
-                <PageLoading />
-            )
+            ) : ( <PageLoading /> )
         }
         </>
     )
