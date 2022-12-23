@@ -120,7 +120,18 @@ export default function Index() {
 
   const renderDirect = useMemo(() => {
     return globalUser.userId !== undefined
-      ? (<div></div>)
+      ? (
+        <a href="/admin/dashboard-admin">
+          <Title
+            title="Quay lại trang chủ?"
+            isUnderLine={true}
+            isUpperCase={false}
+            fontSize="font-bold"
+            fontWeight=""
+            margin=""
+          />
+        </a>
+      )
       : (
         <div>
           <WayLog
@@ -149,28 +160,19 @@ export default function Index() {
     )
   }, [visible, status, message])
 
-  if (globalUser.userId !== undefined) {
-    router.push("/admin/dashboard-admin")
-    return <></>;
-  } else {
-    return (
-      <section
-        className={`h-screen w-screen mx-auto flex justify-center items-center ${BG_COLOR}`}
-      >
-        <div
-          className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full `}
-        >
-          {renderLogo}
-          {renderTitle}
-          {renderInput}
-          {renderButton}
-          {renderLine}
-          <QrButton onClick={() => alert("Please scan a QR code to join.")} />
-          {/* Handle logic todo: go direct to open device's camera */}
-          {renderDirect}
-        </div>
-        {renderPopUp}
-      </section>
-    );
-  }
+  return (
+    <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
+      <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
+        {renderLogo}
+        {renderTitle}
+        {renderInput}
+        {renderButton}
+        {renderLine}
+        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
+        {/* Handle logic todo: go direct to open device's camera */}
+        {renderDirect}
+      </div>
+      {renderPopUp}
+    </section>
+  );
 }

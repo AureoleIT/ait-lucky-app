@@ -33,8 +33,8 @@ export default function Login() {
   const dbRef = ref(db);
 
   const globalUser = useUserPackageHook();
-  console.log(globalUser.userId);
-  const checkExistedUser = () => {
+
+  if (globalUser.userId !== undefined) {
     router.push("/admin/dashboard-admin");
   }
 
@@ -160,7 +160,7 @@ export default function Login() {
     )
   }, [pass, passData])
 
-  const renderPrivacy = useMemo(() => {
+  const renderRemember = useMemo(() => {
     return (
       <TickBox
         content="Ghi nhớ đăng nhập"
@@ -169,6 +169,21 @@ export default function Login() {
       />
     )
   }, [onCheckData])
+
+  const renderForget = useMemo(() => {
+    return (
+      <a href="/auth/forgot-password">
+        <Title
+          title="Quên mật khẩu?"
+          isUnderLine={true}
+          isUpperCase={false}
+          fontSize="font-bold"
+          fontWeight=""
+          margin=""
+        />
+      </a>
+    )
+  }, [])
 
   const renderSubmitButton = useMemo(() => {
     return (
@@ -212,7 +227,7 @@ export default function Login() {
     return (
       <AuthFooter
         normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!!!"
+        boldContent="Đăng kí ngay!"
         href="/auth/register"
       />
     )
@@ -231,26 +246,27 @@ export default function Login() {
   }, [visible, status, message])
 
   return (
-    <>
-      <section className="h-full mx-auto w-full flex justify-center items-center">
-        <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
-          {renderTitle}
-          {renderName}
-          {renderPassword}
-          <div className="flex flex-row">
-            {renderPrivacy}
-          </div>
-          <div>
-            {renderSubmitButton}
-            {renderFirstLine}
-            {renderAuthInput}
-            {renderSecondLine}
-          </div>
-          {renderFooter}
+    // <>
+    <section className="pt-16 h-full mx-auto w-full flex justify-center items-center">
+      <div className="flex flex-col justify-center max-w-xl w-4/5 h-full">
+        {renderTitle}
+        {renderName}
+        {renderPassword}
+        <div className="flex flex-row justify-between">
+          {renderRemember}
+          {renderForget}
         </div>
-        {renderPopUp}
-      </section>
-    </>
+        <div>
+          {renderSubmitButton}
+          {renderFirstLine}
+          {renderAuthInput}
+          {renderSecondLine}
+        </div>
+        {renderFooter}
+      </div>
+      {renderPopUp}
+    </section>
+    // </>
   );
 }
 

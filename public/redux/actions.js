@@ -4,7 +4,12 @@ import {
     INCOGNITO_USER,
     INCOGNITO_REWARD,
     USER_PACKAGE,
-    REMOVE_STATE,
+    CLEAR,
+    REMOVE_PLAYER_STATE,
+    REMOVE_USER_STATE,
+    REMOVE_USER_PLAYING,
+    REMOVE_USER_CREATING,
+    REMOVE_USER_HOSTING,
     USER_CURR_EVENT_HOSTING,
     USER_CURR_EVENT_PLAYING,
     USER_EVENT_CREATING,
@@ -38,8 +43,23 @@ export const incognitoReward = (reward) => ({
     payload: reward,
 })
 // remove all state of a reducer
-export const removeState = () => ({
-    type: REMOVE_STATE,
+export const clear = () => ({
+    type: CLEAR,
+})
+export const removePlayerState = () => ({
+    type: REMOVE_PLAYER_STATE,
+})
+export const removeUserState = () => ({
+    type: REMOVE_USER_STATE,
+})
+export const removeUserPlaying = () => ({
+    type: REMOVE_USER_PLAYING,
+})
+export const removeUserCreating = () => ({
+    type: REMOVE_USER_CREATING,
+})
+export const removeUserHosting = () => ({
+    type: REMOVE_USER_HOSTING,
 })
 // User object that logged in
 export const userPackage = (user) => ({

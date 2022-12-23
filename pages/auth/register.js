@@ -331,7 +331,7 @@ export default function Register() {
 
   return (
     <>
-      <section className="h-full w-full mx-auto flex justify-center items-center">
+      <section className="pt-16 h-full w-full mx-auto flex justify-center items-center">
         <div className={`flex flex-col justify-center max-w-xl w-4/5 h-full ${BG_WHITE}`}>
           {renderTitle}
           {renderName}
@@ -340,11 +340,9 @@ export default function Register() {
           {renderRetypePassword}
           {renderPrivacy}
           {renderConfirmButton}
-          <div>
-            {renderFirstLine}
-            {renderAuthButton}
-            {renderSecondLine}
-          </div>
+          {renderFirstLine}
+          {renderAuthButton}
+          {renderSecondLine}
           {renderFooter}
         </div>
         {renderPopUp}
