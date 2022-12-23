@@ -54,7 +54,7 @@ export default function Index() {
           case 2:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
-              router.push("event/countdown-checkin");
+              router.push("event/countdown-checkin/" + currEvent.eventId);
             }, 500);
             return
           case 3:

@@ -345,8 +345,8 @@ export default function Register() {
           {renderSecondLine}
           {renderFooter}
         </div>
-        {renderPopUp}
       </section>
+      {renderPopUp}
     </div>
   );
 }
