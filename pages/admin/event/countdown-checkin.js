@@ -12,12 +12,12 @@ import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
 import { messagesSuccess } from "public/util/messages"
 
-import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
+import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
 import {ref, update, onValue, query, orderByChild, equalTo} from "firebase/database"
-import { Button } from "public/shared"
+import { Button, PageLoading } from "public/shared"
 
 
 function CountDownCheckIn () 
@@ -25,10 +25,10 @@ function CountDownCheckIn ()
     // router
     const router = useRouter()
     // user
-    const user = useUserPackageHook()
     const { query: { countdown, statusEvent } } = router
 
     const props = {countdown, statusEvent}
+    let initCountdown = countdown
     // dispatch
     const dispatch = useDispatch()
     // eventID
@@ -42,12 +42,17 @@ function CountDownCheckIn ()
     else 
     {
         event = hostingEvent
+        if(hostingEvent.waitingTime !== undefined)
+        {
+            initCountdown = hostingEvent.waitingTime
+        }
     }
     const eventID = event.eventId 
     const pinCode = eventID.slice(0,6)
 
     // state
-    const [minutes, setMinutes] = useState(Math.floor(countdown / 60))  // store minutes of countdown
+    const [loadedData, setLoadedData] = useState(false)
+    const [minutes, setMinutes] = useState(Math.floor(initCountdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
     const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
@@ -55,6 +60,7 @@ function CountDownCheckIn ()
     const [isStop, setIsStop] = useState(false)  // countdown
     const [player, setPlayer] = useState(0)  // number of player join
     const [playerList, setPlayerList] = useState([])  // list of player join
+    const [eventName, setEventName] = useState(event.title)
 
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
@@ -64,11 +70,7 @@ function CountDownCheckIn ()
     const visible = usePopUpVisibleHook()
     const status = usePopUpStatusHook()
 
-    //  check admin
-    useEffect(() =>
-    {
-        if(user.userId !== event.createBy) { router.push("/") }
-    },[])
+    setTimeout(() => setLoadedData(true), 2500)  // load page
 
     // get participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
@@ -82,51 +84,69 @@ function CountDownCheckIn ()
                 setPlayer(data.length)
             }
         });
-    })
+    },[])
+
+    // get event name from firebase
+    const queryGetName = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
+    useEffect(() =>
+    {
+        onValue(queryGetName, (snapshot) =>
+        {
+            if(snapshot.exists())
+            {
+                const rawData = snapshot.val()
+                const data = Object.values(rawData)
+                setEventName(data[0].title)
+            }
+        })
+    },[])
 
     //countdown
     useEffect(() =>
     {
-        let date = new Date()
-        let deadline = date.getTime() + (minutes * 60 * 1000)
-
-        let countdown = null
-
-        if(isActive && isStop === false)
+        setTimeout(() =>
         {
-            countdown = setInterval(() => {
-                let nowDate = new Date()
-                let left = deadline - nowDate
-
-                let nowSeconds = Math.floor((left / 1000) % 60);
-                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
-
-                if(nowMinutes === 0 && nowSeconds === 0)
-                {
-                    clearInterval(countdown)
-
-                    update(ref(db,`event/${eventID}`),
+            let date = new Date()
+            let deadline = date.getTime() + (minutes * 60 * 1000)
+    
+            let countdown = null
+    
+            if(isActive && isStop === false)
+            {
+                countdown = setInterval(() => {
+                    let nowDate = new Date()
+                    let left = deadline - nowDate
+    
+                    let nowSeconds = Math.floor((left / 1000) % 60);
+                    let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+    
+                    if(nowMinutes === 0 && nowSeconds === 0)
                     {
-                        status:3,
-                    })
-
-                    ShowMethod(dispatch, messagesSuccess.I0010, true)
-
-                    setTimeout(() =>
-                    {
-                        router.push(`/admin/luckyspin/${pinCode}`)
-                    },2000)
-                }
-                else {
-                    setMinutes(nowMinutes)
-                    setSeconds(nowSeconds)
-                }   
-            }, 1000)
-        }
-        else {
-            clearInterval(countdown)
-        }
-        return () => clearInterval(countdown)
+                        clearInterval(countdown)
+    
+                        update(ref(db,`event/${eventID}`),
+                        {
+                            status:3,
+                        })
+    
+                        ShowMethod(dispatch, messagesSuccess.I0010, true)
+    
+                        setTimeout(() =>
+                        {
+                            router.push(`/admin/luckyspin/${pinCode}`)
+                        },2000)
+                    }
+                    else {
+                        setMinutes(nowMinutes)
+                        setSeconds(nowSeconds)
+                    }   
+                }, 1000)
+            }
+            else {
+                clearInterval(countdown)
+            }
+            return () => clearInterval(countdown)
+        },2500)
     },[isActive, isStop, dispatch])
     
     // close pop up
@@ -169,17 +189,17 @@ function CountDownCheckIn ()
             HideMethod(dispatch)
             router.push(`/admin/luckyspin/${pinCode}`)
         }, 2000)
-    })
+    },[dispatch, pinCode])
 
     const renderTitleandH1 = useMemo(() =>
     {
         return (
             <>
-                <Title title={event.title}/>
+                <Title title={eventName}/>
                 <h1 className="font-[900] uppercase text-[#004599] text-[22px] text-center mb-1">mã pin sự kiện</h1> 
             </>
         )
-    },[])
+    },[eventName])
 
     const renderPinCode = useMemo(() =>
     {
@@ -188,7 +208,7 @@ function CountDownCheckIn ()
                 <PinCode length={6} value={pinCode} />
             </div> 
         )
-    },[])
+    },[pinCode])
 
     const renderButtonQRcode = useMemo(() =>
     {
@@ -274,8 +294,8 @@ function CountDownCheckIn ()
     const renderPlayer = useMemo(() =>
     {
         return (
-            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide">
-                <div className="w-full h-full flex flex-col items-center">
+            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide py-3">
+                <div className="w-full h-full flex flex-col items-center mb-3">
                     <PlayerList listPlayer={playerList} />
                 </div>
             </div>
@@ -284,7 +304,7 @@ function CountDownCheckIn ()
 
     const renderLine3 = useMemo(() =>
     {
-        return ( <div className="max-w-xl w-4/5 mb-4 z-0"> <Line /> </div> )
+        return ( <div className="max-w-xl w-4/5 mb-1 z-0"> <Line /> </div> )
     },[])
 
     const renderStartButton = useMemo(() =>
@@ -306,21 +326,32 @@ function CountDownCheckIn ()
     },[status, message, visible])
 
     return (
-        <section className="flex flex-col justify-center items-center h-screen w-screen">
-                    {renderTitleandH1}
-                    {/* id room */}
-                    {renderPinCode}
-                    {/* qr code */}
-                    {renderButtonQRcode}
-                    {renderQRPopup}
-                    {renderCountdownTime}
-                    {renderParticipants}
-                    {renderH1andLine}
-                    {renderPlayer}
-                    {renderLine3}
-                    {renderStartButton}
-                    {renderPopup}
-        </section>
+        <>
+        {
+            loadedData ? 
+            (
+                <section className="flex flex-col justify-center items-center h-screen w-screen">
+                            {renderTitleandH1}
+                            {/* id room */}
+                            {renderPinCode}
+                            {/* qr code */}
+                            {renderButtonQRcode}
+                            {renderQRPopup}
+                            {renderCountdownTime}
+                            {renderParticipants}
+                            {renderH1andLine}
+                            {renderPlayer}
+                            {renderLine3}
+                            {renderStartButton}
+                            {renderPopup}
+                </section>
+            )
+            :
+            (
+                <PageLoading />
+            )
+        }
+        </>
     )
 }
 

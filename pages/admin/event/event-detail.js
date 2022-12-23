@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
-import SpecialRewardInfo from "public/shared/SpecialRewardInfo";
 import Line from "public/shared/Line";
 import { HideMethod } from "public/util/popup";
 import Title from "public/shared/Title";
@@ -118,7 +117,7 @@ function EventDetail() {
     // render component
     const renderTitle = useMemo(() =>
     {
-        return ( <Title title={title}/> )
+        return ( <div className="w-4/5 max-w-xl"> <Title title={title}/> </div> )
     },[title])
 
     const renderEventID = useMemo(() =>

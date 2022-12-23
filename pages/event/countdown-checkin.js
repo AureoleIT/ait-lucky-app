@@ -81,7 +81,7 @@ function UserCountdownCheckin () {
                 setPlayer(data.length)
             }
         });
-    })
+    },[])
 
     //countdown
     useEffect(() =>
@@ -130,7 +130,7 @@ function UserCountdownCheckin () {
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>bắt đầu sau ...</h1>
             </div>
         )
-    },[])
+    },[eventName])
 
     const renderCountdownTime = useMemo(() =>
     {
@@ -191,12 +191,12 @@ function UserCountdownCheckin () {
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>{`số người tham gia: ${player}/${eventMaxTicket}`}</h1>
             </div>
         )
-    },[player])
+    },[player, eventMaxTicket])
 
     const renderPlayerList = useMemo(() =>
     {
         return (
-            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide">
+            <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide py-3">
                 <div className="w-full h-full flex flex-col items-center">
                     <PlayerList listPlayer={playerList} />
                 </div>
