@@ -264,8 +264,8 @@ export default function Login() {
           </div>
           {renderFooter}
         </div>
-        {renderPopUp}
       </section>
+      {renderPopUp}
     </div>
   );
 }
