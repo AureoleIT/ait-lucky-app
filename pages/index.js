@@ -6,13 +6,13 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
 import { db } from "src/firebase";
-import { ref, child, get } from "firebase/database";
+import { ref, child, get, query, orderByChild, equalTo } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
-import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserPackageHook } from "public/redux/hooks";
+import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 
 export default function Index() {
@@ -30,19 +30,49 @@ export default function Index() {
   var [user, setUser] = useState({});
 
   const globalUser = useUserPackageHook();
-  const eventUserPlaying = useUserCurrEventPlayingHook();
+  const userHostingEvent = useUserCurrEventHostingHook();
+  const userEventCreating = useUserCurrEventCreatingHook();
+  const userRewardCreating = useUserCurrRewardCreatingHook();
+  const eventPlaying = useUserCurrEventPlayingHook();
+
   const participant = usePlayerParticipantHook();
   const playerEvent = usePlayerEventHook();
-  const userHostingEvent = useUserCurrEventHostingHook();
 
-  // const userId = globalUser.userId;
-  // const eventUserPlayingId = eventUserPlaying.eventId;
-  // const playerCreatedById = participant.createdBy;
-  // const eventParticipant = playerEvent.eventId;
-  // const statusEventUser = eventUserPlaying.status;
-  // const statusEventPlayer = playerEvent.status;
-  // const ownerEventUser = eventUserPlaying.createBy;
-  // const ownerEventParticipant = playerEvent.createBy;
+  if (participant.participant && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
+    get(child(ref(db), "event/")).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+      var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
+      if (currEvent === undefined || currEvent.delFlag === true) {
+        ShowMethod(dispatch, messagesError.E2004, false);
+        return;
+      }
+      switch (currEvent.status) {
+        case 1:
+          dispatch(removePlayerState());
+          dispatch(removeUserPlaying());
+          return;
+        case 2:
+          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          setTimeout(() => {
+            router.push("event/countdown-checkin");
+          }, 500);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          setTimeout(() => {
+            router.push("event/luckyspin/" + currEvent.eventId);
+          }, 500);
+          return;
+        case 4:
+          dispatch(removePlayerState());
+          dispatch(removeUserPlaying());
+          return;
+        default:
+          return;
+      }
+    });
+  }
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -57,13 +87,15 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      setEvent(currEvent);
+console.log({event})
       get(child(ref(db), "users/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
         const values = Object.values(record);
         var currUser = values.find((item) => item.userId === event.createBy);
         setUser(currUser);
       });
-      setEvent(currEvent);
+console.log({user});
       const path = "/event/join";
       checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
     });
