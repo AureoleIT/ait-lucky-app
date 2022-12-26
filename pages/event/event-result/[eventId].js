@@ -10,10 +10,11 @@ import { RewardList, PlayerList, Button, Line, PageLoading } from "public/shared
 import { LEFT_COLOR, RIGHT_COLOR, BG } from "public/util/colors";
 
 
-export default function EventResult({ isAdmin = false }) {
+export default function EventResult() {
   // Dynamic link
   const router = useRouter();
   const EventId = router.query.eventId;
+  const isAdmin = router.query.admin;
 
   // list db
   const [countPlayer, setCountPlayer] = useState(0);
