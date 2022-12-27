@@ -6,17 +6,20 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
 import { db } from "src/firebase";
-import { ref, child, get } from "firebase/database";
+import { ref, child, get, query, orderByChild, equalTo } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
-import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserPackageHook } from "public/redux/hooks";
+import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
+import QrReader from 'react-qr-scanner'
 
 export default function Index() {
   const [pin, setPin] = useState("");
+  const [scanResultWebCam, setScanResultWebCam] =  useState('');
+  const [isShown, setIsShown] = useState(false);
 
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
@@ -26,23 +29,53 @@ export default function Index() {
   const dispatch = useDispatch();
   var BG_COLOR =
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
-  var [event, setEvent] = useState({});
-  var [user, setUser] = useState({});
 
   const globalUser = useUserPackageHook();
-  const eventUserPlaying = useUserCurrEventPlayingHook();
+  const userHostingEvent = useUserCurrEventHostingHook();
+  const userEventCreating = useUserCurrEventCreatingHook();
+  const userRewardCreating = useUserCurrRewardCreatingHook();
+  const eventPlaying = useUserCurrEventPlayingHook();
+
   const participant = usePlayerParticipantHook();
   const playerEvent = usePlayerEventHook();
-  const userHostingEvent = useUserCurrEventHostingHook();
 
-  // const userId = globalUser.userId;
-  // const eventUserPlayingId = eventUserPlaying.eventId;
-  // const playerCreatedById = participant.createdBy;
-  // const eventParticipant = playerEvent.eventId;
-  // const statusEventUser = eventUserPlaying.status;
-  // const statusEventPlayer = playerEvent.status;
-  // const ownerEventUser = eventUserPlaying.createBy;
-  // const ownerEventParticipant = playerEvent.createBy;
+  useEffect(() => {
+    if (participant.participantId && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
+      get(child(ref(db), "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
+        if (currEvent === undefined || currEvent.delFlag === true) {
+          ShowMethod(dispatch, messagesError.E2004, false);
+          return;
+        }
+        switch (currEvent.status) {
+          case 1:
+            dispatch(removePlayerState());
+            dispatch(removeUserPlaying());
+            return;
+          case 2:
+            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            setTimeout(() => {
+              router.push("event/countdown-checkin/" + currEvent.eventId);
+            }, 500);
+            return
+          case 3:
+            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            setTimeout(() => {
+              router.push("event/luckyspin/" + currEvent.eventId);
+            }, 500);
+            return;
+          case 4:
+            dispatch(removePlayerState());
+            dispatch(removeUserPlaying());
+            return;
+          default:
+            return;
+        }
+      });
+    }
+  })
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -57,33 +90,21 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      dispatch(incognitoEvent(currEvent));
+      window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
+      if (globalUser.userId) {
+        dispatch(userCurrentEventPlaying(currEvent));
+      }
       get(child(ref(db), "users/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
         const values = Object.values(record);
-        var currUser = values.find((item) => item.userId === event.createBy);
-        setUser(currUser);
+        var currUser = values.find((item) => item.userId === currEvent.createBy);
+        dispatch(incognitoUser(currUser));
       });
-      setEvent(currEvent);
       const path = "/event/join";
       checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
     });
-  }, [dispatch, event.createBy, pin]);
-
-  /* Export current event to redux for another access */
-  useEffect(() => {
-    dispatch(incognitoEvent(event));
-    dispatch(incognitoUser(user));
-    if (globalUser.userId) {
-      dispatch(userCurrentEventPlaying(event));
-    }
-  }, [dispatch, event, globalUser.userId, user])
-
-  /*localStorage is here to track what has been saved*/
-  useEffect(() => {
-    window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(event.eventId));
-  }, [event]);
-
-  console.log({ pin })
+  }, [dispatch, globalUser.userId, pin]);
 
   const pinData = useCallback(
     (e) => {
@@ -250,6 +271,64 @@ export default function Index() {
   //     }
   //   });
   // } else {
+
+  const handleClick = event => {
+    setIsShown(current => !current);
+  };
+  
+    // const [scanResultFile, setScanResultFile] = useState('');
+    // const qrRef = useRef(null)
+  
+    //  const handleErrorFile = (error) => {
+    //      alert(error)
+    //   }
+    //   const  handleScanFile = (result) => {
+    //     if  (result) {
+    //        setScanResultFile(result)
+    //     }
+    //   }
+    // const onScanFile = () => {
+    //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
+    // }
+
+  
+  const handleErrorWebCam = (error) => {
+    alert("not connect camera");
+  }
+  const handleScanWebCam = (result) => {
+    if (result){
+        setScanResultWebCam(result);
+    }
+  }
+  const renderQRscan = useMemo(() =>{
+    return(
+      <div className="flex flex-col justify-center items-center">
+        <QrButton onClick={() => {
+          if (window.innerWidth <= 768) {
+            return
+          }
+          setIsShown(current => !current);
+        }} />
+        {/* {isShown && <QrReader className="h-[120px]"     
+        />} */}
+
+        {isShown && <QrReader 
+          //  ref={qrRef}
+            delay={300}
+            style={{ width:'180px'}}
+            onError={handleErrorWebCam}
+            onScan={handleScanWebCam}
+        />}
+        {/* {isShown && <BgBlueButton className="w-[200px]"  variant="contained" content="open file" onClick={onScanFile}/>} */}
+        {isShown && (
+        <div>
+        <h3> Scanned  Code: <a  href={scanResultWebCam}>{scanResultWebCam}</a></h3>
+        </div>)}
+      </div>  
+    )
+  },[handleClick,isShown])
+
+
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
@@ -258,8 +337,7 @@ export default function Index() {
         {renderInput}
         {renderButton}
         {renderLine}
-        <QrButton onClick={() => alert("Please scan a QR code to join.")} />
-        {/* Handle logic todo: go direct to open device's camera */}
+        {renderQRscan}
         {renderDirect}
       </div>
       {renderPopUp}
