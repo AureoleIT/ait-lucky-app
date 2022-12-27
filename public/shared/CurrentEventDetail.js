@@ -21,12 +21,12 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
                 </div>
                 <div className="flex flex-col w-full h-full max-h-64 px-5 overflow-hidden" style={{minHeight: "8rem"}}>
                     <Title title="THÔNG TIN GIẢI THƯỞNG" fontSize="20" margin="mb-4"/>
-                    <div className="h-1 bg-white w-full -mt-4 mb-4"></div>
+                    <div className="h-1 bg-white w-full -mt-4 mb-2"></div>
                     <RewardList listReward={listReward} showRemain={remainReward} eventPaticipant={Object.values(listPlayer)} />
                 </div>
                 <div className="flex flex-col w-full grow px-5 mt-4 overflow-hidden">
                     <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="20" />
-                    <div className="h-1 bg-white w-full -mt-4 mb-4"></div>
+                    <div className="h-2 bg-white w-full -mt-4 mb-4"></div>
                     <PlayerList listPlayer={listPlayer} listReward={listReward} isAdmin={isAdmin} />
                 </div>
         </div>
