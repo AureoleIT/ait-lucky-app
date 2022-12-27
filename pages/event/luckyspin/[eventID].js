@@ -223,9 +223,9 @@ export default function LuckySpin() {
                         </svg>
                     </>}
                     {confirmStatus === 0 && <>
-                        <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex].nameDisplay}</p>
+                        <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex]?remainPlayerList[lastAwardedIndex].nameDisplay:""}</p>
                         <p className="font-semibold">sẽ nhận được giải:</p>
-                        <p className="font-[900] text-lg">{remainRewardList[rewardChosing].nameReward}</p>
+                        <p className="font-[900] text-lg">{remainRewardList[rewardChosing]?remainRewardList[rewardChosing].nameReward:""}</p>
                         <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
                         <p>Đang chờ xác nhận trao giải ...</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
@@ -393,7 +393,7 @@ export default function LuckySpin() {
                             </div>
                         </div>
                         {spinBlock}
-                        <div className="w-full mb-20">
+                        <div className="w-full mb-16">
                             <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
                             <div className="h-44 px-4 py-2 relative">
                                 {renderRewardList}
