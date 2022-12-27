@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Title from "public/shared/Title";
-import { useMemo } from "react/cjs/react.development";
 import Spin from "public/shared/Spin";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";

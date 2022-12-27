@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import Button from "public/shared/Button";
 import Title from "public/shared/Title";
-import { useMemo } from "react/cjs/react.development";
 import Spin from "public/shared/Spin";
 import CurrentEventDetail from "public/shared/CurrentEventDetail";
 import OverlayBlock from "public/shared/OverlayBlock";
