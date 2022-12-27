@@ -63,40 +63,90 @@ export default function LuckySpinAdmin() {
     // Thời gian cho animate quay thưởng
     const [spinTime, setSpinTime] = useState(4);
 
-    const getEventID = () => {
+    const getData = () => {
         console.log("Welcome admin ", adminId);
         console.log("Getting event with ID:", EventID);
-        get(query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID))).then((snapshot) => {
-            if (snapshot.exists()) {
+
+        const asyncData = () => {
+            const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
+            const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+            const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
+            //  Load data
+            const loadEventPaticipant = get(que2);
+            const loadEvent = get(que3);
+            const loadEventReward = get(que1);
+            let combined_promise = Promise.all([loadEventPaticipant, loadEvent, loadEventReward]);
+            return combined_promise;
+        }
+
+        async function loadData() {
+            await update(ref(db, "event/" + EventID + "/playingData"), {
+                isSpinning: false,
+                lastAwardedIndex: 0,
+                lastAwardedId: "",
+                rewardChosingId: "",
+                rewardChosingIndex: 0,
+                spinTime: spinTime,
+                confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
+            });
+            
+            const dataset = await asyncData();
+            // Event Paticipant
+            if (dataset[0].exists()) {
+                const rawData = dataset[0].val();
+                const dataEventParticipant = Object.values(rawData);
+                dataEventParticipant.forEach((val, idx) => {
+                    val.ID = Object.keys(rawData)[idx];
+                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            val['pic'] = snapshot.val().pic;
+                        }
+                    })
+                })
+                const online = dataEventParticipant.filter(val => val.status === 1).length;
+                const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
+                setPlayerList(rawData);
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
+            }
+            // Event
+            if (dataset[1].exists()) {
                 // setEventID(Object.keys(snapshot.val())[0]);
-                const data = Object.values(snapshot.val())[0];
-                if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
-                if (data["status"] === 4) router.push('/event/event-result/' + EventID);
-                setEventInfo(data);
+                const dataEvent = Object.values(dataset[1].val())[0];
+                if (dataEvent["status"] === 1) router.push('/');
+                if (dataEvent["status"] === 2) router.push('/admin/event/countdown-checkin');
+                if (dataEvent["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(dataEvent);
                 // Nếu không phải admin sự kiện, đưa về trang chủ.
-                if (adminId !== data.createBy) {
+                if (adminId !== dataEvent.createBy) {
                     console.log('No permission!')
                     router.push('/');
                 };
+                const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
+                const rewardChosingId = dataEvent['playingData']['rewardChosingId'];
+                const spin_time = dataEvent['playingData']['spinTime'];
+                setRewardChosing(rewardChosingIndex);
+                setIDRewardChosing(rewardChosingId);
+                setSpinTime(spin_time);
             } else {
                 console.log('Not found event');
                 router.back();
             }
-        })
+            // Event Reward
+            if (dataset[2].exists()) {
+                const dataEventReward = Object.values(dataset[2].val());
+                dataEventReward.sort(compare);
+                setRewardList(dataEventReward);
+                setRemainRewardList(dataEventReward.filter((val) => (val.quantityRemain > 0)));
+            }
+            setLoadedData(true);
+        }
+
+        loadData();
     }
 
     const fetchDB = () => {
         console.log(`Getting event ${EventID}'s data`);
-        update(ref(db, "event/" + EventID + "/playingData"), {
-            isSpinning: false,
-            lastAwardedIndex: 0,
-            lastAwardedId: "",
-            rewardChosingId: "",
-            rewardChosingIndex: 0,
-            spinTime: spinTime,
-            confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
-        });
 
         const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
         onValue(que3, (snapshot) => {
@@ -106,11 +156,6 @@ export default function LuckySpinAdmin() {
                 if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
-                // // Nếu không phải admin sự kiện, đưa về trang chủ.
-                // if (adminId !== data.createBy) {
-                //     console.log('No permission!')
-                //     router.push('/');
-                // };
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
                 const rewardChosingId = data['playingData']['rewardChosingId'];
                 const spin_time = data['playingData']['spinTime'];
@@ -145,16 +190,13 @@ export default function LuckySpinAdmin() {
                         }
                     })
                 })
-                setTimeout(function () {
-                    const online = data.filter(val => val.status === 1).length;
-                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-                    setPlayerList(rawData);
-                    setRemainPlayerList(filted);
-                    setOnlinePlayerAmount(online);
-                }, 200)
+                const online = data.filter(val => val.status === 1).length;
+                const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+                setPlayerList(rawData);
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
             }
         });
-        setTimeout(() => setLoadedData(true), 1000)
     }
 
     // ------------------------------------------------ Function
@@ -249,7 +291,7 @@ export default function LuckySpinAdmin() {
     }, [dispatch])
 
     useEffect(() => {
-        getEventID()
+        getData()
     }, [])
 
     useEffect(() => {

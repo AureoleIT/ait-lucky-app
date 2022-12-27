@@ -64,26 +64,90 @@ export default function LuckySpin() {
     // Xác nhận trao thưởng
     const [confirmStatus, setConfirmStatus] = useState(0);
 
-    const getEventID = () => {
+    const getData = () => {
         console.log("Welcome player ", participantId);
         console.log("Player detail:", currPlayer)
         console.log("Getting event with ID:", EventID);
-        // get(query(ref(db, "event"), orderByChild("eventId"), equalTo(pinCode))).then((snapshot) => {
-        //     if (snapshot.exists()) {
-        //         setEventID(Object.keys(snapshot.val())[0]);
-        //     } else {
-        //         console.log('Not found event');
-        //         router.push('/');
-        //     }
-        // })
-        get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
-            if (snapshot.exists()) {
-                if (snapshot.val() === 0) {
-                    if (document.getElementById("kickPlayerOverlay")) document.getElementById("kickPlayerOverlay").classList.remove("hidden");
-                    router.push('/');
+
+        const asyncData = () => {
+            const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(EventID));
+            const que3 = query(ref(db, "event"), orderByChild("eventId"), equalTo(EventID));
+            const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
+            //  Load data
+            const loadEventPaticipant = get(que2);
+            const loadEvent = get(que3);
+            const loadEventReward = get(que1);
+            let combined_promise = Promise.all([loadEventPaticipant, loadEvent, loadEventReward]);
+            return combined_promise;
+        }
+
+        async function loadData() {
+            await get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
+                if (snapshot.exists()) {
+                    if (snapshot.val() === 0) {
+                        if (document.getElementById("kickPlayerNotificationOverlay")) document.getElementById("kickPlayerNotificationOverlay").classList.remove("hidden");
+                        router.push('/');
+                    }
                 }
+            });
+
+            const dataset = await asyncData();
+            // Event Paticipant
+            if (dataset[0].exists()) {
+                const rawData = dataset[0].val();
+                const dataEventParticipant = Object.values(rawData);
+                // Nếu không tồn tại
+                if (!Object.keys(dataset[0].val()).includes(participantId)) {
+                    console.log('Not found player');
+                    router.push('/');
+                };
+                dataEventParticipant.forEach((val, idx) => {
+                    val.ID = Object.keys(rawData)[idx];
+                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            val.pic = snapshot.val().pic;
+                        }
+                    })
+                })
+                const online = dataEventParticipant.filter(val => val.status === 1).length;
+                const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
+                setPlayerList(rawData);
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
             }
-        });
+            // Event
+            if (dataset[1].exists()) {
+                const dataEvent = Object.values(dataset[1].val())[0];
+                if (dataEvent["status"] === 1) router.push('/');
+                if (dataEvent["status"] === 2) router.push('/event/countdown-checkin');
+                if (dataEvent["status"] === 4) router.push('/event/event-result/' + EventID);
+                setEventInfo(dataEvent);
+                const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
+                const isSpining = dataEvent['playingData']['isSpinning'];
+                const lastAwardedIndex = dataEvent['playingData']['lastAwardedIndex'];
+                const spinTime = dataEvent['playingData']['spinTime'];
+                setSpinTime(spinTime);
+                setConfirmStatus(dataEvent['playingData']['confirmStatus'])
+                if (!spinClicked && isSpining) {
+                    setLastAwardedIndex(lastAwardedIndex);
+                    setSpinClicked(isSpining);
+                };
+                setRewardChosing(rewardChosingIndex);
+            } else {
+                console.log('Not found event');
+                router.push('/');
+            }
+            // Event Reward
+            if (dataset[2].exists()) {
+                const dataEventReward = Object.values(dataset[2].val());
+                dataEventReward.sort(compare);
+                setRewardList(dataEventReward);
+                setRemainRewardList(dataEventReward.filter((val) => (val.quantityRemain > 0)));
+                setLoadedData(true);
+            }
+        }
+
+        loadData();
     }
 
     const fetchDB = () => {
@@ -94,10 +158,6 @@ export default function LuckySpin() {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
                 // Nếu không tồn tại
-                if (!Object.keys(snapshot.val()).includes(participantId)) {
-                    console.log('Not found player');
-                    router.push('/');
-                }
                 data.forEach((val, idx) => {
                     val.ID = Object.keys(rawData)[idx];
                     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
@@ -106,13 +166,11 @@ export default function LuckySpin() {
                         }
                     })
                 })
-                setTimeout(function () {
-                    const online = data.filter(val => val.status === 1).length;
-                    const filted = data.filter(val => (val.idReward === "" && val.status === 1));
-                    setPlayerList(rawData);
-                    setRemainPlayerList(filted);
-                    setOnlinePlayerAmount(online);
-                }, 200);
+                const online = data.filter(val => val.status === 1).length;
+                const filted = data.filter(val => (val.idReward === "" && val.status === 1));
+                setPlayerList(rawData);
+                setRemainPlayerList(filted);
+                setOnlinePlayerAmount(online);
             }
         });
 
@@ -150,8 +208,7 @@ export default function LuckySpin() {
                 setRemainRewardList(data.filter((val) => (val.quantityRemain > 0)));
             }
         });
-
-        setTimeout(() => setLoadedData(true), 1000)
+        // setLoadedData(true);
     }
 
     // ------------------------------------------------- Function
@@ -223,9 +280,9 @@ export default function LuckySpin() {
                         </svg>
                     </>}
                     {confirmStatus === 0 && <>
-                        <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex]?remainPlayerList[lastAwardedIndex].nameDisplay:""}</p>
+                        <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex] ? remainPlayerList[lastAwardedIndex].nameDisplay : ""}</p>
                         <p className="font-semibold">sẽ nhận được giải:</p>
-                        <p className="font-[900] text-lg">{remainRewardList[rewardChosing]?remainRewardList[rewardChosing].nameReward:""}</p>
+                        <p className="font-[900] text-lg">{remainRewardList[rewardChosing] ? remainRewardList[rewardChosing].nameReward : ""}</p>
                         <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
                         <p>Đang chờ xác nhận trao giải ...</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
@@ -255,10 +312,7 @@ export default function LuckySpin() {
     // Real time
     useEffect(() => {
         dispatch(incognitoEvent({ eventId: EventID }));
-    }, [])
-
-    useEffect(() => {
-        getEventID()
+        getData()
     }, [])
 
     useEffect(() => {
@@ -275,7 +329,7 @@ export default function LuckySpin() {
                     if (snapshot.val() === 0) {
                         console.log("BAN");
                         clearInterval(onlineStatus);
-                        if (document.getElementById("kickPlayerOverlay")) document.getElementById("kickPlayerOverlay").classList.remove("hidden");
+                        if (document.getElementById("kickPlayerNotificationOverlay")) document.getElementById("kickPlayerNotificationOverlay").classList.remove("hidden");
                         return;
                     } else {
                         update(ref(db, 'event_participants/' + participantId), {
@@ -358,7 +412,7 @@ export default function LuckySpin() {
             <>
                 <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn đã bị cấm khỏi sự kiện <br /> bởi người điều hành</p>
             </>
-        } id={"kickPlayerOverlay"} clickOutFunc={() => router.push('/')} Timeout={3000} />
+        } id={"kickPlayerNotificationOverlay"} clickOutFunc={() => router.push('/')} Timeout={3000} />
     }, [])
 
     return (
