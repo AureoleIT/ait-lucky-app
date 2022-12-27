@@ -14,7 +14,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     }
 
     const PlayerList_List = (
-        <div className="flex flex-col divide-y divide-white/50">
+        <div className="flex flex-col divide-y divide-white/50 h-full">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     if (player.status === 0 && !isAdmin) return;
@@ -48,7 +48,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     }
 
     const PlayerList_Menu = (
-        <div className="grid grid-flow-row grid-cols-4 mt-2 grow min-h-fit h-28">
+        <div className="grid grid-flow-row grid-cols-4 h-32">
             {
                 listPlayer!==undefined?listPlayer.map((player, idx) => {
                     if (player.status === 0 && !isAdmin) return;
@@ -91,7 +91,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
                     </svg>
                 </span>
             </div>:<></>}
-            <div className="overflow-auto grow w-full">
+            <div className="overflow-auto h-full w-full">
                 {typeList==="List"?PlayerList_List:PlayerList_Menu}
             </div>
             {listPlayer.length?<OverlayBlock childDiv={<div className="hidden" id="playerDetail"></div>} id={"playerDetailOverlay"} manual={true} zIndex={45} rerenderOnChange={[listPlayer]} />:<></>}

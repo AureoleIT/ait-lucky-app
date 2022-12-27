@@ -7,7 +7,7 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
     const [expand, setExpand] = useState(false);
 
     const EventDetailExpand = (
-        <div className="flex flex-col w-full h-[80%] absolute bg-[#40BEE5] rounded-t-2xl bottom-0" onClick={(e) => {e.stopPropagation();}}
+        <div className="flex flex-col w-full absolute bg-[#40BEE5] rounded-t-2xl bottom-0" onClick={(e) => {e.stopPropagation();}}
             style={{height: !expand?"60%":"90%"}}>
                 <div className="flex w-14 absolute bg-[#40BEE5] h-7 rounded-t-2xl -top-7 right-6 items-center justify-center" onClick={() => setExpand(!expand)}>
                     <span className="pointer-event-none">
@@ -20,13 +20,13 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
                     <p className="w-full text-center items-center uppercase text-white font-[900] text-[20px]">THÔNG TIN SỰ KIỆN</p>
                 </div>
                 <div className="flex flex-col w-full h-full max-h-64 px-5 overflow-hidden" style={{minHeight: "8rem"}}>
-                    <Title title="THÔNG TIN GIẢI THƯỞNG" fontSize="20" margin="mb-4"/>
-                    <div className="h-1 bg-white w-full -mt-4 mb-2"></div>
+                    <Title title="THÔNG TIN GIẢI THƯỞNG" fontSize="text-[20]" margin="mb-4"/>
+                    <div className="h-1 bg-white w-full -mt-4 mb-2 grow-0"></div>
                     <RewardList listReward={listReward} showRemain={remainReward} eventPaticipant={Object.values(listPlayer)} />
                 </div>
-                <div className="flex flex-col w-full grow px-5 mt-4 overflow-hidden">
-                    <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="20" />
-                    <div className="h-2 bg-white w-full -mt-4 mb-4"></div>
+                <div className="flex flex-col w-full h-full px-5 mt-4 overflow-hidden">
+                    <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="text-[20]" margin="mb-4" />
+                    <div className="h-1 bg-white w-full -mt-4 mb-4 grow-0"></div>
                     <PlayerList listPlayer={listPlayer} listReward={listReward} isAdmin={isAdmin} />
                 </div>
         </div>
