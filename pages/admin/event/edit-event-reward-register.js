@@ -99,6 +99,13 @@ function EditEventRewardRegister() {
             }
         })
     },[])
+
+    const compare = (a, b) => {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+    
     // get reward from firebase
     const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(String(eventID)))
     useEffect(() =>
@@ -108,7 +115,9 @@ function EditEventRewardRegister() {
             const data = snapshot.val()
             if (data !== undefined && data !== null)
             {
-                setRewards(Object.values(data))
+                const rw = Object.values(data)
+                rw.sort(compare)
+                setRewards(rw)
             }   
         })
         

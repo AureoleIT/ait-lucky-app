@@ -71,7 +71,7 @@ export default function EventRegister() {
                 createAt: new Date().getTime(),
                 createBy: user.userId,
                 userJoined: 0,
-                pinCode: id.current.slice(0, 6),
+                pinCode: new Date().getTime().toString().slice(-8),
                 status: 1,
                 delFlag: false,
             };

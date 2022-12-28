@@ -16,19 +16,23 @@ import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, 
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
-import {ref, update, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, child, get, update, onValue, query, orderByChild, equalTo} from "firebase/database"
 import { Button, PageLoading } from "public/shared"
 
 
 function CountDownCheckIn () 
 {
+    const dbRef = ref(db);
+
     // router
     const router = useRouter()
     // user
     const { query: { countdown, statusEvent } } = router
 
     const props = {countdown, statusEvent}
+
     let initCountdown = countdown
+
     // dispatch
     const dispatch = useDispatch()
     // eventID
@@ -48,20 +52,30 @@ function CountDownCheckIn ()
         }
     }
     const eventID = event.eventId
-    const pinCode = eventID.slice(0,6)
-    const startingTime = event.startAt
+    const pinCode = event.pinCode
+    let startingTime
 
+    get(child(dbRef, "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        const currentEvent = values.find(x => x.pinCode === pinCode)
+        startingTime = currentEvent.startAt
+    })
+    
     // state
     const [loadedData, setLoadedData] = useState(false)
+    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [minutes, setMinutes] = useState(Math.floor(initCountdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
-    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown
     const [player, setPlayer] = useState(0)  // number of player join
     const [playerList, setPlayerList] = useState([])  // list of player join
     const [eventName, setEventName] = useState(event.title)
+    const [statusOfEvent, setStatusOfEvent] = useState()
+
+    console.log(minutes,seconds)
 
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
@@ -98,8 +112,28 @@ function CountDownCheckIn ()
                 const rawData = snapshot.val()
                 const data = Object.values(rawData)
                 setEventName(data[0].title)
+                setStatusOfEvent(data[0].status)
             }
         })
+    },[])
+
+    useEffect(() =>
+    {
+        if(statusOfEvent === 3) { router.push(`/admin/luckyspin/${eventID}`) }
+    },[statusOfEvent, eventID])
+
+    // check countdown end or not
+    useEffect(() =>
+    {
+        if((startingTime + (minutes * 60 * 1000)) < new Date().getTime())
+        {
+            update(ref(db,`event/${eventID}`), { status:3 })
+            setTimeout(() =>
+            {
+                HideMethod(dispatch)
+                router.push(`/admin/luckyspin/${eventID}`)
+            },2000)
+        }
     },[])
 
     //countdown
@@ -117,12 +151,11 @@ function CountDownCheckIn ()
             {
                 deadline = date.getTime() + (minutes * 60 * 1000)
             }
-    
-            let countdown = null
+            // let countdown = null
     
             if(isActive && isStop === false)
             {
-                countdown = setInterval(() => {
+                let countdown = setInterval(() => {
                     let nowDate = new Date()
                     let left = deadline - nowDate
     
@@ -145,10 +178,8 @@ function CountDownCheckIn ()
                             router.push(`/admin/luckyspin/${eventID}`)
                         },2000)
                     }
-                    else {
-                        setMinutes(nowMinutes)
-                        setSeconds(nowSeconds)
-                    }   
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
                 }, 1000)
             }
             else {
@@ -159,9 +190,7 @@ function CountDownCheckIn ()
     },[isActive, isStop, dispatch])
     
     // close pop up
-    const closePopup = (e) => {
-        setIsHidden(hidden);
-    };
+    const closePopup = (e) => { setIsHidden(hidden) };
 
     // generate qr code
     const generateQRcode = useCallback(() =>
@@ -192,6 +221,7 @@ function CountDownCheckIn ()
     const handleStartEvent = useCallback(() =>
     {   
         setIsStop(true)
+        update(ref(db,`event/${eventID}`), { status:3 })
         ShowMethod(dispatch, messagesSuccess.I0010, true)
         setTimeout(() =>
         {
@@ -214,7 +244,7 @@ function CountDownCheckIn ()
     {
         return (
             <div className="w-4/5 max-w-xl h-[80px] flex justify-center items-center">
-                <PinCode length={6} value={pinCode} />
+                <PinCode length={8} value={pinCode} />
             </div> 
         )
     },[pinCode])
@@ -354,11 +384,7 @@ function CountDownCheckIn ()
                             {renderStartButton}
                             {renderPopup}
                 </section>
-            )
-            :
-            (
-                <PageLoading />
-            )
+            ) : ( <PageLoading /> )
         }
         </>
     )
