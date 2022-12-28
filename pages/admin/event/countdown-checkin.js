@@ -144,7 +144,7 @@ function CountDownCheckIn() {
                     let nowSeconds = Math.floor((left / 1000) % 60);
                     let nowMinutes = Math.floor((left / 1000 / 60) % 60);
 
-                    if (nowMinutes === 0 && nowSeconds === 0) {
+                    if (nowMinutes <= 0 && nowSeconds <= 0) {
                         clearInterval(countdown)
 
                         update(ref(db, `event/${eventID}`),
