@@ -119,7 +119,7 @@ export default function LuckySpin() {
             if (dataset[1].exists()) {
                 const dataEvent = Object.values(dataset[1].val())[0];
                 if (dataEvent["status"] === 1) router.push('/');
-                if (dataEvent["status"] === 2) router.push('/event/countdown-checkin');
+                if (dataEvent["status"] === 2) router.push('/event/countdown-checkin/' + EventID);
                 if (dataEvent["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(dataEvent);
                 const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
@@ -178,7 +178,7 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/event/countdown-checkin');
+                if (data["status"] === 2) router.push('/event/countdown-checkin/' + EventID);
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
