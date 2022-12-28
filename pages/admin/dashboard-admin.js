@@ -2,7 +2,14 @@ import React, { useState, useEffect, useMemo } from "react";
 import router from "next/router";
 // firebase
 import { db } from "src/firebase";
-import { ref, orderByChild, query, onValue } from "firebase/database";
+import {
+  ref,
+  orderByChild,
+  query,
+  onValue,
+  orderByValue,
+  orderByKey,
+} from "firebase/database";
 // redux
 import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
@@ -16,11 +23,12 @@ import nyancat from "public/img/nyancat.gif";
 
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
+  const [reverse, setReverse] = useState([]);
   const [arrID, setArrID] = useState([]);
   const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const queDb = query(ref(db, "event"), orderByChild("createAt"));
+  const queDb = query(ref(db, "event"), orderByValue("createBy"));
   // authentication, only users can access this page
   const checkAuth = () => {
     router.push("/auth/login");
@@ -54,6 +62,15 @@ export default function Dashboard() {
       const data = snapshot.val();
       if (data != null) {
         const values = Object.values(data);
+        values.sort((a, b) =>
+          a.createAt > b.createAt
+            ? -1
+            : a.createAt === b.createAt
+            ? a.title > b.title
+              ? -1
+              : 1
+            : 1
+        );
         values.forEach((value) => {
           if (
             value.delFlag === false &&
@@ -65,12 +82,30 @@ export default function Dashboard() {
       }
     });
   }, []);
+
+  // console.log(arrStatus);
+  useEffect(() => {
+    const reverse = arrStatus.reverse();
+    console.log(reverse);
+  }, []);
+  // console.log("==============");
+  // console.log(reverse);
+
   useEffect(() => {
     onValue(queDb, (snapshot) => {
       setArrID([]);
       const data = snapshot.val();
       if (data != null) {
         const values = Object.values(data);
+        values.sort((a, b) =>
+          a.createAt > b.createAt
+            ? -1
+            : a.createAt === b.createAt
+            ? a.title > b.title
+              ? -1
+              : 1
+            : 1
+        );
         values.forEach((value) => {
           if (value.delFlag === false && value.createBy === currentUser.userId)
             setArrID((prev) => [...prev, value]);
