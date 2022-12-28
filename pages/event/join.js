@@ -7,13 +7,14 @@ import { db } from "./../../src/firebase";
 import { HideMethod, ShowMethod } from "public/util/popup";
 import { isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { ref, set } from "firebase/database";
+import { child, push, ref, set, update } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
 import { incognitoParticipant, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
+import { database } from "firebase";
 
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
@@ -30,11 +31,11 @@ export default function Info() {
   var [player, setPlayer] = useState({});
 
   // Get current event from previous state get in
-  const currEvent = usePlayerEventHook();
+  var currEvent = usePlayerEventHook();
 
   //Get current user logged in and play
   const currUser = useUserPackageHook()
-console.log(currEvent)
+  console.log(currEvent)
   useEffect(() => {
     if (!currEvent.eventId) {
       router.push("/");
@@ -59,17 +60,26 @@ console.log(currEvent)
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
-        ShowMethod(dispatch, messagesSuccess.I0009, true)
-        setPlayer(newParticipant)
+        
+        currEvent.userJoined += 1;
+        update(ref(db, `event/${currEvent.eventId}`),
+          {
+            userJoined: currEvent.userJoined,
+          }).then(
+            ShowMethod(dispatch, messagesSuccess.I0009, true)
+          ).catch((e) => {
+            ShowMethod(dispatch, messagesError.E4444, false)
+          })
+          setPlayer(newParticipant)
         setTimeout(() => {
           HideMethod(dispatch)
           router.push("/event/countdown-checkin");
-        }, 1000);
+        }, 500);
       })
       .catch((e) => {
         ShowMethod(dispatch, messagesError.E4444, false)
       });
-  }, [currEvent.eventId, currUser.pic, currUser.userId, dispatch, name]);
+  }, [currEvent, currUser.pic, currUser.userId, dispatch, name]);
 
   // Set and save new player object to redux
   useEffect(() => {

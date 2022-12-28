@@ -90,6 +90,10 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      if ( currEvent.maxTicket === currEvent.userJoined ) { 
+        ShowMethod(dispatch, messagesError.E2005, false);
+        return;
+      }
       dispatch(incognitoEvent(currEvent));
       window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
       if (globalUser.userId) {
@@ -198,80 +202,6 @@ export default function Index() {
     )
   }, [visible, status, message])
 
-  // if (playerCreatedById === userId
-  //   && eventUserPlayingId === eventParticipant
-  //   && statusEventPlayer === statusEventUser
-  //   && ownerEventUser !== ownerEventParticipant) {
-  //   get(child(ref(db), "event/")).then((snapshot) => {
-  //     const record = snapshot.val() ?? [];
-  //     const values = Object.values(record);
-  //     var currEvent = values.find((item) => item.eventId === eventUserPlayingId);
-  //     if (currEvent === undefined || currEvent.delFlag === true) {
-  //       ShowMethod(dispatch, messagesError.E2004, false);
-  //       return;
-  //     }
-  //     switch (currEvent.status) {
-  //       case 1:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3001, false);
-  //         return;
-  //       case 2:
-  //         ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-  //         setTimeout(() => {
-  //           router.push("event/countdown-checkin");
-  //         }, 500);
-  //         return
-  //       case 3:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3002, false);
-  //         return;
-  //       case 4:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3003, false);
-  //         return;
-  //       default:
-  //         return;
-  //     }
-  //   });
-  // } else if (ownerEventUser === ownerEventParticipant) {
-  //   get(child(ref(db), "event/")).then((snapshot) => {
-  //     const record = snapshot.val() ?? [];
-  //     const values = Object.values(record);
-  //     var currEvent = values.find((item) => item.eventId === userHostingEvent.eventId);
-  //     if (currEvent === undefined || currEvent.delFlag === true) {
-  //       ShowMethod(dispatch, messagesError.E2004, false);
-  //       return;
-  //     }
-  //     switch (currEvent.status) {
-  //       case 1:
-  //         setTimeout(() => {
-  //           router.push("/admin/event/event-detail");
-  //         }, 500);
-  //         return;
-  //       case 2:
-  //         setTimeout(() => {
-  //           router.push("/admin/countdown-checkin");
-  //         }, 500);
-  //         return
-  //       case 3:
-  //         setTimeout(() => {
-  //           router.push("/admin/luckyspin/" + currEvent.eventId);
-  //         }, 500);
-  //         return;
-  //       case 4:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserHosting())
-  //         ShowMethod(dispatch, messagesError.E3003, false);
-  //         return;
-  //       default:
-  //         return;
-  //     }
-  //   });
-  // } else {
-
   const handleClick = event => {
     setIsShown(current => !current);
   };
@@ -328,7 +258,6 @@ export default function Index() {
     )
   },[handleClick,isShown])
 
-
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
@@ -343,5 +272,4 @@ export default function Index() {
       {renderPopUp}
     </section>
   );
-  // }
 }
