@@ -101,14 +101,14 @@ export default function LuckySpin() {
                     console.log('Not found player');
                     router.push('/');
                 };
-                dataEventParticipant.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val.pic = snapshot.val().pic;
-                        }
-                    })
-                })
+                // dataEventParticipant.forEach((val, idx) => {
+                //     val.ID = Object.keys(rawData)[idx];
+                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                //         if (snapshot.exists()) {
+                //             val.pic = snapshot.val().pic;
+                //         }
+                //     })
+                // })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -157,15 +157,14 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                // Nếu không tồn tại
-                data.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val.pic = snapshot.val().pic;
-                        }
-                    })
-                })
+                // data.forEach((val, idx) => {
+                //     val.ID = Object.keys(rawData)[idx];
+                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                //         if (snapshot.exists()) {
+                //             val.pic = snapshot.val().pic;
+                //         }
+                //     })
+                // })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
