@@ -18,6 +18,7 @@ export default function Input({
   children,
   margin = 2,
   isMultiLine = false,
+  height = "auto"
 }) {
   const contentCSS = {
     background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -27,14 +28,15 @@ export default function Input({
   return (
     <div
       className={`p-[2px] rounded-[10px] w-full min-h-[60px] my-${margin} outline-none relative flex flex-col
-      bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}]`}
+      bg-gradient-to-r from-[${primaryColor}] to-[${secondaryColor}] ${height === "auto" ? "h-auto" : height}`}
     >
-      <div className="h-full grow flex flex-col">
+      <div className="h-full resize-none flex flex-col">
         <input
           type={type}
-          className={`min-h-[56px] autofill:!bg-white w-full rounded-lg text-lg px-4 outline-none border-none 
+          className={`min-h-[56px] autofill:!bg-white w-full max-w-full rounded-lg text-lg px-4 outline-none border-none 
           ${noContent ? "text-center" : ""} 
-          ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"}`}
+          ${children ? "hidden" : ""} ${!isMultiLine ? "" : "hidden"} 
+          h-full`}
           placeholder={placeHolder}
           onChange={onChange}
           value={value}
@@ -43,8 +45,9 @@ export default function Input({
           required
         />
         <textarea
+          id="event-desc"
           className={`min-h-[56px] w-full rounded-lg px-4 py-4 text-lg outline-none border-none 
-            ${isMultiLine ? "" : "hidden"}`}
+          ${isMultiLine ? "resize-none" : "hidden"} h-full resize-none`}
           rows={row}
           value={value}
           onChange={onChange}
