@@ -157,14 +157,12 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                // data.forEach((val, idx) => {
-                //     val.ID = Object.keys(rawData)[idx];
-                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                //         if (snapshot.exists()) {
-                //             val.pic = snapshot.val().pic;
-                //         }
-                //     })
-                // })
+                data.forEach((val, idx) => {
+                    if (val.status !== 0)
+                        update(ref(db, 'event_participants/' + val.participantId), {
+                            status: 1
+                        });
+                })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
