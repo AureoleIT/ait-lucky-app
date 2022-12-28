@@ -34,7 +34,8 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
     }
 
     const openImage = (index, imgIdx) => {
-        document.getElementById("showImageOverlay").classList.toggle("hidden");
+        if (document.getElementById("showImageOverlay")) document.getElementById("showImageOverlay").classList.toggle("hidden");
+        else (alert("Có lỗi trong mở khung hiển thị hình ảnh!"))
         setRewardIndex(index);
         setRewardImageIndex(imgIdx);
     }
@@ -68,7 +69,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
             <>
                 {imgUrls.length?
                 <>
-                    <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto">
+                    <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto select-none">
                         {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
                             onTouchStart={(e) => {
                                 setTouchX(e.touches[0].clientX)
@@ -126,7 +127,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
 
     const getDetailFromReward = (reward, index) => {
         return (
-            <div className="flex flex-col">
+            <div className="flex flex-col select-none">
                 <div className="h-full grid grid-flow-row grid-cols-3 gap-2">
                     {
                         (reward.imgUrl !== undefined && reward.imgUrl !== [])?reward.imgUrl.slice(0, 3).map((url, idx) => {
