@@ -115,8 +115,8 @@ export default function EventRegister() {
 
     const renderDescription = useMemo(() => {
         return (
-            <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
-                <Input content={"Mô tả sự kiện"} row={4} maxLength={"1000"} value={description} onChange={onChangeDescription} isMultiLine={true} />
+            <div className="flex items-center h-[200px] w-full">
+                <Input content={"Mô tả sự kiện"} row={4} maxLength={"1000"} value={description} onChange={onChangeDescription} height={"h-full"} isMultiLine={true} />
             </div>
         );
     }, [description, onChangeDescription]);
@@ -164,9 +164,11 @@ export default function EventRegister() {
                 <div className="w-full flex items-center justify-center">
                     <div className="flex flex-col items-center justify-center w-4/5 max-w-xl">
                         {renderTitleHeader}
-                        {renderTitle}
-                        {renderDescription}
-                        {renderMaxTicket}
+                        <div className="flex flex-col gap-4 w-full">
+                            {renderTitle}
+                            {renderDescription}
+                            {renderMaxTicket}
+                        </div>
                         {renderCheckbox}
                     </div>
                 </div>
