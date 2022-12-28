@@ -95,14 +95,14 @@ export default function LuckySpinAdmin() {
             if (dataset[0].exists()) {
                 const rawData = dataset[0].val();
                 const dataEventParticipant = Object.values(rawData);
-                dataEventParticipant.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val['pic'] = snapshot.val().pic;
-                        }
-                    })
-                })
+                // dataEventParticipant.forEach((val, idx) => {
+                //     val.ID = Object.keys(rawData)[idx];
+                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                //         if (snapshot.exists()) {
+                //             val['pic'] = snapshot.val().pic;
+                //         }
+                //     })
+                // })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -123,10 +123,8 @@ export default function LuckySpinAdmin() {
                     router.push('/');
                 };
                 const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
-                const rewardChosingId = dataEvent['playingData']['rewardChosingId'];
                 const spin_time = dataEvent['playingData']['spinTime'];
                 setRewardChosing(rewardChosingIndex);
-                setIDRewardChosing(rewardChosingId);
                 setSpinTime(spin_time);
             } else {
                 console.log('Not found event');
@@ -137,7 +135,12 @@ export default function LuckySpinAdmin() {
                 const dataEventReward = Object.values(dataset[2].val());
                 dataEventReward.sort(compare);
                 setRewardList(dataEventReward);
-                setRemainRewardList(dataEventReward.filter((val) => (val.quantityRemain > 0)));
+                const remainRewardData = dataEventReward.filter((val) => (val.quantityRemain > 0))
+                setRemainRewardList(remainRewardData);
+                const rewardChosingId = remainRewardData[0].idReward;
+                console.log(rewardChosingId)
+                update(ref(db, "event/" + EventID + "/playingData"), {rewardChosingId: rewardChosingId});
+                setIDRewardChosing(rewardChosingId);
             }
             setLoadedData(true);
         }
@@ -153,7 +156,7 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
+                if (data["status"] === 2) router.push('/admin/event/countdown-checkin' + EventID);
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
@@ -166,7 +169,7 @@ export default function LuckySpinAdmin() {
                 router.back();
             }
         });
-
+        
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
             if (snapshot.exists()) {
@@ -182,14 +185,14 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                data.forEach((val, idx) => {
-                    val.ID = Object.keys(rawData)[idx];
-                    get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            val['pic'] = snapshot.val().pic;
-                        }
-                    })
-                })
+                // data.forEach((val, idx) => {
+                //     val.ID = Object.keys(rawData)[idx];
+                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
+                //         if (snapshot.exists()) {
+                //             val['pic'] = snapshot.val().pic;
+                //         }
+                //     })
+                // })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -291,13 +294,13 @@ export default function LuckySpinAdmin() {
     }, [dispatch])
 
     useEffect(() => {
-        getData()
+        getData();
     }, [])
 
     useEffect(() => {
         if (EventID === "") return;
 
-        fetchDB();
+        if (loadedData) fetchDB();
 
         window.addEventListener('beforeunload',
             () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
@@ -307,7 +310,7 @@ export default function LuckySpinAdmin() {
             window.removeEventListener('beforeunload',
                 () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
         }
-    }, [EventID])
+    }, [EventID, loadedData])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
