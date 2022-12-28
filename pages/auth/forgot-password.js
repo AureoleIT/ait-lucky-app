@@ -206,7 +206,8 @@ export default function ForgotPassword() {
         onChange={nameData}
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-        value={name} />
+        value={name}
+        margin={4} />
     )
   }, [name, setName])
 
@@ -219,7 +220,8 @@ export default function ForgotPassword() {
         onChange={emailData}
         primaryColor={LEFT_COLOR}
         secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-        value={email} />
+        value={email} 
+        margin={4}/>
     )
   }, [email, setEmail])
 
@@ -232,7 +234,8 @@ export default function ForgotPassword() {
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={newPassData}
-        value={newPass} />
+        value={newPass} 
+        margin={4} />
     )
   }, [newPass, newPassData])
 
@@ -245,7 +248,8 @@ export default function ForgotPassword() {
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={repeatPassData}
-        value={repeatPass} />
+        value={repeatPass} 
+        margin={4} />
     )
   }, [repeatPass, repeatPassData]
   )
