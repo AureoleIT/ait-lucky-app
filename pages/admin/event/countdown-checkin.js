@@ -75,8 +75,6 @@ function CountDownCheckIn ()
     const [eventName, setEventName] = useState(event.title)
     const [statusOfEvent, setStatusOfEvent] = useState()
 
-    console.log(minutes,seconds)
-
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
     const zIndexNaviagte = { zIndex: "20" }
