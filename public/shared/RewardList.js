@@ -3,7 +3,7 @@ import PlayerList from "./PlayerList";
 import OverlayBlock from "./OverlayBlock";
 import CloseButton from "./CloseButton";
 
-export default function RewardList({listReward, showQuantity = true, showRemain = false, eventPaticipant, showDetail = false}) {
+export default function RewardList({listReward, showQuantity = true, showRemain = false, eventPaticipant}) {
     const rewardList = [...listReward];
     const [rewardIndex, setRewardIndex] = useState(0);
     const [rewardImageIndex, setRewardImageIndex] = useState(0);
@@ -66,56 +66,60 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
 
         return (
             <>
-                <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto">
-                    {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
-                        onTouchStart={(e) => {
-                            setTouchX(e.touches[0].clientX)
-                        }}
-                        onTouchEnd={(e) => {
-                            if (e.changedTouches[0].clientX - touchX > 10 && imgIdx > 0) setImdIdx(imgIdx => imgIdx-1);
-                            if (e.changedTouches[0].clientX - touchX < -10 && imgIdx < imgUrls.length - 1) setImdIdx(imgIdx => imgIdx+1);
-                        }}/>}
-                    {imgIdx > 0 && <div className="absolute left-0 w-[10%] text-white h-full flex items-center transition-all bg-transparent hover:bg-gradient-to-r from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
-                        onClick={() => setImdIdx(imgIdx => imgIdx-1)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-                            <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clipRule="evenodd" />
-                        </svg>
-                    </div>}
-                    {imgIdx < imgUrls.length - 1 && <div className="absolute right-0 w-[10%] text-white h-full flex justify-end items-center transition-all bg-transparent hover:bg-gradient-to-l from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
-                        onClick={() => setImdIdx(imgIdx => imgIdx+1)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-                           <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clipRule="evenodd" />
-                        </svg>
-                    </div>}
-                </div>
-                <div className="absolute bottom-0 left-0 w-full flex flex-row justify-center px-1 opacity-50 translate-y-20 hover:opacity-100 hover:translate-y-0 transition-all bg-transparent hover:bg-gradient-to-t from-black to-[#00000080]">
-                    <div className="flex flex-row justify-center w-full pt-4 h-36 overflow-x-hidden overflow-y-hidden">
-                    {
-                        (imgUrls !== undefined && imgUrls !== [])?imgUrls.map((url, idx) => {
-                            const x = (idx - imgIdx)*110;
-                            return (
-                                <div key={idx}>
-                                   {idx !== imgIdx?
-                                        <div className="relative h-0 w-0 mt-2 transition-all" style={{transform: `translate(${x}px, 0px)`}}>
-                                            <div className="absolute w-24 -translate-x-12">
-                                                <img className="object-cover h-20 w-24 rounded-lg drop-shadow-lg hover:brightness-90 brightness-50 cursor-pointer" src={url} alt={imgIndex+idx}
-                                                        onClick={() => setImdIdx(idx)}/>
-                                            </div>
-                                        </div>:
-                                        <div className="relative h-0 w-0 transition-all" style={{transform: `translate(0px, 0px)`}}>
-                                            <div className="absolute w-28 -translate-x-14">
-                                                <img className="object-cover h-24 w-28 rounded-lg drop-shadow-lg brightness-100" src={url} alt={imgIndex+idx} />
-                                            </div>
-                                        </div>
-                                   } 
-                                </div>
-                            )
-                        }):<></>
-                    }
-                    <p className="text-white text-lg font-semibold text-center w-full absolute bottom-0 left-0">{imgIdx+1} / {imgUrls.length}</p>
+                {imgUrls.length?
+                <>
+                    <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto">
+                        {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
+                            onTouchStart={(e) => {
+                                setTouchX(e.touches[0].clientX)
+                            }}
+                            onTouchEnd={(e) => {
+                                if (e.changedTouches[0].clientX - touchX > 10 && imgIdx > 0) setImdIdx(imgIdx => imgIdx-1);
+                                if (e.changedTouches[0].clientX - touchX < -10 && imgIdx < imgUrls.length - 1) setImdIdx(imgIdx => imgIdx+1);
+                            }}/>}
+                        {imgIdx > 0 && <div className="absolute left-0 w-[10%] text-white h-full flex items-center transition-all bg-transparent hover:bg-gradient-to-r from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
+                            onClick={() => setImdIdx(imgIdx => imgIdx-1)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                                <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clipRule="evenodd" />
+                            </svg>
+                        </div>}
+                        {imgIdx < imgUrls.length - 1 && <div className="absolute right-0 w-[10%] text-white h-full flex justify-end items-center transition-all bg-transparent hover:bg-gradient-to-l from-black to-transparent hover:text-[#00F0FF] hover:w-[20%] cursor-pointer"
+                            onClick={() => setImdIdx(imgIdx => imgIdx+1)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                            <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clipRule="evenodd" />
+                            </svg>
+                        </div>}
                     </div>
-                </div>
-                <CloseButton parentDivID={"showImageOverlay"} fillColor={"#ffffff"} />
+                    <div className="absolute bottom-0 left-0 w-full flex flex-row justify-center px-1 opacity-50 translate-y-20 hover:opacity-100 hover:translate-y-0 transition-all bg-transparent hover:bg-gradient-to-t from-black to-[#00000080]">
+                        <div className="flex flex-row justify-center w-full pt-4 h-36 overflow-x-hidden overflow-y-hidden">
+                        {
+                            (imgUrls !== undefined && imgUrls !== [])?imgUrls.map((url, idx) => {
+                                const x = (idx - imgIdx)*110;
+                                return (
+                                    <div key={idx}>
+                                    {idx !== imgIdx?
+                                            <div className="relative h-0 w-0 mt-2 transition-all" style={{transform: `translate(${x}px, 0px)`}}>
+                                                <div className="absolute w-24 -translate-x-12">
+                                                    <img className="object-cover h-20 w-24 rounded-lg drop-shadow-lg hover:brightness-90 brightness-50 cursor-pointer" src={url} alt={imgIndex+idx}
+                                                            onClick={() => setImdIdx(idx)}/>
+                                                </div>
+                                            </div>:
+                                            <div className="relative h-0 w-0 transition-all" style={{transform: `translate(0px, 0px)`}}>
+                                                <div className="absolute w-28 -translate-x-14">
+                                                    <img className="object-cover h-24 w-28 rounded-lg drop-shadow-lg brightness-100" src={url} alt={imgIndex+idx} />
+                                                </div>
+                                            </div>
+                                    } 
+                                    </div>
+                                )
+                            }):<></>
+                        }
+                        <p className="text-white text-lg font-semibold text-center w-full absolute bottom-0 left-0">{imgIdx+1} / {imgUrls.length}</p>
+                        </div>
+                    </div>
+                    <CloseButton parentDivID={"showImageOverlay"} fillColor={"#ffffff"} />
+                </>:
+                <></>}
             </>
         )
     }
