@@ -137,8 +137,7 @@ export default function LuckySpinAdmin() {
                 setRewardList(dataEventReward);
                 const remainRewardData = dataEventReward.filter((val) => (val.quantityRemain > 0))
                 setRemainRewardList(remainRewardData);
-                const rewardChosingId = remainRewardData[0].idReward;
-                console.log(rewardChosingId);
+                const rewardChosingId = remainRewardData[0]?remainRewardData[0].idReward:"";
                 update(ref(db, "event/" + EventID + "/playingData"), {rewardChosingId: rewardChosingId});
                 setIDRewardChosing(rewardChosingId);
             }
@@ -227,7 +226,7 @@ export default function LuckySpinAdmin() {
         updateFB('event/' + EventID + '/playingData', { confirmStatus: -1 });
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
+        setSpinningFB(true, randomNum, remainPlayerList[randomNum].participantId);
         setAwardedIdx(randomNum);
         Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-" + idx)
@@ -258,13 +257,13 @@ export default function LuckySpinAdmin() {
                 Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-" + idx)
                 })
-                setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
+                setSpinningFB(false, randomNum, remainPlayerList[randomNum].participantId);
                 setSpinClicked(false);
                 document.getElementById("gameSound").play();
                 updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    setAwardedId(remainPlayerList[randomNum].ID);
+                    setAwardedId(remainPlayerList[randomNum].participantId);
                     document.getElementById("gameSound").pause();
                 }, (500))
             }, (2000))
