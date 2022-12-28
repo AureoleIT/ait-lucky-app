@@ -93,7 +93,7 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
     const content = (
         <div className="absolute bottom-0 left-0 h-[70%] w-full bg-white rounded-t-2xl p-4 z-30"
             onClick={(e) => e.stopPropagation()}>
-            <div className="overflow-auto h-full">
+            <div className="overflow-auto">
                 {player?<div className="h-fit">
                     <div className="mx-auto mb-4 h-20 w-20 object-cover rounded-full" src={player.pic}>
                         <ParticipantAvt player={player} />

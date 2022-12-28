@@ -9,7 +9,7 @@ import PageLoading from "public/shared/PageLoading";
 import { useRouter } from "next/router";
 
 import { useDispatch } from "react-redux";
-import { userEvent, incognitoEvent } from "public/redux/actions";
+import { userEvent, incognitoEvent, removeUserHosting } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
@@ -95,14 +95,12 @@ export default function LuckySpinAdmin() {
             if (dataset[0].exists()) {
                 const rawData = dataset[0].val();
                 const dataEventParticipant = Object.values(rawData);
-                // dataEventParticipant.forEach((val, idx) => {
-                //     val.ID = Object.keys(rawData)[idx];
-                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                //         if (snapshot.exists()) {
-                //             val['pic'] = snapshot.val().pic;
-                //         }
-                //     })
-                // })
+                dataEventParticipant.forEach((val, idx) => {
+                    if (val.status !== 0)
+                        update(ref(db, 'event_participants/' + val.participantId), {
+                            status: 1
+                        });
+                })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -132,13 +130,12 @@ export default function LuckySpinAdmin() {
             }
             // Event Reward
             if (dataset[2].exists()) {
-                const dataEventReward = Object.values(dataset[2].val());
+                const dataEventReward = [...Object.values(dataset[2].val())];
                 dataEventReward.sort(compare);
                 setRewardList(dataEventReward);
                 const remainRewardData = dataEventReward.filter((val) => (val.quantityRemain > 0))
                 setRemainRewardList(remainRewardData);
-                const rewardChosingId = remainRewardData[0].idReward;
-                console.log(rewardChosingId)
+                const rewardChosingId = remainRewardData[0]?remainRewardData[0].idReward:"";
                 update(ref(db, "event/" + EventID + "/playingData"), {rewardChosingId: rewardChosingId});
                 setIDRewardChosing(rewardChosingId);
             }
@@ -185,14 +182,12 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                // data.forEach((val, idx) => {
-                //     val.ID = Object.keys(rawData)[idx];
-                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                //         if (snapshot.exists()) {
-                //             val['pic'] = snapshot.val().pic;
-                //         }
-                //     })
-                // })
+                data.forEach((val, idx) => {
+                    if (val.status !== 0)
+                        update(ref(db, 'event_participants/' + val.participantId), {
+                            status: 1
+                        });
+                })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -227,7 +222,7 @@ export default function LuckySpinAdmin() {
         updateFB('event/' + EventID + '/playingData', { confirmStatus: -1 });
         // Random đối tượng
         const randomNum = Math.floor(Math.random() * (remainPlayerList.length));
-        setSpinningFB(true, randomNum, remainPlayerList[randomNum].ID);
+        setSpinningFB(true, randomNum, remainPlayerList[randomNum].participantId);
         setAwardedIdx(randomNum);
         Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
             document.getElementById("spin-idx-" + idx).classList.add("animate-move-down-" + idx)
@@ -258,13 +253,13 @@ export default function LuckySpinAdmin() {
                 Array.from({ length: 9 }, (_, index) => index).forEach(idx => {
                     document.getElementById("spin-idx-" + idx).classList.remove("animate-slow-move-down-" + idx)
                 })
-                setSpinningFB(false, randomNum, remainPlayerList[randomNum].ID);
+                setSpinningFB(false, randomNum, remainPlayerList[randomNum].participantId);
                 setSpinClicked(false);
                 document.getElementById("gameSound").play();
                 updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
-                    setAwardedId(remainPlayerList[randomNum].ID);
+                    setAwardedId(remainPlayerList[randomNum].participantId);
                     document.getElementById("gameSound").pause();
                 }, (500))
             }, (2000))
@@ -303,7 +298,13 @@ export default function LuckySpinAdmin() {
         if (loadedData) fetchDB();
 
         window.addEventListener('beforeunload',
-            () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
+            () => {
+                get(ref(db, 'event/' + EventID + '/playingData')).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        updateFB('event/' + EventID + '/playingData', { isSpinning: false });
+                    }
+                })
+            });
 
         return () => {
             updateFB('event/' + EventID + '/playingData', { isSpinning: false });
@@ -351,8 +352,9 @@ export default function LuckySpinAdmin() {
             <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">kết thúc</span> sự kiện?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
-                    updateFB('event/' + EventID, { status: 4 });
                     remove(child(ref(db), "event/" + EventID + "/playingData"));
+                    dispatch(removeUserHosting)
+                    updateFB('event/' + EventID, { status: 4 });
                 }} />
                 <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
             </div>

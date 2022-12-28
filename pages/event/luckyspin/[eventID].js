@@ -9,7 +9,7 @@ import Button from "public/shared/Button";
 import router, { useRouter } from "next/router";
 
 import { useDispatch } from "react-redux";
-import { userEvent, incognitoEvent } from "public/redux/actions";
+import { userEvent, incognitoEvent, removePlayerState, removeUserPlaying } from "public/redux/actions";
 import { usePlayerParticipantHook } from "public/redux/hooks";
 // firebase
 import { auth, db } from "../../../src/firebase";
@@ -82,6 +82,20 @@ export default function LuckySpin() {
         }
 
         async function loadData() {
+            get(ref(db, "event/" + EventID + "/playingData")).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    update(ref(db, "event/" + EventID + "/playingData"), {
+                        isSpinning: false,
+                        lastAwardedIndex: 0,
+                        lastAwardedId: "",
+                        rewardChosingId: "",
+                        rewardChosingIndex: 0,
+                        spinTime: spinTime,
+                        confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
+                    });
+                }
+            });
+
             await get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
                 if (snapshot.exists()) {
                     if (snapshot.val() === 0) {
@@ -157,14 +171,6 @@ export default function LuckySpin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                // data.forEach((val, idx) => {
-                //     val.ID = Object.keys(rawData)[idx];
-                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                //         if (snapshot.exists()) {
-                //             val.pic = snapshot.val().pic;
-                //         }
-                //     })
-                // })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -388,7 +394,12 @@ export default function LuckySpin() {
         return <OverlayBlock childDiv={<>
             <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">thoát</span>?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
-                <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => { router.push('/') }} />
+                <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0}
+                    onClick={() => {
+                        dispatch(removePlayerState);
+                        dispatch(removeUserPlaying);
+                        router.push('/');
+                    }} />
                 <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
             </div>
         </>} id={"exitOverlay"}></OverlayBlock>
