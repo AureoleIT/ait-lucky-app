@@ -30,6 +30,15 @@ export default function EventList() {
       const record = snapshot.val();
       if (record != null) {
         const data = Object.values(record);
+        data.sort((a, b) =>
+        a.createAt > b.createAt
+          ? -1
+          : a.createAt === b.createAt
+          ? a.size > b.size
+            ? -1
+            : 1
+          : 1
+      );
         data.forEach((value) => {
           if (value.delFlag === false) {
             setEvents((prev) => [...prev, value]);
@@ -37,7 +46,7 @@ export default function EventList() {
         });
       }
     });
-  }, [String(currentUser.userId)]);
+  }, [currentUser]);
 
   const filteredEvents = events.filter((item) => {
     return searchContent.toLowerCase() === ""
@@ -60,7 +69,7 @@ export default function EventList() {
   return (
     <>
       {renderHeader}
-      <section className="h-screen max-w-md mx-auto flex flex-col justify-center items-center">
+      <section className="h-screen mx-auto flex flex-col justify-center items-center">
         <div className="flex flex-col px-3 py-5 w-full h-full items-center">
           {renderTitle}
           <div className="max-w-md flex flex-col w-full gap-y-[19px]">
