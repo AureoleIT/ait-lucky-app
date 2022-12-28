@@ -156,7 +156,7 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const data = Object.values(snapshot.val())[0];
                 if (data["status"] === 1) router.push('/');
-                if (data["status"] === 2) router.push('/admin/event/countdown-checkin' + EventID);
+                if (data["status"] === 2) router.push('/admin/event/countdown-checkin');
                 if (data["status"] === 4) router.push('/event/event-result/' + EventID);
                 setEventInfo(data);
                 const rewardChosingIndex = data['playingData']['rewardChosingIndex'];
