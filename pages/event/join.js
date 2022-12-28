@@ -73,7 +73,7 @@ export default function Info() {
           setPlayer(newParticipant)
         setTimeout(() => {
           HideMethod(dispatch)
-          router.push("/event/countdown-checkin");
+          router.push("/event/countdown-checkin/"+currEvent.eventId);
         }, 500);
       })
       .catch((e) => {
