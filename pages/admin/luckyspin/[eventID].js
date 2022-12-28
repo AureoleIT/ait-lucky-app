@@ -298,7 +298,13 @@ export default function LuckySpinAdmin() {
         if (loadedData) fetchDB();
 
         window.addEventListener('beforeunload',
-            () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
+            () => {
+                get(ref(db, 'event/' + EventID + '/playingData')).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        updateFB('event/' + EventID + '/playingData', { isSpinning: false });
+                    }
+                })
+            });
 
         return () => {
             updateFB('event/' + EventID + '/playingData', { isSpinning: false });
