@@ -10,10 +10,10 @@ import { useDispatch } from "react-redux"
 import { usePlayerParticipantHook } from "public/redux/hooks"
 
 import { db } from "src/firebase"
-import {ref, onValue, query, orderByChild, equalTo} from "firebase/database"
+import { ref, onValue, query, orderByChild, equalTo } from "firebase/database"
 import { RewardList } from "public/shared";
 
-function UserCountdownCheckin () {
+function UserCountdownCheckin() {
 
     // router
     const router = useRouter()
@@ -23,20 +23,16 @@ function UserCountdownCheckin () {
 
     // user
     const user = usePlayerParticipantHook()
-    useEffect(() =>
-    {
-        if(user.participantId === null || user.participantId === undefined)
-        {
+    useEffect(() => {
+        if (user.participantId === null || user.participantId === undefined) {
             router.push("/event/join")
         }
-        else 
-        {
-            if(user.eventId !== eventID)
-            {
+        else {
+            if (user.eventId !== eventID) {
                 router.push("/")
             }
         }
-    },[])
+    }, [])
 
     // state
     const [minutes, setMinutes] = useState(0)  // store minutes of countdown
@@ -56,76 +52,63 @@ function UserCountdownCheckin () {
 
     // get event
     const getEvent = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
-    useEffect(() =>
-    {
-        onValue(getEvent, (snapshot) =>{
+    useEffect(() => {
+        onValue(getEvent, (snapshot) => {
             const data = snapshot.val()
-            if(data !== null)
-            {
+            if (data !== null) {
                 setEvent(Object.values(data)[0])
                 setStatus(Object.values(data)[0].status) // get status to route to lucky spin if status of event equal to 3
             }
         })
-    },[])
+    }, [])
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setTitle(event.title)
         setCountdown(event.waitingTime)
         setDeadline(event.startAt)
         setMaxTicket(event.maxTicket)
         setEventId(event.eventId)
-    },[event])
+    }, [event])
 
     // get reward from firebase
     const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(eventID))
 
-    useEffect(() =>
-    {
-        onValue(getReward,(snapshot) =>
-        {
-                const data = snapshot.val()
-                if(data !== null)
-                {
-                    setRewards(Object.values(data))
-                }
+    useEffect(() => {
+        onValue(getReward, (snapshot) => {
+            const data = snapshot.val()
+            if (data !== null) {
+                setRewards(Object.values(data))
+            }
         })
-    },[])
+    }, [])
 
     // get realtime number of player
 
     const getNumberPlayer = query(ref(db, "event"), orderByChild("evenId"), equalTo(eventID))
 
-    useEffect(() =>
-    {
-        onValue(getNumberPlayer, (snapshot) =>
-        {
+    useEffect(() => {
+        onValue(getNumberPlayer, (snapshot) => {
             const data = snapshot.val()
-            if(data !== null)
-            {
-                const rawData  = Object.values(data)
+            if (data !== null) {
+                const rawData = Object.values(data)
                 setPlayer(rawData[0].userJoined)
             }
         })
-    },[])
+    }, [])
 
     // check countdown end or not
-    useEffect(() =>
-    {
-        if((deadline + countdown * 1000) < new Date().getTime())
-        {
-            setTimeout(() =>
-            {
+    useEffect(() => {
+        if ((deadline + countdown * 1000) < new Date().getTime()) {
+            setTimeout(() => {
                 HideMethod(dispatch)
                 router.push(`/event/luckyspin/${eventId}`)
-            },2000)
+            }, 2000)
         }
-    },[deadline, countdown, dispatch])
+    }, [deadline, countdown, dispatch])
 
     // get realtime participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
-    useEffect(() =>
-    {
+    useEffect(() => {
         onValue(que2, (snapshot) => {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
@@ -134,71 +117,63 @@ function UserCountdownCheckin () {
                 setPlayer(data.length)
             }
         });
-    },[])
+    }, [])
 
     //countdown
-    useEffect(() =>
-    {
-            let deadlineCountdown = deadline + ((countdown + 3) * 1000)
-            let countdownTimer = null
-    
-            if(isActive && isStop === false)
-            {
-                countdownTimer = setInterval(() => {
-                    let nowDate = new Date()
-                    let left = deadlineCountdown - nowDate
-                    let nowSeconds = Math.floor((left / 1000) % 60);
-                    let nowMinutes = Math.floor((left / 1000 / 60) % 60);
-                    if(nowMinutes === 0 && nowSeconds === 0)
-                    {
-                        clearInterval(countdownTimer)
-                        setIsStop(true)
-                    }
-                    else {
-                        setMinutes(nowMinutes)
-                        setSeconds(nowSeconds)
-                    }   
-                }, 1000)
-            }
-            else {
-                clearInterval(countdownTimer)
-            }
-            return () => clearInterval(countdownTimer)
-    },[isActive, isStop, dispatch, countdown, deadline])
+    useEffect(() => {
+        let deadlineCountdown = deadline + ((countdown) * 1000)
+        let countdownTimer = null
+
+        if (isActive && isStop === false) {
+            countdownTimer = setInterval(() => {
+                let nowDate = new Date()
+                let left = deadlineCountdown - nowDate
+                let nowSeconds = Math.floor((left / 1000) % 60);
+                let nowMinutes = Math.floor((left / 1000 / 60) % 60);
+                if (nowMinutes === 0 && nowSeconds === 0) {
+                    clearInterval(countdownTimer)
+                    setIsStop(true)
+                }
+                else {
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
+                }
+            }, 1000)
+        }
+        else {
+            clearInterval(countdownTimer)
+        }
+        return () => clearInterval(countdownTimer)
+    }, [isActive, isStop, dispatch, countdown, deadline])
 
     // route to lucky spin if status of event equal to 3
-    useEffect(() =>
-    {
-        if(status === 3)
-        {
+    useEffect(() => {
+        if (status === 3) {
             ShowMethod(dispatch, messagesSuccess.I0010, true)
-            setTimeout(() =>
-            {
+            setTimeout(() => {
                 router.push(`/event/luckyspin/${eventId}`)
-            },2000)
+            }, 2000)
         }
-    },[status, dispatch, eventId])
+    }, [status, dispatch, eventId])
 
-    const BG_COLOR ="bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
+    const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
-    const countDownNumber = {background: "#3B88C3"}
+    const countDownNumber = { background: "#3B88C3" }
 
     // render component
-    const renderTitle = useMemo(() =>
-    {
+    const renderTitle = useMemo(() => {
         return (
             <div className="flex flex-col">
                 <h1 className={`font-[900] uppercase text-[#004599] text-[36px] text-center`}>{title}</h1>
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>bắt đầu sau ...</h1>
             </div>
         )
-    },[title])
+    }, [title])
 
-    const renderCountdownTime = useMemo(() =>
-    {
+    const renderCountdownTime = useMemo(() => {
         return (
             <div className="flex justify-center items-center max-w-xl w-4/5 mb-3">
-                
+
                 <div className="w-[65px] h-[80px] rounded-[10px] mr-1 text-white text-6xl flex justify-center items-center drop-shadow-lg" style={countDownNumber}>
                     {minutes > 9 ? (Math.floor(minutes / 10)) : 0}
                 </div>
@@ -216,47 +191,42 @@ function UserCountdownCheckin () {
                 </div>
 
             </div>)
-    },[minutes, seconds])
+    }, [minutes, seconds])
 
-    const renderTitle2 = useMemo(() =>
-    {
+    const renderTitle2 = useMemo(() => {
         return (
             <div className="flex">
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>thông tin giải thưởng</h1>
             </div>
         )
-    },[])
+    }, [])
 
-    const renderLine = useMemo(() =>
-    {
+    const renderLine = useMemo(() => {
         return (
             <div className="max-w-xl w-4/5 mb-2 z-0"> <Line /> </div>
         )
-    },[])
+    }, [])
 
-    const renderRewards = useMemo(() =>
-    {
+    const renderRewards = useMemo(() => {
         return (
             <section className="flex flex-col overflow-x-hidden overflow-y-auto scrollbar-hide justify-center items-center w-4/5 max-w-xl h-[300px] my-2">
                 <div className="my-2 w-full h-full flex flex-col max-h-[300px]">
-                    <RewardList listReward={rewards}/>
+                    <RewardList listReward={rewards} />
                 </div>
             </section>
         )
-    },[rewards])
+    }, [rewards])
 
-    const renderTitle3 = useMemo(() =>
-    {
+    const renderTitle3 = useMemo(() => {
         return (
-            <div className="flex flex-col">    
+            <div className="flex flex-col">
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>danh sách người chơi</h1>
                 <h1 className={`font-[900] uppercase text-[#004599] text-[18px] text-center mb-2`}>{`số người tham gia: ${player}/${maxTicket}`}</h1>
             </div>
         )
-    },[player, maxTicket])
+    }, [player, maxTicket])
 
-    const renderPlayerList = useMemo(() =>
-    {
+    const renderPlayerList = useMemo(() => {
         return (
             <div className="max-w-xl w-4/5 h-[200px] overflow-x-hidden overflow-y-auto scrollbar-hide py-3">
                 <div className="w-full h-full flex flex-col items-center">
@@ -264,7 +234,7 @@ function UserCountdownCheckin () {
                 </div>
             </div>
         )
-    },[playerList])
+    }, [playerList])
 
     return (
         <section className={`h-screen w-screen flex flex-col items-center justify-center ${BG_COLOR}`}>
