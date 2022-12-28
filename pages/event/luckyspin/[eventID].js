@@ -82,6 +82,20 @@ export default function LuckySpin() {
         }
 
         async function loadData() {
+            get(ref(db, "event/" + EventID + "/playingData")).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    update(ref(db, "event/" + EventID + "/playingData"), {
+                        isSpinning: false,
+                        lastAwardedIndex: 0,
+                        lastAwardedId: "",
+                        rewardChosingId: "",
+                        rewardChosingIndex: 0,
+                        spinTime: spinTime,
+                        confirmStatus: 0 // -1:Spinning, 0: Waiting; 1: Confirm; 2: Cancel
+                    });
+                }
+            });
+
             await get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
                 if (snapshot.exists()) {
                     if (snapshot.val() === 0) {
@@ -383,8 +397,8 @@ export default function LuckySpin() {
                 <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0}
                     onClick={() => {
                         dispatch(removePlayerState);
-                        dispatch(removeUserPlaying); 
-                        router.push('/'); 
+                        dispatch(removeUserPlaying);
+                        router.push('/');
                     }} />
                 <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
             </div>
