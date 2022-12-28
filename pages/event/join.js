@@ -60,7 +60,7 @@ export default function Info() {
     };
     set(ref(db, `event_participants/${id}/`), newParticipant)
       .then(() => {
-        
+
         currEvent.userJoined += 1;
         update(ref(db, `event/${currEvent.eventId}`),
           {
@@ -70,10 +70,10 @@ export default function Info() {
           ).catch((e) => {
             ShowMethod(dispatch, messagesError.E4444, false)
           })
-          setPlayer(newParticipant)
+        setPlayer(newParticipant)
         setTimeout(() => {
           HideMethod(dispatch)
-          router.push("/event/countdown-checkin");
+          router.push("/event/countdown-checkin/" + currEvent.eventId);
         }, 500);
       })
       .catch((e) => {

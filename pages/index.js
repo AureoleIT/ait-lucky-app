@@ -133,7 +133,7 @@ export default function Index() {
       <Input
         placeHolder="Mã pin"
         onChange={pinData}
-        type="text"
+        type="number"
         primaryColor={LEFT_COLOR}
         secondaryColor={RIGHT_COLOR}
         noContent={true}
