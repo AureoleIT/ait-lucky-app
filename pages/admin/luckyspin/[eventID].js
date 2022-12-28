@@ -123,10 +123,8 @@ export default function LuckySpinAdmin() {
                     router.push('/');
                 };
                 const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
-                const rewardChosingId = dataEvent['playingData']['rewardChosingId'];
                 const spin_time = dataEvent['playingData']['spinTime'];
                 setRewardChosing(rewardChosingIndex);
-                setIDRewardChosing(rewardChosingId);
                 setSpinTime(spin_time);
             } else {
                 console.log('Not found event');
@@ -137,7 +135,12 @@ export default function LuckySpinAdmin() {
                 const dataEventReward = Object.values(dataset[2].val());
                 dataEventReward.sort(compare);
                 setRewardList(dataEventReward);
-                setRemainRewardList(dataEventReward.filter((val) => (val.quantityRemain > 0)));
+                const remainRewardData = dataEventReward.filter((val) => (val.quantityRemain > 0))
+                setRemainRewardList(remainRewardData);
+                const rewardChosingId = remainRewardData[0].idReward;
+                console.log(rewardChosingId)
+                update(ref(db, "event/" + EventID + "/playingData"), {rewardChosingId: rewardChosingId});
+                setIDRewardChosing(rewardChosingId);
             }
             setLoadedData(true);
         }
@@ -166,7 +169,7 @@ export default function LuckySpinAdmin() {
                 router.back();
             }
         });
-
+        
         const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
         onValue(que1, (snapshot) => {
             if (snapshot.exists()) {
@@ -291,13 +294,13 @@ export default function LuckySpinAdmin() {
     }, [dispatch])
 
     useEffect(() => {
-        getData()
+        getData();
     }, [])
 
     useEffect(() => {
         if (EventID === "") return;
 
-        fetchDB();
+        if (loadedData) fetchDB();
 
         window.addEventListener('beforeunload',
             () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
@@ -307,7 +310,7 @@ export default function LuckySpinAdmin() {
             window.removeEventListener('beforeunload',
                 () => updateFB('event/' + EventID + '/playingData', { isSpinning: false }));
         }
-    }, [EventID])
+    }, [EventID, loadedData])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
