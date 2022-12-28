@@ -16,19 +16,23 @@ import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, 
 import { useDispatch } from "react-redux"
 
 import { db } from "src/firebase"
-import {ref, update, onValue, query, orderByChild, equalTo} from "firebase/database"
+import {ref, child, get, update, onValue, query, orderByChild, equalTo} from "firebase/database"
 import { Button, PageLoading } from "public/shared"
 
 
 function CountDownCheckIn () 
 {
+    const dbRef = ref(db);
+
     // router
     const router = useRouter()
     // user
     const { query: { countdown, statusEvent } } = router
 
     const props = {countdown, statusEvent}
+
     let initCountdown = countdown
+
     // dispatch
     const dispatch = useDispatch()
     // eventID
@@ -49,13 +53,20 @@ function CountDownCheckIn ()
     }
     const eventID = event.eventId
     const pinCode = event.pinCode
-    const startingTime = event.startAt
+    let startingTime
 
+    get(child(dbRef, "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        const currentEvent = values.find(x => x.pinCode === pinCode)
+        startingTime = currentEvent.startAt
+    })
+    
     // state
     const [loadedData, setLoadedData] = useState(false)
+    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [minutes, setMinutes] = useState(Math.floor(initCountdown / 60))  // store minutes of countdown
     const [seconds, setSeconds] = useState(0) // store seconds of countdown
-    const [qrCodeValue, setQrCodeValue] = useState("")  // store qr code value
     const [isHidden, setIsHidden] = useState(hidden) // qr code hidden state
     const isActive = true  // countdown
     const [isStop, setIsStop] = useState(false)  // countdown
@@ -63,6 +74,8 @@ function CountDownCheckIn ()
     const [playerList, setPlayerList] = useState([])  // list of player join
     const [eventName, setEventName] = useState(event.title)
     const [statusOfEvent, setStatusOfEvent] = useState()
+
+    console.log(minutes,seconds)
 
     const countDownNumber = { background: "#3B88C3" }
     const zIndex = { zIndex: "10" }
@@ -138,12 +151,11 @@ function CountDownCheckIn ()
             {
                 deadline = date.getTime() + (minutes * 60 * 1000)
             }
-    
-            let countdown = null
+            // let countdown = null
     
             if(isActive && isStop === false)
             {
-                countdown = setInterval(() => {
+                let countdown = setInterval(() => {
                     let nowDate = new Date()
                     let left = deadline - nowDate
     
@@ -166,10 +178,8 @@ function CountDownCheckIn ()
                             router.push(`/admin/luckyspin/${eventID}`)
                         },2000)
                     }
-                    else {
-                        setMinutes(nowMinutes)
-                        setSeconds(nowSeconds)
-                    }   
+                    setMinutes(nowMinutes)
+                    setSeconds(nowSeconds)
                 }, 1000)
             }
             else {
