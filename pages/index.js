@@ -90,6 +90,10 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
+      if ( currEvent.maxTicket === currEvent.userJoined ) { 
+        ShowMethod(dispatch, messagesError.E2005, false);
+        return;
+      }
       dispatch(incognitoEvent(currEvent));
       window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
       if (globalUser.userId) {
