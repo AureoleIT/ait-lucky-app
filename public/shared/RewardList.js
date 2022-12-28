@@ -67,7 +67,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
 
         return (
             <>
-                {imgUrls.length?
+                {imgUrls?
                 <>
                     <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto select-none">
                         {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
