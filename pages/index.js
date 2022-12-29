@@ -203,6 +203,19 @@ export default function Index() {
     )
   }, [visible, status, message])
 
+  //============================Scan QR==================
+  const handleErrorWebCam = (error) => {
+    alert("Can not connect to camera in this device");
+    setIsShown(current => !current);
+  }
+
+  const handleScanWebCam = (result) => {
+    if (result) {
+      setScanResultWebCam(result);
+      router.push(result?.text);
+      return;
+    }
+  }
   const renderQRscan = useMemo(() => {
     return (
       <div className="flex flex-col justify-center items-center">
@@ -230,37 +243,7 @@ export default function Index() {
     )
   }, [isShown, scanResultWebCam])
 
-  // const handleClick = event => {
-  //   setIsShown(current => !current);
-  // };
-
-  // const [scanResultFile, setScanResultFile] = useState('');
-  // const qrRef = useRef(null)
-
-  //  const handleErrorFile = (error) => {
-  //      alert(error)
-  //   }
-  //   const  handleScanFile = (result) => {
-  //     if  (result) {
-  //        setScanResultFile(result)
-  //     }
-  //   }
-  // const onScanFile = () => {
-  //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
-  // }
-
-  const handleErrorWebCam = (error) => {
-    alert("Some thing's wrong");
-  }
-
-  const handleScanWebCam = (result) => {
-    if (result) {
-      setScanResultWebCam(result);
-      router.push(result?.text);
-      return;
-    }
-  }
-
+  
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
