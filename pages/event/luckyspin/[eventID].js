@@ -398,7 +398,9 @@ export default function LuckySpin() {
                     onClick={() => {
                         dispatch(removePlayerState);
                         dispatch(removeUserPlaying);
-                        router.push('/');
+                        setTimeout(() => {
+                            router.push('/');
+                        }, 1000);
                     }} />
                 <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
             </div>
