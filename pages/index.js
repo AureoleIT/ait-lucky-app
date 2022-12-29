@@ -40,7 +40,6 @@ export default function Index() {
   const playerEvent = usePlayerEventHook();
 
   useEffect(() => {
-    console.log("1");
     if (participant.participantId && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
       get(child(ref(db), "event/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
@@ -60,11 +59,12 @@ export default function Index() {
             setTimeout(() => {
               router.push("event/countdown-checkin/" + currEvent.eventId);
             }, 500);
-            return
+            return;
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
-              router.push("event/luckyspin/wronglink/" + currEvent.eventId);
+              console.log("3");
+              // router.push("event/luckyspin/" + currEvent.eventId);
             }, 500);
             return;
           case 4:

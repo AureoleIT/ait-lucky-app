@@ -317,14 +317,12 @@ export default function LuckySpin() {
     // Real time
     useEffect(() => {
         dispatch(incognitoEvent({ eventId: EventID }));
-        getData()
+        getData();
     }, [])
 
     useEffect(() => {
-        if (EventID === "") return;
+        if (loadedData === false) return;
 
-        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
-        if (participantId === "") router.push('/event/info');
         fetchDB();
 
         const setOnlineStatus = (status) => {
@@ -354,7 +352,7 @@ export default function LuckySpin() {
             clearInterval(onlineStatus);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, [EventID])
+    }, [loadedData])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
