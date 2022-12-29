@@ -75,6 +75,9 @@ export default function LuckySpin() {
             const que1 = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(EventID));
             //  Load data
             const loadEventPaticipant = get(que2);
+            // get(que2).then((snapshot) => {
+            //     console.log(snapshot.exists());
+            // })
             const loadEvent = get(que3);
             const loadEventReward = get(que1);
             let combined_promise = Promise.all([loadEventPaticipant, loadEvent, loadEventReward]);
@@ -106,6 +109,7 @@ export default function LuckySpin() {
             });
 
             const dataset = await asyncData();
+            
             // Event Paticipant
             if (dataset[0].exists()) {
                 const rawData = dataset[0].val();
@@ -115,14 +119,6 @@ export default function LuckySpin() {
                     console.log('Not found player');
                     router.push('/');
                 };
-                // dataEventParticipant.forEach((val, idx) => {
-                //     val.ID = Object.keys(rawData)[idx];
-                //     get(child(ref(db), "users/" + val.createBy)).then((snapshot) => {
-                //         if (snapshot.exists()) {
-                //             val.pic = snapshot.val().pic;
-                //         }
-                //     })
-                // })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -157,8 +153,8 @@ export default function LuckySpin() {
                 dataEventReward.sort(compare);
                 setRewardList(dataEventReward);
                 setRemainRewardList(dataEventReward.filter((val) => (val.quantityRemain > 0)));
-                setLoadedData(true);
             }
+            setLoadedData(true);
         }
 
         loadData();
@@ -321,8 +317,6 @@ export default function LuckySpin() {
     }, [])
 
     useEffect(() => {
-        if (loadedData === false) return;
-
         fetchDB();
 
         const setOnlineStatus = (status) => {
@@ -344,6 +338,7 @@ export default function LuckySpin() {
             })
         }
 
+        setOnlineStatus(1);
         const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
         window.addEventListener('beforeunload', () => setOnlineStatus(2));
 
@@ -352,7 +347,7 @@ export default function LuckySpin() {
             clearInterval(onlineStatus);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, [loadedData])
+    }, [])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
