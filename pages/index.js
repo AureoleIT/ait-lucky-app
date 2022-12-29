@@ -63,7 +63,7 @@ export default function Index() {
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
-              router.push("event/luckyspin/wronglink/" + currEvent.eventId);
+              router.push("event/luckyspin/" + currEvent.eventId);
             }, 500);
             return;
           case 4:

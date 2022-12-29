@@ -95,12 +95,6 @@ export default function LuckySpinAdmin() {
             if (dataset[0].exists()) {
                 const rawData = dataset[0].val();
                 const dataEventParticipant = Object.values(rawData);
-                dataEventParticipant.forEach((val, idx) => {
-                    if (val.status !== 0)
-                        update(ref(db, 'event_participants/' + val.participantId), {
-                            status: 1
-                        });
-                })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
