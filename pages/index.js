@@ -257,6 +257,7 @@ export default function Index() {
     if (result) {
       setScanResultWebCam(result);
       router.push(result?.text);
+      return;
     }
   }
 
