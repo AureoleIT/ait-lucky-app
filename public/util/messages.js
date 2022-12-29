@@ -55,4 +55,5 @@ export const messagesError = {
   E3002: "Sự kiện đang diễn ra, bạn không thể tham gia!",
   E3003: "Sự kiện đã kết thúc!",
   E4444: "Đã xảy ra lỗi hệ thống",
+  E5555: "Không thể kết nối camera trên thiết bị này"
 };

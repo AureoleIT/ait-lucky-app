@@ -208,7 +208,7 @@ export default function Index() {
       <div className="flex flex-col justify-center items-center">
         <QrButton onClick={() => {
           if (window.innerWidth > 768) {
-            alert("Can not connect to camera in this device")
+            alert(messagesError.E5555)
             return;
           }
           setIsShown(current => !current);
