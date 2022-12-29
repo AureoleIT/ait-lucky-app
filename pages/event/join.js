@@ -10,8 +10,8 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { child, get, ref, set, update } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
-import { incognitoParticipant, incognitoUser, incognitoEvent, userCurrentEventPlaying } from "public/redux/actions";
-import { usePlayerEventHook } from "public/redux/hooks";
+import { incognitoParticipant, incognitoUser, incognitoEvent, userCurrentEventPlaying, removePlayerState } from "public/redux/actions";
+import { usePlayerEventHook, usePlayerParticipantHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
 
@@ -29,57 +29,130 @@ export default function Info() {
   let pinCode = new URLSearchParams(window.location.search).get('pinCode')
   console.log(pinCode)
 
-
   // Call dispatch from redux
   const dispatch = useDispatch();
-  var [player, setPlayer] = useState({});
 
   // Get current event from previous state get in
-  var currEvent = usePlayerEventHook();
+  const currEvent = usePlayerEventHook();
 
   //Get current user logged in and play
   const currUser = useUserPackageHook()
 
-  useEffect(() => {
-    if (!currEvent.eventId) {
-      router.push("/");
-    }
-  })
+  const currPlayer = usePlayerParticipantHook();
 
+  // -------------------------------------------Check path--------------------------------------------
   useEffect(() => {
-    if (isEmpty(pinCode)) {
-      ShowMethod(dispatch, messagesError.E2002, false);
+    if ((pinCode === undefined || pinCode === null) && !currEvent.eventId) {
+      router.push("/");
       return;
-    }
-    get(child(ref(db), "event/")).then((snapshot) => {
-      const record = snapshot.val() ?? [];
-      const values = Object.values(record);
-      var currEvent = values.find((item) => item.pinCode === pinCode);
-      if (currEvent.status !== 2) {
-        router.push('/')
+    } else if ((pinCode === undefined || pinCode === null) && currEvent.eventId) {
+      if (currPlayer.eventId === currEvent.eventId && currPlayer.eventId !== undefined) {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.eventId === currEvent.eventId);
+          switch (event.status) {
+            case 1:
+              ShowMethod(dispatch, messagesError.E3001, false);
+              removePlayerState()
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("/");
+              }, 500)
+              return;
+            case 2:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/countdown-checkin/" + currEvent.eventId);
+              }, 500);
+              return
+            case 3:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/luckyspin/" + currEvent.eventId);
+              }, 500);
+              return;
+            case 4:
+              dispatch(removePlayerState());
+              router.push("/");
+              return;
+            default:
+              return;
+          }
+        });
       }
-      if (currEvent === undefined || currEvent.delFlag === true) {
-        ShowMethod(dispatch, messagesError.E2004, false);
-        return;
-      }
-      if ( currEvent.maxTicket === currEvent.userJoined ) { 
-        ShowMethod(dispatch, messagesError.E2005, false);
-        return;
-      }
-      dispatch(incognitoEvent(currEvent));
-      window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
-      if (globalUser.userId) {
-        dispatch(userCurrentEventPlaying(currEvent));
-      }
-      get(child(ref(db), "users/")).then((snapshot) => {
+    } else if (!(pinCode === undefined || pinCode === null) && !currEvent.eventId) {
+      dispatch(removePlayerState());
+      get(child(ref(db), "event/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
         const values = Object.values(record);
-        var currUser = values.find((item) => item.userId === currEvent.createBy);
-        dispatch(incognitoUser(currUser));
+        var event = values.find((item) => item.pinCode === pinCode);
+        dispatch(incognitoEvent(event));
+        if (globalUser.userId) {
+          dispatch(userCurrentEventPlaying(event))
+        }
       });
-    });
-  }, [dispatch, globalUser.userId, pinCode]);
+    } else {
+      if ((currPlayer.eventId === currEvent.eventId) && (currPlayer.eventId !== undefined)) {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.eventId === currEvent.eventId);
+          switch (event.status) {
+            case 1:
+              ShowMethod(dispatch, messagesError.E3001, false);
+              removePlayerState()
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("/");
+              }, 500)
+              return;
+            case 2:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/countdown-checkin/" + currEvent.eventId);
+              }, 500);
+              return
+            case 3:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/luckyspin/" + currEvent.eventId);
+              }, 500);
+              return;
+            case 4:
+              dispatch(removePlayerState());
+              setTimeout(() => {
+                router.push("/");
+              })
+              return;
+            default:
+              return;
+          }
+        });
+      } else {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.pinCode === pinCode);
+          if (event === undefined || event.delFlag === true) {
+            ShowMethod(dispatch, messagesError.E2004, false);
+            return;
+          }
+          dispatch(incognitoEvent(event));
+          if (globalUser.userId) {
+            dispatch(userCurrentEventPlaying(event))
+          }
+        });
+      }
+    }
 
+  }, [currEvent.eventId, currEvent.title, currPlayer.eventId, dispatch, globalUser.userId, pinCode]);
+
+  // -------------------------------------------Click logic handle------------------------------------
   const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       ShowMethod(dispatch, messagesError.E0004, false)
@@ -97,39 +170,48 @@ export default function Info() {
       idReward: "",
       eventId: currEvent.eventId,
     };
-    set(ref(db, `event_participants/${id}/`), newParticipant)
-      .then(() => {
-
-        currEvent.userJoined += 1;
-        update(ref(db, `event/${currEvent.eventId}`),
-          {
-            userJoined: currEvent.userJoined,
-          }).then(
-            ShowMethod(dispatch, messagesSuccess.I0009, true)
-          ).catch((e) => {
-            ShowMethod(dispatch, messagesError.E4444, false)
-          })
-        setPlayer(newParticipant)
+    get(child(ref(db), "event/")).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+      var event = values.find((item) => item.eventId === currEvent.eventId);
+      if (event === undefined || event.delFlag === true) {
+        ShowMethod(dispatch, messagesError.E2004, false);
+        return;
+      }
+      if (event.maxTicket <= event.userJoined) {
+        ShowMethod(dispatch, messagesError.E2005, false);
         setTimeout(() => {
           HideMethod(dispatch)
-          router.push("/event/countdown-checkin/" + currEvent.eventId);
-        }, 500);
-      })
-      .catch((e) => {
-        ShowMethod(dispatch, messagesError.E4444, false)
-      });
+          dispatch(removePlayerState());
+          router.push("/");
+        }, 1000);
+        return;
+      }
+      set(ref(db, `event_participants/${id}/`), newParticipant)
+        .then(() => {
+          event.userJoined += 1;
+          update(ref(db, `event/${event.eventId}`),
+            {
+              userJoined: event.userJoined,
+            }).then(
+              ShowMethod(dispatch, messagesSuccess.I0009, true)
+            ).catch((e) => {
+              ShowMethod(dispatch, messagesError.E4444, false)
+            })
+          dispatch(incognitoParticipant(newParticipant));
+          window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
+          setTimeout(() => {
+            HideMethod(dispatch)
+            router.push("/event/countdown-checkin/" + event.eventId);
+          }, 500);
+        })
+        .catch((e) => {
+          ShowMethod(dispatch, messagesError.E4444, false)
+        });
+    });
   }, [currEvent, currUser.pic, currUser.userId, dispatch, name]);
 
-  // Set and save new player object to redux
-  useEffect(() => {
-    dispatch(incognitoParticipant(player));
-  }, [currEvent, dispatch, player]);
-
-  /*localStorage is here to track what has been saved*/
-  useEffect(() => {
-    window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player.participantId));
-  }, [player]);
-
+  // -------------------------------------------Components render-------------------------------------
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);
@@ -185,6 +267,7 @@ export default function Info() {
       </div>
     )
   }, [visible, status, message])
+  //-------------------------------------------------------------------------------------------------
 
   return (
     <section
