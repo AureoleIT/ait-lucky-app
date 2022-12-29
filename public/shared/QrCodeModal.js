@@ -22,7 +22,7 @@ export default function QrCodeModal() {
     return (
         <div className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 block">
             <QRCode 
-                value="https://google.com" //Đừng link tới Event !!! Phải có https://
+                value=""
                 renderAs="canvas" 
                 size={256}
                 id="qrCodeEl"
