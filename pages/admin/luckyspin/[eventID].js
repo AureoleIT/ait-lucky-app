@@ -95,12 +95,6 @@ export default function LuckySpinAdmin() {
             if (dataset[0].exists()) {
                 const rawData = dataset[0].val();
                 const dataEventParticipant = Object.values(rawData);
-                dataEventParticipant.forEach((val, idx) => {
-                    if (val.status !== 0)
-                        update(ref(db, 'event_participants/' + val.participantId), {
-                            status: 1
-                        });
-                })
                 const online = dataEventParticipant.filter(val => val.status === 1).length;
                 const filted = dataEventParticipant.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -182,12 +176,6 @@ export default function LuckySpinAdmin() {
             if (snapshot.exists()) {
                 const rawData = snapshot.val();
                 const data = Object.values(rawData);
-                data.forEach((val, idx) => {
-                    if (val.status !== 0)
-                        update(ref(db, 'event_participants/' + val.participantId), {
-                            status: 1
-                        });
-                })
                 const online = data.filter(val => val.status === 1).length;
                 const filted = data.filter(val => (val.idReward === "" && val.status === 1));
                 setPlayerList(rawData);
@@ -352,7 +340,7 @@ export default function LuckySpinAdmin() {
             <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">kết thúc</span> sự kiện?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
-                    remove(child(ref(db), "event/" + EventID + "/playingData"));
+                    // remove(child(ref(db), "event/" + EventID + "/playingData"));
                     dispatch(removeUserHosting)
                     updateFB('event/' + EventID, { status: 4 });
                 }} />
