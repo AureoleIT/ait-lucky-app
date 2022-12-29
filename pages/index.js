@@ -6,19 +6,19 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
 import { db } from "src/firebase";
-import { ref, child, get, query, orderByChild, equalTo } from "firebase/database";
+import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
+import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 import QrReader from 'react-qr-scanner'
 
 export default function Index() {
   const [pin, setPin] = useState("");
-  const [scanResultWebCam, setScanResultWebCam] =  useState('');
+  const [scanResultWebCam, setScanResultWebCam] = useState('');
   const [isShown, setIsShown] = useState(false);
 
   const message = usePopUpMessageHook();
@@ -59,7 +59,7 @@ export default function Index() {
             setTimeout(() => {
               router.push("event/countdown-checkin/" + currEvent.eventId);
             }, 500);
-            return;
+            return
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
@@ -75,7 +75,8 @@ export default function Index() {
         }
       });
     }
-  });
+  }, [])
+
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
@@ -90,7 +91,7 @@ export default function Index() {
         ShowMethod(dispatch, messagesError.E2004, false);
         return;
       }
-      if ( currEvent.maxTicket === currEvent.userJoined ) { 
+      if (currEvent.maxTicket <= currEvent.userJoined) {
         ShowMethod(dispatch, messagesError.E2005, false);
         return;
       }
@@ -202,90 +203,64 @@ export default function Index() {
     )
   }, [visible, status, message])
 
+  const renderQRscan = useMemo(() => {
+    return (
+      <div className="flex flex-col justify-center items-center">
+        <QrButton onClick={() => {
+          if (window.innerWidth > 768) {
+            alert("Can not connect to camera in this device")
+            return;
+          }
+          setIsShown(current => !current);
+        }} />
+
+        {isShown && <QrReader
+          delay={300}
+          style={{ width: '180px' }}
+          constraints={{ audio: false, video: { facingMode: 'environment' } }}
+          onError={handleErrorWebCam}
+          onScan={handleScanWebCam}
+        />}
+
+        {isShown && (
+          <div>
+            <h3> Scanned  Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
+          </div>)}
+      </div>
+    )
+  }, [isShown, scanResultWebCam])
+
   // const handleClick = event => {
   //   setIsShown(current => !current);
   // };
-  
-    // const [scanResultFile, setScanResultFile] = useState('');
-    // const qrRef = useRef(null)
-  
-    //  const handleErrorFile = (error) => {
-    //      alert(error)
-    //   }
-    //   const  handleScanFile = (result) => {
-    //     if  (result) {
-    //        setScanResultFile(result)
-    //     }
-    //   }
-    // const onScanFile = () => {
-    //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
-    // }
 
-    const handleErrorWebCam = (error) => {
-      alert("Some thing's wrong");
-    }
-    const handleScanWebCam = (result) => {
-      if (result) {
-        setScanResultWebCam(result);
-        const parsedUrl = new URL(result?.text);
-        const path = parsedUrl.pathname;
-        const id = path.split("/").slice(-1)[0];
+  // const [scanResultFile, setScanResultFile] = useState('');
+  // const qrRef = useRef(null)
 
-        get(child(ref(db), "event/")).then((snapshot) => {
-          const record = snapshot.val() ?? [];
-          const values = Object.values(record);
-          var currEvent = values.find((item) => item.userId === id);
-          if (currEvent === undefined || currEvent.delFlag === true) {
-            ShowMethod(dispatch, messagesError.E2004, false);
-            return;
-          }
-          if ( currEvent.maxTicket === currEvent.userJoined ) { 
-            ShowMethod(dispatch, messagesError.E2005, false);
-            return;
-          }
-          dispatch(incognitoEvent(currEvent));
-          window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
-          if (globalUser.userId) {
-            dispatch(userCurrentEventPlaying(currEvent));
-          }
-          get(child(ref(db), "users/")).then((snapshot) => {
-            const record = snapshot.val() ?? [];
-            const values = Object.values(record);
-            var currUser = values.find((item) => item.userId === currEvent.createBy);
-            dispatch(incognitoUser(currUser));
-          });
-          const path = "/event/join";
-          checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
-        });
-      }
+  //  const handleErrorFile = (error) => {
+  //      alert(error)
+  //   }
+  //   const  handleScanFile = (result) => {
+  //     if  (result) {
+  //        setScanResultFile(result)
+  //     }
+  //   }
+  // const onScanFile = () => {
+  //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
+  // }
+
+  const handleErrorWebCam = (error) => {
+    alert("Some thing's wrong");
+  }
+
+  const handleScanWebCam = (result) => {
+    if (result) {
+      setScanResultWebCam(result);
+      router.push(result?.text);
+      return;
     }
-    const renderQRscan = useMemo(() => {
-      return (
-        <div className="flex flex-col justify-center items-center">
-          <QrButton onClick={() => {
-            if (window.innerWidth > 768) {
-              alert("Can not connect to camera in this device")
-              return;
-            }
-            setIsShown(current => !current);
-          }} />
-  
-          {isShown && <QrReader
-            delay={300}
-            style={{ width: '180px' }}
-            constraints={{ audio: false, video: { facingMode: 'environment' } }}
-            onError={handleErrorWebCam}
-            onScan={handleScanWebCam}
-          />}
-  
-          {isShown && (
-            <div>
-              <h3> Scanned Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
-            </div>)}
-        </div>
-      )
-    }, [isShown, scanResultWebCam])
-    
+  }
+
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >
