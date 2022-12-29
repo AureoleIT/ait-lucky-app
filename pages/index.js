@@ -6,12 +6,12 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
 import { db } from "src/firebase";
-import { ref, child, get, query, orderByChild, equalTo, onValue } from "firebase/database";
+import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
+import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 import QrReader from 'react-qr-scanner'
