@@ -396,8 +396,6 @@ export default function LuckySpin() {
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0}
                     onClick={() => {
-                        // dispatch(removePlayerState);
-                        // dispatch(removeUserPlaying);
                         dispatch(incognitoEvent({ eventId: "" }));
                         setTimeout(() => {
                             router.push('/');

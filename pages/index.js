@@ -40,7 +40,7 @@ export default function Index() {
   const playerEvent = usePlayerEventHook();
 
   useEffect(() => {
-    console.log(1);
+    console.log("1");
     if (participant.participantId && playerEvent.eventId && participant.eventId === playerEvent.eventId) {
       get(child(ref(db), "event/")).then((snapshot) => {
         const record = snapshot.val() ?? [];
