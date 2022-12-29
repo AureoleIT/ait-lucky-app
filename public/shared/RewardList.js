@@ -34,10 +34,14 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
     }
 
     const openImage = (index, imgIdx) => {
-        if (document.getElementById("showImageOverlay")) document.getElementById("showImageOverlay").classList.toggle("hidden");
-        else (alert("Có lỗi trong mở khung hiển thị hình ảnh!"))
-        setRewardIndex(index);
-        setRewardImageIndex(imgIdx);
+        if (document.getElementById("showImageOverlay")) {
+            document.getElementById("showImageOverlay").classList.toggle("hidden");
+            setRewardIndex(index);
+            setRewardImageIndex(imgIdx);
+        }
+        else {
+            alert("Có lỗi trong mở khung hiển thị hình ảnh!");
+        }
     }
 
     const ShowcaseImage = ({imgUrls, imgIndex = 0}) => {

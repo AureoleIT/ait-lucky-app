@@ -118,7 +118,7 @@ export default function LuckySpinAdmin() {
                 // Nếu không phải admin sự kiện, đưa về trang chủ.
                 if (adminId !== dataEvent.createBy) {
                     console.log('No permission!')
-                    router.push('/');
+                    router.push('/admin/dashboard-admin');
                 };
                 const rewardChosingIndex = dataEvent['playingData']['rewardChosingIndex'];
                 const spin_time = dataEvent['playingData']['spinTime'];
@@ -163,7 +163,7 @@ export default function LuckySpinAdmin() {
                 setIDRewardChosing(rewardChosingId);
                 setSpinTime(spin_time);
             } else {
-                router.back();
+                router.push('/');
             }
         });
         

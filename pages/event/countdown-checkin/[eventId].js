@@ -96,16 +96,6 @@ function UserCountdownCheckin() {
         })
     }, [])
 
-    // check countdown end or not
-    useEffect(() => {
-        if ((deadline + countdown * 1000) < new Date().getTime()) {
-            setTimeout(() => {
-                HideMethod(dispatch)
-                router.push(`/event/luckyspin/${eventId}`)
-            }, 2000)
-        }
-    }, [deadline, countdown, dispatch])
-
     // get realtime participants from firebase
     const que2 = query(ref(db, "event_participants"), orderByChild("eventId"), equalTo(eventID));
     useEffect(() => {

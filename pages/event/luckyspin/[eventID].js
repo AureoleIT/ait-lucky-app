@@ -317,14 +317,12 @@ export default function LuckySpin() {
     // Real time
     useEffect(() => {
         dispatch(incognitoEvent({ eventId: EventID }));
-        getData()
+        getData();
     }, [])
 
     useEffect(() => {
-        if (EventID === "") return;
+        if (loadedData === false) return;
 
-        // Nếu đến trang trong trạng thái chưa đăng ký participant, đưa đến trang nhập thông tin
-        if (participantId === "") router.push('/event/info');
         fetchDB();
 
         const setOnlineStatus = (status) => {
@@ -354,7 +352,7 @@ export default function LuckySpin() {
             clearInterval(onlineStatus);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, [EventID])
+    }, [loadedData])
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
@@ -396,9 +394,10 @@ export default function LuckySpin() {
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0}
                     onClick={() => {
-                        dispatch(removePlayerState);
-                        dispatch(removeUserPlaying);
-                        router.push('/');
+                        dispatch(incognitoEvent({ eventId: "" }));
+                        setTimeout(() => {
+                            router.push('/');
+                        }, 1000);
                     }} />
                 <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
             </div>

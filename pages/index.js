@@ -59,7 +59,7 @@ export default function Index() {
             setTimeout(() => {
               router.push("event/countdown-checkin/" + currEvent.eventId);
             }, 500);
-            return
+            return;
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
@@ -75,7 +75,7 @@ export default function Index() {
         }
       });
     }
-  })
+  });
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
