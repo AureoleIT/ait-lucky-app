@@ -172,9 +172,10 @@ function CountDownCheckIn() {
     // close pop up
     const closePopup = (e) => { setIsHidden(hidden) };
 
+    const originURL = window.location.origin
     // generate qr code
     const generateQRcode = useCallback(() => {
-        setQrCodeValue(`http://localhost:3000/event/join?pinCode=${pinCode}`)
+        setQrCodeValue(`${originURL}/event/join?pinCode=${pinCode}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
         setIsHidden(show)
