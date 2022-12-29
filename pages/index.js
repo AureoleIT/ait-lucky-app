@@ -75,7 +75,7 @@ export default function Index() {
         }
       });
     }
-  })
+  });
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
