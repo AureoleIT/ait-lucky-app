@@ -93,7 +93,7 @@ export default function Dashboard() {
                 {"Chào mừng đến với AIT Lucky App,"}
               </p>
               <p className="text-sm text-[#656565] mb-2">
-                {"hãy bắt đầu chơi các sự kiện ngay nào!"}
+                {"Hãy bắt đầu tham gia các sự kiện ngay nào!"}
               </p>
             </div>
             <img
