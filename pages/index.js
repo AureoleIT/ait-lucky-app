@@ -280,7 +280,7 @@ export default function Index() {
   
           {isShown && (
             <div>
-              <h3> Scanned  Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
+              <h3> Scanned Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
             </div>)}
         </div>
       )
