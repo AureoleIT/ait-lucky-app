@@ -174,7 +174,7 @@ function CountDownCheckIn() {
 
     // generate qr code
     const generateQRcode = useCallback(() => {
-        setQrCodeValue(`http://localhost:3000/event/coutdown-checkin/${eventID}`)
+        setQrCodeValue(`http://localhost:3000/event/join?pinCode=${pinCode}`)
         let toggle = document.getElementById("qr_code")
         toggle.style.display = "flex"
         setIsHidden(show)
