@@ -292,9 +292,9 @@ export default function Setting() {
                     <section className="h-screen w-screen overflow-y-hidden">
                         {renderHeader}
                         <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
+                            <p className="text-lg mb-2 font-bold text-[#004599]">THÔNG TIN CÁ NHÂN</p>
                             <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
                                 <div className="flex flex-col justify-center items-center">
-                                    <p className="text-lg mb-0 font-bold text-[#004599]">THÔNG TIN CÁ NHÂN</p>
                                     <img src={img}
                                         onClick={(e) => getImage(e)}
                                         alt="" className="w-[100px] h-[100px] rounded object-cover mt-12" />
