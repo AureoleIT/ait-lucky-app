@@ -340,7 +340,7 @@ export default function LuckySpinAdmin() {
             <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">kết thúc</span> sự kiện?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
                 <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
-                    remove(child(ref(db), "event/" + EventID + "/playingData"));
+                    // remove(child(ref(db), "event/" + EventID + "/playingData"));
                     dispatch(removeUserHosting)
                     updateFB('event/' + EventID, { status: 4 });
                 }} />
