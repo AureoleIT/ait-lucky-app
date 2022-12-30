@@ -43,7 +43,6 @@ export default function Info() {
   // -------------------------------------------Check path--------------------------------------------
   useEffect(() => {
     if ((pinCode === undefined || pinCode === null) && !currEvent.eventId) {
-      alert(1);
       router.push("/");
       return;
     } else if ((pinCode === undefined || pinCode === null) && currEvent.eventId) {
@@ -58,8 +57,6 @@ export default function Info() {
               removePlayerState()
               setTimeout(() => {
                 HideMethod(dispatch);
-      alert(2);
-
                 router.push("/");
               }, 500)
               return;
@@ -79,8 +76,6 @@ export default function Info() {
               return;
             case 4:
               dispatch(removePlayerState());
-      alert(3);
-
               router.push("/");
               return;
             default:
@@ -111,8 +106,6 @@ export default function Info() {
               removePlayerState()
               setTimeout(() => {
                 HideMethod(dispatch);
-      alert(4);
-
                 router.push("/");
               }, 500)
               return;
@@ -133,8 +126,6 @@ export default function Info() {
             case 4:
               dispatch(removePlayerState());
               setTimeout(() => {
-      alert(5);
-
                 router.push("/");
               })
               return;
@@ -192,8 +183,6 @@ export default function Info() {
         setTimeout(() => {
           HideMethod(dispatch)
           dispatch(removePlayerState());
-      alert(6);
-
           router.push("/");
         }, 1000);
         return;

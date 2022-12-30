@@ -29,6 +29,7 @@ function UserCountdownCheckin() {
         }
         else {
             if (user.eventId !== eventID) {
+                alert("!!!");
                 router.push("/")
             }
         }
