@@ -152,7 +152,6 @@ function UserCountdownCheckin() {
             if (!user.participantId) return;
             get(query(ref(db, "event_participants/" + user.participantId + "/status"))).then((snapshot) => {
                 if (snapshot.exists()) {
-                    console.log("!!!");
                     update(ref(db, 'event_participants/' + user.participantId), {
                         status: status
                     });
