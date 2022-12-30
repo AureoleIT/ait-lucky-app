@@ -23,6 +23,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Input, Title, Button, AuthFooter, Privacy, Line } from "public/shared";
+import Trans from "public/trans/hooks/Trans";
 
 const uuid = require("uuid");
 const dbRef = ref(db);
@@ -39,6 +40,7 @@ export default function Register() {
   const visible = usePopUpVisibleHook();
 
   const dispatch = useDispatch();
+  const transSignup = Trans().register;
 
   const globalUser = useUserPackageHook();
 
@@ -196,7 +198,7 @@ export default function Register() {
 
   const renderTitle = useMemo(() => {
     return (
-      <Title title="ĐĂNG KÝ" />
+      <Title title={transSignup.heading}/>
     )
   }, [])
 
@@ -211,7 +213,7 @@ export default function Register() {
             ? FAIL_RIGHT_COLOR
             : RIGHT_COLOR
         }
-        content={"Tên đăng nhập"}
+        content={transSignup.username}
         onChange={setNameData}
       />
     )
@@ -239,7 +241,7 @@ export default function Register() {
         secondaryColor={
           enoughNumCountPass(password) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
         }
-        content={"Mật khẩu"}
+        content={transSignup.password}
         onChange={setPassData}
       />
     )
@@ -254,7 +256,7 @@ export default function Register() {
         secondaryColor={
           enoughNumCountPass(rePassword) ? FAIL_RIGHT_COLOR : RIGHT_COLOR
         }
-        content={"Nhập lại mật khẩu"}
+        content={transSignup.confirmPassword}
         onChange={setRePassData}
       />
     )
@@ -269,7 +271,7 @@ export default function Register() {
   const renderConfirmButton = useMemo(() => {
     return (
       <Button
-        content="đăng ký"
+        content={transSignup.heading}
         onClick={() => {
           signUpSubmit(name, email, password);
         }}
@@ -282,14 +284,14 @@ export default function Register() {
 
   const renderFirstLine = useMemo(() => {
     return (
-      <Line content="hoặc" />
+      <Line content={transSignup.or} />
     )
   }, [])
 
   const renderAuthButton = useMemo(() => {
     return (
       <Button
-        content="đăng ký với"
+        content={transSignup.google}
         onClick={() => {
           signUpAuth();
         }}
@@ -310,10 +312,10 @@ export default function Register() {
   const renderFooter = useMemo(() => {
     return (
       <AuthFooter
-        normalContent="Đã có tài khoản?"
-        boldContent="Đăng nhập luôn!"
-        href="/auth/login"
-      />
+        normalContent={transSignup.hasAccount}
+        boldContent={transSignup.login}
+        href="/auth/login" 
+        />
     )
   }, [])
 

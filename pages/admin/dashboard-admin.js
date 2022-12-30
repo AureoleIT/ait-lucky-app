@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import router from "next/router";
 // firebase
 import { db } from "src/firebase";
-import { ref, orderByChild, query, onValue } from "firebase/database";
+import { ref, query, onValue, orderByValue } from "firebase/database";
 // redux
 import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
@@ -11,20 +11,23 @@ import { userCurrentEventHosting } from "public/redux/actions";
 import { Header, Input, Line, Button } from "public/shared";
 import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
+// translation
+import Trans from "public/trans/hooks/Trans";
 //gif
 import nyancat from "public/img/nyancat.gif";
-
 export default function Dashboard() {
   const [arrStatus, setArrStatus] = useState([]);
   const [arrID, setArrID] = useState([]);
   const dispatch = useDispatch();
   const currentUser = useUserPackageHook();
   // create query
-  const queDb = query(ref(db, "event"), orderByChild("createAt"));
+  const queDb = query(ref(db, "event"), orderByValue("createAt"));
   // authentication, only users can access this page
   const checkAuth = () => {
     router.push("/auth/login");
   };
+  // translation
+  const trans = Trans();
   // get(child(ref(db), `event`))
   // .then((snapshot) => {
   //   const res = snapshot.val() ?? [];
@@ -78,7 +81,6 @@ export default function Dashboard() {
       }
     });
   }, [String(currentUser.userId)]);
-
   //render view
   const renderHeader = useMemo(() => {
     return <Header />;
@@ -90,10 +92,10 @@ export default function Dashboard() {
           <div className="flex justify-between items-end w-full">
             <div className="flex flex-col flex-1">
               <p className="font-bold text-sm text-[#656565] mt-2">
-                {"Chào mừng đến với AIT Lucky App,"}
+                {trans.dashboard.welcome.title}
               </p>
               <p className="text-sm text-[#656565] mb-2">
-                {"Hãy bắt đầu tham gia các sự kiện ngay nào!"}
+                {trans.dashboard.welcome.content}
               </p>
             </div>
             <img
@@ -111,35 +113,38 @@ export default function Dashboard() {
   }, []);
   const renderJoinEvent = useMemo(() => {
     return (
-      <Input content={"Tham gia sự kiện"}>
+      <Input content={trans.dashboard.joinEvent.title}>
         <div className="flex flex-col pb-4 pt-2">
           <p className=" f text-sm text-[#656565] my-2">
-            {"Tham gia vào các sự kiện được tổ chức bằng mã pin."}
+            {trans.dashboard.joinEvent.description}
           </p>
-          <a href="/">
+          <div onClick={() => {router.push("/")}}>
             <Button
               margin={"my-0"}
-              content={"CHƠI VỚI MÃ PIN!"}
+              content={trans.dashboard.joinEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
-          </a>
+          </div>
         </div>
       </Input>
     );
   }, []);
   const renderShowCurrentEvent = useMemo(() => {
     return (
-      <Input content={"Các sự kiện đang diễn ra"} isTextGradient={true}>
+      <Input
+        content={trans.dashboard.showCurrentEvent.title}
+        isTextGradient={true}
+      >
         <div className="flex flex-col py-4">
           <p className=" text-sm text-[#656565] mb-2">
-            {"Hiển thị các sự kiện đang diễn ra của tôi"}
+            {trans.dashboard.showCurrentEvent.description}
           </p>
           <div className="w-full flex flex-col gap-y-[7px] overflow-auto max-h-[188px] scrollbar-hide">
             {arrStatus.length === 0 ? (
               <div className="w-full flex items-center text-center justify-center text-sm text-[#000000]">
                 {" "}
-                {"Không có dữ liệu"}
+                {trans.dashboard.showCurrentEvent.checklength}
               </div>
             ) : (
               arrStatus.map((item, index) => (
@@ -162,36 +167,36 @@ export default function Dashboard() {
   }, [arrStatus]);
   const renderCreateEvent = useMemo(() => {
     return (
-      <Input content={"Tạo sự kiện"} isTextGradient={true}>
+      <Input content={trans.dashboard.createEvent.title} isTextGradient={true}>
         <div className="">
           <p className="text-sm text-[#656565] pt-4">
-            {
-              "Tạo một sự kiện quay thưởng mới, bạn có thể thiết lập các giải thưởng, mỗi giải thưởng gồm tên, khái quát, hình ảnh giải thưởng, số lượng giải."
-            }
+            {trans.dashboard.createEvent.description}
           </p>
-          <a href="/admin/event/event-register">
+          <div onClick={() => {router.push("/admin/event/event-register")}}>
             <Button
-              content={"TẠO SỰ KIỆN NGAY"}
+              content={trans.dashboard.createEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
-          </a>
+          </div>
         </div>
       </Input>
     );
   }, []);
-
   const renderShowCreateEvent = useMemo(() => {
     return (
-      <Input content={"Danh sách sự kiện"} isTextGradient={true}>
+      <Input
+        content={trans.dashboard.showCreateEvent.title}
+        isTextGradient={true}
+      >
         <p className=" text-sm text-[#656565] mt-4 mb-2">
-          {"Hiển thị các sự kiện gần đây của tôi đã tạo"}
+          {trans.dashboard.showCreateEvent.description}
         </p>
         <div className="flex flex-col gap-y-[7px]">
           {arrID.length === 0 ? (
             <div className="w-full flex items-center text-center justify-center text-sm text-[#000000] ">
               {" "}
-              {"Không có dữ liệu"}
+              {trans.dashboard.showCreateEvent.checklength}
             </div>
           ) : (
             arrID.slice(0, 4).map((item, index) => (
@@ -209,7 +214,7 @@ export default function Dashboard() {
           )}
           <a href="event-list">
             <Button
-              content={"Tất cả sự kiện"}
+              content={trans.dashboard.showCreateEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />

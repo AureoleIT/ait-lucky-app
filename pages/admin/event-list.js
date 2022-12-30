@@ -7,12 +7,14 @@ import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
 import { userCurrentEventHosting } from "public/redux/actions";
 import { Header, EventButton, Title, Input } from "public/shared";
+import Trans from "public/trans/hooks/Trans";
 
 export default function EventList() {
   const dispatch = useDispatch();
   const [searchContent, setSearchContent] = useState("");
   const [events, setEvents] = useState([]);
   const router = useRouter();
+  const trans = Trans();
 
   //get current user from last state get in
   const currentUser = useUserPackageHook();
@@ -31,14 +33,14 @@ export default function EventList() {
       if (record != null) {
         const data = Object.values(record);
         data.sort((a, b) =>
-        a.createAt > b.createAt
-          ? -1
-          : a.createAt === b.createAt
-          ? a.size > b.size
+          a.createAt > b.createAt
             ? -1
+            : a.createAt === b.createAt
+            ? a.size > b.size
+              ? -1
+              : 1
             : 1
-          : 1
-      );
+        );
         data.forEach((value) => {
           if (value.delFlag === false) {
             setEvents((prev) => [...prev, value]);
@@ -59,7 +61,7 @@ export default function EventList() {
   }, []);
 
   const renderTitle = useMemo(() => {
-    return <Title title={"danh sách sự kiện"} fontSize={"text-[33px]"} />;
+    return <Title title={trans.eventList.heading} fontSize={"text-[33px]"} />;
   }, []);
 
   if (!currentUser.userId) {
@@ -75,7 +77,7 @@ export default function EventList() {
           <div className="max-w-md flex flex-col w-full gap-y-[19px]">
             <div id="search" className="flex flex-col mx-2">
               <Input
-                content={"Tên sự kiện"}
+                content={trans.eventList.searchContent.title}
                 type={"text"}
                 onChange={(e) => setSearchContent(e.target.value)}
                 primaryColor={LEFT_COLOR}
@@ -97,7 +99,7 @@ export default function EventList() {
                   </div>
                 ))
               ) : (
-                <p className="text-[#004599] text-center">Danh sách trống</p>
+                <p className="text-[#004599] text-center">{trans.eventList.searchContent.checklength}</p>
               )}
             </div>
           </div>

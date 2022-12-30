@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import router from "next/router";
+import Trans from "public/trans/hooks/Trans";
 
 //firebase
 import {
@@ -16,7 +17,7 @@ import { db } from "src/firebase";
 import { useUserPackageHook } from "public/redux/hooks";
 
 //component
-import { Button, Header, Input, OverlayBlock, PageLoading } from "public/shared";
+import { Button, Header, Input, OverlayBlock, PageLoading, Title } from "public/shared";
 
 //util
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
@@ -30,6 +31,8 @@ export default function ChangePassword() {
   const [repeatPass, setRepeat] = useState("");
   const user = useUserPackageHook();
   const [loadedData, setLoadedData] = useState(false);
+
+  const changePassTrans = Trans().changePassword
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -95,7 +98,7 @@ export default function ChangePassword() {
 
   // show popup
   useEffect(() => {
-    if (isHidden == false) {
+    if (!isHidden == false) {
       isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
       document.getElementById("textState").innerHTML = textState;
       document.getElementById("changeOverlay").classList.toggle('hidden');
@@ -144,7 +147,7 @@ export default function ChangePassword() {
   const renderOldPass = useMemo(() => {
     return (
       <Input
-        content={"Mật khẩu cũ"}
+        content={changePassTrans.currPass}
         type={"password"}
         isTextGradient={true}
         primaryColor={LEFT_COLOR}
@@ -156,7 +159,7 @@ export default function ChangePassword() {
   const renderNewPass = useMemo(() => {
     return (
       <Input
-        content={"Mật khẩu mới"}
+        content={changePassTrans.newPassword}
         type={"password"}
         isTextGradient={true}
         primaryColor={LEFT_COLOR}
@@ -168,7 +171,7 @@ export default function ChangePassword() {
   const renderRepeatPass = useMemo(() => {
     return (
       <Input
-        content={"Nhập lại mật khẩu"}
+        content={changePassTrans.confirmPassword}
         type={"password"}
         isTextGradient={true}
         primaryColor={LEFT_COLOR}
@@ -197,12 +200,18 @@ export default function ChangePassword() {
   const renderButton = useMemo(() => {
     return (
       <Button
-        content={"LƯU"}
+        content={changePassTrans.save}
         onClick={() => changePassword()}
         primaryColor={LEFT_COLOR}
         secondaryColor={RIGHT_COLOR} />
     )
   }, [changePassword])
+
+  const renderTitle = useMemo(() => {
+    return (
+      <Title title={changePassTrans.heading} />
+    )
+  }, [])
 
   const renderOverlayBlock = useMemo(() => {
     return (
@@ -225,31 +234,29 @@ export default function ChangePassword() {
   return (
     <>
       {
-        loadedData ?
-          <section className="h-screen overflow-y-hidden">
-            {renderHeader}
-            <div className="h-full w-[90%] mx-auto">
-              <div
-                className="flex xl:justify-center lg:justify-center justify-center h-full mt-4"
-              >
-                <div className="flex flex-col w-full max-w-md md:mb-0">
-                  <div className="flex flex-col justify-center items-center">
-                    <p className="text-lg font-bold text-[#004599] ">ĐỔI MẬT KHẨU</p>
-                  </div>
-
-                  {renderOldPass}
-                  {renderNewPass}
-                  {renderRepeatPass}
-                  {renderButton}
+        <section className="h-screen overflow-y-hidden">
+          {renderHeader}
+          <div className="h-full w-[90%] mx-auto">
+            <div
+              className="flex xl:justify-center lg:justify-center justify-center h-full mt-4"
+            >
+              <div className="flex flex-col w-full max-w-md md:mb-0">
+                <div className="flex flex-col justify-center items-center">
+                  {renderTitle}
                 </div>
+
+                {renderOldPass}
+                {renderNewPass}
+                {renderRepeatPass}
+                {renderButton}
               </div>
             </div>
+          </div>
 
-            <div className="">
-              {renderOverlayBlock}
-            </div>
-          </section>
-          : <> {renderPageLoading}</>
+          <div className="">
+            {renderOverlayBlock}
+          </div>
+        </section>
       }
     </>
 

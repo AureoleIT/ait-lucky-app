@@ -17,6 +17,7 @@ import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
+import Trans from "public/trans/hooks/Trans";
 
 export default function Login() {
   const message = usePopUpMessageHook();
@@ -27,6 +28,8 @@ export default function Login() {
   const [pass, setPass] = useState("");
   const [check, setCheck] = useState(false);
   var [user, setUser] = useState({});
+
+  const loginTrans = Trans().login;
 
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
@@ -123,7 +126,7 @@ export default function Login() {
   }, [check]);
 
   const renderTitle = useMemo(() => {
-    return (<Title title="ĐĂNG NHẬP" />)
+    return (<Title title={loginTrans.heading}/>)
   }, [])
 
   const renderName = useMemo(() => {
@@ -137,7 +140,7 @@ export default function Login() {
             ? FAIL_RIGHT_COLOR
             : RIGHT_COLOR
         }
-        content={"Tên đăng nhập/Email"}
+        content={loginTrans.username}
         onChange={nameData}
       />
     )
@@ -154,7 +157,7 @@ export default function Login() {
             ? FAIL_RIGHT_COLOR
             : RIGHT_COLOR
         }
-        content={"Mật khẩu"}
+        content={loginTrans.password}
         onChange={passData}
       />
     )
@@ -163,7 +166,7 @@ export default function Login() {
   const renderRemember = useMemo(() => {
     return (
       <TickBox
-        content="Ghi nhớ đăng nhập"
+        content={loginTrans.rememberLogin}
         htmlFor="rememberLogin"
         onChange={onCheckData}
       />
@@ -174,7 +177,7 @@ export default function Login() {
     return (
       <a href="/auth/forgot-password">
         <Title
-          title="Quên mật khẩu?"
+          title={loginTrans.forgotPassword}
           isUnderLine={true}
           isUpperCase={false}
           fontSize="font-bold"
@@ -188,7 +191,7 @@ export default function Login() {
   const renderSubmitButton = useMemo(() => {
     return (
       <Button
-        content="Đăng nhập"
+        content={loginTrans.heading}
         onClick={() => {
           loginSubmit(name, pass);
         }}
@@ -200,14 +203,14 @@ export default function Login() {
 
   const renderFirstLine = useMemo(() => {
     return (
-      <Line content="hoặc" />
+      <Line content={loginTrans.or} />
     )
   }, [])
 
   const renderAuthInput = useMemo(() => {
     return (
       <Button
-        content="Đăng nhập bằng"
+        content={loginTrans.google}
         onClick={() => loginAuth(name, pass)}
         isTextGradient={true}
         logoGg={true}
@@ -226,8 +229,8 @@ export default function Login() {
   const renderFooter = useMemo(() => {
     return (
       <AuthFooter
-        normalContent="Chưa có tài khoản?"
-        boldContent="Đăng kí ngay!"
+        normalContent={loginTrans.noAccount}
+        boldContent={loginTrans.register}
         href="/auth/register"
       />
     )
