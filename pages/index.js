@@ -220,7 +220,10 @@ export default function Index() {
     return (
       <div className="flex flex-col justify-center items-center">
         <QrButton onClick={() => {
-         
+          if (window.innerWidth > 768) {
+            alert(messagesError.E5555)
+            return;
+          }
           setIsShown(current => !current);
         }} />
 
