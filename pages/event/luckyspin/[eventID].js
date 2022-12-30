@@ -347,7 +347,7 @@ export default function LuckySpin() {
             clearInterval(onlineStatus);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, [])
+    }, []);
 
     // Điều chỉnh danh sách người chơi được điều chỉnh
     useEffect(() => {
