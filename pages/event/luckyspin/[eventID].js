@@ -343,8 +343,8 @@ export default function LuckySpin() {
         window.addEventListener('beforeunload', () => setOnlineStatus(2));
 
         return () => {
-            setOnlineStatus(2);
             clearInterval(onlineStatus);
+            setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
     }, []);
