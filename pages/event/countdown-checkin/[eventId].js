@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux"
 import { usePlayerParticipantHook } from "public/redux/hooks"
 
 import { db } from "src/firebase"
-import { ref, onValue, query, orderByChild, equalTo, get } from "firebase/database"
+import { ref, onValue, query, orderByChild, equalTo } from "firebase/database"
 import { RewardList } from "public/shared";
 
 function UserCountdownCheckin() {
@@ -152,6 +152,7 @@ function UserCountdownCheckin() {
             if (!user.participantId) return;
             get(query(ref(db, "event_participants/" + user.participantId + "/status"))).then((snapshot) => {
                 if (snapshot.exists()) {
+                    console.log("!!!");
                     update(ref(db, 'event_participants/' + user.participantId), {
                         status: status
                     });
@@ -169,7 +170,7 @@ function UserCountdownCheckin() {
             clearInterval(onlineStatus);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
         }
-    }, []);
+    }, [])
 
     const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
