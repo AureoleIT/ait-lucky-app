@@ -164,7 +164,7 @@ function UserCountdownCheckin() {
         const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
         window.addEventListener('beforeunload', () => setOnlineStatus(2));
         window.blur(() => {
-            console.log("BLUR");
+            alert("BLUR");
         })
 
         return () => {
