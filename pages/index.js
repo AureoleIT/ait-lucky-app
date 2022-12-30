@@ -211,6 +211,7 @@ export default function Index() {
   const handleScanWebCam = (result) => {
     if (result) {
       setScanResultWebCam(result);
+      alert(result?.text);
       router.push(result?.text);
       return;
     }
