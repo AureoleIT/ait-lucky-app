@@ -189,6 +189,7 @@ export default function Info() {
         }, 1000)
         return;
       }
+      console.log(event.status)
       switch (event.status) {
         case 1:
           ShowMethod(dispatch, messagesError.E3001, false);
@@ -199,7 +200,29 @@ export default function Info() {
           }, 750)
           return;
         case 2:
-          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          set(ref(db, `event_participants/${id}/`), newParticipant)
+          .then(() => {
+            event.userJoined += 1;
+            update(ref(db, `event/${event.eventId}`),
+              {
+                userJoined: event.userJoined,
+              }).then(
+                ShowMethod(dispatch, messagesSuccess.I0009, true)
+              ).catch((e) => {
+                ShowMethod(dispatch, messagesError.E4444, false)
+              })
+            dispatch(incognitoParticipant(newParticipant));
+  
+            window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
+            
+            setTimeout(() => {
+              HideMethod(dispatch)
+              router.push("/event/countdown-checkin/" + event.eventId);
+            }, 750);
+          })
+          .catch((e) => {
+            ShowMethod(dispatch, messagesError.E4444, false)
+          });
           setTimeout(() => {
             HideMethod(dispatch);
             router.push("event/countdown-checkin/" + currEvent.eventId);
@@ -232,27 +255,6 @@ export default function Info() {
         }, 1000);
         return;
       }
-      set(ref(db, `event_participants/${id}/`), newParticipant)
-        .then(() => {
-          event.userJoined += 1;
-          update(ref(db, `event/${event.eventId}`),
-            {
-              userJoined: event.userJoined,
-            }).then(
-              ShowMethod(dispatch, messagesSuccess.I0009, true)
-            ).catch((e) => {
-              ShowMethod(dispatch, messagesError.E4444, false)
-            })
-          dispatch(incognitoParticipant(newParticipant));
-          window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
-          setTimeout(() => {
-            HideMethod(dispatch)
-            router.push("/event/countdown-checkin/" + event.eventId);
-          }, 750);
-        })
-        .catch((e) => {
-          ShowMethod(dispatch, messagesError.E4444, false)
-        });
     });
   }, [currEvent, currUser.pic, currUser.userId, dispatch, name]);
 
