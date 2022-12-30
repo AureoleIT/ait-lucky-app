@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import router from "next/router";
+import Trans from "public/trans/hooks/Trans";
 
 //firebase
 import {
@@ -30,7 +31,7 @@ import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 
-export default function Setting() {
+export default function Setting() {   
     //redux
     const [user, setUser] = useState(useUserPackageHook());
     const dispatch = useDispatch();
@@ -58,6 +59,7 @@ export default function Setting() {
         setIsSuccess(isSuccess);
         setIsHidden(isHidden);
     }, [])
+    const transSetting = Trans().setting;
 
     // popup
     const popupNoti = useMemo(() => {
@@ -187,8 +189,8 @@ export default function Setting() {
     const renderUsername = useMemo(() => {
         return (
             <Input
-                content={"Tên đăng nhập"}
-                placeHolder={"Tên đăng nhập"}
+                content={transSetting.title}
+                placeHolder={transSetting.title}
                 type={"text"}
                 isTextGradient={true}
                 primaryColor={LEFT_COLOR}
@@ -233,7 +235,7 @@ export default function Setting() {
 
     const renderButtonSave = useMemo(() => {
         return (
-            <Button content={"LƯU"}
+            <Button content={transSetting.buttonSave}
                 primaryColor={LEFT_COLOR}
                 secondaryColor={RIGHT_COLOR}
                 onClick={() => { handleSaveInfo(username) }}
@@ -243,7 +245,7 @@ export default function Setting() {
 
     const renderButtonNavi = useMemo(() => {
         return (
-            <Button content={"ĐỔI MẬT KHẨU"}
+            <Button content={transSetting.buttonChangePW}
                 primaryColor={"bg-white"}
                 secondaryColor={RIGHT_COLOR}
                 isTextGradient={true}
@@ -287,38 +289,36 @@ export default function Setting() {
 
     return (
         <>
-            {
-                loadedData ?
-                    <section className="h-screen w-screen overflow-y-hidden">
-                        {renderHeader}
-                        <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
-                            <p className="text-lg mb-2 font-bold text-[#004599]">THÔNG TIN CÁ NHÂN</p>
-                            <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
-                                <div className="flex flex-col justify-center items-center">
-                                    <img src={img}
-                                        onClick={(e) => getImage(e)}
-                                        alt="" className="w-[100px] h-[100px] rounded object-cover mt-12" />
-                                    <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
-                                </div>
+            {            
+                <section className="h-screen w-screen overflow-y-hidden">
+                    {renderHeader}
+                    <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
+                        <p className="text-lg mb-2 font-bold text-[#004599]">{transSetting.heading}</p>
+                        <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
+                            <div className="flex flex-col justify-center items-center">
+                                <img src={img}
+                                    onClick={(e) => getImage(e)}
+                                    alt="" className="w-[100px] h-[100px] rounded object-cover mt-12" />
+                                <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
                             </div>
-
-                            <div className="w-[90%] mx-auto my-10">
-                                {renderUsername}
-                                {renderEmail}
-                                {renderButtonSave}
-                            </div>
-
-                            <footer className="flex items-end h-full w-full">
-                                <div className="pb-24 w-full max-w-md text-center lg:text-left">
-                                    <div className="w-[90%] h-[50px] mx-auto rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
-                                        {renderButtonNavi}
-                                    </div>
-                                </div>
-                            </footer>
                         </div>
-                        {renderOverlayBlock}
-                    </section>
-                    : <>{renderPageLoading}</>
+
+                        <div className="w-[90%] mx-auto my-10">
+                            {renderUsername}
+                            {renderEmail}
+                            {renderButtonSave}
+                        </div>
+
+                        <footer className="flex items-end h-full w-full">
+                            <div className="pb-24 w-full max-w-md text-center lg:text-left">
+                                <div className="w-[90%] h-[50px] mx-auto rounded-[50px] bg-gradient-to-r from-[#003B93] to-[#00F0FF]">
+                                    {renderButtonNavi}
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+                    {renderOverlayBlock}
+                </section>             
             }
         </>
 

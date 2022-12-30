@@ -75,7 +75,7 @@ export default function Header() {
               }}
             >
               <span className="mt-2 justify-center items-center text-xs text-center">
-                {locale === "vi" ? "Vi" : "En"}
+                {locale === "vi" ? <img src="https://cdn-icons-png.flaticon.com/128/197/197473.png" alt="" /> : <img src="https://cdn-icons-png.flaticon.com/128/323/323310.png" alt="" />}
               </span>
             </div>
             <UserAvatar avatar={userData.pic || defaultAvatar} />
