@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux"
 import { usePlayerParticipantHook } from "public/redux/hooks"
 
 import { db } from "src/firebase"
-import { ref, onValue, query, orderByChild, equalTo } from "firebase/database"
+import { ref, onValue, query, orderByChild, equalTo, get } from "firebase/database"
 import { RewardList } from "public/shared";
 
 function UserCountdownCheckin() {
