@@ -345,8 +345,11 @@ export default function LuckySpin() {
         var delayOffline = setTimeout(() => {}, 0);
 
         window.addEventListener('beforeunload', () => { setOnlineStatus(2); });
-        window.addEventListener('blur', () => {
-            delayOffline = setTimeout(() => setOnlineStatus(2), 3000);
+        if (window.innerWidth <= 768) window.addEventListener('blur', () => {
+            setOnlineStatus(2);
+        });
+        else window.addEventListener('blur', () => {
+            delayOffline = setTimeout(() => setOnlineStatus(2), 6000);
         });
         window.addEventListener('focus', () => {
             setOnlineStatus(1);
@@ -361,8 +364,11 @@ export default function LuckySpin() {
             clearInterval(onlineStatus);
             setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
-            window.removeEventListener('blur', () => {
-                delayOffline = setTimeout(() => setOnlineStatus(2), 3000);
+            if (window.innerWidth <= 768) window.removeEventListener('blur', () => {
+                setOnlineStatus(2);
+            });
+            else window.addEventListener('blur', () => {
+                delayOffline = setTimeout(() => setOnlineStatus(2), 6000);
             });
             window.removeEventListener('focus', () => {
                 setOnlineStatus(1);
