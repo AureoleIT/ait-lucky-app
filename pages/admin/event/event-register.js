@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { userEventCreating } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
+import Trans from "public/trans/hooks/Trans";
 
 const uuid = require("uuid");
 
@@ -27,6 +28,7 @@ export default function EventRegister() {
     const [description, setDescription] = useState(""); // description of event
     const [maxTicket, setMaxTicket] = useState(""); // limit player in event
     const [publicFlag, setPublicFlag] = useState(true); // event public or not
+    const transEventReg = Trans().eventRegister;
 
     const contentCSS = {
         background: "-webkit-linear-gradient(45deg, #003B93, #00F0FF)",
@@ -99,8 +101,8 @@ export default function EventRegister() {
     const renderTitleHeader = useMemo(() => {
         return (
         <>
-            <h1 className="font-[900] uppercase text-[#004599] text-[36px] text-center mb-2"> đăng ký </h1>
-            <h1 className="font-[900] uppercase text-[#004599] text-[25px] text-center mb-4"> thông tin sự kiện </h1>
+            <h1 className="font-[900] uppercase text-[#004599] text-[36px] text-center mb-2"> {transEventReg.heading}</h1>
+            <h1 className="font-[900] uppercase text-[#004599] text-[25px] text-center mb-4"> {transEventReg.subHeading} </h1>
         </>
         );
     }, []);
@@ -108,7 +110,7 @@ export default function EventRegister() {
     const renderTitle = useMemo(() => {
         return (
             <div className="w-full h-[70px]">
-                <Input primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} content={"Tên sự kiện"} maxLength={"100"} value={title} onChange={onChangeTitle} />
+                <Input primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} content={transEventReg.eventName} maxLength={"100"} value={title} onChange={onChangeTitle} />
             </div>
         );
     }, [title, onChangeTitle]);
@@ -116,7 +118,7 @@ export default function EventRegister() {
     const renderDescription = useMemo(() => {
         return (
             <div className="flex items-center h-[200px] w-full">
-                <Input content={"Mô tả sự kiện"} row={4} maxLength={"1000"} value={description} onChange={onChangeDescription} height={"h-full"} isMultiLine={true} />
+                <Input content={transEventReg.eventDescription} row={4} maxLength={"1000"} value={description} onChange={onChangeDescription} height={"h-full"} isMultiLine={true} />
             </div>
         );
     }, [description, onChangeDescription]);
@@ -124,7 +126,7 @@ export default function EventRegister() {
     const renderMaxTicket = useMemo(() => {
         return (
             <div className="w-full">
-                <Input primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={maxTicket} onChange={onChangeMaxTicket} />
+                <Input primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={transEventReg.maxTicket} type={"number"} min={"1"} value={maxTicket} onChange={onChangeMaxTicket} />
             </div>
         );
     }, [maxTicket, onChangeMaxTicket]);
@@ -133,7 +135,7 @@ export default function EventRegister() {
         return (
             <div className="w-full flex justify-center items-center">
                 <div className="w-[70%]">
-                    <p style={contentCSS} className="font-bold"> Cho phép người tham gia không cần đăng nhập </p>
+                    <p style={contentCSS} className="font-bold">{transEventReg.publicFlag}</p>
                 </div>
                 <div className="w-[30%] flex items-center text-right">
                     <CheckBox value={publicFlag} onChange={onChangePublicFlag} />
@@ -149,7 +151,7 @@ export default function EventRegister() {
     const renderButton = useMemo(() => {
         return (
             <div className="py-3 w-4/5 max-w-xl">
-                <Button content={"TIẾP TỤC"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={() => handleSubmit(title, description, maxTicket, publicFlag) }/>
+                <Button content={transEventReg.buttonContent} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={() => handleSubmit(title, description, maxTicket, publicFlag) }/>
             </div>
         );
     }, [handleSubmit, title, description, maxTicket, publicFlag]);
@@ -157,7 +159,6 @@ export default function EventRegister() {
   return (
     <>
     {
-        loadedData ? 
         (
             <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center justify-between h-screen w-screen">
                 {renderHeader}
@@ -175,10 +176,6 @@ export default function EventRegister() {
                 {renderButton}
                 {renderPopUp}
             </section>
-        )
-        : 
-        (
-            <PageLoading />
         )
     }
     </>
