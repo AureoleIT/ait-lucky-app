@@ -208,11 +208,17 @@ export default function Index() {
     setIsShown(current => !current);
   }
 
+  const pushURL = (url) => {
+    router.push(url);
+  }
+
   const handleScanWebCam = (result) => {
+
     if (result) {
       setScanResultWebCam(result);
-      alert(result?.text.replace(window.location.origin+"/", ""));
-      router.push(result?.text.replace(window.location.origin+"/", ""));
+      const link = (result?.text.replace(window.location.origin, ""));
+      // router.push(link);
+      pushURL(link);
       return;
     }
   }
