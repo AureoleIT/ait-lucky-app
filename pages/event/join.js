@@ -24,10 +24,9 @@ export default function Info() {
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
-
+  
   //Get pinCode from URL
   let pinCode = new URLSearchParams(window.location.search).get('pinCode')
-  console.log(pinCode)
 
   // Call dispatch from redux
   const dispatch = useDispatch();
@@ -54,8 +53,8 @@ export default function Info() {
           switch (event.status) {
             case 1:
               ShowMethod(dispatch, messagesError.E3001, false);
-              removePlayerState()
               setTimeout(() => {
+                dispatch(removePlayerState());
                 HideMethod(dispatch);
                 router.push("/");
               }, 500)
@@ -103,8 +102,8 @@ export default function Info() {
           switch (event.status) {
             case 1:
               ShowMethod(dispatch, messagesError.E3001, false);
-              removePlayerState()
               setTimeout(() => {
+                dispatch(removePlayerState());
                 HideMethod(dispatch);
                 router.push("/");
               }, 500)
@@ -124,10 +123,12 @@ export default function Info() {
               }, 500);
               return;
             case 4:
-              dispatch(removePlayerState());
+              ShowMethod(dispatch, messagesError.E3003, false);
               setTimeout(() => {
+                dispatch(removePlayerState());
+                HideMethod(dispatch);
                 router.push("/");
-              })
+              }, 500)
               return;
             default:
               return;
@@ -140,6 +141,9 @@ export default function Info() {
           var event = values.find((item) => item.pinCode === pinCode);
           if (event === undefined || event.delFlag === true) {
             ShowMethod(dispatch, messagesError.E2004, false);
+            setTimeout(() => {
+              HideMethod(dispatch)
+            }, 500)
             return;
           }
           dispatch(incognitoEvent(event));
@@ -156,6 +160,9 @@ export default function Info() {
   const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       ShowMethod(dispatch, messagesError.E0004, false)
+      setTimeout(() => {
+        HideMethod(dispatch)
+      }, 1000)
       return;
     }
     var id = uuid.v4();
@@ -176,7 +183,68 @@ export default function Info() {
       var event = values.find((item) => item.eventId === currEvent.eventId);
       if (event === undefined || event.delFlag === true) {
         ShowMethod(dispatch, messagesError.E2004, false);
+        setTimeout(() => {
+          HideMethod(dispatch)
+          router.push("/")
+        }, 1000)
         return;
+      }
+      console.log(event.status)
+      switch (event.status) {
+        case 1:
+          ShowMethod(dispatch, messagesError.E3001, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750)
+          return;
+        case 2:
+          set(ref(db, `event_participants/${id}/`), newParticipant)
+          .then(() => {
+            event.userJoined += 1;
+            update(ref(db, `event/${event.eventId}`),
+              {
+                userJoined: event.userJoined,
+              }).then(
+                ShowMethod(dispatch, messagesSuccess.I0009, true)
+              ).catch((e) => {
+                ShowMethod(dispatch, messagesError.E4444, false)
+              })
+            dispatch(incognitoParticipant(newParticipant));
+  
+            window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
+            
+            setTimeout(() => {
+              HideMethod(dispatch)
+              router.push("/event/countdown-checkin/" + event.eventId);
+            }, 750);
+          })
+          .catch((e) => {
+            ShowMethod(dispatch, messagesError.E4444, false)
+          });
+          setTimeout(() => {
+            HideMethod(dispatch);
+            router.push("event/countdown-checkin/" + currEvent.eventId);
+          }, 750);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesError.E3002, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750);
+          return;
+        case 4:
+          ShowMethod(dispatch, messagesError.E3003(currEvent.title), false);
+          setTimeout(() => {
+            dispatch(removePlayerState());
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750);
+          return;
+        default:
       }
       if (event.maxTicket <= event.userJoined) {
         ShowMethod(dispatch, messagesError.E2005, false);
@@ -187,27 +255,6 @@ export default function Info() {
         }, 1000);
         return;
       }
-      set(ref(db, `event_participants/${id}/`), newParticipant)
-        .then(() => {
-          event.userJoined += 1;
-          update(ref(db, `event/${event.eventId}`),
-            {
-              userJoined: event.userJoined,
-            }).then(
-              ShowMethod(dispatch, messagesSuccess.I0009, true)
-            ).catch((e) => {
-              ShowMethod(dispatch, messagesError.E4444, false)
-            })
-          dispatch(incognitoParticipant(newParticipant));
-          window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
-          setTimeout(() => {
-            HideMethod(dispatch)
-            router.push("/event/countdown-checkin/" + event.eventId);
-          }, 500);
-        })
-        .catch((e) => {
-          ShowMethod(dispatch, messagesError.E4444, false)
-        });
     });
   }, [currEvent, currUser.pic, currUser.userId, dispatch, name]);
 

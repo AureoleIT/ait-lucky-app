@@ -8,7 +8,7 @@ import router from "next/router";
 import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
-import { ShowMethod, checkStatus } from "public/util/popup";
+import { HideMethod, ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
@@ -32,10 +32,6 @@ export default function Index() {
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
   const globalUser = useUserPackageHook();
-  const userHostingEvent = useUserCurrEventHostingHook();
-  const userEventCreating = useUserCurrEventCreatingHook();
-  const userRewardCreating = useUserCurrRewardCreatingHook();
-  const eventPlaying = useUserCurrEventPlayingHook();
 
   const participant = usePlayerParticipantHook();
   const playerEvent = usePlayerEventHook();
@@ -48,6 +44,9 @@ export default function Index() {
         var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
         if (currEvent === undefined || currEvent.delFlag === true) {
           ShowMethod(dispatch, messagesError.E2004, false);
+          setTimeout(() => {
+            HideMethod(dispatch)  
+          }, 1000)
           return;
         }
         switch (currEvent.status) {
@@ -58,14 +57,16 @@ export default function Index() {
           case 2:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
+              HideMethod(dispatch)
               router.push("event/countdown-checkin/" + currEvent.eventId);
-            }, 500);
+            }, 750);
             return
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
+              HideMethod(dispatch)
               router.push("event/luckyspin/" + currEvent.eventId);
-            }, 500);
+            }, 750);
             return;
           case 4:
             dispatch(removePlayerState());
@@ -81,6 +82,9 @@ export default function Index() {
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
       ShowMethod(dispatch, messagesError.E2002, false);
+      setTimeout(() => {
+        HideMethod(dispatch)  
+      }, 1000)
       return;
     }
     get(child(ref(db), "event/")).then((snapshot) => {
@@ -89,10 +93,16 @@ export default function Index() {
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined || currEvent.delFlag === true) {
         ShowMethod(dispatch, messagesError.E2004, false);
+        setTimeout(() => {
+          HideMethod(dispatch)  
+        }, 1000)
         return;
       }
       if (currEvent.maxTicket <= currEvent.userJoined) {
         ShowMethod(dispatch, messagesError.E2005, false);
+        setTimeout(() => {
+          HideMethod(dispatch)  
+        }, 1000)
         return;
       }
       dispatch(incognitoEvent(currEvent));
@@ -106,8 +116,38 @@ export default function Index() {
         var currUser = values.find((item) => item.userId === currEvent.createBy);
         dispatch(incognitoUser(currUser));
       });
-      const path = "/event/join";
-      checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
+      switch (currEvent.status) {
+        case 1:
+          ShowMethod(dispatch, messagesError.E3001, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        case 2:
+          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          setTimeout(() => {
+            HideMethod(dispatch)
+            router.push("/event/join");
+          }, 750);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesError.E3002, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        case 4:
+          ShowMethod(dispatch, messagesError.E3003, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        default:
+          return;
+      }
     });
   }, [dispatch, globalUser.userId, pin]);
 
@@ -212,6 +252,8 @@ export default function Index() {
   const handleScanWebCam = (result) => {
 
     if (result) {
+      // setScanResultWebCam(result.text);
+      // router.push(result?.text);
       setScanResultWebCam(result);
       // const link = (result?.text.replace(window.location.origin, ""));
       // router.push(link);

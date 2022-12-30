@@ -49,7 +49,7 @@ export const messagesError = {
   E2001: "Mã pin sai, vui lòng nhập lại mã pin",
   E2002: "Không được để mã PIN trống",
   E2003: "Không thể quét được mã, vui lòng quét lại mã QR",
-  E2004: "Không có sự kiện nào tồn tại với mã PIN này",
+  E2004: "Sự kiện không tồn tại hoặc đã bị xoá",
   E2005: "Sự kiện đã đạt giới hạn số người chơi",
   E3001: "Sự kiện chưa sẵn sàng, bạn không thể tham gia!",
   E3002: "Sự kiện đang diễn ra, bạn không thể tham gia!",
