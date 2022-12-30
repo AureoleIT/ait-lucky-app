@@ -166,20 +166,39 @@ function UserCountdownCheckin() {
         }
 
         setOnlineStatus(1);
-        const onlineStatus = setInterval(() => {
+        var onlineStatus = setInterval(() => {
             setOnlineStatus(1);
         }, 1000);
+        var delayOffline = setTimeout(() => {}, 0);
 
-        window.addEventListener('beforeunload', () => {setOnlineStatus(2);});
-        window.addEventListener('blur', () => {setOnlineStatus(2);});
-        window.addEventListener('focus', () => {setOnlineStatus(1);});
+        window.addEventListener('beforeunload', () => { setOnlineStatus(2); });
+        window.addEventListener('blur', () => {
+            delayOffline = setTimeout(() => setOnlineStatus(2), 3000);
+        });
+        window.addEventListener('focus', () => {
+            setOnlineStatus(1);
+            clearInterval(onlineStatus);
+            clearTimeout(delayOffline);
+            onlineStatus = setInterval(() => {
+                setOnlineStatus(1);
+            }, 1000);
+        });
 
         return () => {
             clearInterval(onlineStatus);
             setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
-            window.removeEventListener('blur', () => setOnlineStatus(2));
-            window.removeEventListener('focus', () => setOnlineStatus(1));
+            window.removeEventListener('blur', () => {
+                delayOffline = setTimeout(() => setOnlineStatus(2), 3000);
+            });
+            window.removeEventListener('focus', () => {
+                setOnlineStatus(1);
+                clearInterval(onlineStatus);
+                clearTimeout(delayOffline);
+                onlineStatus = setInterval(() => {
+                    setOnlineStatus(1);
+                }, 1000);
+            });
         }
     }, [])
 
