@@ -211,8 +211,8 @@ export default function Index() {
   const handleScanWebCam = (result) => {
     if (result) {
       setScanResultWebCam(result);
-      alert(result?.text.replace(window.location.origin, ""));
-      router.push(result?.text.replace(window.location.origin, ""));
+      alert(result?.text.replace(window.location.origin+"/", ""));
+      router.push(result?.text.replace(window.location.origin+"/", ""));
       return;
     }
   }
