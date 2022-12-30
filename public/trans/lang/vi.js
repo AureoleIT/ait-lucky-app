@@ -1,4 +1,12 @@
 const vi = {
+  header: {
+    dashboard: "Trang chủ",
+    eventRegister: "Tạo sự kiện",
+    eventList: "Danh sách sự kiện",
+    index: "Tham gia sự kiện",
+    setting: "Cài đặt tài khoản",
+    logout: "Đăng xuất",
+  },
   index: {
     title: "Mã pin sự kiện",
     inputHolder: "Mã pin",
@@ -11,9 +19,34 @@ const vi = {
     },
     waylogRegister: {
       action: "Đăng ký",
-      title: "để tạo tài khoản?"
+      title: "để tạo tài khoản?",
     },
-    QrButton: "Quét mã QR"
+    QrButton: "Quét mã QR",
+  },
+  login: {
+    heading: "Đăng nhập",
+    username: "Tên đăng nhập/email",
+    password: "Mật khẩu",
+    rememberLogin: "Ghi nhớ đăng nhập",
+    forgotPassword: "Quên mật khẩu?",
+    google: "Đăng nhập bằng",
+    or: "hoặc",
+    noAccount: "Chưa có tài khoản?",
+    register: "Đăng kí ngay",
+  },
+  register: {
+    heading: "Đăng kí",
+    username: "Tên đăng nhập",
+    password: "Mật khẩu",
+    confirmPassword: "Nhập lại mật khẩu",
+    policy: {
+      read: "Tôi đã đọc và đồng ý với các",
+      rules: "điều khoản và điều kiện",
+    },
+    or: "hoặc",
+    google: "Đăng kí với",
+    hasAccount: "Đã có tài khoản?",
+    login: "Đăng nhập luôn!"
   },
   dashboard: {
     welcome: {
@@ -43,17 +76,50 @@ const vi = {
       buttonContent: "Tất cả sự kiện",
     },
   },
+  eventRegister: {
+    heading: "Đăng ký",
+    subHeading: "thông tin sự kiện",
+    eventName: "Tên sự kiện",
+    eventDescription: "Mô tả sự kiện",
+    maxTicket: "Giới hạn người tham gia",
+    publicFlag: "Cho phép người tham gia không cần đăng nhập",
+    buttonContent: "Tiếp tục"
+  },
   eventList: {
     heading: "danh sách sự kiện",
-    searchContent: 
-    {
+    searchContent: {
       title: "Tên sự kiện",
       checklength: "Danh sách trống",
     },
     eventButton: {
       participant: "người tham gia",
-    }
-  }
+    },
+  },
+  setting: {
+    heading: "Thông tin cá nhân",
+    title: "Tên đăng nhập",
+    buttonSave: "Lưu",
+    buttonChangePW: "Đổi mật khẩu",
+  },
+  loading: {
+    loading: "đang tải",
+  },
+  forgotPassword: {
+    heading: "quên mật khẩu",
+    username: "Tên đăng nhập",
+    send: "gửi",
+    backLogin: "Quay lại trang Đăng nhập",
+    newPassword: "Mật khẩu mới",
+    confirmPassword: "Xác nhận mật khẩu",
+  },
+  changePassword: {
+    heading: "đổi mật khẩu",
+    username: "Tên đăng nhập",
+    currPass: "Mật khẩu hiện tại",
+    save: "lưu",
+    newPassword: "Mật khẩu mới",
+    confirmPassword: "Xác nhận mật khẩu",
+  },
 };
 
 export default vi;

@@ -1,4 +1,12 @@
 const en = {
+  header: {
+    dashboard: "Dashboard",
+    eventRegister: "Create an event",
+    eventList: "List of events",
+    index: "Join event",
+    setting: "Seting account",
+    logout: "Logout",
+  },
   index: {
     title: "Event pincode",
     inputHolder: "Pincode",
@@ -14,6 +22,31 @@ const en = {
       title: "to create an account?"
     },
     QrButton: "Scan QR"
+  },
+  login: {
+    heading: "Sign in",
+    username: "Username/email",
+    password: "Password",
+    rememberLogin: "Remember me",
+    forgotPassword: "Forgot password?",
+    google: "Sign in by",
+    or: "or",
+    noAccount: "You're not a member?",
+    register: "Sign up now",
+  },
+  register: {
+    heading: "Sign up",
+    username: "Username",
+    password: "Password",
+    confirmPassword: "Confirm password",
+    policy: {
+      read: "I haved read and agreed to these",
+      rules: "terms and conditions",
+    },
+    or: "or",
+    google: "Sign up with",
+    hasAccount: "Already registered?",
+    login: "Sign in now!"
   },
   dashboard: {
     welcome: {
@@ -42,6 +75,15 @@ const en = {
       buttonContent: "All my events",
     },
   },
+  eventRegister: {
+    heading: "Register",
+    subHeading: "Event infomation",
+    eventName: "Event name",
+    eventDescription: "Event description",
+    maxTicket: "Max participants",
+    publicFlag: "Allow everyone join in without login",
+    buttonContent: "Continue"
+  },
   eventList: {
     heading: "List of events",
     searchContent: {
@@ -51,7 +93,32 @@ const en = {
     eventButton: {
       participant: "participants",
     }
-  }
+  },
+  setting: {
+    heading: "Personal information",
+    title: "User name",
+    buttonSave: "Save",
+    buttonChangePW:"Change password",
+  },
+  loading: {
+    loading: "loading",
+  },
+  forgotPassword: {
+    heading: "forgot password",
+    username: "Username",
+    send: "send",
+    backLogin: "Back to Log in page",
+    newPassword: "New password",
+    confirmPassword: "Confirm password",
+  },
+  changePassword: {
+    heading: "Change password",
+    username: "Username",
+    currPass: "Current password",
+    save: "save",
+    newPassword: "New password",
+    confirmPassword: "Confirm password",
+  },
 };
 
 export default en;
