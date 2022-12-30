@@ -208,16 +208,39 @@ export default function Index() {
     setIsShown(current => !current);
   }
 
-  const pushURL = (url) => {
-    router.push(url);
-  }
-
   const handleScanWebCam = (result) => {
 
     if (result) {
       setScanResultWebCam(result);
       // const link = (result?.text.replace(window.location.origin, ""));
       // router.push(link);
+      const position = result?.text.search("=");
+      const pinCodeQR = result?.text.substr(position + 1);
+      get(child(ref(db), "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currEvent = values.find((item) => item.pinCode === pinCodeQR);
+        if (currEvent === undefined || currEvent.delFlag === true) {
+          ShowMethod(dispatch, messagesError.E2004, false);
+          return;
+        }
+        if (currEvent.maxTicket <= currEvent.userJoined) {
+          ShowMethod(dispatch, messagesError.E2005, false);
+          return;
+        }
+        dispatch(incognitoEvent(currEvent));
+        window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
+        if (globalUser.userId) {
+          dispatch(userCurrentEventPlaying(currEvent));
+        }
+        get(child(ref(db), "users/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var currUser = values.find((item) => item.userId === currEvent.createBy);
+          dispatch(incognitoUser(currUser));
+        });
+      });
+      // 
       window.location.assign(result?.text);
       return;
     }
