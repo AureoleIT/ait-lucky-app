@@ -84,7 +84,7 @@ function UserCountdownCheckin() {
 
     // get realtime number of player
 
-    const getNumberPlayer = query(ref(db, "event"), orderByChild("evenId"), equalTo(eventID))
+    const getNumberPlayer = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
 
     useEffect(() => {
         onValue(getNumberPlayer, (snapshot) => {
