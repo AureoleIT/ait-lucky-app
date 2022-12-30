@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux"
 import { usePlayerParticipantHook } from "public/redux/hooks"
 
 import { db } from "src/firebase"
-import { ref, onValue, query, orderByChild, equalTo } from "firebase/database"
+import { ref, onValue, query, orderByChild, equalTo, get, update } from "firebase/database"
 import { RewardList } from "public/shared";
 
 function UserCountdownCheckin() {
@@ -84,7 +84,7 @@ function UserCountdownCheckin() {
 
     // get realtime number of player
 
-    const getNumberPlayer = query(ref(db, "event"), orderByChild("evenId"), equalTo(eventID))
+    const getNumberPlayer = query(ref(db, "event"), orderByChild("eventId"), equalTo(eventID))
 
     useEffect(() => {
         onValue(getNumberPlayer, (snapshot) => {
@@ -144,7 +144,69 @@ function UserCountdownCheckin() {
                 router.push(`/event/luckyspin/${eventId}`)
             }, 2000)
         }
+        if (status === 4) {
+            setTimeout(() => {
+                router.push(`/event/event-result/${eventId}`)
+            }, 2000)
+        }
     }, [status, dispatch, eventId])
+
+    // Set online
+    useEffect(() => {
+        const setOnlineStatus = (status) => {
+            if (!user.participantId) return;
+            get(query(ref(db, "event_participants/" + user.participantId + "/status"))).then((snapshot) => {
+                if (snapshot.exists()) {
+                    update(ref(db, 'event_participants/' + user.participantId), {
+                        status: status
+                    });
+                    if (status === 2) clearInterval(onlineStatus);
+                }
+            })
+        }
+
+        setOnlineStatus(1);
+        var onlineStatus = setInterval(() => {
+            setOnlineStatus(1);
+        }, 1000);
+        var delayOffline = setTimeout(() => { }, 0);
+
+        window.addEventListener('beforeunload', () => { setOnlineStatus(2); });
+        if (window.innerWidth <= 768) window.addEventListener('blur', () => {
+            setOnlineStatus(2);
+        });
+        else window.addEventListener('blur', () => {
+            delayOffline = setTimeout(() => setOnlineStatus(2), 6000);
+        });
+        window.addEventListener('focus', () => {
+            setOnlineStatus(1);
+            clearInterval(onlineStatus);
+            clearTimeout(delayOffline);
+            onlineStatus = setInterval(() => {
+                setOnlineStatus(1);
+            }, 1000);
+        });
+
+        return () => {
+            clearInterval(onlineStatus);
+            setOnlineStatus(2);
+            window.removeEventListener('beforeunload', () => setOnlineStatus(2));
+            if (window.innerWidth <= 768) window.removeEventListener('blur', () => {
+                setOnlineStatus(2);
+            });
+            else window.addEventListener('blur', () => {
+                delayOffline = setTimeout(() => setOnlineStatus(2), 6000);
+            });
+            window.removeEventListener('focus', () => {
+                setOnlineStatus(1);
+                clearInterval(onlineStatus);
+                clearTimeout(delayOffline);
+                onlineStatus = setInterval(() => {
+                    setOnlineStatus(1);
+                }, 1000);
+            });
+        }
+    }, [])
 
     const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
