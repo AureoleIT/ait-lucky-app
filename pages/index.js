@@ -216,9 +216,9 @@ export default function Index() {
 
     if (result) {
       setScanResultWebCam(result);
-      const link = (result?.text.replace(window.location.origin, ""));
+      // const link = (result?.text.replace(window.location.origin, ""));
       // router.push(link);
-      pushURL(link);
+      window.location.href(result?.text);
       return;
     }
   }
