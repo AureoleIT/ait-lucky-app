@@ -146,6 +146,31 @@ function UserCountdownCheckin() {
         }
     }, [status, dispatch, eventId])
 
+    // Set online
+    useEffect(() => {
+        const setOnlineStatus = (status) => {
+            if (!user.participantId) return;
+            get(query(ref(db, "event_participants/" + user.participantId + "/status"))).then((snapshot) => {
+                if (snapshot.exists()) {
+                    update(ref(db, 'event_participants/' + user.participantId), {
+                        status: status
+                    });
+                    if (status === 2) clearInterval(onlineStatus);
+                }
+            })
+        }
+
+        setOnlineStatus(1);
+        const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
+        window.addEventListener('beforeunload', () => setOnlineStatus(2));
+
+        return () => {
+            setOnlineStatus(2);
+            clearInterval(onlineStatus);
+            window.removeEventListener('beforeunload', () => setOnlineStatus(2));
+        }
+    }, []);
+
     const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
     const countDownNumber = { background: "#3B88C3" }

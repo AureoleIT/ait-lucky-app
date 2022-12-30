@@ -165,7 +165,7 @@ export default function Info() {
       createBy: currUser.userId === undefined ? "" : currUser.userId,
       pic: currUser.pic === undefined ? "" : currUser.pic,
       createAt: new Date().getTime(),
-      status: 1,
+      status: 2,
       nameDisplay: name,
       idReward: "",
       eventId: currEvent.eventId,
