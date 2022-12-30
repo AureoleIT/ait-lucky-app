@@ -1,6 +1,6 @@
 import router from "next/router";
+import Trans from "pages/hooks/Trans";
 import React from "react";
-
 export default function EventButton({
   title,
   id,
@@ -9,6 +9,7 @@ export default function EventButton({
   onclick,
   db = 0, // nếu muốn ẩn trường dữ liệu id thì db == 1, nếu muốn ẩn trường dữ liệu userJoined thì db == 2
 }) {
+  const trans = Trans();
   const handleClick = () => {
     const statusEvent = 2;
     switch (status) {
@@ -63,7 +64,7 @@ export default function EventButton({
               <>
                 {" "}
                 {userJoined >= 0 ? (
-                  <div className="truncate">{userJoined} người tham gia</div>
+                  <div className="truncate">{userJoined} {trans.eventList.eventButton.participant}</div>
                 ) : (
                   <div className="truncate">Players not available</div>
                 )}{" "}

@@ -1,10 +1,12 @@
 const withImages = require("next-images");
+const { i18n } = require("./i18n.config");
 /** @type {import('next').NextConfig} */
 module.exports = withImages({
   webpack(config, options) {
     delete config.resolve.alias.url;
     return config;
   },
+  i18n,
   // comment below when building on localhost
 
   // trailingSlash: true,
@@ -29,4 +31,4 @@ module.exports = withImages({
   // images: {
   //   domains: ["s120-ava-talk.zadn.vn", "blob"],
   // },
-},);
+});
