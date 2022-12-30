@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { useUserPackageHook } from "public/redux/hooks";
 import { userCurrentEventHosting } from "public/redux/actions";
 import { Header, EventButton, Title, Input } from "public/shared";
-import Trans from "pages/hooks/Trans";
+import Trans from "public/trans/hooks/Trans";
 
 export default function EventList() {
   const dispatch = useDispatch();
@@ -33,14 +33,14 @@ export default function EventList() {
       if (record != null) {
         const data = Object.values(record);
         data.sort((a, b) =>
-        a.createAt > b.createAt
-          ? -1
-          : a.createAt === b.createAt
-          ? a.size > b.size
+          a.createAt > b.createAt
             ? -1
+            : a.createAt === b.createAt
+            ? a.size > b.size
+              ? -1
+              : 1
             : 1
-          : 1
-      );
+        );
         data.forEach((value) => {
           if (value.delFlag === false) {
             setEvents((prev) => [...prev, value]);

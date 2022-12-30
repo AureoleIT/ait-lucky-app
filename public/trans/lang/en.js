@@ -1,6 +1,20 @@
-import { EventButton } from "public/shared";
-
 const en = {
+  index: {
+    title: "Event pincode",
+    inputHolder: "Pincode",
+    buttonContent: "Join",
+    lineContent: "or",
+    titleReturn: "Return to dashboard?",
+    waylogLogin: {
+      action: "Login",
+      title: "to manage events?",
+    },
+    waylogRegister: {
+      action: "Register",
+      title: "to create an account?"
+    },
+    QrButton: "Scan QR"
+  },
   dashboard: {
     welcome: {
       title: "Welcome to AIT Lucky App!",

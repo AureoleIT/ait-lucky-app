@@ -1,6 +1,9 @@
 import React from "react";
 import { TEXT } from "../util/colors";
+import Trans from "public/trans/hooks/Trans";
+
 export default function QrButton({ onClick }) {
+  const trans = Trans();
   return (
     <button
       type="button"
@@ -13,7 +16,7 @@ export default function QrButton({ onClick }) {
         className="w-12 h-12"
         alt="..."
       ></img>
-      <p className={`font-medium text-[${TEXT}]`}>Quét mã QR</p>
+      <p className={`font-medium text-[${TEXT}]`}>{trans.index.QrButton}</p>
     </button>
   );
 }

@@ -12,7 +12,7 @@ import { Header, Input, Line, Button } from "public/shared";
 import EventButton from "public/shared/button/EventButton";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 // translation
-import Trans from "pages/hooks/Trans";
+import Trans from "public/trans/hooks/Trans";
 //gif
 import nyancat from "public/img/nyancat.gif";
 export default function Dashboard() {
@@ -118,14 +118,14 @@ export default function Dashboard() {
           <p className=" f text-sm text-[#656565] my-2">
             {trans.dashboard.joinEvent.description}
           </p>
-          <a href="/">
+          <div onClick={() => {router.push("/")}}>
             <Button
               margin={"my-0"}
               content={trans.dashboard.joinEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
-          </a>
+          </div>
         </div>
       </Input>
     );
@@ -172,13 +172,13 @@ export default function Dashboard() {
           <p className="text-sm text-[#656565] pt-4">
             {trans.dashboard.createEvent.description}
           </p>
-          <a href="/admin/event/event-register">
+          <div onClick={() => {router.push("/admin/event/event-register")}}>
             <Button
               content={trans.dashboard.createEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
-          </a>
+          </div>
         </div>
       </Input>
     );

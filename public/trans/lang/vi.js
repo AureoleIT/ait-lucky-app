@@ -1,4 +1,20 @@
 const vi = {
+  index: {
+    title: "Mã pin sự kiện",
+    inputHolder: "Mã pin",
+    buttonContent: "Tham gia",
+    lineContent: "hoặc",
+    titleReturn: "Quay lại trang chủ?",
+    waylogLogin: {
+      action: "Đăng nhập",
+      title: "để quản lý sự kiện?",
+    },
+    waylogRegister: {
+      action: "Đăng ký",
+      title: "để tạo tài khoản?"
+    },
+    QrButton: "Quét mã QR"
+  },
   dashboard: {
     welcome: {
       title: "Chào mừng đến AIT Lucky App!",

@@ -15,12 +15,13 @@ import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, us
 import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 import QrReader from 'react-qr-scanner'
+import Trans from "public/trans/hooks/Trans";
 
 export default function Index() {
   const [pin, setPin] = useState("");
   const [scanResultWebCam, setScanResultWebCam] = useState('');
   const [isShown, setIsShown] = useState(false);
-
+  const trans = Trans();
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
@@ -125,14 +126,14 @@ export default function Index() {
 
   const renderTitle = useMemo(() => {
     return (
-      <Title fontSize="text-2xl" fontWeight="font-bold" title="Mã pin sự kiện" />
-    )
-  }, [])
+      <Title fontSize="text-2xl" fontWeight="font-bold" title={trans.index.title}/>
+      )
+    }, [])
 
   const renderInput = useMemo(() => {
     return (
       <Input
-        placeHolder="Mã pin"
+        placeHolder={trans.index.inputHolder}
         onChange={pinData}
         type="number"
         primaryColor={LEFT_COLOR}
@@ -146,7 +147,7 @@ export default function Index() {
     return (
       <div className="w-full">
         <Button
-          content="Tham gia"
+          content={trans.index.buttonContent}
           onClick={onJoinClick}
           primaryColor={LEFT_COLOR}
           secondaryColor={RIGHT_COLOR}
@@ -157,44 +158,44 @@ export default function Index() {
 
   const renderLine = useMemo(() => {
     return (
-      <Line content="hoặc" />
+      <Line content={trans.index.lineContent} />
     )
   }, [])
 
   const renderDirect = useMemo(() => {
     return globalUser.userId !== undefined
-      ? (
-        <a href="/admin/dashboard-admin">
-          <Title
-            title="Quay lại trang chủ?"
-            isUnderLine={true}
-            isUpperCase={false}
-            fontSize="font-bold"
-            fontWeight=""
-            margin=""
-          />
-        </a>
-      )
-      : (
-        <div>
-          <WayLog
-            action="Đăng nhập"
-            title="để quản lý sự kiện?"
-            path="/auth/login"
-          />
-          <WayLog
-            action="Đăng ký"
-            title="để tạo tài khoản."
-            path="/auth/register"
-          />
-        </div>
-      )
+    ? (
+      <div onClick={() => {router.push("/admin/dashboard-admin")}} className="cursor-pointer">
+        <Title
+          title={trans.index.titleReturn}
+          isUnderLine={true}
+          isUpperCase={false}
+          fontSize="font-bold"
+          fontWeight=""
+          margin=""
+        />
+      </div>
+    ) 
+    : (
+      <div>
+        <WayLog
+          action={trans.index.waylogLogin.action}
+          title={trans.index.waylogLogin.title}
+          path="/auth/login"
+        />
+        <WayLog 
+          action={trans.index.waylogRegister.action}
+          title={trans.index.waylogRegister.title}
+          path="/auth/register"
+        />
+      </div>
+    )
   }, [globalUser])
 
   const renderPopUp = useMemo(() => {
     return (
       <div className={visible}>
-        <PopUp
+          <PopUp
           text={message}
           status={status}
           isWarning={!status}
@@ -219,7 +220,7 @@ export default function Index() {
   const renderQRscan = useMemo(() => {
     return (
       <div className="flex flex-col justify-center items-center">
-        <QrButton onClick={() => {
+                <QrButton onClick={() => {
           if (window.innerWidth > 768) {
             alert(messagesError.E5555)
             return;
@@ -227,7 +228,7 @@ export default function Index() {
           setIsShown(current => !current);
         }} />
 
-        {isShown && <QrReader
+{isShown && <QrReader
           delay={300}
           style={{ width: '180px' }}
           constraints={{ audio: false, video: { facingMode: 'environment' } }}
@@ -235,7 +236,7 @@ export default function Index() {
           onScan={handleScanWebCam}
         />}
 
-        {isShown && (
+{isShown && (
           <div>
             <h3> Scanned  Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
           </div>)}
@@ -243,7 +244,7 @@ export default function Index() {
     )
   }, [isShown, scanResultWebCam])
 
-  
+
   return (
     <section className={`h-screen h-min-full w-screen mx-auto flex justify-center items-center ${BG_COLOR}`} >
       <div className={`flex flex-col justify-center items-center max-w-xl w-4/5 h-full h-min-screen `} >

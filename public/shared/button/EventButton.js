@@ -1,5 +1,5 @@
 import router from "next/router";
-import Trans from "pages/hooks/Trans";
+import Trans from "public/trans/hooks/Trans";
 import React from "react";
 export default function EventButton({
   title,
