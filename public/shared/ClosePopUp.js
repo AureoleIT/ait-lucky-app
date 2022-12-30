@@ -30,7 +30,7 @@ export default function ClosePopUp({
       <button
         type="button"
         className="flex justify-end place-self-end
-        items-end self-end justify-self-end relative md:top-[-30px] md:right-[5px]"
+        items-end self-end justify-self-end relative"
         onClick={closeAction}
         id="close-btn"
       >

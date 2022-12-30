@@ -26,7 +26,7 @@ export default function QrCodeModal() {
                 renderAs="canvas" 
                 size={256}
                 id="qrCodeEl"
-                style={{ height: "auto", maxWidth: "100%", width: "100%" }} 
+                style={{ height: "100%", maxWidth: "100%", width: "100%" }} 
             />
             <div className="text-black mt-6 flex justify-end">
                 {downloadIcon}
