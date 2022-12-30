@@ -341,11 +341,13 @@ export default function LuckySpin() {
         setOnlineStatus(1);
         const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
         window.addEventListener('beforeunload', () => setOnlineStatus(2));
+        window.addEventListener('blur', () => {setOnlineStatus(2);});
 
         return () => {
             clearInterval(onlineStatus);
             setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
+            window.removeEventListener('blur', () => setOnlineStatus(2));
         }
     }, []);
 

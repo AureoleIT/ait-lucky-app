@@ -144,6 +144,11 @@ function UserCountdownCheckin() {
                 router.push(`/event/luckyspin/${eventId}`)
             }, 2000)
         }
+        if (status === 4) {
+            setTimeout(() => {
+                router.push(`/event/event-result/${eventId}`)
+            }, 2000)
+        }
     }, [status, dispatch, eventId])
 
     // Set online
@@ -161,16 +166,18 @@ function UserCountdownCheckin() {
         }
 
         setOnlineStatus(1);
-        const onlineStatus = setInterval(() => setOnlineStatus(1), 1000);
-        window.addEventListener('beforeunload', () => setOnlineStatus(2));
-        window.blur(() => {
-            alert("BLUR");
-        })
+        const onlineStatus = setInterval(() => {
+            setOnlineStatus(1);
+        }, 1000);
+
+        window.addEventListener('beforeunload', () => {setOnlineStatus(2);});
+        window.addEventListener('blur', () => {setOnlineStatus(2);});
 
         return () => {
             clearInterval(onlineStatus);
             setOnlineStatus(2);
             window.removeEventListener('beforeunload', () => setOnlineStatus(2));
+            window.removeEventListener('blur', () => setOnlineStatus(2));
         }
     }, [])
 
