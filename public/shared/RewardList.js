@@ -27,7 +27,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
             <>
                 {showcaseList.length > 0?
                     <>
-                        <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">{Trans().rewardList}</p>
+                        <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">{trans.winner}</p>
                         <PlayerList listType="Menu" changeButton={false} listPlayer={showcaseList} listReward={listReward} />
                     </>:
                 <></>}
