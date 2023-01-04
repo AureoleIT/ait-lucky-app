@@ -16,9 +16,13 @@ import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, push, startAfter } from "firebase/database";
 import PageLoading from "public/shared/PageLoading";
 import { render } from "react-dom";
-
+//translation
+import Trans from "public/trans/hooks/Trans";
 
 export default function LuckySpin() {
+    //translation
+    const trans = Trans().luckySpin;
+    
     const [loadedData, setLoadedData] = useState(false);
     const dispatch = useDispatch()
 
@@ -272,33 +276,33 @@ export default function LuckySpin() {
                 onClick={(e) => e.stopPropagation()}>
                 {loadedData && <div className="text-[#004599] text-base text-center w-full font-bold flex flex-col items-center">
                     {confirmStatus === -1 && <>
-                        <p className="font-semibold">Giải thưởng hiện tại:</p>
+                        <p className="font-semibold">{trans.curentReward}</p>
                         <p className="font-[900] text-lg">{remainRewardList[rewardChosing].nameReward}</p>
                         <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
-                        <p>Đang chờ quay thưởng ...</p>
+                        <p>{trans.waitingSpin}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
                         </svg>
                     </>}
                     {confirmStatus === 0 && <>
                         <p className="font-[900] text-lg">{remainPlayerList[lastAwardedIndex] ? remainPlayerList[lastAwardedIndex].nameDisplay : ""}</p>
-                        <p className="font-semibold">sẽ nhận được giải:</p>
+                        <p className="font-semibold">{trans.rewardReceive1}</p>
                         <p className="font-[900] text-lg">{remainRewardList[rewardChosing] ? remainRewardList[rewardChosing].nameReward : ""}</p>
                         <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
-                        <p>Đang chờ xác nhận trao giải ...</p>
+                        <p>{trans.waitingReward}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#004599" className="w-10 h-10 loadingAnimate">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M 12 2 A 1 1 0 0 0 12 22 A 1 1 0 0 0 12 2z" />
                         </svg>
                     </>}
                     {confirmStatus === 1 && <>
-                        <p className="text-green-600">Chủ sự kiện đã xác nhận trao giải!</p>
+                        <p className="text-green-600">{trans.adminConfirm}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#00A44A" className="w-10 h-10 iconAnimate">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
                         </svg>
                     </>}
                     {confirmStatus === 2 && <>
-                        <p className="text-[#FF6262]">Chủ sự kiện đã hủy trao giải</p>
+                        <p className="text-[#FF6262]">{trans.adminCancel}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#FF6262" className="w-10 h-10 iconAnimate">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5" />
@@ -417,16 +421,16 @@ export default function LuckySpin() {
 
     const renderExitNotification = useMemo(() => {
         return <OverlayBlock childDiv={<>
-            <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">thoát</span>?</p>
+            <p className="text-[#004599] text-xl text-center w-full font-bold">{trans.exit1} <br /><span className="text-[#FF6262] uppercase">{trans.exit2}</span>?</p>
             <div className="mt-2 w-full flex gap-4 px-2">
-                <Button fontSize={"20px"} content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} marginY={0}
+                <Button fontSize={"20px"} content={trans.exitButton} primaryColor={"#FF6262"} isSquare={true} marginY={0}
                     onClick={() => {
                         dispatch(incognitoEvent({ eventId: "" }));
                         setTimeout(() => {
                             router.push('/');
                         }, 1000);
                     }} />
-                <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
+                <Button fontSize={"20px"} content={trans.cancelButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
             </div>
         </>} id={"exitOverlay"}></OverlayBlock>
     }, []);
@@ -446,7 +450,7 @@ export default function LuckySpin() {
     const renderKickPlayer = useMemo(() => {
         return <OverlayBlock childDiv={
             <>
-                <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn đã bị cấm khỏi sự kiện <br /> bởi người điều hành</p>
+                <p className="text-[#004599] text-xl text-center w-full font-bold">{trans.ban1} <br /> {trans.ban2}</p>
             </>
         } id={"kickPlayerNotificationOverlay"} clickOutFunc={() => router.push('/')} Timeout={3000} />
     }, [])
@@ -457,10 +461,10 @@ export default function LuckySpin() {
                 <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                     <div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
                         <div className="flex flex-col w-full pt-5">
-                            <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold" />
+                            <Title title={trans.title} fontSize="text-[24px]" fontWeight="font-semibold" />
                             <Title title={eventInfo.title} fontSize="text-[32px]" />
                             <div className="flex w-full justify-between -mt-3 mb-1">
-                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">{trans.onlPlayer}</p>
                                 <span className="flex gap-1">
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
                                         {Math.floor(onlinePlayerAmount / 100)}
@@ -474,7 +478,7 @@ export default function LuckySpin() {
                                 </span>
                             </div>
                             <div className="flex w-full justify-between">
-                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">{trans.player}</p>
                                 <span className="flex gap-1">
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(remainPlayerList.length / 100)}</p>
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length % 100) / 10)}</p>
@@ -484,11 +488,11 @@ export default function LuckySpin() {
                         </div>
                         {spinBlock}
                         <div className="w-full mb-16">
-                            <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
+                            <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">{trans.curentReward}</p>
                             <div className="h-44 px-4 py-2 relative">
                                 {renderRewardList}
                             </div>
-                            <Button content={"THOÁT"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
+                            <Button content={trans.exitButton} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => { document.getElementById("exitOverlay").classList.toggle('hidden') }} />
                         </div>
                         <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"
                             onClick={() => { document.getElementById("settingOverlay").classList.toggle('hidden') }}>

@@ -83,17 +83,17 @@ const en = {
     eventDescription: "Event description",
     maxTicket: "Max participants",
     publicFlag: "Allow everyone join in without login",
-    buttonContent: "Continue"
+    buttonContent: "Continue",
   },
   rewardRegister: {
-    addGift: "Add Gift",
+    addGift: "Add reward",
     registerEvent: "Register Event"
   },
   reward: {
     rewardName: "Reward name",
     quantity: "Quantity",
     addImages: "Add images",
-    awardImages: "Award images",
+    awardImages: "Reward images",
   },
   editEventRewardRegister: {
     rewardName: "Reward name",
@@ -102,8 +102,8 @@ const en = {
     maxTicket: "Max participants",
     publicFlag: "Allow everyone join in without login",
     addReward: "Add reward",
-    addGift: "Add gift",
-    adjust: "Adjust"
+    addGift: "Add reward",
+    adjust: "Adjust",
   },
   eventResult:
   {
@@ -159,7 +159,7 @@ const en = {
     arlert: "Error in opening image!",
     amountRemain: "Remain amount: ",
     amount: "Amount: ",
-    winner: "Winner"
+    winner: "Winner",
   },
   setting: {
     heading: "Personal information",
@@ -186,9 +186,43 @@ const en = {
     newPassword: "New password",
     confirmPassword: "Confirm password",
   },
-  // luckySpin: {
-  //   currentReward: "Curent reward:",
-  // }
+  luckySpin: {
+    title: "LUCKY SPIN",
+    onlPlayer: "Online players",
+    player: "Players in-game",
+    curentReward: "Curent reward",
+    none: "NONE",
+    remain: "Remain",
+    min: "sec",
+    numberRemain: "Number remain: ",
+    timeAnimation: "Animation duration:",
+    spinButton: "SPIN",
+    endButton: "END EVENT",
+    notiEnd1: "DO you really want to",
+    notiEnd2: "end",
+    notiEnd3: "event?",
+    yesButton: "YES",
+    noButton: "NO",
+    confirmButton: "CONFIRM",
+    cancelButton:"CANCEL",
+    rewardReceive1: "will receive prize:",
+    rewardReceive2: "Confirm prize?",
+    exitButton: "EXIT",
+    ban1:"You were banned",
+    ban2: "by admin",
+    exit1:"Do you really want to ",
+    exit2: "exit",
+    waitingSpin: "Waiting for spining ...",
+    waitingReward: "Waiting for rewarding ...",
+    adminConfirm:"Admin has confirmed to award!",
+    adminCancel:"Admin has cancel the award",
+
+  },
+  curentEventDetail: {
+    title: "EVENT INFORMATION",
+    reward: "REWARD INFORMATION",
+    player: "PARTICIPANTS INFORMATION",
+  }
 };
 
 export default en;
