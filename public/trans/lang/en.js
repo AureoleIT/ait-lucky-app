@@ -19,9 +19,9 @@ const en = {
     },
     waylogRegister: {
       action: "Register",
-      title: "to create an account?"
+      title: "to create an account?",
     },
-    QrButton: "Scan QR"
+    QrButton: "Scan QR",
   },
   login: {
     heading: "Sign in",
@@ -46,7 +46,7 @@ const en = {
     or: "or",
     google: "Sign up with",
     hasAccount: "Already registered?",
-    login: "Sign in now!"
+    login: "Sign in now!",
   },
   dashboard: {
     welcome: {
@@ -65,7 +65,8 @@ const en = {
     },
     createEvent: {
       title: "Create an event",
-      description: "Create a luckly spin event, you can set up prizes, each prize includes name, description, prize picture, number of gifts.",
+      description:
+        "Create a luckly spin event, you can set up prizes, each prize includes name, description, prize picture, number of gifts.",
       buttonContent: "Create an event",
     },
     showCreateEvent: {
@@ -75,15 +76,6 @@ const en = {
       buttonContent: "All my events",
     },
   },
-  eventRegister: {
-    heading: "Register",
-    subHeading: "Event infomation",
-    eventName: "Event name",
-    eventDescription: "Event description",
-    maxTicket: "Max participants",
-    publicFlag: "Allow everyone join in without login",
-    buttonContent: "Continue"
-  },
   eventList: {
     heading: "List of events",
     searchContent: {
@@ -92,13 +84,32 @@ const en = {
     },
     eventButton: {
       participant: "participants",
-    }
+    },
+  },
+  eventRegister: {
+    heading: "Register",
+    subHeading: "Event infomation",
+    eventName: "Event name",
+    eventDescription: "Event description",
+    maxTicket: "Max participants",
+    publicFlag: "Allow everyone join in without login",
+    buttonContent: "Continue",
+  },
+  countdown: {
+    pincode: "pincode",
+    participant: "Number of participant",
+    player: "players",
+    createQR: "CREATE QR CODE",
+    startButton: "START",
+    startAfter: "start after...",
+    prizeInfo: "Reward's Information",
+    participantList: "List of participants",
   },
   setting: {
     heading: "Personal information",
     title: "User name",
     buttonSave: "Save",
-    buttonChangePW:"Change password",
+    buttonChangePW: "Change password",
   },
   loading: {
     loading: "loading",
