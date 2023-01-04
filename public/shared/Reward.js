@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import Line from "public/shared/Line";
 import ImageCustom from "public/shared/ImageCustom";
 import { Input } from "public/shared";
+import Trans from "public/trans/hooks/Trans";
 
 const uuid = require("uuid");
 
@@ -26,6 +27,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
 
     imageList ? initImage = imageList : initImage = []
 
+    const trans = Trans().reward
     const [imgList, setImgList] = useState([])
     const [beforeImg, setBeforeImg] = useState(initImage)
     const [img, setImg] = useState(initImage)
@@ -113,7 +115,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     {
         return (
             <div className="flex w-full">
-                <Input value={name} onChange={(e) => setName(e.target.value)} content={"Tên giải thưởng"} primaryColor="#003B93" secondaryColor="#00F0FF" type={"text"} />
+                <Input value={name} onChange={(e) => setName(e.target.value)} content={trans.rewardName} primaryColor="#003B93" secondaryColor="#00F0FF" type={"text"} />
             </div>
         )
     },[name, setName])
@@ -122,7 +124,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     {
         return (
             <div className="flex justify-evenly items-center w-full mt-1 mb-2 lg:justify-center">
-                <label className="font-bold" style={contentCSS}>Số lượng</label>
+                <label className="font-bold" style={contentCSS}>{trans.quantity}</label>
                 <div className="flex justify-between items-center text-lg font-bold" style={contentCSS}>
                     <i className="fas fa-minus px-2 flex justify-center items-center cursor-pointer" style={icon} onClick={() => setCount(prev => Math.max(prev -1, 0))}></i>
                     <label>{count}</label>
@@ -186,7 +188,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
         return (
             <div className="w-full mb-6">
                 <button className="flex justify-evenly items-center w-full h-[35px] rounded-[5px]" style={buttonColor} onClick={getImage}>
-                    <div className="font-[900] text-[24px] text-white">Thêm hình ảnh</div>
+                    <div className="font-[900] text-[24px] text-white">{trans.addImages}</div>
                     <i className="fas fa-image" style={iconStyle}></i>
                 </button>
                 <input type={"file"} id={fileID} onChange={handleChangeFile} style={{display:"none"}}/>
@@ -197,7 +199,7 @@ function Reward ({ rewardId, fileID, toggleID, rewardName, amount, imageList, re
     
     const renderLine1 = useMemo(() =>
     {
-        return ( <div className="w-full flex"> <Line content={"Hình ảnh giải thưởng"}/> </div> )
+        return ( <div className="w-full flex"> <Line content={trans.awardImages}/> </div> )
     },[])
     
     const renderLine2 = useMemo(() =>  { return ( <div className="w-full flex mb-2"> <Line /> </div> ) },[])

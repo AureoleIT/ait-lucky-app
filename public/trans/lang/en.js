@@ -76,6 +76,31 @@ const en = {
       buttonContent: "All my events",
     },
   },
+  eventRegister: {
+    heading: "Register",
+    subHeading: "Event infomation",
+    eventName: "Event name",
+    eventDescription: "Event description",
+    maxTicket: "Max participants",
+    publicFlag: "Allow everyone join in without login",
+    buttonContent: "Continue"
+  },
+  reward: {
+    rewardName: "Reward name",
+    quantity: "Quantity",
+    addImages: "Add images",
+    awardImages: "Award images",
+  },
+  editEventRewardRegister: {
+    rewardName: "Reward name",
+    eventName: "Event name",
+    eventDescription: "Event description",
+    maxTicket: "Max participants",
+    publicFlag: "Allow everyone join in without login",
+    addReward: "Add reward",
+    addGift: "Add gift",
+    adjust: "Adjust"
+  },
   eventList: {
     heading: "List of events",
     searchContent: {
@@ -85,15 +110,6 @@ const en = {
     eventButton: {
       participant: "participants",
     },
-  },
-  eventRegister: {
-    heading: "Register",
-    subHeading: "Event infomation",
-    eventName: "Event name",
-    eventDescription: "Event description",
-    maxTicket: "Max participants",
-    publicFlag: "Allow everyone join in without login",
-    buttonContent: "Continue",
   },
   countdown: {
     pincode: "pincode",

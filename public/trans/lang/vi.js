@@ -76,6 +76,31 @@ const vi = {
       buttonContent: "Tất cả sự kiện",
     },
   },
+  eventRegister: {
+    heading: "Đăng ký",
+    subHeading: "thông tin sự kiện",
+    eventName: "Tên sự kiện",
+    eventDescription: "Mô tả sự kiện",
+    maxTicket: "Giới hạn người tham gia",
+    publicFlag: "Cho phép người tham gia không cần đăng nhập",
+    buttonContent: "Tiếp tục",
+  },
+  reward: {
+    rewardName: "Tên giải thưởng",
+    quantity: "Số lượng",
+    addImages: "Thêm hình ảnh",
+    awardImages: "Hình ảnh giải thưởng",
+  },
+  editEventRewardRegister: {
+    rewardName: "Tên giải thưởng",
+    eventName: "Tên sự kiện",
+    eventDescription: "Mô tả sự kiện",
+    maxTicket: "Giới hạn người tham gia",
+    publicFlag: "Cho phép người tham gia không cần đăng nhập",
+    addReward: "Thêm giải thưởng",
+    addGift: "Thêm phần quà",
+    adjust: "Điều chỉnh"
+  },
   eventList: {
     heading: "danh sách sự kiện",
     searchContent: {
@@ -85,16 +110,6 @@ const vi = {
     eventButton: {
       participant: "người tham gia",
     },
-  },
-  eventRegister: {
-    heading: "Đăng ký",
-    subHeading: "thông tin sự kiện",
-    eventName: "Tên sự kiện",
-    eventDescription: "Mô tả sự kiện",
-    maxTicket: "Giới hạn người tham gia",
-    publicFlag: "Cho phép người tham gia không cần đăng nhập",
-    buttonContent: "Tiếp tục",
-    reward: "Tên giải thường"
   },
   countdown: {
     pincode: "mã pin sự kiện",
