@@ -85,6 +85,10 @@ const vi = {
     publicFlag: "Cho phép người tham gia không cần đăng nhập",
     buttonContent: "Tiếp tục",
   },
+  rewardRegister: {
+    addGift: "Thêm phần quà",
+    registerEvent: "Đăng ký sự kiện"
+  },
   reward: {
     rewardName: "Tên giải thưởng",
     quantity: "Số lượng",
@@ -101,6 +105,28 @@ const vi = {
     addGift: "Thêm phần quà",
     adjust: "Điều chỉnh",
   },
+  eventResult: {
+    prizeInfo: "Thông tin giải thưởng",
+    participantList: "Danh sách người chơi",
+    participant: "Số người tham gia: ",
+    exit: "Thoát"
+  },
+  playerDetail: {
+    cancelReward: "Hủy giải thưởng",
+    givenTo: "đã được trao cho",
+    confirmedCancel: "Xác nhận hủy giải?",
+    yes: "Có",
+    no: "Không",
+    inviteAttendees: "Mời người tham dự",
+    leavingEvent: "rời khỏi sự kiện?",
+    confirm: "Xác nhận?",
+    allowAttendees: "Cho phép người tham dự",
+    returnEvent: "trở lại sự kiện?",
+    banned: "Cấm tham gia",
+    allowed: "Cho phép tham gia",
+    reward: "Giải thưởng",
+    none: "Không có"
+  },
   eventList: {
     heading: "danh sách sự kiện",
     searchContent: {
@@ -108,7 +134,7 @@ const vi = {
       checklength: "Danh sách trống",
     },
     eventButton: {
-      participant: "người tham gia",
+      participant: "người tham gia: ",
     },
   },
   countdown: {

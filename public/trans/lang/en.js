@@ -85,6 +85,10 @@ const en = {
     publicFlag: "Allow everyone join in without login",
     buttonContent: "Continue"
   },
+  rewardRegister: {
+    addGift: "Add Gift",
+    registerEvent: "Register Event"
+  },
   reward: {
     rewardName: "Reward name",
     quantity: "Quantity",
@@ -100,6 +104,29 @@ const en = {
     addReward: "Add reward",
     addGift: "Add gift",
     adjust: "Adjust"
+  },
+  eventResult:
+  {
+    prizeInfo: "Reward's Information",
+    participantList: "List of participants",
+    participant: "Number of participant:",
+    exit: "Exit"
+  },
+  playerDetail: {
+    cancelReward: "Cancel reward",
+    givenTo: "have been given to",
+    confirmedCancel: "Confirmed prize cancellation?",
+    yes: "Yes",
+    no: "No",
+    inviteAttendees: "Invite attendees",
+    leavingEvent: "leaving the event?",
+    confirm: "Confirm?",
+    allowAttendees: "Allow attendees",
+    returnEvent: "to return to the event",
+    banned: "Banned",
+    allowed: "Allowed",
+    reward: "Reward",
+    none: "None"
   },
   eventList: {
     heading: "List of events",
