@@ -121,6 +121,18 @@ const en = {
     prizeInfo: "Reward's Information",
     participantList: "List of participants",
   },
+  eventDetail: {
+    id: "Event ID",
+    eventInfo: "Reward information",
+    timeCheckin: "Checkin time",
+    min: "mins",
+    startButton: "START",
+  },
+  rewardList: {
+    arlert: "Error in opening image!",
+    amountRemain: "Remain amount: ",
+    amount: "Amount: ",
+  },
   setting: {
     heading: "Personal information",
     title: "User name",

@@ -99,7 +99,7 @@ const vi = {
     publicFlag: "Cho phép người tham gia không cần đăng nhập",
     addReward: "Thêm giải thưởng",
     addGift: "Thêm phần quà",
-    adjust: "Điều chỉnh"
+    adjust: "Điều chỉnh",
   },
   eventList: {
     heading: "danh sách sự kiện",
@@ -120,6 +120,18 @@ const vi = {
     startAfter: "bắt đầu sau ...",
     prizeInfo: "thông tin giải thưởng",
     participantList: "danh sách người chơi",
+  },
+  eventDetail: {
+    id: "Mã sự kiện",
+    eventInfo: "thông tin giải thưởng",
+    timeCheckin: "thời gian check in",
+    min: "phút",
+    startButton: "BẮT ĐẦU",
+  },
+  rewardList: {
+    arlert: "Có lỗi trong mở khung hiển thị hình ảnh!",
+    amountRemain: "Số lượng còn lại: ",
+    amount: "Số lượng: ",
   },
   setting: {
     heading: "Thông tin cá nhân",
