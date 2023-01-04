@@ -132,6 +132,7 @@ const vi = {
     arlert: "Có lỗi trong mở khung hiển thị hình ảnh!",
     amountRemain: "Số lượng còn lại: ",
     amount: "Số lượng: ",
+    winner: "Người trúng thưởng"
   },
   setting: {
     heading: "Thông tin cá nhân",
@@ -158,6 +159,10 @@ const vi = {
     newPassword: "Mật khẩu mới",
     confirmPassword: "Xác nhận mật khẩu",
   },
+  
+  // luckySpin: {
+  //   currentReward: "Giải thưởng hiện tại:",
+  // }
 };
 
 export default vi;

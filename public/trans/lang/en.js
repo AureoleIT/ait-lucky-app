@@ -132,6 +132,7 @@ const en = {
     arlert: "Error in opening image!",
     amountRemain: "Remain amount: ",
     amount: "Amount: ",
+    winner: "Winner"
   },
   setting: {
     heading: "Personal information",
@@ -158,6 +159,9 @@ const en = {
     newPassword: "New password",
     confirmPassword: "Confirm password",
   },
+  // luckySpin: {
+  //   currentReward: "Curent reward:",
+  // }
 };
 
 export default en;
