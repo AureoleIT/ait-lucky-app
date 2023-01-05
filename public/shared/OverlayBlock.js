@@ -87,7 +87,7 @@ export default function OverlayBlock({
         return () => {
             if (document.getElementById("overlayBlockArea") && document.getElementById("overlayBlockArea").children.length === 0) {
                 document.removeEventListener('keydown', handler);
-                document.getElementById("overlayBlockArea").remove();
+                //document.getElementById("overlayBlockArea").remove();
             }
         }
     }, [])
