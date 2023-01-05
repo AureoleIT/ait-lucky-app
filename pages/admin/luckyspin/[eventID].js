@@ -15,8 +15,12 @@ import { useUserPackageHook } from "public/redux/hooks";
 import { auth, db } from "../../../src/firebase";
 import { getDatabase, ref, set, child, get, onValue, update, query, orderByChild, equalTo, remove } from "firebase/database";
 import { render } from "react-dom";
+//translation
+import Trans from "public/trans/hooks/Trans";
 
 export default function LuckySpinAdmin() {
+    //translation
+    const trans= Trans().luckySpin;
     const [loadedData, setLoadedData] = useState(false);
     const dispatch = useDispatch()
 
@@ -337,21 +341,21 @@ export default function LuckySpinAdmin() {
 
     const renderFinishNotification = useMemo(() => {
         return <OverlayBlock childDiv={<>
-            <p className="text-[#004599] text-xl text-center w-full font-bold">Bạn có chắc chắn muốn <br /><span className="text-[#FF6262] uppercase">kết thúc</span> sự kiện?</p>
+            <p className="text-[#004599] text-xl text-center w-full font-bold">{trans.notiEnd1} <br /><span className="text-[#FF6262] uppercase">{trans.notiEnd2}</span> {trans.notiEnd3}</p>
             <div className="mt-2 w-full flex gap-4 px-2">
-                <Button fontSize={"20px"} content={"CÓ"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
+                <Button fontSize={"20px"} content={trans.yesButton} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                     // remove(child(ref(db), "event/" + EventID + "/playingData"));
                     dispatch(removeUserHosting)
                     updateFB('event/' + EventID, { status: 4 });
                 }} />
-                <Button fontSize={"20px"} content={"KHÔNG"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
+                <Button fontSize={"20px"} content={trans.noButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
             </div>
         </>} id={"finishOverlay"}></OverlayBlock>
     }, []);
 
     const confirmButton = useMemo(() => {
         return <>
-            <Button fontSize={"20px"} content={"XÁC NHẬN"} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {
+            <Button fontSize={"20px"} content={trans.confirmButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {
                 if (awardedId === "" && idRewardChosing === "") return;
                 document.getElementById("awardedOverlay").classList.toggle('hidden');
                 updateFB('event_participants/' + awardedId, { idReward: idRewardChosing });
@@ -365,13 +369,13 @@ export default function LuckySpinAdmin() {
         return <OverlayBlock childDiv={
             <div className="flex flex-col items-center text-center text-[#004599]">
                 <p className="font-[900] text-lg">{remainPlayerList[awardedIdx] ? remainPlayerList[awardedIdx].nameDisplay : ""}</p>
-                <p className="font-semibold">sẽ nhận được giải:</p>
+                <p className="font-semibold">{trans.rewardReceive1}</p>
                 <p className="font-[900] text-lg">{remainRewardList[rewardChosing] ? remainRewardList[rewardChosing].nameReward : ""}</p>
                 <div className="mt-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
-                <p className="mt-2 font-bold">Xác nhận trao giải?</p>
+                <p className="mt-2 font-bold">{trans.rewardReceive2}</p>
                 <div className="mt-2 w-full flex gap-4 px-2">
                     {confirmButton}
-                    <Button fontSize={"20px"} content={"HỦY"} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
+                    <Button fontSize={"20px"} content={trans.cancelButton} primaryColor={"#FF6262"} isSquare={true} marginY={0} onClick={() => {
                         document.getElementById("awardedOverlay").classList.toggle('hidden');
                         updateFB('event/' + EventID + '/playingData', { confirmStatus: 2 });
                     }} />
@@ -389,10 +393,10 @@ export default function LuckySpinAdmin() {
                 <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
                     <div className="flex flex-col justify-start items-center w-full h-full">
                         <div className="flex flex-col w-full pt-5">
-                            <Title title="QUAY THƯỞNG MAY MẮN" fontSize="text-[24px]" fontWeight="font-semibold"></Title>
+                            <Title title={trans.title} fontSize="text-[24px]" fontWeight="font-semibold"></Title>
                             <Title title={eventInfo.title} fontSize="text-[32px]" />
                             <div className="flex w-full justify-between -mt-3 mb-1">
-                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người trực tuyến</p>
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">{trans.onlPlayer}</p>
                                 <span className="flex gap-1">
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">
                                         {Math.floor(onlinePlayerAmount / 100)}
@@ -406,7 +410,7 @@ export default function LuckySpinAdmin() {
                                 </span>
                             </div>
                             <div className="flex w-full justify-between">
-                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">Số người quay thưởng</p>
+                                <p className="font-[900] text-[#004599] text-[16px] text-left items-center h-6">{trans.player}</p>
                                 <span className="flex gap-1">
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor(remainPlayerList.length / 100)}</p>
                                     <p className="items-center text-center bg-[#3B88C3] text-white font-[900] rounded-md w-6 h-6">{Math.floor((remainPlayerList.length % 100) / 10)}</p>
@@ -416,7 +420,7 @@ export default function LuckySpinAdmin() {
                         </div>
                         {spinBlock}
                         <div className="w-full mb-16">
-                            <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">giải thưởng hiện tại</p>
+                            <p className="font-[900] text-[#004599] uppercase text-[16px] text-center items-center">{trans.curentReward}</p>
                             <div className="h-50 px-4 py-2 relative">
                                 <div>
                                     <div className="relative mt-1 before:block before:absolute before:-inset-0.5 before:bg-gradient-to-r before:from-[#003B93] before:to-[#00F0FF] before:rounded-md">
@@ -425,8 +429,8 @@ export default function LuckySpinAdmin() {
                                             onClick={!spinClicked ?
                                                 () => document.getElementById("selectRewardPopUp").classList.toggle("hidden") : () => { }}>
                                             <div className="flex">
-                                                <p className="text-[#004599] font-bold text-base text-left w-full ml-4 truncate">{remainRewardList.length > 0 ? remainRewardList[rewardChosing].nameReward : "KHÔNG CÓ"}</p>
-                                                <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">Còn lại: {remainRewardList.length > 0 ? remainRewardList[rewardChosing].quantityRemain : 0}</p>
+                                                <p className="text-[#004599] font-bold text-base text-left w-full ml-4 truncate">{remainRewardList.length > 0 ? remainRewardList[rewardChosing].nameReward : trans.none}</p>
+                                                <p className="w-full font-bold text-[#004599] text-right mr-7 ml-2">{trans.remain} {remainRewardList.length > 0 ? remainRewardList[rewardChosing].quantityRemain : 0}</p>
                                             </div>
                                             <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 absolute right-2 origin-center fill-[#004599]">
@@ -444,7 +448,7 @@ export default function LuckySpinAdmin() {
                                                             style={{ background: (idx === rewardChosing ? "#3B88C3" : ""), color: (idx === rewardChosing ? "white" : ""), fontWeight: (idx === rewardChosing ? "700" : "") }}
                                                             onClick={() => { chooseReward(idx) }}>
                                                             <span className="ml-3 block truncate grow">{reward.nameReward}</span>
-                                                            <span className="min-w-[150px] ml-3 block truncate text-right">Số lượng còn lại: {reward.quantityRemain}</span>
+                                                            <span className="min-w-[150px] ml-3 block truncate text-right">{trans.numberRemain} {reward.quantityRemain}</span>
                                                         </li>
                                                     )
                                                 }) : <></>
@@ -453,7 +457,7 @@ export default function LuckySpinAdmin() {
                                     </div>
                                 </div>
                                 <div className="flex justify-center h-fit items-center mt-4 gap-4">
-                                    <label className="font-bold text-[#004599]" htmlFor="spinTime">Thời gian animation: </label>
+                                    <label className="font-bold text-[#004599]" htmlFor="spinTime">{trans.timeAnimation} </label>
                                     <input id="spinTime" name="spinTime" defaultValue={spinTime} type={"number"} className={"text-sky-500 font-bold text-center w-20 h-10 border border-slate-300 rounded-md py-1 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"}
                                         onChange={() => {
                                             if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 2)
@@ -467,10 +471,10 @@ export default function LuckySpinAdmin() {
                                                 document.getElementById("spinTime").value = 2;
                                             };
                                         }}></input>
-                                    <p className="font-bold text-[#004599]">giây</p>
+                                    <p className="font-bold text-[#004599]">{trans.min}</p>
                                 </div>
-                                <Button content={"QUAY THƯỞNG"} onClick={!spinClicked ? spining : () => { }} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
-                                <Button content={"KẾT THÚC SỰ KIỆN"} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
+                                <Button content={trans.spinButton} onClick={!spinClicked ? spining : () => { }} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
+                                <Button content={trans.endButton} primaryColor={"#FF6262"} isSquare={true} margin={"my-0"} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
                             </div>
                         </div>
                         <div className="absolute right-2 top-2 rounded-full h-10 w-10 bg-gradient-to-r from-[#003B93] to-[#00F0FF] p-1"

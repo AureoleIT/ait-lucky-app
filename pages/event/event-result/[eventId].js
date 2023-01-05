@@ -10,6 +10,8 @@ import { RewardList, PlayerList, Button, Line, PageLoading } from "public/shared
 import { LEFT_COLOR, RIGHT_COLOR, BG } from "public/util/colors";
 //redux
 import { useUserPackageHook } from "public/redux/hooks";
+//languge
+import Trans from "public/trans/hooks/Trans";
 
 
 export default function EventResult() {
@@ -17,6 +19,9 @@ export default function EventResult() {
   const router = useRouter();
   const EventId = router.query.eventId;
   const userLogin = useUserPackageHook();
+
+  // language
+  const trans = Trans().eventResult
 
   // list db
   const [countPlayer, setCountPlayer] = useState(0);
@@ -127,13 +132,13 @@ export default function EventResult() {
 
   const renderLine = useMemo(() => {
     return (
-      <Line />
+      <Line margin="my-2"/>
     )
   }, [])
 
   const renderButton = useMemo(() => {
     return (
-      <Button content={"Thoát"} primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} onClick={handleExit} />
+      <Button content={trans.exit} primaryColor={LEFT_COLOR} secondaryColor={RIGHT_COLOR} onClick={handleExit} />
     )
   }, [handleExit])
 
@@ -147,7 +152,7 @@ export default function EventResult() {
                 {event.title}
               </h1>
               <h1 className="uppercase text-2xl py-0 font-bold text-[#004599]">
-                thông tin giải thưởng
+                {trans.prizeInfo}
               </h1>
               <div className="max-w-md w-[90%]">
                 {renderLine}
@@ -158,10 +163,10 @@ export default function EventResult() {
               </div>
 
               <h1 className="uppercase text-2xl pt-2 font-bold text-[#004599]">
-                danh sách người chơi
+                {trans.participantList}
               </h1>
               <h1 className="uppercase text-xl pt-2 font-semibold text-[#004599]">
-                số người tham gia: {countPlayer}
+                {trans.participant} {countPlayer}
               </h1>
 
               <div className="flex flex-col grow w-[90%] max-w-md h-[30%] overflow-y-auto">

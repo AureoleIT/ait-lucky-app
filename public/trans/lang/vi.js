@@ -46,7 +46,7 @@ const vi = {
     or: "hoặc",
     google: "Đăng kí với",
     hasAccount: "Đã có tài khoản?",
-    login: "Đăng nhập luôn!"
+    login: "Đăng nhập luôn!",
   },
   dashboard: {
     welcome: {
@@ -83,7 +83,49 @@ const vi = {
     eventDescription: "Mô tả sự kiện",
     maxTicket: "Giới hạn người tham gia",
     publicFlag: "Cho phép người tham gia không cần đăng nhập",
-    buttonContent: "Tiếp tục"
+    buttonContent: "Tiếp tục",
+  },
+  rewardRegister: {
+    addGift: "Thêm phần quà",
+    registerEvent: "Đăng ký sự kiện"
+  },
+  reward: {
+    rewardName: "Tên giải thưởng",
+    quantity: "Số lượng",
+    addImages: "Thêm hình ảnh",
+    awardImages: "Hình ảnh giải thưởng",
+  },
+  editEventRewardRegister: {
+    rewardName: "Tên giải thưởng",
+    eventName: "Tên sự kiện",
+    eventDescription: "Mô tả sự kiện",
+    maxTicket: "Giới hạn người tham gia",
+    publicFlag: "Cho phép người tham gia không cần đăng nhập",
+    addReward: "Thêm giải thưởng",
+    addGift: "Thêm phần quà",
+    adjust: "Điều chỉnh",
+  },
+  eventResult: {
+    prizeInfo: "Thông tin giải thưởng",
+    participantList: "Danh sách người chơi",
+    participant: "Số người tham gia: ",
+    exit: "Thoát"
+  },
+  playerDetail: {
+    cancelReward: "Hủy giải thưởng",
+    givenTo: "đã được trao cho",
+    confirmedCancel: "Xác nhận hủy giải?",
+    yes: "Có",
+    no: "Không",
+    inviteAttendees: "Mời người tham dự",
+    leavingEvent: "rời khỏi sự kiện?",
+    confirm: "Xác nhận?",
+    allowAttendees: "Cho phép người tham dự",
+    returnEvent: "trở lại sự kiện?",
+    banned: "Cấm tham gia",
+    allowed: "Cho phép tham gia",
+    reward: "Giải thưởng",
+    none: "Không có"
   },
   eventList: {
     heading: "danh sách sự kiện",
@@ -92,8 +134,31 @@ const vi = {
       checklength: "Danh sách trống",
     },
     eventButton: {
-      participant: "người tham gia",
+      participant: "người tham gia: ",
     },
+  },
+  countdown: {
+    pincode: "mã pin sự kiện",
+    participant: "Số người tham gia",
+    player: "người chơi",
+    createQR: "TẠO MÃ QR",
+    startButton: "BẮT ĐẦU",
+    startAfter: "bắt đầu sau ...",
+    prizeInfo: "thông tin giải thưởng",
+    participantList: "danh sách người chơi",
+  },
+  eventDetail: {
+    id: "Mã sự kiện",
+    eventInfo: "thông tin giải thưởng",
+    timeCheckin: "thời gian check in",
+    min: "phút",
+    startButton: "BẮT ĐẦU",
+  },
+  rewardList: {
+    arlert: "Có lỗi trong mở khung hiển thị hình ảnh!",
+    amountRemain: "Số lượng còn lại: ",
+    amount: "Số lượng: ",
+    winner: "Người trúng thưởng",
   },
   setting: {
     heading: "Thông tin cá nhân",
@@ -120,6 +185,45 @@ const vi = {
     newPassword: "Mật khẩu mới",
     confirmPassword: "Xác nhận mật khẩu",
   },
+
+  luckySpin: {
+    title: "VÒNG QUAY MAY MẮN",
+    onlPlayer: "Số người trực tuyến",
+    player: "Số người quay thưởng",
+    curentReward: "giải thưởng hiện tại",
+    none: "KHÔNG CÓ",
+    remain: "Còn lại",
+    min: "Giây",
+    numberRemain: "Số lượng còn lại: ",
+    timeAnimation: "Thời gian animation:",
+    spinButton: "QUAY THƯỞNG",
+    endButton: "KẾT THÚC SỰ KIỆN",
+    notiEnd1: "Bạn có chắc chắn muốn",
+    notiEnd2: "kết thúc",
+    notiEnd3: "sự kiện?",
+    yesButton: "CÓ",
+    noButton: "KHÔNG",
+    confirmButton: "XÁC NHẬN",
+    cancelButton:"HỦY",
+    rewardReceive1: "sẽ nhận được giải:",
+    rewardReceive2: "Xác nhận trao giải?",
+    exitButton: "THOÁT",
+    ban1:"Bạn đã bị cấm khỏi sự kiện",
+    ban2: "bởi người điều hành",
+    exit1:"Bạn có chắc chắn muốn ",
+    exit2: "thoát",
+    waitingSpin: "Đang chờ quay thưởng ...",
+    waitingReward: "Đang chờ xác nhận trao giải ...",
+    adminConfirm:"Chủ sự kiện đã xác nhận trao giải!",
+    adminCancel:"Chủ sự kiện đã hủy trao giải",
+  },
+  curentEventDetail: {
+    title: "THÔNG TIN SỰ KIỆN",
+    reward: "THÔNG TIN GIẢI THƯỞNG",
+    player: "THÔNG TIN NGƯỜI CHƠI",
+
+  }
+
 };
 
 export default vi;

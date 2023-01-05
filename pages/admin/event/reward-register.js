@@ -17,10 +17,13 @@ import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, 
 import { useDispatch } from "react-redux"
 import Header from "public/shared/Header";
 import { Button, PageLoading } from "public/shared";
+import Trans from "public/trans/hooks/Trans";
 
 function RewardRegister() {
     // router
     const router = useRouter();
+    // language
+    const trans = Trans().rewardRegister
     // status to pass to event detail
     const statusEvent = 1
     // user
@@ -230,7 +233,7 @@ function RewardRegister() {
     {
         return (
             <div className="w-full">
-                <Button content={"Thêm phần quà"} primaryColor={"#40BEE5"} onClick={handleAdd}/>
+                <Button content={trans.addGift} primaryColor={"#40BEE5"} onClick={handleAdd}/>
             </div>
         )
     },[handleAdd])
@@ -239,7 +242,7 @@ function RewardRegister() {
     {
         return (
             <div className="pb-4 w-4/5 drop-shadow-lg max-w-xl">
-                <Button content={"ĐĂNG KÝ SỰ KIỆN"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={() => handleNavigate(value, uniqueKey)} />
+                <Button content={trans.registerEvent} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={() => handleNavigate(value, uniqueKey)} />
             </div>
         )
     },[handleNavigate, value, uniqueKey])
@@ -253,28 +256,19 @@ function RewardRegister() {
 
     return (
         <>
-        {
-            loadedData?
-            (
-                <section className="w-screen h-screen">
-                    <div className="flex flex-col items-center h-full">
-                        {renderHeader}
-                        <div className="flex flex-col items-center w-full justify-between h-[85%]">
-                            <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
-                                {renderReward}
-                                {renderAddRewardButton}
-                            </div>
-                            {renderRewardRegisterButton}
+            <section className="w-screen h-screen">
+                <div className="flex flex-col items-center h-full">
+                    {renderHeader}
+                    <div className="flex flex-col items-center w-full justify-between h-[85%]">
+                        <div className="w-4/5 max-w-xl my-2 flex flex-col items-center justify-center">
+                            {renderReward}
+                            {renderAddRewardButton}
                         </div>
-                        {renderPopUp}
+                        {renderRewardRegisterButton}
                     </div>
-                </section>
-            )
-            :
-            (
-                <PageLoading />
-            )
-        }
+                    {renderPopUp}
+                </div>
+            </section>
         </>
   );
 }

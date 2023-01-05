@@ -19,12 +19,16 @@ import { db } from "src/firebase"
 import { ref, child, get, update, onValue, query, orderByChild, equalTo } from "firebase/database"
 import { Button, PageLoading } from "public/shared"
 
+import Trans from "public/trans/hooks/Trans";
 
 function CountDownCheckIn() {
     const dbRef = ref(db);
 
     // router
     const router = useRouter()
+
+    // translation
+    const trans = Trans().countdown;
     // user
     const { query: { countdown, statusEvent } } = router
 
@@ -211,7 +215,8 @@ function CountDownCheckIn() {
         return (
             <>
                 <Title title={eventName} />
-                <h1 className="font-[900] uppercase text-[#004599] text-[22px] text-center mb-1">mã pin sự kiện</h1>
+                <h1 className="font-[900] uppercase text-[#004599] text-[22px] text-center mb-1"> 
+                 {trans.pincode}</h1>
             </>
         )
     }, [eventName])
@@ -227,7 +232,7 @@ function CountDownCheckIn() {
     const renderButtonQRcode = useMemo(() => {
         return (
             <div className="max-w-xl w-4/5 flex mb-3 drop-shadow-lg">
-                <Button content={"TẠO MÃ QR"} iconClass={"fas fa-qrcode"} primaryColor={"#40BEE5"} onClick={generateQRcode} />
+                <Button content={trans.createQR} iconClass={"fas fa-qrcode"} primaryColor={"#40BEE5"} onClick={generateQRcode} />
             </div>
         )
     }, [generateQRcode])
@@ -278,7 +283,7 @@ function CountDownCheckIn() {
     const renderParticipants = useMemo(() => {
         return (
             <div className="max-w-xl w-4/5 flex justify-between mb-2">
-                <p className={`text-[16px] text-[${TEXT}] font-bold text-center`}>Số người tham gia</p>
+                <p className={`text-[16px] text-[${TEXT}] font-bold text-center`}>{trans.participant}</p>
                 <div className="flex">
                     <div className="w-[24px] h-[24px] rounded-[5px] text-white font-bold mr-1 flex justify-center items-center drop-shadow-lg" style={countDownNumber}>
                         {Math.floor(player / 10)}
@@ -294,7 +299,7 @@ function CountDownCheckIn() {
     const renderH1andLine = useMemo(() => {
         return (
             <>
-                <h1 className="uppercase text-xl font-bold text-[#004599]">người chơi</h1>
+                <h1 className="uppercase text-xl font-bold text-[#004599]">{trans.player}</h1>
                 <div className="max-w-xl w-4/5 z-0"> <Line /> </div>
             </>
         )
@@ -318,7 +323,7 @@ function CountDownCheckIn() {
         return (
             <div className="max-w-xl w-4/5 flex justify-center items-center" onClick={handleStartEvent}>
                 <div className="w-full mr-1 drop-shadow-lg">
-                    <Button content={"BẮT ĐẦU"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
+                    <Button content={trans.startButton} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} />
                 </div>
             </div>
         )
