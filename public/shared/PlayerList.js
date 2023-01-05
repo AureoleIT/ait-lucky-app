@@ -73,7 +73,7 @@ export default function PlayerList({listPlayer = undefined, listType = "List", c
     useEffect(() => {
         if (listPlayer[playerChosing] === undefined) return;
         const detail = (<PlayerDetail player={listPlayer[playerChosing]} playerID={keysPlayers[playerChosing]} reward={listReward.filter((val) => val.idReward === listPlayer[playerChosing].idReward)} isAdmin={isAdmin} />);
-        if (playerChosing!==undefined) render(detail, document.getElementById('playerDetail'));
+        if (playerChosing!==undefined && document.getElementById('playerDetail')) render(detail, document.getElementById('playerDetail'));
     }, [playerChosing, listPlayer, keysPlayers])
 
     return (
