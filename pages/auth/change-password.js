@@ -98,14 +98,16 @@ export default function ChangePassword() {
 
   // show popup
   useEffect(() => {
-    if (!isHidden == false) {
-      isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
-      document.getElementById("textState").innerHTML = textState;
-      document.getElementById("changeOverlay").classList.toggle('hidden');
-      const timer = setTimeout(() => {
-        setIsHidden(true);
-      }, 1000)
-      return () => { clearTimeout(timer) }
+    if (isHidden == false) {
+      if (document.getElementById("imgPopup")) {
+        isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+        document.getElementById("textState").innerHTML = textState;
+        document.getElementById("changeOverlay").classList.toggle('hidden');
+        const timer = setTimeout(() => {
+          setIsHidden(true);
+        }, 1000)
+        return () => { clearTimeout(timer) }
+      }
     }
   }, [isHidden])
 

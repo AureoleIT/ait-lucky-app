@@ -31,7 +31,7 @@ import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 
-export default function Setting() {   
+export default function Setting() {
     //redux
     const [user, setUser] = useState(useUserPackageHook());
     const dispatch = useDispatch();
@@ -275,13 +275,15 @@ export default function Setting() {
     // show popup
     useEffect(() => {
         if (isHidden == false) {
-            isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
-            document.getElementById("textState").innerHTML = textState;
-            document.getElementById("profileOverlay").classList.toggle('hidden');
-            const timer = setTimeout(() => {
-                setIsHidden(true);
-            }, 1)
-            return () => { clearTimeout(timer) }
+            if (document.getElementById("imgPopup")) {
+                isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+                document.getElementById("textState").innerHTML = textState;
+                document.getElementById("profileOverlay").classList.toggle('hidden');
+                const timer = setTimeout(() => {
+                    setIsHidden(true);
+                }, 1000)
+                return () => { clearTimeout(timer) }
+            }
         }
     }, [isHidden])
 
@@ -289,16 +291,22 @@ export default function Setting() {
 
     return (
         <>
-            {            
+            {
                 <section className="h-screen w-screen overflow-y-hidden">
                     {renderHeader}
                     <div className="h-screen w-full flex flex-col items-center max-w-md mx-auto mt-2">
                         <p className="text-lg mb-2 font-bold text-[#004599]">{transSetting.heading}</p>
                         <div className="w-full max-w-md h-[200px] bg-[url('../public/img/setting_background.svg')] bg-center bg-no-repeat my-0">
-                            <div className="flex flex-col justify-center items-center">
+                            <div className="relative flex flex-col justify-center items-center">
                                 <img src={img}
                                     onClick={(e) => getImage(e)}
                                     alt="" className="w-[100px] h-[100px] rounded object-cover mt-12" />
+                                <div className="absolute bottom-0 ml-[72px]" onClick={(e) => getImage(e)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF" className="w-6 h-6">
+                                        <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+                                        <path d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
                                 <input type={"file"} id={"fileID"} onChange={handleChangeFile} style={{ display: "none" }} accept="image/*" />
                             </div>
                         </div>
@@ -318,7 +326,7 @@ export default function Setting() {
                         </footer>
                     </div>
                     {renderOverlayBlock}
-                </section>             
+                </section>
             }
         </>
 
