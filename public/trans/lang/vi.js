@@ -90,7 +90,9 @@ const vi = {
   },
   rewardRegister: {
     addGift: "Thêm phần quà",
-    registerEvent: "Đăng ký sự kiện"
+    registerEvent: "Đăng ký sự kiện",
+    nameGift: "Tên giải thưởng",
+    gift: "Phần thưởng"
   },
   reward: {
     rewardName: "Tên giải thưởng",
