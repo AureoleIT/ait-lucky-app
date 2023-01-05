@@ -458,7 +458,7 @@ export default function LuckySpin() {
     return (
         <>
             {loadedData ?
-                <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center w-3/4 max-w-md max-sm:w-full">
+                <section className="relative h-screen px-5 py-5 mx-auto flex justify-center items-center max-w-md max-md:w-full">
                     <div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
                         <div className="flex flex-col w-full pt-5">
                             <Title title={trans.title} fontSize="text-[24px]" fontWeight="font-semibold" />
