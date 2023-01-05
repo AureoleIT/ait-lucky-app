@@ -61,12 +61,12 @@ export default function Header() {
               />
             </svg>
           </button>
-          <a
-            href="/admin/dashboard-admin"
-            className="text-2xl font-extrabold text-center text-white"
+          <div 
+            onClick={() => {router.push("/admin/dashboard-admin")}}
+            className="text-2xl font-extrabold text-center text-white cursor-pointer"
           >
             AIT LUCKY APP
-          </a>
+          </div>
           <div className="flex flex-row justify-center items-center">
             <div
               className=" mr-4 h-5 w-5 rounded-full shadow-md cursor-pointer transform bg-white justify-center items-center text-xs text-center"

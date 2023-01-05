@@ -212,13 +212,13 @@ export default function Dashboard() {
               </div>
             ))
           )}
-          <a href="event-list">
+          <div onClick={() => {router.push("event-list")}}>
             <Button
               content={trans.dashboard.showCreateEvent.buttonContent}
               primaryColor={LEFT_COLOR}
               secondaryColor={RIGHT_COLOR}
             />
-          </a>
+          </div>
         </div>
       </Input>
     );
