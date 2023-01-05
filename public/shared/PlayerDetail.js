@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import Line from "./Line";
 import Title from "./Title";
@@ -8,20 +8,19 @@ import CloseButton from "./CloseButton";
 import ParticipantAvt from "./ParticipantAvatar";
 import Button from "./Button";
 import OverlayBlock from "./OverlayBlock";
-import { useMemo } from "react";
 import { db } from "src/firebase";
-import { ref, update, get, query, orderByChild, equalTo } from "firebase/database";
+import { ref, update, get, query, orderByChild, equalTo, onValue } from "firebase/database";
 import Trans from "public/trans/hooks/Trans";
 
 export default function PlayerDetail({player, reward, isAdmin = false, playerID = ""}) {
     const [playerStatus, setPlayerStatus] = useState(0);
     const trans = Trans().playerDetail
     useEffect(() => {
-        get(query(ref(db, "event_participants/" + playerID + "/status"))).then((snapshot) => {
+        onValue(query(ref(db, "event_participants/" + playerID + "/status")), snapshot => {
             if (snapshot.exists()) {
                 setPlayerStatus(snapshot.val());
             }
-        })
+        });
     }, [playerID]);
 
     const renderCancelRewardNotification = useMemo(() => {
@@ -41,7 +40,9 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
                         update(ref(db, 'event_participants/'+ playerID), { idReward: "" });
                         update(ref(db, 'event_rewards/'+ reward[0].idReward), { quantityRemain: (reward[0].quantityRemain + 1) });
                     }} />
-                    <Button fontSize={"text-[20px]"} content={trans.no} primaryColor={"#3B88C3"} isSquare={true} margin={""} onClick={() => {document.getElementById("cancelRewardedOverlay").classList.toggle('hidden')}} />
+                    <Button fontSize={"text-[20px]"} content={trans.no} primaryColor={"#3B88C3"} isSquare={true} margin={""} onClick={() => {
+                        document.getElementById("cancelRewardedOverlay").classList.toggle('hidden');
+                    }} />
                 </div>
             </div>
         :<></>}  id={"cancelRewardedOverlay"}
@@ -79,10 +80,10 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
                 <div className="my-2 relative w-full before:absolute before:left-0 before:border-b-transparent before:border-l-transparent before:border-r-transparent before:border-t-slate-300 before:border-2 before:w-full"></div>
                 <p className="font-bold">{trans.confirm}</p>
                 <div className="w-full flex gap-4 px-2">
-                    <Button fontSize={"text-[20px]"} content={trans.yes} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => {
+                    <Button fontSize={"text-[20px]"} content={trans.yes} primaryColor={"#3B88C3"} isSquare={true} margin={""} onClick={() => {
                         document.getElementById("CancelBanPlayerOverlay").classList.toggle('hidden');
                         document.getElementById("playerDetailOverlay").classList.toggle('hidden');
-                        update(ref(db, 'event_participants/'+ playerID), { idReward: "", status: 1 });
+                        update(ref(db, 'event_participants/'+ playerID), { idReward: "", status: 2 });
                     }} />
                     <Button fontSize={"text-[20px]"} content={trans.no} primaryColor={"#FF6262"} isSquare={true} margin={""} onClick={() => {document.getElementById("CancelBanPlayerOverlay").classList.toggle('hidden')}} />
                 </div>
@@ -91,8 +92,8 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
             rerenderOnChange={[player, reward]}></OverlayBlock>
     }, [player, reward]);
 
-    const content = (
-        <div className="absolute bottom-0 left-0 h-[70%] w-full bg-white rounded-t-2xl p-4 z-30"
+    const content = useMemo(() => {
+        return (<div className="absolute bottom-0 left-0 h-[70%] w-full bg-white rounded-t-2xl p-4 z-30"
             onClick={(e) => e.stopPropagation()}>
             <div className="overflow-auto">
                 {player?<div className="h-fit">
@@ -127,8 +128,7 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
                 {renderKickPlayerNotification}
                 {renderCancelBanPlayerNotification}
             </div>
-        </div>
-    )
+        </div>)}, [player, reward, playerStatus])
 
     return (
         <>
