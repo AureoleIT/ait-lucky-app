@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import Title from "public/shared/Title";
 import RewardList from "public/shared/RewardList";
 import PlayerList from "./PlayerList";
+import Trans from "public/trans/hooks/Trans";
 
 export default function CurrentEventDetail({listPlayer, listReward, remainReward = false, isAdmin = false}) {
+    const trans = Trans().curentEventDetail;
     const [expand, setExpand] = useState(false);
 
     const EventDetailExpand = (
@@ -17,15 +19,15 @@ export default function CurrentEventDetail({listPlayer, listReward, remainReward
                     </span>
                 </div>
                 <div className="flex flex-col w-full h-fit items-center" style={{marginTop: expand?"1rem":"0.5rem"}}>
-                    <p className="w-full text-center items-center uppercase text-white font-[900] text-[20px]">THÔNG TIN SỰ KIỆN</p>
+                    <p className="w-full text-center items-center uppercase text-white font-[900] text-[20px]">{trans.title}</p>
                 </div>
                 <div className="flex flex-col w-full h-full max-h-64 px-5 overflow-hidden" style={{minHeight: "8rem"}}>
-                    <Title title="THÔNG TIN GIẢI THƯỞNG" fontSize="text-[20]" margin="mb-4"/>
+                    <Title title={trans.reward} fontSize="text-[20]" margin="mb-4"/>
                     <div className="h-1 bg-white w-full -mt-4 mb-2 grow-0"></div>
                     <RewardList listReward={listReward} showRemain={remainReward} eventPaticipant={Object.values(listPlayer)} />
                 </div>
                 <div className="flex flex-col w-full h-full px-5 mt-4 overflow-hidden">
-                    <Title title="THÔNG TIN NGƯỜI CHƠI" fontSize="text-[20]" margin="mb-4" />
+                    <Title title={trans.player} fontSize="text-[20]" margin="mb-4" />
                     <div className="h-1 bg-white w-full -mt-4 mb-4 grow-0"></div>
                     <PlayerList listPlayer={listPlayer} listReward={listReward} isAdmin={isAdmin} />
                 </div>

@@ -7,11 +7,11 @@ import { db } from "./../../src/firebase";
 import { HideMethod, ShowMethod } from "public/util/popup";
 import { isEmpty } from "public/util/functions";
 import { messagesError, messagesSuccess } from "public/util/messages";
-import { ref, set } from "firebase/database";
+import { child, get, ref, set, update } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
-import { incognitoParticipant, userCurrentEventPlaying } from "public/redux/actions";
-import { usePlayerEventHook } from "public/redux/hooks";
+import { incognitoParticipant, incognitoUser, incognitoEvent, userCurrentEventPlaying, removePlayerState } from "public/redux/actions";
+import { usePlayerEventHook, usePlayerParticipantHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
 
@@ -20,29 +20,149 @@ const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
 export default function Info() {
   const [name, setName] = useState("");
-
+  const globalUser = useUserPackageHook();
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
+  
+  //Get pinCode from URL
+  let pinCode = new URLSearchParams(window.location.search).get('pinCode')
 
   // Call dispatch from redux
   const dispatch = useDispatch();
-  var [player, setPlayer] = useState({});
 
   // Get current event from previous state get in
   const currEvent = usePlayerEventHook();
 
   //Get current user logged in and play
   const currUser = useUserPackageHook()
-console.log(currEvent)
+
+  const currPlayer = usePlayerParticipantHook();
+
+  // -------------------------------------------Check path--------------------------------------------
   useEffect(() => {
-    if (!currEvent.eventId) {
+    if ((pinCode === undefined || pinCode === null) && !currEvent.eventId) {
       router.push("/");
+      return;
+    } else if ((pinCode === undefined || pinCode === null) && currEvent.eventId) {
+      if (currPlayer.eventId === currEvent.eventId && currPlayer.eventId !== undefined) {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.eventId === currEvent.eventId);
+          switch (event.status) {
+            case 1:
+              ShowMethod(dispatch, messagesError.E3001, false);
+              setTimeout(() => {
+                dispatch(removePlayerState());
+                HideMethod(dispatch);
+                router.push("/");
+              }, 500)
+              return;
+            case 2:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/countdown-checkin/" + currEvent.eventId);
+              }, 500);
+              return
+            case 3:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/luckyspin/" + currEvent.eventId);
+              }, 500);
+              return;
+            case 4:
+              dispatch(removePlayerState());
+              router.push("/");
+              return;
+            default:
+              return;
+          }
+        });
+      }
+    } else if (!(pinCode === undefined || pinCode === null) && !currEvent.eventId) {
+      dispatch(removePlayerState());
+      get(child(ref(db), "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var event = values.find((item) => item.pinCode === pinCode);
+        dispatch(incognitoEvent(event));
+        if (globalUser.userId) {
+          dispatch(userCurrentEventPlaying(event))
+        }
+      });
+    } else {
+      if ((currPlayer.eventId === currEvent.eventId) && (currPlayer.eventId !== undefined)) {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.eventId === currEvent.eventId);
+          switch (event.status) {
+            case 1:
+              ShowMethod(dispatch, messagesError.E3001, false);
+              setTimeout(() => {
+                dispatch(removePlayerState());
+                HideMethod(dispatch);
+                router.push("/");
+              }, 500)
+              return;
+            case 2:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/countdown-checkin/" + currEvent.eventId);
+              }, 500);
+              return
+            case 3:
+              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              setTimeout(() => {
+                HideMethod(dispatch);
+                router.push("event/luckyspin/" + currEvent.eventId);
+              }, 500);
+              return;
+            case 4:
+              ShowMethod(dispatch, messagesError.E3003, false);
+              setTimeout(() => {
+                dispatch(removePlayerState());
+                HideMethod(dispatch);
+                router.push("/");
+              }, 500)
+              return;
+            default:
+              return;
+          }
+        });
+      } else {
+        get(child(ref(db), "event/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var event = values.find((item) => item.pinCode === pinCode);
+          if (event === undefined || event.delFlag === true) {
+            ShowMethod(dispatch, messagesError.E2004, false);
+            setTimeout(() => {
+              HideMethod(dispatch)
+            }, 500)
+            return;
+          }
+          dispatch(incognitoEvent(event));
+          if (globalUser.userId) {
+            dispatch(userCurrentEventPlaying(event))
+          }
+        });
+      }
     }
-  })
+
+  }, [currEvent.eventId, currEvent.title, currPlayer.eventId, dispatch, globalUser.userId, pinCode]);
+
+  // -------------------------------------------Click logic handle------------------------------------
   const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
       ShowMethod(dispatch, messagesError.E0004, false)
+      setTimeout(() => {
+        HideMethod(dispatch)
+      }, 1000)
       return;
     }
     var id = uuid.v4();
@@ -52,35 +172,93 @@ console.log(currEvent)
       createBy: currUser.userId === undefined ? "" : currUser.userId,
       pic: currUser.pic === undefined ? "" : currUser.pic,
       createAt: new Date().getTime(),
-      status: 1,
+      status: 2,
       nameDisplay: name,
       idReward: "",
       eventId: currEvent.eventId,
     };
-    set(ref(db, `event_participants/${id}/`), newParticipant)
-      .then(() => {
-        ShowMethod(dispatch, messagesSuccess.I0009, true)
-        setPlayer(newParticipant)
+    get(child(ref(db), "event/")).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+      var event = values.find((item) => item.eventId === currEvent.eventId);
+      if (event === undefined || event.delFlag === true) {
+        ShowMethod(dispatch, messagesError.E2004, false);
         setTimeout(() => {
           HideMethod(dispatch)
-          router.push("/event/countdown-checkin");
+          router.push("/")
+        }, 1000)
+        return;
+      }
+      console.log(event.status)
+      switch (event.status) {
+        case 1:
+          ShowMethod(dispatch, messagesError.E3001, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750)
+          return;
+        case 2:
+          set(ref(db, `event_participants/${id}/`), newParticipant)
+          .then(() => {
+            event.userJoined += 1;
+            update(ref(db, `event/${event.eventId}`),
+              {
+                userJoined: event.userJoined,
+              }).then(
+                ShowMethod(dispatch, messagesSuccess.I0009, true)
+              ).catch((e) => {
+                ShowMethod(dispatch, messagesError.E4444, false)
+              })
+            dispatch(incognitoParticipant(newParticipant));
+  
+            window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
+            
+            setTimeout(() => {
+              HideMethod(dispatch)
+              router.push("/event/countdown-checkin/" + event.eventId);
+            }, 750);
+          })
+          .catch((e) => {
+            ShowMethod(dispatch, messagesError.E4444, false)
+          });
+          setTimeout(() => {
+            HideMethod(dispatch);
+            router.push("event/countdown-checkin/" + currEvent.eventId);
+          }, 750);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesError.E3002, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750);
+          return;
+        case 4:
+          ShowMethod(dispatch, messagesError.E3003(currEvent.title), false);
+          setTimeout(() => {
+            dispatch(removePlayerState());
+            HideMethod(dispatch);
+            router.push("/");
+          }, 750);
+          return;
+        default:
+      }
+      if (event.maxTicket <= event.userJoined) {
+        ShowMethod(dispatch, messagesError.E2005, false);
+        setTimeout(() => {
+          HideMethod(dispatch)
+          dispatch(removePlayerState());
+          router.push("/");
         }, 1000);
-      })
-      .catch((e) => {
-        ShowMethod(dispatch, messagesError.E4444, false)
-      });
-  }, [currEvent.eventId, currUser.pic, currUser.userId, dispatch, name]);
+        return;
+      }
+    });
+  }, [currEvent, currUser.pic, currUser.userId, dispatch, name]);
 
-  // Set and save new player object to redux
-  useEffect(() => {
-    dispatch(incognitoParticipant(player));
-  }, [currEvent, dispatch, player]);
-
-  /*localStorage is here to track what has been saved*/
-  useEffect(() => {
-    window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(player.participantId));
-  }, [player]);
-
+  // -------------------------------------------Components render-------------------------------------
   const setNameData = useCallback(
     (e) => {
       setName(e?.target?.value);
@@ -136,6 +314,7 @@ console.log(currEvent)
       </div>
     )
   }, [visible, status, message])
+  //-------------------------------------------------------------------------------------------------
 
   return (
     <section

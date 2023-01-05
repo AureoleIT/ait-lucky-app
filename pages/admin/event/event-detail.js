@@ -13,9 +13,13 @@ import { db } from "src/firebase"
 import {ref, onValue, query, orderByChild, equalTo, update} from "firebase/database"
 import { Button, PageLoading, RewardList } from "public/shared";
 
+import Trans from "public/trans/hooks/Trans";
+
 function EventDetail() {
     // router
     const router = useRouter();
+    // translation
+    const trans = Trans().eventDetail;
     // user
     const user = useUserPackageHook()
     // eventID get from redux
@@ -52,6 +56,12 @@ function EventDetail() {
         if(user.userId !== event.createBy) { router.push("/") }
     },[])
 
+    const compare = (a, b) => {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+
     // get name event from firebase
     const getName = query(ref(db, "event"), orderByChild("eventId"), equalTo(beforeID))
     useEffect(() =>
@@ -76,7 +86,9 @@ function EventDetail() {
                 const data = snapshot.val()
                 if(data !== null)
                 {
-                    setRewards(Object.values(data))
+                    const rw = Object.values(data)
+                    rw.sort(compare)
+                    setRewards(rw)
                 }
         })
     },[])
@@ -124,7 +136,7 @@ function EventDetail() {
     {
         return (
             <div className="flex justify-between w-4/5 max-w-xl text-lg">
-                <h1 className="font-[700] uppercase text-[#004599] text-[18px] text-center mb-2">mã sự kiện</h1>
+                <h1 className="font-[700] uppercase text-[#004599] text-[18px] text-center mb-2">{trans.id}</h1>
                 <h1 className="font-[700] uppercase text-[#004599] text-[18px] text-center mb-2 tracking-[5px]">{eventID}</h1>
             </div>
         )
@@ -134,7 +146,7 @@ function EventDetail() {
     {
         return (
             <>
-                <h1 className="font-[800] uppercase text-[#004599] text-[20px] text-center mb-2">thông tin giải thưởng</h1>
+                <h1 className="font-[800] uppercase text-[#004599] text-[20px] text-center mb-2">{trans.eventInfo}</h1>
                 <div className="w-4/5 max-w-xl"> <Line /> </div>
             </>
         )
@@ -161,7 +173,7 @@ function EventDetail() {
         return (
             <div className="flex items-center w-4/5 max-w-xl justify-center mb-2">
                 <div className="flex items-center justify-center h-[40px]">
-                    <h1 className="font-[800] uppercase text-[#004599] text-[18px] text-center mb-2">thời gian check in</h1>
+                    <h1 className="font-[800] uppercase text-[#004599] text-[18px] text-center mb-2">{trans.timeCheckin}</h1>
                 </div>
                 <div className="text-white font-bold ml-3 w-[110px] h-[40px] flex justify-center items-center rounded-[10px] " style={optionStyles}>
                     <select
@@ -170,10 +182,10 @@ function EventDetail() {
                         id={"timer"}
                         onChange={onSetCoundownTime}
                     >
-                        <option value={"300"}>5 phút</option>
-                        <option value={"600"}>10 phút</option>
-                        <option value={"900"}>15 phút</option>
-                        <option value={"1200"}>20 phút</option>
+                        <option value={"300"}>5 {trans.min}</option>
+                        <option value={"600"}>10 {trans.min}</option>
+                        <option value={"900"}>15 {trans.min}</option>
+                        <option value={"1200"}>20 {trans.min}</option>
                     </select>
                 </div>
             </div>
@@ -184,7 +196,7 @@ function EventDetail() {
     {
         return (
             <div className="w-full mr-1 drop-shadow-lg">
-                <Button content={"CHUẨN BỊ"} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={handlePrepare} />
+                <Button content={trans.startButton} primaryColor={"#003B93"} secondaryColor={"#00F0FF"} onClick={handlePrepare} />
             </div>
         )
     },[handlePrepare])

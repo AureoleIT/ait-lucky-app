@@ -2,8 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import PlayerList from "./PlayerList";
 import OverlayBlock from "./OverlayBlock";
 import CloseButton from "./CloseButton";
+import Trans from "public/trans/hooks/Trans";
 
 export default function RewardList({listReward, showQuantity = true, showRemain = false, eventPaticipant}) {
+    const trans= Trans().rewardList;
     const rewardList = [...listReward];
     const [rewardIndex, setRewardIndex] = useState(0);
     const [rewardImageIndex, setRewardImageIndex] = useState(0);
@@ -25,7 +27,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
             <>
                 {showcaseList.length > 0?
                     <>
-                        <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">Người trúng thưởng</p>
+                        <p className="ml-4 items-center text-left text-[#004599] text-lg font-extrabold mt-2 mb-1">{trans.winner}</p>
                         <PlayerList listType="Menu" changeButton={false} listPlayer={showcaseList} listReward={listReward} />
                     </>:
                 <></>}
@@ -34,10 +36,14 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
     }
 
     const openImage = (index, imgIdx) => {
-        if (document.getElementById("showImageOverlay")) document.getElementById("showImageOverlay").classList.toggle("hidden");
-        else (alert("Có lỗi trong mở khung hiển thị hình ảnh!"))
-        setRewardIndex(index);
-        setRewardImageIndex(imgIdx);
+        if (document.getElementById("showImageOverlay")) {
+            document.getElementById("showImageOverlay").classList.toggle("hidden");
+            setRewardIndex(index);
+            setRewardImageIndex(imgIdx);
+        }
+        else {
+            alert(trans.alert);
+        }
     }
 
     const ShowcaseImage = ({imgUrls, imgIndex = 0}) => {
@@ -67,7 +73,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
 
         return (
             <>
-                {imgUrls.length?
+                {imgUrls?
                 <>
                     <div className="absolute flex items-center left-0 right-0 -translate-y-[50%] w-fit mx-auto select-none">
                         {imgUrls && <img className="object-scale-down" src={imgUrls[imgIdx]} alt={"lageImg"}
@@ -167,7 +173,7 @@ export default function RewardList({listReward, showQuantity = true, showRemain 
                             <div className="flex items-center justify-between h-8 rounded-full pr-4 pl-8 mb-2 drop-shadow-lg cursor-pointer" style={{backgroundColor: "#F5F92E"}}
                                 onClick={(e) => {e.target.parentNode.firstChild.classList.toggle("rotate-90"); e.target.parentNode.lastChild.classList.toggle("hidden")}}>
                                 <p className="items-center text-left text-[#004599] text-[18px] font-extrabold pointer-events-none text-ellipsis">{reward.nameReward}</p>
-                                {showQuantity && <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? "Số lượng còn lại: " + reward.quantityRemain : "Số lượng: " + reward.quantity}</p>}
+                                {showQuantity && <p className="items-center text-left text-[#004599] text-[16px] font-normal pointer-events-none">{showRemain? trans.amountRemain + reward.quantityRemain : trans.amount + reward.quantity}</p>}
                             </div>
                             {getDetailFromReward(reward, idx)}
                         </div>

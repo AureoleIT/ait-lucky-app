@@ -14,8 +14,8 @@ export default function LuckySpinSetting({router}) {
     const [muteSound, setMuteSound] = useState(true);
 
     useEffect(() => {
-        document.getElementById("gameSound").volume = soundVol/100;
-        document.getElementById("gameMusic").volume = musicVol/100;
+        if (document.getElementById("gameSound")) document.getElementById("gameSound").volume = soundVol/100;
+        if (document.getElementById("gameMusic")) document.getElementById("gameMusic").volume = musicVol/100;
     }, [])
 
     useEffect(() => {

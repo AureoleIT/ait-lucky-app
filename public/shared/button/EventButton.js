@@ -1,14 +1,15 @@
 import router from "next/router";
+import Trans from "public/trans/hooks/Trans";
 import React from "react";
-
 export default function EventButton({
   title,
-  id, // nếu muốn ẩn trường dữ liệu này thì truyền giá trị -1
-  userJoined, // nếu muốn ẩn trường dữ liệu này thì truyền giá trị -1
+  id,
+  userJoined,
   status,
   onclick,
-  db = 0,
+  db = 0, // nếu muốn ẩn trường dữ liệu id thì db == 1, nếu muốn ẩn trường dữ liệu userJoined thì db == 2
 }) {
+  const trans = Trans();
   const handleClick = () => {
     const statusEvent = 2;
     switch (status) {
@@ -25,7 +26,7 @@ export default function EventButton({
       case 3:
         return router.push(`/admin/luckyspin/${id}`);
       case 4:
-        return router.push("/event/event-result");
+        return router.push(`/event/event-result/${id}`);
       default:
         return router.push({
           pathname: "/admin/event/event-detail",
@@ -42,7 +43,7 @@ export default function EventButton({
       >
         <div className="flex justify-between items-center ml-4 mr-2 text-white h-10 font-[Nunito Sans]">
           <div className="justify-center items-center text-left font-bold text-sm uppercase truncate w-1/2">
-            {title ? <> {title}</> : <>Title not available</>}
+            {title ? <> {title} </> : <>Title not available</>}
           </div>
           <div className="text-xs flex flex-col flex-1 text-right ml-10 items-right truncate break-words">
             {db === 1 ? (
@@ -63,7 +64,7 @@ export default function EventButton({
               <>
                 {" "}
                 {userJoined >= 0 ? (
-                  <div className="truncate">{userJoined} người tham gia </div>
+                  <div className="truncate">{userJoined} {trans.eventList.eventButton.participant}</div>
                 ) : (
                   <div className="truncate">Players not available</div>
                 )}{" "}

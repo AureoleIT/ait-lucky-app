@@ -6,21 +6,22 @@ import { React, useCallback, useEffect, useMemo, useState } from "react";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import router from "next/router";
 import { db } from "src/firebase";
-import { ref, child, get, query, orderByChild, equalTo } from "firebase/database";
+import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
-import { ShowMethod, checkStatus } from "public/util/popup";
+import { HideMethod, ShowMethod, checkStatus } from "public/util/popup";
 import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
-import { incognitoEvent, incognitoUser, removePlayerState, removeUserHosting, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
+import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 import QrReader from 'react-qr-scanner'
+import Trans from "public/trans/hooks/Trans";
 
 export default function Index() {
   const [pin, setPin] = useState("");
-  const [scanResultWebCam, setScanResultWebCam] =  useState('');
+  const [scanResultWebCam, setScanResultWebCam] = useState('');
   const [isShown, setIsShown] = useState(false);
-
+  const trans = Trans();
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
@@ -31,10 +32,6 @@ export default function Index() {
     "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
   const globalUser = useUserPackageHook();
-  const userHostingEvent = useUserCurrEventHostingHook();
-  const userEventCreating = useUserCurrEventCreatingHook();
-  const userRewardCreating = useUserCurrRewardCreatingHook();
-  const eventPlaying = useUserCurrEventPlayingHook();
 
   const participant = usePlayerParticipantHook();
   const playerEvent = usePlayerEventHook();
@@ -47,6 +44,9 @@ export default function Index() {
         var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
         if (currEvent === undefined || currEvent.delFlag === true) {
           ShowMethod(dispatch, messagesError.E2004, false);
+          setTimeout(() => {
+            HideMethod(dispatch)  
+          }, 1000)
           return;
         }
         switch (currEvent.status) {
@@ -57,14 +57,16 @@ export default function Index() {
           case 2:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
+              HideMethod(dispatch)
               router.push("event/countdown-checkin/" + currEvent.eventId);
-            }, 500);
+            }, 750);
             return
           case 3:
             ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
+              HideMethod(dispatch)
               router.push("event/luckyspin/" + currEvent.eventId);
-            }, 500);
+            }, 750);
             return;
           case 4:
             dispatch(removePlayerState());
@@ -75,11 +77,14 @@ export default function Index() {
         }
       });
     }
-  })
+  }, []);
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
       ShowMethod(dispatch, messagesError.E2002, false);
+      setTimeout(() => {
+        HideMethod(dispatch)  
+      }, 1000)
       return;
     }
     get(child(ref(db), "event/")).then((snapshot) => {
@@ -88,6 +93,16 @@ export default function Index() {
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined || currEvent.delFlag === true) {
         ShowMethod(dispatch, messagesError.E2004, false);
+        setTimeout(() => {
+          HideMethod(dispatch)  
+        }, 1000)
+        return;
+      }
+      if (currEvent.maxTicket <= currEvent.userJoined) {
+        ShowMethod(dispatch, messagesError.E2005, false);
+        setTimeout(() => {
+          HideMethod(dispatch)  
+        }, 1000)
         return;
       }
       dispatch(incognitoEvent(currEvent));
@@ -101,8 +116,38 @@ export default function Index() {
         var currUser = values.find((item) => item.userId === currEvent.createBy);
         dispatch(incognitoUser(currUser));
       });
-      const path = "/event/join";
-      checkStatus(dispatch, router, currEvent.title, currEvent.status, path);
+      switch (currEvent.status) {
+        case 1:
+          ShowMethod(dispatch, messagesError.E3001, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        case 2:
+          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          setTimeout(() => {
+            HideMethod(dispatch)
+            router.push("/event/join");
+          }, 750);
+          return
+        case 3:
+          ShowMethod(dispatch, messagesError.E3002, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        case 4:
+          ShowMethod(dispatch, messagesError.E3003, false);
+          setTimeout(() => {
+            dispatch(removePlayerState())
+            HideMethod(dispatch)
+          }, 500);
+          return;
+        default:
+          return;
+      }
     });
   }, [dispatch, globalUser.userId, pin]);
 
@@ -120,16 +165,16 @@ export default function Index() {
 
   const renderTitle = useMemo(() => {
     return (
-      <Title fontSize="text-2xl" fontWeight="font-bold" title="Mã pin sự kiện" />
-    )
-  }, [])
+      <Title fontSize="text-2xl" fontWeight="font-bold" title={trans.index.title}/>
+      )
+    }, [])
 
   const renderInput = useMemo(() => {
     return (
       <Input
-        placeHolder="Mã pin"
+        placeHolder={trans.index.inputHolder}
         onChange={pinData}
-        type="text"
+        type="number"
         primaryColor={LEFT_COLOR}
         secondaryColor={RIGHT_COLOR}
         noContent={true}
@@ -141,7 +186,7 @@ export default function Index() {
     return (
       <div className="w-full">
         <Button
-          content="Tham gia"
+          content={trans.index.buttonContent}
           onClick={onJoinClick}
           primaryColor={LEFT_COLOR}
           secondaryColor={RIGHT_COLOR}
@@ -152,44 +197,44 @@ export default function Index() {
 
   const renderLine = useMemo(() => {
     return (
-      <Line content="hoặc" />
+      <Line content={trans.index.lineContent} />
     )
   }, [])
 
   const renderDirect = useMemo(() => {
     return globalUser.userId !== undefined
-      ? (
-        <a href="/admin/dashboard-admin">
-          <Title
-            title="Quay lại trang chủ?"
-            isUnderLine={true}
-            isUpperCase={false}
-            fontSize="font-bold"
-            fontWeight=""
-            margin=""
-          />
-        </a>
-      )
-      : (
-        <div>
-          <WayLog
-            action="Đăng nhập"
-            title="để quản lý sự kiện?"
-            path="/auth/login"
-          />
-          <WayLog
-            action="Đăng ký"
-            title="để tạo tài khoản."
-            path="/auth/register"
-          />
-        </div>
-      )
+    ? (
+      <div onClick={() => {router.push("/admin/dashboard-admin")}} className="cursor-pointer">
+        <Title
+          title={trans.index.titleReturn}
+          isUnderLine={true}
+          isUpperCase={false}
+          fontSize="font-bold"
+          fontWeight=""
+          margin=""
+        />
+      </div>
+    ) 
+    : (
+      <div>
+        <WayLog
+          action={trans.index.waylogLogin.action}
+          title={trans.index.waylogLogin.title}
+          path="/auth/login"
+        />
+        <WayLog 
+          action={trans.index.waylogRegister.action}
+          title={trans.index.waylogRegister.title}
+          path="/auth/register"
+        />
+      </div>
+    )
   }, [globalUser])
 
   const renderPopUp = useMemo(() => {
     return (
       <div className={visible}>
-        <PopUp
+          <PopUp
           text={message}
           status={status}
           isWarning={!status}
@@ -198,135 +243,77 @@ export default function Index() {
     )
   }, [visible, status, message])
 
-  // if (playerCreatedById === userId
-  //   && eventUserPlayingId === eventParticipant
-  //   && statusEventPlayer === statusEventUser
-  //   && ownerEventUser !== ownerEventParticipant) {
-  //   get(child(ref(db), "event/")).then((snapshot) => {
-  //     const record = snapshot.val() ?? [];
-  //     const values = Object.values(record);
-  //     var currEvent = values.find((item) => item.eventId === eventUserPlayingId);
-  //     if (currEvent === undefined || currEvent.delFlag === true) {
-  //       ShowMethod(dispatch, messagesError.E2004, false);
-  //       return;
-  //     }
-  //     switch (currEvent.status) {
-  //       case 1:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3001, false);
-  //         return;
-  //       case 2:
-  //         ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
-  //         setTimeout(() => {
-  //           router.push("event/countdown-checkin");
-  //         }, 500);
-  //         return
-  //       case 3:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3002, false);
-  //         return;
-  //       case 4:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserPlaying());
-  //         ShowMethod(dispatch, messagesError.E3003, false);
-  //         return;
-  //       default:
-  //         return;
-  //     }
-  //   });
-  // } else if (ownerEventUser === ownerEventParticipant) {
-  //   get(child(ref(db), "event/")).then((snapshot) => {
-  //     const record = snapshot.val() ?? [];
-  //     const values = Object.values(record);
-  //     var currEvent = values.find((item) => item.eventId === userHostingEvent.eventId);
-  //     if (currEvent === undefined || currEvent.delFlag === true) {
-  //       ShowMethod(dispatch, messagesError.E2004, false);
-  //       return;
-  //     }
-  //     switch (currEvent.status) {
-  //       case 1:
-  //         setTimeout(() => {
-  //           router.push("/admin/event/event-detail");
-  //         }, 500);
-  //         return;
-  //       case 2:
-  //         setTimeout(() => {
-  //           router.push("/admin/countdown-checkin");
-  //         }, 500);
-  //         return
-  //       case 3:
-  //         setTimeout(() => {
-  //           router.push("/admin/luckyspin/" + currEvent.eventId);
-  //         }, 500);
-  //         return;
-  //       case 4:
-  //         dispatch(removePlayerState());
-  //         dispatch(removeUserHosting())
-  //         ShowMethod(dispatch, messagesError.E3003, false);
-  //         return;
-  //       default:
-  //         return;
-  //     }
-  //   });
-  // } else {
-
-  const handleClick = event => {
-    setIsShown(current => !current);
-  };
-  
-    // const [scanResultFile, setScanResultFile] = useState('');
-    // const qrRef = useRef(null)
-  
-    //  const handleErrorFile = (error) => {
-    //      alert(error)
-    //   }
-    //   const  handleScanFile = (result) => {
-    //     if  (result) {
-    //        setScanResultFile(result)
-    //     }
-    //   }
-    // const onScanFile = () => {
-    //   if(qrRef && qrRef.current) qrRef.current.openImageDialog()
-    // }
-
-  
+  //============================Scan QR==================
   const handleErrorWebCam = (error) => {
-    alert("not connect camera");
+    alert("Can not connect to camera in this device");
+    setIsShown(current => !current);
   }
+
   const handleScanWebCam = (result) => {
-    if (result){
-        setScanResultWebCam(result);
+
+    if (result) {
+      // setScanResultWebCam(result.text);
+      // router.push(result?.text);
+      setScanResultWebCam(result);
+      // const link = (result?.text.replace(window.location.origin, ""));
+      // router.push(link);
+      const position = result?.text.search("=");
+      const pinCodeQR = result?.text.substr(position + 1);
+      get(child(ref(db), "event/")).then((snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+        var currEvent = values.find((item) => item.pinCode === pinCodeQR);
+        if (currEvent === undefined || currEvent.delFlag === true) {
+          ShowMethod(dispatch, messagesError.E2004, false);
+          return;
+        }
+        if (currEvent.maxTicket <= currEvent.userJoined) {
+          ShowMethod(dispatch, messagesError.E2005, false);
+          return;
+        }
+        dispatch(incognitoEvent(currEvent));
+        window.localStorage.setItem('EVENT_JOINED_STATE', JSON.stringify(currEvent.eventId));
+        if (globalUser.userId) {
+          dispatch(userCurrentEventPlaying(currEvent));
+        }
+        get(child(ref(db), "users/")).then((snapshot) => {
+          const record = snapshot.val() ?? [];
+          const values = Object.values(record);
+          var currUser = values.find((item) => item.userId === currEvent.createBy);
+          dispatch(incognitoUser(currUser));
+        });
+      });
+      // 
+      window.location.assign(result?.text);
+      return;
     }
   }
-  const renderQRscan = useMemo(() =>{
-    return(
+  const renderQRscan = useMemo(() => {
+    return (
       <div className="flex flex-col justify-center items-center">
-        <QrButton onClick={() => {
-          if (window.innerWidth <= 768) {
-            return
+                <QrButton onClick={() => {
+          if (window.innerWidth > 768) {
+            alert(messagesError.E5555)
+            return;
           }
           setIsShown(current => !current);
         }} />
-        {/* {isShown && <QrReader className="h-[120px]"     
-        />} */}
 
-        {isShown && <QrReader 
-          //  ref={qrRef}
-            delay={300}
-            style={{ width:'180px'}}
-            onError={handleErrorWebCam}
-            onScan={handleScanWebCam}
+{isShown && <QrReader
+          delay={300}
+          style={{ width: '180px' }}
+          constraints={{ audio: false, video: { facingMode: 'environment' } }}
+          onError={handleErrorWebCam}
+          onScan={handleScanWebCam}
         />}
-        {/* {isShown && <BgBlueButton className="w-[200px]"  variant="contained" content="open file" onClick={onScanFile}/>} */}
-        {isShown && (
-        <div>
-        <h3> Scanned  Code: <a  href={scanResultWebCam}>{scanResultWebCam}</a></h3>
-        </div>)}
-      </div>  
+
+{isShown && (
+          <div>
+            <h3> Scanned  Code: <a href={scanResultWebCam}>{scanResultWebCam}</a></h3>
+          </div>)}
+      </div>
     )
-  },[handleClick,isShown])
+  }, [isShown, scanResultWebCam])
 
 
   return (
@@ -343,5 +330,4 @@ export default function Index() {
       {renderPopUp}
     </section>
   );
-  // }
 }

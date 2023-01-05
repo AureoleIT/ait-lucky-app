@@ -25,8 +25,8 @@ export default function PageLoading() {
             </div>
             <div className="flex">
 
-                <p className="text-white font-bold text-2xl">
-                    ĐANG TẢI
+                <p className="text-white font-bold text-2xl uppercase">
+                    loading
                 </p>
                 <span><p className="animate-[bounce_0.75s_ease-in-out_infinite] delay-200 ml-1 text-white font-[900] text-2xl">.</p></span>
                 <span><p className="animate-[bounce_0.75s_ease-in-out_infinite_0.25s] ml-1 text-white font-[900] text-2xl">.</p></span>

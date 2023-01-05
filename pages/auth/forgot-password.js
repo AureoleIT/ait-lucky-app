@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import router from "next/router";
+import Trans from "public/trans/hooks/Trans";
 
 //fiebase
 import {
@@ -29,6 +30,8 @@ export default function ForgotPassword() {
   const [newPass, setNew] = useState("");
   const [repeatPass, setRepeat] = useState("");
   const [flagReset, setFlagReset] = useState(false);
+
+  const forgotPassTrans = Trans().forgotPassword
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -200,13 +203,14 @@ export default function ForgotPassword() {
   const renderName = useMemo(() => {
     return (
       <Input
-        content={"Tên đăng nhập"}
+        content={forgotPassTrans.username}
         type={"text"}
         isTextGradient={true}
         onChange={nameData}
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-        value={name} />
+        value={name}
+        margin={4} />
     )
   }, [name, setName])
 
@@ -219,47 +223,50 @@ export default function ForgotPassword() {
         onChange={emailData}
         primaryColor={LEFT_COLOR}
         secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
-        value={email} />
+        value={email} 
+        margin={4}/>
     )
   }, [email, setEmail])
 
   const renderNewPass = useMemo(() => {
     return (
       <Input
-        content={"Mật khẩu mới"}
+        content={forgotPassTrans.newPassword}
         type={"password"}
         isTextGradient={true}
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={newPassData}
-        value={newPass} />
+        value={newPass} 
+        margin={4} />
     )
   }, [newPass, newPassData])
 
   const renderRepeatPass = useMemo(() => {
     return (
       <Input
-        content={"Nhập lại mật khẩu"}
+        content={forgotPassTrans.confirmPassword}
         type={"password"}
         isTextGradient={true}
         primaryColor={LEFT_COLOR}
         secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
         onChange={repeatPassData}
-        value={repeatPass} />
+        value={repeatPass} 
+        margin={4} />
     )
   }, [repeatPass, repeatPassData]
   )
 
   const renderTitle = useMemo(() => {
     return (
-      <Title title="QUÊN MẬT KHẨU" />
+      <Title title={forgotPassTrans.heading} />
     )
   }, [])
 
   const renderButtonCheck = useMemo(() => {
     return (
       <Button
-        content="GỬI"
+        content={forgotPassTrans.send}
         onClick={() => {
           handleCheck(name, email);
         }}
@@ -272,7 +279,7 @@ export default function ForgotPassword() {
   const renderButtonReset = useMemo(() => {
     return (
       <Button
-        content="GỬI"
+        content={forgotPassTrans.heading}
         onClick={() => {
           handleReset();
         }}
@@ -293,7 +300,7 @@ export default function ForgotPassword() {
       <Link href={"/auth/login"} className="my-0">
         <button className="w-full ">
           <div className="font-[600] text-[16px] text-[#004599]">
-            {"Trở lại Đăng nhập"}
+            {forgotPassTrans.backLogin}
           </div>
         </button>
       </Link>

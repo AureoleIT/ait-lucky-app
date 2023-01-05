@@ -17,10 +17,13 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
+import Trans from "public/trans/hooks/Trans";
 
 function EditEventRewardRegister() {
     // router
     const router = useRouter();
+    // language
+    const trans = Trans().editEventRewardRegister;
     // user
     const user = useUserPackageHook()
     // eventID
@@ -99,6 +102,13 @@ function EditEventRewardRegister() {
             }
         })
     },[])
+
+    const compare = (a, b) => {
+        if (a.sortNo > b.sortNo) return 1;
+        if (b.sortNo > a.sortNo) return -1;
+        return 0;
+    }
+    
     // get reward from firebase
     const getReward = query(ref(db, "event_rewards"), orderByChild("eventId"), equalTo(String(eventID)))
     useEffect(() =>
@@ -108,7 +118,9 @@ function EditEventRewardRegister() {
             const data = snapshot.val()
             if (data !== undefined && data !== null)
             {
-                setRewards(Object.values(data))
+                const rw = Object.values(data)
+                rw.sort(compare)
+                setRewards(rw)
             }   
         })
         
@@ -385,7 +397,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="w-full h-[70px]">
-                <Input content={"Tên sự kiện"} maxLength={"100"} value={nameEvent} onChange={(e) => setNameEvent(e.target.value)} />
+                <Input content={trans.eventName} maxLength={"100"} value={nameEvent} onChange={(e) => setNameEvent(e.target.value)} />
             </div>
         )
     },[setNameEvent, nameEvent])
@@ -394,7 +406,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="pb-[1rem] pt-[2rem] w-full h-[200px]">
-                <Input isMultiLine={true} content={"Mô tả sự kiện"} row={4} maxLength={"1000"} value={description} onChange={(e) => setDescription(e.target.value)} />
+                <Input isMultiLine={true} content={trans.eventDescription} row={4} maxLength={"1000"} value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
         )
     },[description, setDescription])
@@ -403,7 +415,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="w-full">
-                <Input primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={"Giới hạn người tham gia"} type={"number"} min={"1"} value={maxTicket} onChange={(e) => setMaxTicket(e.target.value)} />
+                <Input primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={trans.maxTicket} type={"number"} min={"1"} value={maxTicket} onChange={(e) => setMaxTicket(e.target.value)} />
             </div>
         )
     },[maxTicket, setMaxTicket])
@@ -413,7 +425,7 @@ function EditEventRewardRegister() {
         return (
             <div className="w-full flex justify-center items-center">
                 <div className="w-[70%]">
-                    <p style={contentCSS} className="font-bold"> Cho phép người tham gia không cần đăng nhập </p>
+                    <p style={contentCSS} className="font-bold"> {trans.publicFlag} </p>
                 </div>
                 <div className="w-[30%] flex items-center text-right">
                     <CheckBox value={publicFlag} onChange={e => setPublicFlag(e?.target?.checked)}/>
@@ -474,7 +486,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="w-full">
-                <Button content={"Thêm phần quà"} primaryColor={"#40BEE5"} onClick={handleAdd}/>
+                <Button content={trans.addGift} primaryColor={"#40BEE5"} onClick={handleAdd}/>
             </div>
         )
     },[handleAdd])
@@ -483,7 +495,7 @@ function EditEventRewardRegister() {
     {
         return (
             <div className="py-3 w-4/5 max-w-xl">
-                <Button primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={"ĐIỀU CHỈNH"} onClick={handleNavigate} />
+                <Button primaryColor={"#003B93"} secondaryColor={"#00F0FF"} content={trans.adjust} onClick={handleNavigate} />
             </div>
         )
     },[handleNavigate])
@@ -495,33 +507,25 @@ function EditEventRewardRegister() {
       }, [visible, message, status])
 
     return (
-        <>
-        {
-            loadedData ? 
-            (
-                <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
-                    {renderHeader}
-                    <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
-                        {renderTitle}
-                        {renderEventTitle}
-                        {renderEventDescription}
-                        {renderMaxTicket}
-                        {renderCheckbox}
-                    </div>
-                    <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
-                        {renderReward}
-                        {renderNewReward}
-                        {renderAddButton}
-                    </div>
-                    {renderEditButton}
-                    {renderPopUp}
-                </section>
-            )
-            :
-            (
-                <PageLoading />
-            )
-        }
+        <>  
+            <section className="flex flex-col overflow-y-auto overflow-x-hidden items-center h-screen w-screen">
+                {renderHeader}
+                <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mb-5">
+                    {renderTitle}
+                    {renderEventTitle}
+                    {renderEventDescription}
+                    {renderMaxTicket}
+                    {renderCheckbox}
+                </div>
+                <div className="w-4/5 max-w-xl flex flex-col items-center justify-center mt-5">
+                    {renderReward}
+                    {renderNewReward}
+                    {renderAddButton}
+                </div>
+                {renderEditButton}
+                {renderPopUp}
+            </section>
+
         </>
     );
 }
