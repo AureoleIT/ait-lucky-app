@@ -83,7 +83,7 @@ export default function PlayerDetail({player, reward, isAdmin = false, playerID 
                     <Button fontSize={"text-[20px]"} content={trans.yes} primaryColor={"#3B88C3"} isSquare={true} margin={""} onClick={() => {
                         document.getElementById("CancelBanPlayerOverlay").classList.toggle('hidden');
                         document.getElementById("playerDetailOverlay").classList.toggle('hidden');
-                        update(ref(db, 'event_participants/'+ playerID), { idReward: "", status: 1 });
+                        update(ref(db, 'event_participants/'+ playerID), { idReward: "", status: 2 });
                     }} />
                     <Button fontSize={"text-[20px]"} content={trans.no} primaryColor={"#FF6262"} isSquare={true} margin={""} onClick={() => {document.getElementById("CancelBanPlayerOverlay").classList.toggle('hidden')}} />
                 </div>
