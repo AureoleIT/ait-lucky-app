@@ -98,7 +98,7 @@ export default function ChangePassword() {
 
   // show popup
   useEffect(() => {
-    if (!isHidden == false) {
+    if (isHidden == false) {
       isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
       document.getElementById("textState").innerHTML = textState;
       document.getElementById("changeOverlay").classList.toggle('hidden');
