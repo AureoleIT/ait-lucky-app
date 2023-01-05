@@ -10,7 +10,6 @@ import PopUp from "public/shared/PopUp"
 import Title from "public/shared/Title"
 import { TEXT } from "public/util/colors"
 import PlayerList from "public/shared/PlayerList"
-import { messagesSuccess } from "public/util/messages"
 
 import { useUserCurrEventCreatingHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventHostingHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
@@ -20,6 +19,7 @@ import { ref, child, get, update, onValue, query, orderByChild, equalTo } from "
 import { Button, PageLoading } from "public/shared"
 
 import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess"
 
 function CountDownCheckIn() {
     const dbRef = ref(db);
@@ -29,6 +29,8 @@ function CountDownCheckIn() {
 
     // translation
     const trans = Trans().countdown;
+    const transMess = TransMess();
+
     // user
     const { query: { countdown, statusEvent } } = router
 
@@ -156,7 +158,7 @@ function CountDownCheckIn() {
                                 status: 3,
                             })
 
-                        ShowMethod(dispatch, messagesSuccess.I0010, true)
+                        ShowMethod(dispatch,transMess.messagesSuccess.I0010, true)
 
                         setTimeout(() => {
                             router.push(`/admin/luckyspin/${eventID}`)
@@ -204,7 +206,7 @@ function CountDownCheckIn() {
     const handleStartEvent = useCallback(() => {
         setIsStop(true)
         update(ref(db, `event/${eventID}`), { status: 3 })
-        ShowMethod(dispatch, messagesSuccess.I0010, true)
+        ShowMethod(dispatch, transMess.messagesSuccess.I0010, true)
         setTimeout(() => {
             HideMethod(dispatch)
             router.push(`/admin/luckyspin/${eventID}`)

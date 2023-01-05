@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import Line from "public/shared/Line";
 import PlayerList from "public/shared/PlayerList";
 import { HideMethod, ShowMethod } from "public/util/popup";
-import { messagesSuccess } from "public/util/messages";
 
 import { useDispatch } from "react-redux";
 import { usePlayerParticipantHook } from "public/redux/hooks";
@@ -22,6 +21,7 @@ import {
 import { RewardList } from "public/shared";
 
 import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess";
 
 function UserCountdownCheckin() {
   // router
@@ -31,6 +31,7 @@ function UserCountdownCheckin() {
   const eventID = router.query.eventId;
   // translation
   const trans = Trans().countdown;
+  const transMess = TransMess()
   // user
   const user = usePlayerParticipantHook();
   useEffect(() => {
@@ -162,7 +163,7 @@ function UserCountdownCheckin() {
   // route to lucky spin if status of event equal to 3
   useEffect(() => {
     if (status === 3) {
-      ShowMethod(dispatch, messagesSuccess.I0010, true);
+      ShowMethod(dispatch, transMess.messagesSuccess.I0010, true);
       setTimeout(() => {
         router.push(`/event/luckyspin/${eventId}`);
       }, 2000);

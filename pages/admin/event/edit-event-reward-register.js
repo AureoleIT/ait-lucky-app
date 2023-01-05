@@ -18,6 +18,7 @@ import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserPackageHook } from "public/redux/hooks";
 import { useDispatch } from "react-redux"
 import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess";
 
 function EditEventRewardRegister() {
     // router
@@ -185,7 +186,7 @@ function EditEventRewardRegister() {
             })
             .catch((e) =>
             {
-                ShowMethod(dispatch, messagesError.E4444, false)
+                ShowMethod(dispatch, TransMess().messagesError.E4444, false)
             })
         }
 
@@ -228,7 +229,7 @@ function EditEventRewardRegister() {
                                                 .then((url) =>
                                                 {
                                                     set(ref(db,`event_rewards/${tempId}/imgUrl/${j}`),url)
-                                                    .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                                    .catch((err) => ShowMethod(dispatch, TransMess().messagesError.E4444, false))
                                                 })
                                             })
                                         }
@@ -255,7 +256,7 @@ function EditEventRewardRegister() {
                                             .then((url) =>
                                             {
                                                 set(ref(db,`event_rewards/${tempId}/imgUrl/${i}`),url)
-                                                .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                                .catch((err) => ShowMethod(dispatch, TransMess().messagesError.E4444, false))
                                             })
                                         })
                                     }
@@ -318,7 +319,7 @@ function EditEventRewardRegister() {
                                     .then((url) =>
                                     {
                                         set(ref(db,`event_rewards/${tempId}/imgUrl/${index}`),url)
-                                        .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                        .catch((err) => ShowMethod(dispatch, TransMess().messagesError.E4444, false))
                                     })
                                 })
                             }
@@ -335,7 +336,7 @@ function EditEventRewardRegister() {
                             set(ref(db, `event_rewards/${tempId}`),newReward)
                             .catch((err) =>
                             {
-                                ShowMethod(dispatch, messagesError.E4444, false)
+                                ShowMethod(dispatch, TransMess().messagesError.E4444, false)
                             })
                         }
                         break;
@@ -343,7 +344,7 @@ function EditEventRewardRegister() {
                 }
                 return <></>
             })
-            ShowMethod(dispatch, messagesSuccess.I0003, true)
+            ShowMethod(dispatch, TransMess().messagesSuccess.I0003, true)
             setTimeout(() =>
             {
                 HideMethod(dispatch)
@@ -354,7 +355,7 @@ function EditEventRewardRegister() {
             },[2000])
         }
         else{
-            ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
+            ShowMethod(dispatch, TransMess().messagesError.E0001("Tên giải thưởng"), false)
         }
     },[dispatch, description, eventID, imageFB, maxTicket, nameEvent, rewardId, value]);
 
@@ -371,7 +372,7 @@ function EditEventRewardRegister() {
             }
             else 
             {
-                ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
+                ShowMethod(dispatch, TransMess().messagesError.E0001("Tên giải thưởng"), false)
             }
         }
         else if(rewardCount.length === 0)

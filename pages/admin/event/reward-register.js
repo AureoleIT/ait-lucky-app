@@ -18,7 +18,7 @@ import { useDispatch } from "react-redux"
 import Header from "public/shared/Header";
 import { Button, PageLoading } from "public/shared";
 import Trans from "public/trans/hooks/Trans";
-
+import TransMess from "public/trans/hooks/TransMess";
 function RewardRegister() {
     // router
     const router = useRouter();
@@ -104,7 +104,7 @@ function RewardRegister() {
             }
             else 
             {
-                ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
+                ShowMethod(dispatch, TransMess().messagesError.E0001(trans.nameGift), false)
             }
         }
         else if(rewardCount.length === 0)
@@ -118,7 +118,7 @@ function RewardRegister() {
     {
         set(ref(db, `event/${eventID}`), event)
             .catch((e) => {
-                ShowMethod(dispatch, messagesError.E4444, false)
+                ShowMethod(dispatch, TransMess().messagesError.E4444, false)
             });
 
         let valueLength = value.length - 1
@@ -126,7 +126,7 @@ function RewardRegister() {
 
         if(uniqueKey.length === 0)
         {
-            ShowMethod(dispatch, messagesError.E0001("Phần thưởng"), false)
+            ShowMethod(dispatch, TransMess().messagesError.E0001(trans.gift), false)
         }
         else {
             if(lastValue[0].name !== "" && typeof lastValue[0].name !== "undefined") {
@@ -156,7 +156,7 @@ function RewardRegister() {
                                             .then((url) =>
                                             {
                                                 set(ref(db,`event_rewards/${id}/imgUrl/${index}`),url)
-                                                    .catch((err) => ShowMethod(dispatch, messagesError.E4444, false))
+                                                    .catch((err) => ShowMethod(dispatch, TransMess().messagesError.E4444, false))
                                             })
                                     })
                                 }
@@ -173,11 +173,11 @@ function RewardRegister() {
                                 set(ref(db, `event_rewards/${id}`),newReward)
                                     .then(() =>
                                     {
-                                        ShowMethod(dispatch, messagesSuccess.I0001, true)
+                                        ShowMethod(dispatch, TransMess().messagesSuccess.I0001, true)
                                     })
                                     .catch((err) =>
                                     {
-                                        ShowMethod(dispatch, messagesError.E4444, false)
+                                        ShowMethod(dispatch, TransMess().messagesError.E4444, false)
                                     })
                             }
                             break;
@@ -195,7 +195,7 @@ function RewardRegister() {
                 },2000)
             }
             else {
-                ShowMethod(dispatch, messagesError.E0001("Tên giải thưởng"), false)
+                ShowMethod(dispatch, TransMess().messagesError.E0001(trans.nameGift), false)
             }
         }
     },[dispatch, value, uniqueKey])

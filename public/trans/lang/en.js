@@ -47,7 +47,7 @@ const en = {
     google: "Sign up with",
     hasAccount: "Already registered?",
     login: "Sign in now!",
-    belowPassword: "the below password"
+    belowPassword: "the below password",
   },
   dashboard: {
     welcome: {
@@ -85,11 +85,13 @@ const en = {
     maxTicket: "Max participants",
     publicFlag: "Allow everyone join in without login",
     buttonContent: "Continue",
-    event: "event"
+    event: "event",
   },
   rewardRegister: {
     addGift: "Add reward",
-    registerEvent: "Register Event"
+    registerEvent: "Register Event",
+    nameGift: "Reward name",
+    gift: "Reward",
   },
   reward: {
     rewardName: "Reward name",
@@ -107,12 +109,11 @@ const en = {
     addGift: "Add reward",
     adjust: "Adjust",
   },
-  eventResult:
-  {
+  eventResult: {
     prizeInfo: "Reward's Information",
     participantList: "List of participants",
     participant: "Number of participant:",
-    exit: "Exit"
+    exit: "Exit",
   },
   playerDetail: {
     cancelReward: "Cancel reward",
@@ -128,7 +129,7 @@ const en = {
     banned: "Banned",
     allowed: "Allowed",
     reward: "Reward",
-    none: "None"
+    none: "None",
   },
   eventList: {
     heading: "List of events",
@@ -168,6 +169,7 @@ const en = {
     title: "User name",
     buttonSave: "Save",
     buttonChangePW: "Change password",
+    title2: "user name",
   },
   loading: {
     loading: "loading",
@@ -179,8 +181,7 @@ const en = {
     backLogin: "Back to Log in page",
     newPassword: "New password",
     confirmPassword: "Confirm password",
-    againPassword:"Enter password again"
-    
+    againPassword: "Enter password again",
   },
   changePassword: {
     heading: "Change password",
@@ -189,6 +190,9 @@ const en = {
     save: "save",
     newPassword: "New password",
     confirmPassword: "Confirm password",
+    currPass2: "current password",
+    newPassword2: "new password",
+    rePassword: "enter password again",
   },
   luckySpin: {
     title: "LUCKY SPIN",
@@ -208,25 +212,24 @@ const en = {
     yesButton: "YES",
     noButton: "NO",
     confirmButton: "CONFIRM",
-    cancelButton:"CANCEL",
+    cancelButton: "CANCEL",
     rewardReceive1: "will receive prize:",
     rewardReceive2: "Confirm prize?",
     exitButton: "EXIT",
-    ban1:"You were banned",
+    ban1: "You were banned",
     ban2: "by admin",
-    exit1:"Do you really want to ",
+    exit1: "Do you really want to ",
     exit2: "exit",
     waitingSpin: "Waiting for spining ...",
     waitingReward: "Waiting for rewarding ...",
-    adminConfirm:"Admin has confirmed to award!",
-    adminCancel:"Admin has cancel the award",
-
+    adminConfirm: "Admin has confirmed to award!",
+    adminCancel: "Admin has cancel the award",
   },
   curentEventDetail: {
     title: "EVENT INFORMATION",
     reward: "REWARD INFORMATION",
     player: "PARTICIPANTS INFORMATION",
-  }
+  },
 };
 
 export default en;

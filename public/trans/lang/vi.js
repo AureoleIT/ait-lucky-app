@@ -90,7 +90,9 @@ const vi = {
   },
   rewardRegister: {
     addGift: "Thêm phần quà",
-    registerEvent: "Đăng ký sự kiện"
+    registerEvent: "Đăng ký sự kiện",
+    nameGift: "Tên giải thưởng",
+    gift: "Phần thưởng"
   },
   reward: {
     rewardName: "Tên giải thưởng",
@@ -168,6 +170,7 @@ const vi = {
     title: "Tên đăng nhập",
     buttonSave: "Lưu",
     buttonChangePW: "Đổi mật khẩu",
+    title2: "tên đăng nhập",
   },
   loading: {
     loading: "đang tải",
@@ -189,6 +192,9 @@ const vi = {
     save: "lưu",
     newPassword: "Mật khẩu mới",
     confirmPassword: "Xác nhận mật khẩu",
+    currPass2: "mật khẩu hiện tại",
+    newPassword2: "mật khẩu mới",
+    rePassword: "nhập lại mật khẩu"
   },
 
   luckySpin: {
