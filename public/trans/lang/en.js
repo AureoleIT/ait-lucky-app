@@ -169,6 +169,7 @@ const en = {
     title: "User name",
     buttonSave: "Save",
     buttonChangePW: "Change password",
+    title2: "user name",
   },
   loading: {
     loading: "loading",
@@ -189,6 +190,9 @@ const en = {
     save: "save",
     newPassword: "New password",
     confirmPassword: "Confirm password",
+    currPass2: "current password",
+    newPassword2: "new password",
+    rePassword: "enter password again",
   },
   luckySpin: {
     title: "LUCKY SPIN",

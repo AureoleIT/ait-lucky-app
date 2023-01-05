@@ -21,7 +21,6 @@ import { v4 } from "uuid";
 import { Header, Button, Input, OverlayBlock, PageLoading } from "public/shared";
 
 // util
-import { messagesError, messagesSuccess } from "public/util/messages"
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
@@ -30,11 +29,15 @@ import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
+import TransMess from "public/trans/hooks/TransMess";
 
 export default function Setting() {   
     //redux
     const [user, setUser] = useState(useUserPackageHook());
     const dispatch = useDispatch();
+
+    // language
+    const transMess = TransMess()
 
     // normal state
     const [username, setUsername] = useState("");
@@ -129,7 +132,7 @@ export default function Setting() {
                             ...prev,
                             pic: url
                         }));
-                        showMethod(messagesSuccess.I0003, true, false);
+                        showMethod(transMess.messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
             });
@@ -140,11 +143,11 @@ export default function Setting() {
     function handleSaveInfo(name) {
         //validation
         if (isEmpty(name)) {
-            showMethod(messagesError.E0001("Tên đăng nhập"), false, false);
+            showMethod(transMess.messagesError.E0001(transSetting.title), false, false);
             return;
         }
         if (hasWhiteSpaceAndValidLength(name)) {
-            showMethod(messagesError.E0005("tên đăng nhập"), false, false);
+            showMethod(transMess.messagesError.E0005(transSetting.title2), false, false);
             return;
         }
 
@@ -166,7 +169,7 @@ export default function Setting() {
                             ...prev,
                             name: name
                         }));
-                        showMethod(messagesSuccess.I0003, true, false);
+                        showMethod(transMess.messagesSuccess.I0003, true, false);
                     })
                     .catch((error) => console.log(error));
             }

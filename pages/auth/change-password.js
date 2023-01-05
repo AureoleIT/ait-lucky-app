@@ -23,7 +23,7 @@ import { Button, Header, Input, OverlayBlock, PageLoading, Title } from "public/
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import { isEmpty, hasWhiteSpaceAndValidLength } from "public/util/functions";
-import { messagesError, messagesSuccess } from "public/util/messages"
+import TransMess from "public/trans/hooks/TransMess";
 
 export default function ChangePassword() {
   const [oldPass, setOld] = useState("");
@@ -33,6 +33,9 @@ export default function ChangePassword() {
   const [loadedData, setLoadedData] = useState(false);
 
   const changePassTrans = Trans().changePassword
+
+  // language
+  const transMess = TransMess();
 
   //validation const
   const [textState, setTextState] = useState("");
@@ -47,27 +50,27 @@ export default function ChangePassword() {
   //handle change password
   const changePassword = () => {
     if (isEmpty(oldPass) || isEmpty(newPass) || isEmpty(repeatPass)) {
-      showMethod(messagesError.E0004, false, false);
+      showMethod(transMess.messagesError.E0004, false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(oldPass)) {
-      showMethod(messagesError.E0005("mật khẩu cũ"), false, false);
+      showMethod(transMess.messagesError.E0005(changePassTrans.currPass2), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(newPass)) {
-      showMethod(messagesError.E0005("mật khẩu mới"), false, false);
+      showMethod(transMess.messagesError.E0005(changePassTrans.newPassword2), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(repeatPass)) {
-      showMethod(messagesError.E0005("nhập lại mật khẩu"), false, false);
+      showMethod(transMess.messagesError.E0005(changePassTrans.rePassword), false, false);
       return;
     }
 
     if (newPass != repeatPass) {
-      showMethod(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"), false, false);
+      showMethod(transMess.messagesError.E0021(changePassTrans.newPassword2, changePassTrans.rePassword), false, false);
       return;
     }
 
@@ -78,14 +81,14 @@ export default function ChangePassword() {
       const values = Object.values(record);
 
       if (values[0].password != oldPass) {
-        showMethod(messagesError.E0011("Mật khẩu cũ"), false, false);
+        showMethod(transMess.messagesError.E0011(changePassTrans.currPass), false, false);
         return;
       } else {
         update(ref(db, 'users/' + values[0].userId),
           {
             password: newPass
           }).then(() => {
-            showMethod(messagesSuccess.I0003, true, false);
+            showMethod(transMess.messagesSuccess.I0003, true, false);
             return;
           })
           .catch((error) => {
