@@ -47,6 +47,7 @@ const en = {
     google: "Sign up with",
     hasAccount: "Already registered?",
     login: "Sign in now!",
+    belowPassword: "the below password"
   },
   dashboard: {
     welcome: {
@@ -84,6 +85,7 @@ const en = {
     maxTicket: "Max participants",
     publicFlag: "Allow everyone join in without login",
     buttonContent: "Continue",
+    event: "event"
   },
   rewardRegister: {
     addGift: "Add reward",
@@ -177,6 +179,8 @@ const en = {
     backLogin: "Back to Log in page",
     newPassword: "New password",
     confirmPassword: "Confirm password",
+    againPassword:"Enter password again"
+    
   },
   changePassword: {
     heading: "Change password",

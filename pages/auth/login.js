@@ -13,11 +13,11 @@ import { ref, child, get } from "firebase/database";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import PopUp from "public/shared/PopUp";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { userPackage } from "public/redux/actions";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess";
 
 export default function Login() {
   const message = usePopUpMessageHook();
@@ -30,7 +30,6 @@ export default function Login() {
   var [user, setUser] = useState({});
 
   const loginTrans = Trans().login;
-
   // Call dispatch and set user to redux 
   const dispatch = useDispatch()
   const dbRef = ref(db);
@@ -43,11 +42,11 @@ export default function Login() {
 
   const loginSubmit = useCallback((name, pass) => {
     if (name === "" || pass === "") {
-      ShowMethod(dispatch, messagesError.E0004, false)
+      ShowMethod(dispatch, TransMess().messagesError.E0004, false)
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      ShowMethod(dispatch, messagesError.E0005("username"), false)
+      ShowMethod(dispatch, TransMess().messagesError.E0005("username"), false)
       return;
     }
     get(child(dbRef, "users/")).then((snapshot) => {
@@ -58,13 +57,13 @@ export default function Login() {
           (item.email === name || item.name === name) && item.password === pass
       );
       if (!isUserExisting) {
-        ShowMethod(dispatch, messagesError.E0009, false)
+        ShowMethod(dispatch, TransMess().messagesError.E0009, false)
         return;
       }
       const currUser = values.find(item => item.name === name || item.email === name);
       setUser(currUser);
       dispatch(userPackage(currUser))
-      ShowMethod(dispatch, messagesSuccess.I0002, true)
+      ShowMethod(dispatch, TransMess().messagesSuccess.I0002, true)
       //Go to admin dashboard
       router.push("/admin/dashboard-admin");
     });
@@ -83,13 +82,13 @@ export default function Login() {
             (item) => item.email === currEmail
           );
           if (!isUserExisting) {
-            ShowMethod(dispatch, messagesError.E0010, false);
+            ShowMethod(dispatch, TransMess().messagesError.E0010, false);
             return;
           }
           const currUser = values.find(item => item.email === currEmail);
           setUser(currUser);
           dispatch(userPackage(currUser))
-          ShowMethod(dispatch, messagesSuccess.I0002, true);
+          ShowMethod(dispatch, TransMess().messagesSuccess.I0002, true);
           // push to path like /admin/dashboard/{nameOfUser} props check from db
           setTimeout(() => {
             router.push("/admin/dashboard-admin");
@@ -98,7 +97,7 @@ export default function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        ShowMethod(dispatch, messagesError.E4444, false)
+        ShowMethod(dispatch, TransMess().messagesError.E4444, false)
       });
   }, [dispatch])
 
@@ -175,7 +174,7 @@ export default function Login() {
 
   const renderForget = useMemo(() => {
     return (
-      <a href="/auth/forgot-password">
+      <div onClick={() => {router.push("/auth/forgot-password")}} className = "cursor-pointer">
         <Title
           title={loginTrans.forgotPassword}
           isUnderLine={true}
@@ -184,7 +183,7 @@ export default function Login() {
           fontWeight=""
           margin=""
         />
-      </a>
+      </div>
     )
   }, [])
 

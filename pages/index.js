@@ -9,19 +9,19 @@ import { db } from "src/firebase";
 import { ref, child, get } from "firebase/database";
 import { isEmpty } from "public/util/functions";
 import { HideMethod, ShowMethod, checkStatus } from "public/util/popup";
-import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { incognitoEvent, incognitoUser, removePlayerState, removeUserPlaying, userCurrentEventPlaying } from "public/redux/actions";
 import { usePlayerEventHook, usePlayerParticipantHook, usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserCurrEventCreatingHook, useUserCurrEventHostingHook, useUserCurrEventPlayingHook, useUserCurrRewardCreatingHook, useUserPackageHook } from "public/redux/hooks";
 import { Line, Button, PopUp, WayLog, Logo, Input, QrButton, Title } from "public/shared";
 import QrReader from 'react-qr-scanner'
 import Trans from "public/trans/hooks/Trans";
-
+import TransMess from "public/trans/hooks/TransMess";
 export default function Index() {
   const [pin, setPin] = useState("");
   const [scanResultWebCam, setScanResultWebCam] = useState('');
   const [isShown, setIsShown] = useState(false);
   const trans = Trans();
+  // const transmessSuccess = TransMess();
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
@@ -43,7 +43,7 @@ export default function Index() {
         const values = Object.values(record);
         var currEvent = values.find((item) => item.eventId === playerEvent.eventId);
         if (currEvent === undefined || currEvent.delFlag === true) {
-          ShowMethod(dispatch, messagesError.E2004, false);
+          ShowMethod(dispatch, TransMess().messagesError.E2004, false);
           setTimeout(() => {
             HideMethod(dispatch)  
           }, 1000)
@@ -55,14 +55,14 @@ export default function Index() {
             dispatch(removeUserPlaying());
             return;
           case 2:
-            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
               HideMethod(dispatch)
               router.push("event/countdown-checkin/" + currEvent.eventId);
             }, 750);
             return
           case 3:
-            ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+            ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
             setTimeout(() => {
               HideMethod(dispatch)
               router.push("event/luckyspin/" + currEvent.eventId);
@@ -81,7 +81,7 @@ export default function Index() {
 
   const onJoinClick = useCallback(() => {
     if (isEmpty(pin)) {
-      ShowMethod(dispatch, messagesError.E2002, false);
+      ShowMethod(dispatch, TransMess().messagesError.E2002, false);
       setTimeout(() => {
         HideMethod(dispatch)  
       }, 1000)
@@ -92,14 +92,14 @@ export default function Index() {
       const values = Object.values(record);
       var currEvent = values.find((item) => item.pinCode === pin);
       if (currEvent === undefined || currEvent.delFlag === true) {
-        ShowMethod(dispatch, messagesError.E2004, false);
+        ShowMethod(dispatch, TransMess().messagesError.E2004, false);
         setTimeout(() => {
           HideMethod(dispatch)  
         }, 1000)
         return;
       }
       if (currEvent.maxTicket <= currEvent.userJoined) {
-        ShowMethod(dispatch, messagesError.E2005, false);
+        ShowMethod(dispatch, TransMess().messagesError.E2005, false);
         setTimeout(() => {
           HideMethod(dispatch)  
         }, 1000)
@@ -118,28 +118,28 @@ export default function Index() {
       });
       switch (currEvent.status) {
         case 1:
-          ShowMethod(dispatch, messagesError.E3001, false);
+          ShowMethod(dispatch, TransMess().messagesError.E3001, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch)
           }, 500);
           return;
         case 2:
-          ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+          ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
           setTimeout(() => {
             HideMethod(dispatch)
             router.push("/event/join");
           }, 750);
           return
         case 3:
-          ShowMethod(dispatch, messagesError.E3002, false);
+          ShowMethod(dispatch, TransMess().messagesError.E3002, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch)
           }, 500);
           return;
         case 4:
-          ShowMethod(dispatch, messagesError.E3003, false);
+          ShowMethod(dispatch, TransMess().messagesError.E3003, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch)
@@ -264,11 +264,11 @@ export default function Index() {
         const values = Object.values(record);
         var currEvent = values.find((item) => item.pinCode === pinCodeQR);
         if (currEvent === undefined || currEvent.delFlag === true) {
-          ShowMethod(dispatch, messagesError.E2004, false);
+          ShowMethod(dispatch, TransMess().messagesError.E2004, false);
           return;
         }
         if (currEvent.maxTicket <= currEvent.userJoined) {
-          ShowMethod(dispatch, messagesError.E2005, false);
+          ShowMethod(dispatch, TransMess().messagesError.E2005, false);
           return;
         }
         dispatch(incognitoEvent(currEvent));
@@ -293,7 +293,7 @@ export default function Index() {
       <div className="flex flex-col justify-center items-center">
                 <QrButton onClick={() => {
           if (window.innerWidth > 768) {
-            alert(messagesError.E5555)
+            alert(TransMess().messagesError.E5555)
             return;
           }
           setIsShown(current => !current);

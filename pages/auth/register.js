@@ -19,12 +19,11 @@ import { db, auth, app } from "src/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import PopUp from "public/shared/PopUp";
 import { ShowMethod } from "public/util/popup";
-import { messagesError, messagesSuccess } from "public/util/messages";
 import { useDispatch } from "react-redux";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Input, Title, Button, AuthFooter, Privacy, Line } from "public/shared";
 import Trans from "public/trans/hooks/Trans";
-
+import TransMess from "public/trans/hooks/TransMess";
 const uuid = require("uuid");
 const dbRef = ref(db);
 
@@ -51,27 +50,27 @@ export default function Register() {
   const signUpSubmit = useCallback((name, email, password) => {
     var id = uuid.v4();
     if (isEmpty(name) || isEmpty(email) || isEmpty(password)) {
-      ShowMethod(dispatch, messagesError.E0004, false);
+      ShowMethod(dispatch, TransMess().messagesError.E0004, false);
       return;
     }
     if (!isEmail(email)) {
-      ShowMethod(dispatch, messagesError.E0003("Email"), false);
+      ShowMethod(dispatch, TransMess().messagesError.E0003("Email"), false);
       return;
     }
     if (hasWhiteSpaceAndValidLength(name)) {
-      ShowMethod(dispatch, messagesError.E0005("username"), false);
+      ShowMethod(dispatch, TransMess().messagesError.E0005("username"), false);
       return;
     }
     if (password.length < 6) {
-      ShowMethod(dispatch, messagesError.E0002("password", 6), false);
+      ShowMethod(dispatch, TransMess().messagesError.E0002("password", 6), false);
       return;
     }
     if (!check) {
-      ShowMethod(dispatch, messagesError.E0006, false);
+      ShowMethod(dispatch, TransMess().messagesError.E0006, false);
       return;
     }
     if (password !== rePassword) {
-      ShowMethod(dispatch, messagesError.E0021("lại mật khẩu", "mật khẩu phía trên"), false);
+      ShowMethod(dispatch, TransMess().messagesError.E0021(transSignup.password, transSignup.belowPassword), false);
       return;
     }
 
@@ -95,7 +94,7 @@ export default function Register() {
         (item) => item.email === email || item.name === name
       );
       if (isUserExisting) {
-        ShowMethod(dispatch, messagesError.E0007("username", "email"), false);
+        ShowMethod(dispatch, TransMess().messagesError.E0007("username", "email"), false);
         return;
       }
       var newUser = {
@@ -107,7 +106,7 @@ export default function Register() {
         createAt: new Date().getTime(),
       }
       set(ref(db, `users/${id}/`), newUser).then(() => {
-        ShowMethod(dispatch, messagesSuccess.I0001, true);
+        ShowMethod(dispatch, TransMess().messagesSuccess.I0001, true);
       });
 
       setTimeout(() => {
@@ -144,11 +143,11 @@ export default function Register() {
                 (item) => item.email === newUser.email
               );
               if (isUserExisting) {
-                ShowMethod(dispatch, messagesError.E0008("Email"), false);
+                ShowMethod(dispatch, TransMess().messagesError.E0008("Email"), false);
                 return;
               }
               set(ref(db, `users/${id}/`), newUser).then(() => {
-                ShowMethod(dispatch, messagesSuccess.I0001, true);
+                ShowMethod(dispatch, TransMess().messagesSuccess.I0001, true);
               });
               setTimeout(() => {
                 router.push("/auth/login");
@@ -157,12 +156,12 @@ export default function Register() {
           })
           .catch((error) => {
             console.log(error.message);
-            ShowMethod(dispatch, messagesError.E4444, false);
+            ShowMethod(dispatch, TransMess().messagesError.E4444, false);
           });
       })
       .catch((error) => {
         console.log(error.message);
-        ShowMethod(dispatch, dispatch, dispatch, dispatch, messagesError.E4444, false);
+        ShowMethod(dispatch, dispatch, dispatch, dispatch, TransMess().messagesError.E4444, false);
       });
   }, [dispatch])
 
