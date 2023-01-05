@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import router from "next/router";
 import Trans from "public/trans/hooks/Trans";
-
+import TransMess from "public/trans/hooks/TransMess";
 //fiebase
 import {
   ref,
@@ -19,7 +19,6 @@ import { db } from "src/firebase";
 import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
 import { successIcon, failIcon } from "public/util/popup";
 import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/functions";
-import { messagesError, messagesSuccess } from "public/util/messages";
 
 //component
 import { OverlayBlock, Input, Title, AuthFooter, Button, Line } from "public/shared";
@@ -46,27 +45,27 @@ export default function ForgotPassword() {
   const handleCheck = (name, email) => {
     // validation
     if (hasWhiteSpaceAndValidLength(name)) {
-      showMethod(messagesError.E0005("Tên đăng nhập"), false, false);
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.username), false, false);
       return;
     }
 
     if (isEmpty(name)) {
-      showMethod(messagesError.E0001("Tên đăng nhập"), false, false);
+      showMethod(TransMess().messagesError.E0001(forgotPassTrans.username), false, false);
       return;
     }
 
     if (isEmpty(email)) {
-      showMethod(messagesError.E0001("Email"), false, false);
+      showMethod(TransMess().messagesError.E0001("Email"), false, false);
       return;
     }
 
     if (!isEmail(email)) {
-      showMethod(messagesError.E0003("Email"), false, false);
+      showMethod(TransMess().messagesError.E0003("Email"), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(email)) {
-      showMethod(messagesError.E0005("Email"), false, false);
+      showMethod(TransMess().messagesError.E0005("Email"), false, false);
       return;
     }
 
@@ -77,15 +76,15 @@ export default function ForgotPassword() {
         const values = Object.values(record);
 
         if (values.length === 0) {
-          showMethod(messagesError.E0009, false, false);
+          showMethod(TransMess().messagesError.E0009, false, false);
           return;
         }
         if (values[0].name !== name) {
-          showMethod(messagesError.E0011("Tên đăng nhập"), false, false);
+          showMethod(TransMess().messagesError.E0011(forgotPassTrans.username), false, false);
           return;
         }
         if (values[0].email !== email) {
-          showMethod(messagesError.E0011("Email"), false, false);
+          showMethod(TransMess().messagesError.E0011(forgotPassTrans.username), false, false);
           return;
         } else {
           setFlagReset(true);
@@ -93,29 +92,29 @@ export default function ForgotPassword() {
         }
       })
     } catch (error) {
-      showMethod(messagesError.E1002, false, false);
+      showMethod(TransMess().messagesError.E1002, false, false);
       return;
     }
   };
 
   const handleReset = () => {
     if (isEmpty(newPass) || isEmpty(repeatPass)) {
-      showMethod(messagesError.E0004, false, false);
+      showMethod(TransMess().messagesError.E0004, false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(newPass)) {
-      showMethod(messagesError.E0005("mật khẩu mới"), false, false);
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.newPassword), false, false);
       return;
     }
 
     if (hasWhiteSpaceAndValidLength(repeatPass)) {
-      showMethod(messagesError.E0005("nhập lại mật khẩu"), false, false);
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.againPassword), false, false);
       return;
     }
 
     if (newPass != repeatPass) {
-      showMethod(messagesError.E0021("mật khẩu mới", "nhập lại mật khẩu"), false, false);
+      showMethod(TransMess().messagesError.E0021(forgotPassTrans.newPassword, forgotPassTrans.againPassword), false, false);
       return;
     }
 
@@ -128,7 +127,7 @@ export default function ForgotPassword() {
         {
           password: newPass
         }).then(() => {
-          showMethod(messagesSuccess.I0003, true, false);
+          showMethod(TransMess().messagesSuccess.I0003, true, false);
           setFlagReset(false);
           router.push("auth/login")
           return;

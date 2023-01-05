@@ -47,6 +47,8 @@ const vi = {
     google: "Đăng kí với",
     hasAccount: "Đã có tài khoản?",
     login: "Đăng nhập luôn!",
+    belowPassword: "Mật khẩu phía trên"
+
   },
   dashboard: {
     welcome: {
@@ -84,6 +86,7 @@ const vi = {
     maxTicket: "Giới hạn người tham gia",
     publicFlag: "Cho phép người tham gia không cần đăng nhập",
     buttonContent: "Tiếp tục",
+    event: "sự kiện"
   },
   rewardRegister: {
     addGift: "Thêm phần quà",
@@ -176,6 +179,8 @@ const vi = {
     backLogin: "Quay lại trang Đăng nhập",
     newPassword: "Mật khẩu mới",
     confirmPassword: "Xác nhận mật khẩu",
+    againPassword:"Nhập lại mật khẩu"
+    
   },
   changePassword: {
     heading: "đổi mật khẩu",

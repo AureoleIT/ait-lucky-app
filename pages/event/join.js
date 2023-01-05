@@ -6,7 +6,6 @@ import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { db } from "./../../src/firebase";
 import { HideMethod, ShowMethod } from "public/util/popup";
 import { isEmpty } from "public/util/functions";
-import { messagesError, messagesSuccess } from "public/util/messages";
 import { child, get, ref, set, update } from "firebase/database";
 import router from "next/router";
 import { useDispatch } from "react-redux";
@@ -14,7 +13,7 @@ import { incognitoParticipant, incognitoUser, incognitoEvent, userCurrentEventPl
 import { usePlayerEventHook, usePlayerParticipantHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook, useUserPackageHook } from "public/redux/hooks";
 import { Title, Logo, Input, Button, PopUp } from "public/shared";
-
+import TransMess from "public/trans/hooks/TransMess";
 const uuid = require("uuid");
 const BG_COLOR = "bg-gradient-to-tr from-[#C8EFF1] via-[#B3D2E9] to-[#B9E4A7]";
 
@@ -52,7 +51,7 @@ export default function Info() {
           var event = values.find((item) => item.eventId === currEvent.eventId);
           switch (event.status) {
             case 1:
-              ShowMethod(dispatch, messagesError.E3001, false);
+              ShowMethod(dispatch, TransMess().messagesError.E3001, false);
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
@@ -60,14 +59,14 @@ export default function Info() {
               }, 500)
               return;
             case 2:
-              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
                 router.push("event/countdown-checkin/" + currEvent.eventId);
               }, 500);
               return
             case 3:
-              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
                 router.push("event/luckyspin/" + currEvent.eventId);
@@ -101,7 +100,7 @@ export default function Info() {
           var event = values.find((item) => item.eventId === currEvent.eventId);
           switch (event.status) {
             case 1:
-              ShowMethod(dispatch, messagesError.E3001, false);
+              ShowMethod(dispatch, TransMess().messagesError.E3001, false);
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
@@ -109,21 +108,21 @@ export default function Info() {
               }, 500)
               return;
             case 2:
-              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
                 router.push("event/countdown-checkin/" + currEvent.eventId);
               }, 500);
               return
             case 3:
-              ShowMethod(dispatch, messagesSuccess.I0008(currEvent.title), true);
+              ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
                 router.push("event/luckyspin/" + currEvent.eventId);
               }, 500);
               return;
             case 4:
-              ShowMethod(dispatch, messagesError.E3003, false);
+              ShowMethod(dispatch, TransMess().messagesError.E3003, false);
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
@@ -140,7 +139,7 @@ export default function Info() {
           const values = Object.values(record);
           var event = values.find((item) => item.pinCode === pinCode);
           if (event === undefined || event.delFlag === true) {
-            ShowMethod(dispatch, messagesError.E2004, false);
+            ShowMethod(dispatch, TransMess().messagesError.E2004, false);
             setTimeout(() => {
               HideMethod(dispatch)
             }, 500)
@@ -159,7 +158,7 @@ export default function Info() {
   // -------------------------------------------Click logic handle------------------------------------
   const onJoinClick = useCallback(() => {
     if (isEmpty(name) || name.replaceAll(" ", "") === "") {
-      ShowMethod(dispatch, messagesError.E0004, false)
+      ShowMethod(dispatch, TransMess().messagesError.E0004, false)
       setTimeout(() => {
         HideMethod(dispatch)
       }, 1000)
@@ -182,7 +181,7 @@ export default function Info() {
       const values = Object.values(record);
       var event = values.find((item) => item.eventId === currEvent.eventId);
       if (event === undefined || event.delFlag === true) {
-        ShowMethod(dispatch, messagesError.E2004, false);
+        ShowMethod(dispatch, TransMess().messagesError.E2004, false);
         setTimeout(() => {
           HideMethod(dispatch)
           router.push("/")
@@ -192,7 +191,7 @@ export default function Info() {
       console.log(event.status)
       switch (event.status) {
         case 1:
-          ShowMethod(dispatch, messagesError.E3001, false);
+          ShowMethod(dispatch, TransMess().messagesError.E3001, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch);
@@ -207,9 +206,9 @@ export default function Info() {
               {
                 userJoined: event.userJoined,
               }).then(
-                ShowMethod(dispatch, messagesSuccess.I0009, true)
+                ShowMethod(dispatch, TransMess().messagesSuccess.I0009, true)
               ).catch((e) => {
-                ShowMethod(dispatch, messagesError.E4444, false)
+                ShowMethod(dispatch, TransMess().messagesError.E4444, false)
               })
             dispatch(incognitoParticipant(newParticipant));
   
@@ -221,7 +220,7 @@ export default function Info() {
             }, 750);
           })
           .catch((e) => {
-            ShowMethod(dispatch, messagesError.E4444, false)
+            ShowMethod(dispatch, TransMess().messagesError.E4444, false)
           });
           setTimeout(() => {
             HideMethod(dispatch);
@@ -229,7 +228,7 @@ export default function Info() {
           }, 750);
           return
         case 3:
-          ShowMethod(dispatch, messagesError.E3002, false);
+          ShowMethod(dispatch, TransMess().messagesError.E3002, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch);
@@ -237,7 +236,7 @@ export default function Info() {
           }, 750);
           return;
         case 4:
-          ShowMethod(dispatch, messagesError.E3003(currEvent.title), false);
+          ShowMethod(dispatch, TransMess().messagesError.E3003(currEvent.title), false);
           setTimeout(() => {
             dispatch(removePlayerState());
             HideMethod(dispatch);
@@ -247,7 +246,7 @@ export default function Info() {
         default:
       }
       if (event.maxTicket <= event.userJoined) {
-        ShowMethod(dispatch, messagesError.E2005, false);
+        ShowMethod(dispatch, TransMess().messagesError.E2005, false);
         setTimeout(() => {
           HideMethod(dispatch)
           dispatch(removePlayerState());

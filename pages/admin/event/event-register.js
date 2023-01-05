@@ -5,7 +5,6 @@ import Header from "public/shared/Header";
 import { HideMethod, ShowMethod } from "public/util/popup";
 import PopUp from "public/shared/PopUp";
 import CheckBox from "public/shared/CheckBox";
-import { messagesError, messagesSuccess } from "public/util/messages";
 import { LEFT_COLOR, RIGHT_COLOR } from "public/util/colors";
 import { Button, Input, PageLoading } from "public/shared";
 
@@ -14,6 +13,7 @@ import { userEventCreating } from "public/redux/actions";
 import { useUserPackageHook } from "public/redux/hooks";
 import { usePopUpMessageHook, usePopUpStatusHook, usePopUpVisibleHook } from "public/redux/hooks";
 import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess";
 
 const uuid = require("uuid");
 
@@ -59,7 +59,7 @@ export default function EventRegister() {
     const handleSubmit = useCallback((title, description, maxTicket, publicFlag) => 
     {
         if (title === "" || description === "" || maxTicket === "") {
-            ShowMethod(dispatch, messagesError.E0004, false);
+            ShowMethod(dispatch, TransMess().messagesError.E0004, false);
             return;
         }
 
@@ -78,7 +78,7 @@ export default function EventRegister() {
                 delFlag: false,
             };
             dispatch(userEventCreating(newEvent));
-            ShowMethod(dispatch, messagesSuccess.I0007("sự kiện"), true);
+            ShowMethod(dispatch, TransMess().messagesSuccess.I0007(transEventReg.event), true);
             setTimeout(() => {
                 HideMethod(dispatch);
                 router.push("/admin/event/reward-register");
