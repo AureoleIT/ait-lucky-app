@@ -174,7 +174,7 @@ export default function Login() {
 
   const renderForget = useMemo(() => {
     return (
-      <a href="/auth/forgot-password">
+      <div onClick={() => {router.push("/auth/forgot-password")}} className = "cursor-pointer">
         <Title
           title={loginTrans.forgotPassword}
           isUnderLine={true}
@@ -183,7 +183,7 @@ export default function Login() {
           fontWeight=""
           margin=""
         />
-      </a>
+      </div>
     )
   }, [])
 
