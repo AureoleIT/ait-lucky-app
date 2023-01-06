@@ -23,7 +23,7 @@ export default function Info() {
   const message = usePopUpMessageHook();
   const status = usePopUpStatusHook()
   const visible = usePopUpVisibleHook();
-  
+
   //Get pinCode from URL
   let pinCode = new URLSearchParams(window.location.search).get('pinCode')
 
@@ -41,6 +41,7 @@ export default function Info() {
   // -------------------------------------------Check path--------------------------------------------
   useEffect(() => {
     if ((pinCode === undefined || pinCode === null) && !currEvent.eventId) {
+      // alert(1);
       router.push("/");
       return;
     } else if ((pinCode === undefined || pinCode === null) && currEvent.eventId) {
@@ -55,6 +56,8 @@ export default function Info() {
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
+                // alert(2);
+
                 router.push("/");
               }, 500)
               return;
@@ -62,6 +65,8 @@ export default function Info() {
               ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
+                // alert(3);
+
                 router.push("event/countdown-checkin/" + currEvent.eventId);
               }, 500);
               return
@@ -69,12 +74,15 @@ export default function Info() {
               ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
+                // alert(4);
                 router.push("event/luckyspin/" + currEvent.eventId);
               }, 500);
               return;
             case 4:
               dispatch(removePlayerState());
+              // alert(5);
               router.push("/");
+
               return;
             default:
               return;
@@ -104,6 +112,7 @@ export default function Info() {
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
+                // alert(6);
                 router.push("/");
               }, 500)
               return;
@@ -111,6 +120,7 @@ export default function Info() {
               ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
+                // alert(7);
                 router.push("event/countdown-checkin/" + currEvent.eventId);
               }, 500);
               return
@@ -118,6 +128,7 @@ export default function Info() {
               ShowMethod(dispatch, TransMess().messagesSuccess.I0008(currEvent.title), true);
               setTimeout(() => {
                 HideMethod(dispatch);
+                // alert(8);
                 router.push("event/luckyspin/" + currEvent.eventId);
               }, 500);
               return;
@@ -126,6 +137,7 @@ export default function Info() {
               setTimeout(() => {
                 dispatch(removePlayerState());
                 HideMethod(dispatch);
+                // alert(9);
                 router.push("/");
               }, 500)
               return;
@@ -153,7 +165,9 @@ export default function Info() {
       }
     }
 
-  }, [currEvent.eventId, currEvent.title, currPlayer.eventId, dispatch, globalUser.userId, pinCode]);
+  }, [
+    // currEvent.eventId, currEvent.title, currPlayer.eventId, dispatch, globalUser.userId, pinCode
+  ]);
 
   // -------------------------------------------Click logic handle------------------------------------
   const onJoinClick = useCallback(() => {
@@ -183,55 +197,61 @@ export default function Info() {
       if (event === undefined || event.delFlag === true) {
         ShowMethod(dispatch, TransMess().messagesError.E2004, false);
         setTimeout(() => {
-          HideMethod(dispatch)
+          HideMethod(dispatch);
+          // alert(10);
+
           router.push("/")
         }, 1000)
         return;
       }
-      console.log(event.status)
+      console.log(event.status);
       switch (event.status) {
         case 1:
           ShowMethod(dispatch, TransMess().messagesError.E3001, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch);
+            // alert(11);
             router.push("/");
           }, 750)
           return;
         case 2:
           set(ref(db, `event_participants/${id}/`), newParticipant)
-          .then(() => {
-            event.userJoined += 1;
-            update(ref(db, `event/${event.eventId}`),
-              {
-                userJoined: event.userJoined,
-              }).then(
-                ShowMethod(dispatch, TransMess().messagesSuccess.I0009, true)
-              ).catch((e) => {
-                ShowMethod(dispatch, TransMess().messagesError.E4444, false)
-              })
-            dispatch(incognitoParticipant(newParticipant));
-  
-            window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
-            
-            setTimeout(() => {
-              HideMethod(dispatch)
-              router.push("/event/countdown-checkin/" + event.eventId);
-            }, 750);
-          })
-          .catch((e) => {
-            ShowMethod(dispatch, TransMess().messagesError.E4444, false)
-          });
-          setTimeout(() => {
-            HideMethod(dispatch);
-            router.push("event/countdown-checkin/" + currEvent.eventId);
-          }, 750);
+            .then(() => {
+              event.userJoined += 1;
+              update(ref(db, `event/${event.eventId}`),
+                {
+                  userJoined: event.userJoined,
+                }).then(
+                  ShowMethod(dispatch, TransMess().messagesSuccess.I0009, true)
+                ).catch((e) => {
+                  ShowMethod(dispatch, TransMess().messagesError.E4444, false)
+                })
+              dispatch(incognitoParticipant(newParticipant));
+
+              window.localStorage.setItem('PARTICIPANT_STATE', JSON.stringify(newParticipant.participantId));
+
+              setTimeout(() => {
+                HideMethod(dispatch);
+                alert(12);
+                router.push("/event/countdown-checkin/" + event.eventId);
+              }, 750);
+            })
+            .catch((e) => {
+              ShowMethod(dispatch, TransMess().messagesError.E4444, false)
+            });
+          // setTimeout(() => {
+          //   HideMethod(dispatch);
+            // alert(13);
+          //   router.push("event/countdown-checkin/" + currEvent.eventId);
+          // }, 750);
           return
         case 3:
           ShowMethod(dispatch, TransMess().messagesError.E3002, false);
           setTimeout(() => {
             dispatch(removePlayerState())
             HideMethod(dispatch);
+            // alert(14);
             router.push("/");
           }, 750);
           return;
@@ -240,6 +260,7 @@ export default function Info() {
           setTimeout(() => {
             dispatch(removePlayerState());
             HideMethod(dispatch);
+            // alert(15);
             router.push("/");
           }, 750);
           return;
@@ -250,6 +271,7 @@ export default function Info() {
         setTimeout(() => {
           HideMethod(dispatch)
           dispatch(removePlayerState());
+          // alert(16);
           router.push("/");
         }, 1000);
         return;

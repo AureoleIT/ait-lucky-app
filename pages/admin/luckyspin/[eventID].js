@@ -249,14 +249,15 @@ export default function LuckySpinAdmin() {
                 setSpinClicked(false);
                 document.getElementById("gameSound").play();
                 updateFB('event/' + EventID + '/playingData', { confirmStatus: 0 });
+                // Hiển thị trao thưởng
                 const timeoutPhase3 = setTimeout(() => {
                     document.getElementById("awardedOverlay").classList.toggle('hidden');
                     setAwardedId(remainPlayerList[randomNum].participantId);
                     document.getElementById("gameSound").pause();
-                }, (500))
-            }, (2000))
+                }, (500));
+            }, (2000));
 
-        }, ((spinTime - 2) * 1000))
+        }, ((spinTime * 1000) - 2000))
     }
 
     // Chọn phần quà
@@ -347,8 +348,9 @@ export default function LuckySpinAdmin() {
                     // remove(child(ref(db), "event/" + EventID + "/playingData"));
                     dispatch(removeUserHosting)
                     updateFB('event/' + EventID, { status: 4 });
+                    document.getElementById("finishOverlay").classList.add('hidden');
                 }} />
-                <Button fontSize={"20px"} content={trans.noButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
+                <Button fontSize={"20px"} content={trans.noButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.add('hidden') }} />
             </div>
         </>} id={"finishOverlay"}></OverlayBlock>
     }, []);
@@ -462,7 +464,7 @@ export default function LuckySpinAdmin() {
                                         onChange={() => {
                                             if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 2)
                                                 setSpinTime(parseInt(document.getElementById("spinTime").value));
-                                            else if (document.getElementById("spinTime").value && document.getElementById("spinTime").value <= 60) {
+                                            else if (document.getElementById("spinTime").value && document.getElementById("spinTime").value >= 60) {
                                                 setSpinTime(60);
                                                 document.getElementById("spinTime").value = 60;
                                             }
