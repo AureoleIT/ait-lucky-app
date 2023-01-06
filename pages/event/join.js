@@ -233,7 +233,7 @@ export default function Info() {
 
               setTimeout(() => {
                 HideMethod(dispatch);
-                alert(12);
+                // alert(12);
                 router.push("/event/countdown-checkin/" + event.eventId);
               }, 750);
             })
