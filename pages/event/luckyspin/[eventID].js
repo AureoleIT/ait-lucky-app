@@ -106,7 +106,10 @@ export default function LuckySpin() {
             await get(query(ref(db, "event_participants/" + participantId + "/status"))).then((snapshot) => {
                 if (snapshot.exists()) {
                     if (snapshot.val() === 0) {
-                        if (document.getElementById("kickPlayerNotificationOverlay")) document.getElementById("kickPlayerNotificationOverlay").classList.remove("hidden");
+                        if (document.getElementById("kickPlayerNotificationOverlay")) {
+                            document.getElementById("kickPlayerNotificationOverlay").classList.remove("hidden");
+                            dispatch(incognitoEvent({ eventId: "" }));
+                        }
                         router.push('/');
                     }
                 }
