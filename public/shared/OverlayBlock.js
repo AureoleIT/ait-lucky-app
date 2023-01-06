@@ -58,9 +58,9 @@ export default function OverlayBlock({
         }}
         style={{ backgroundColor: backgroundColor, zIndex: zIndex }}>
             {manual ?
-                <div className="w-0 h-0" onClick={(e) => {
-                    e.stopPropagation();
-                }}>
+                <div className="w-0 h-0" 
+                    onClick={(e) => { e.stopPropagation(); }}
+                >
                     <div onClick={(e) => e.stopPropagation()}>
                         {childDiv ? childDiv : <div className="h-80 w-80"></div>}
                     </div>
@@ -88,7 +88,7 @@ export default function OverlayBlock({
         return () => {
             if (document.getElementById("overlayBlockArea") && document.getElementById("overlayBlockArea").children.length === 0) {
                 document.removeEventListener('keydown', handler);
-                //document.getElementById("overlayBlockArea").remove();
+                // document.getElementById("overlayBlockArea").remove();
             }
         }
     }, [])
