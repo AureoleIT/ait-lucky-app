@@ -80,6 +80,7 @@ export default function OverlayBlock({
         if (document.getElementById("overlayBlockArea") === null) {
             const fsOverlay = document.createElement('div');
             fsOverlay.id = "overlayBlockArea";
+            document.body.appendChild(fsOverlay);
             document.getElementsByTagName('section')[0].appendChild(fsOverlay);
             document.addEventListener('keydown', handler);
         }
