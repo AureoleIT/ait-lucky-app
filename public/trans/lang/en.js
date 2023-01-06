@@ -47,12 +47,12 @@ const en = {
     google: "Sign up with",
     hasAccount: "Already registered?",
     login: "Sign in now!",
-    belowPassword: "the below password",
+    belowPassword: "the password above",
   },
   dashboard: {
     welcome: {
       title: "Welcome to AIT Lucky App!",
-      content: "start to join events now!",
+      content: "Start to join events now!",
     },
     joinEvent: {
       title: "Participate in events",
@@ -72,7 +72,7 @@ const en = {
     },
     showCreateEvent: {
       title: "List of events",
-      description: "Show my own recently events. ",
+      description: "Show my own recently events.",
       checklength: "No infomation.",
       buttonContent: "All my events",
     },

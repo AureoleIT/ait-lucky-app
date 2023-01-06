@@ -53,7 +53,7 @@ const vi = {
   dashboard: {
     welcome: {
       title: "Chào mừng đến AIT Lucky App!",
-      content: "hãy bắt đầu chơi các sự kiện ngay nào!",
+      content: "Hãy bắt đầu chơi các sự kiện ngay nào!",
     },
     joinEvent: {
       title: "Tham gia sự kiện",
@@ -73,7 +73,7 @@ const vi = {
     },
     showCreateEvent: {
       title: "Danh sách sự kiện",
-      description: "Hiển thị các sự kiện gần đây của tôi đã tạo",
+      description: "Hiển thị các sự kiện gần đây của tôi đã tạo.",
       checklength: "Không có dữ liệu",
       buttonContent: "Tất cả sự kiện",
     },

@@ -20,17 +20,17 @@ const messEn = {
           return a + " is required";
         },
         E0002: (a, b) => {
-          return "Please enter " + a + "with " + b + "or more characters" ;
+          return "Please enter " + a + " with " + b + " or more characters" ;
         },
         E0003: (a) => {
-          return a + "wrong format";
+          return a + " is incorrect format";
         },
         E0004: "Please enter all fields",
         E0005: (a) =>
-          "No spaces are allowed and must be greater than or equal to 6 characters in " + a,
+          a + "must have no spaces and have 6 or more characters",
         E0006: "Please read and agree to the terms",
         E0007: (a, b) => {
-          return "Existed " + a + " or" + b;
+          return "Existed " + a + " or " + b;
         },
         E0008: (a) => a + " already existed",
         E0009: "No user exists",
@@ -38,7 +38,7 @@ const messEn = {
           "You do not have an account with this email \nTry another account or register a new account",
         E0011: (a) => a + " didn't match",
         E0021: (a, b) => {
-          return "Please enter " + a + " same as " + b;
+          return "Please enter " + a + " as same as " + b;
         },
         E0022: "Load file failed",
       
