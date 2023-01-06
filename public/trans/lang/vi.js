@@ -139,7 +139,7 @@ const vi = {
       checklength: "Danh sách trống",
     },
     eventButton: {
-      participant: "người tham gia: ",
+      participant: "người tham gia",
     },
   },
   countdown: {
