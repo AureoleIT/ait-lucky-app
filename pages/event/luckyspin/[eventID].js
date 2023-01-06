@@ -432,6 +432,7 @@ export default function LuckySpin() {
                         setTimeout(() => {
                             router.push('/');
                         }, 1000);
+                        document.getElementById("exitOverlay").classList.add('hidden');
                     }} />
                 <Button fontSize={"20px"} content={trans.cancelButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("exitOverlay").classList.add('hidden') }} />
             </div>

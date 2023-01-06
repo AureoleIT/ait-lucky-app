@@ -348,8 +348,9 @@ export default function LuckySpinAdmin() {
                     // remove(child(ref(db), "event/" + EventID + "/playingData"));
                     dispatch(removeUserHosting)
                     updateFB('event/' + EventID, { status: 4 });
+                    document.getElementById("finishOverlay").classList.add('hidden');
                 }} />
-                <Button fontSize={"20px"} content={trans.noButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.toggle('hidden') }} />
+                <Button fontSize={"20px"} content={trans.noButton} primaryColor={"#3B88C3"} isSquare={true} marginY={0} onClick={() => { document.getElementById("finishOverlay").classList.add('hidden') }} />
             </div>
         </>} id={"finishOverlay"}></OverlayBlock>
     }, []);
