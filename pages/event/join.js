@@ -40,6 +40,60 @@ export default function Info() {
 
   // -------------------------------------------Check path--------------------------------------------
   useEffect(() => {
+    // ----------------------------------------- Check event status and public flag --------------------------------------------------------
+    get(child(ref(db), "event/")).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+      var event = values.find((item) => item.pinCode === pinCode);
+      if (event === undefined) event = values.find((item) => item.eventId === currEvent.eventId);
+      alert(pinCode);
+      alert(currEvent.eventId);
+      if (event === undefined || event.delFlag === true) {
+        ShowMethod(dispatch, TransMess().messagesError.E2004, false);
+        setTimeout(() => {
+          HideMethod(dispatch);
+          router.push('/');
+        }, 1000)
+        return;
+      }
+      dispatch(incognitoEvent(event));
+      if (globalUser.userId) {
+        dispatch(userCurrentEventPlaying(event));
+      }
+      if (!event.publicFlag && !globalUser.userId) {
+        ShowMethod(dispatch, TransMess().messagesError.E2006, false);
+        setTimeout(() => {
+          HideMethod(dispatch);
+          router.push("/auth/login");
+        }, 1000)
+        return;
+      }
+      switch (event.status) {
+        case 1:
+          ShowMethod(dispatch, TransMess().messagesError.E3001, false);
+          setTimeout(() => {
+            dispatch(removePlayerState());
+            HideMethod(dispatch);
+            // alert(2);
+            router.push("/");
+          }, 500)
+          return;
+        case 3:
+          dispatch(removePlayerState());
+          alert("Sự kiện đã bắt đầu!");
+          router.push("/");
+          return;
+        case 4:
+          dispatch(removePlayerState());
+          alert("Sự kiện đã kết thúc!");
+          router.push("/");
+          return;
+        default:
+          return;
+      }
+    });
+    // ----------------------------------------------------------------------------------------------------------------------------------------------
+
     if ((pinCode === undefined || pinCode === null) && !currEvent.eventId) {
       // alert(1);
       router.push("/");
@@ -161,14 +215,6 @@ export default function Info() {
           if (globalUser.userId) {
             dispatch(userCurrentEventPlaying(event));
           }
-          if (event.publicFlag !== 1 && !globalUser.userId) {
-            ShowMethod(dispatch, TransMess().messagesError.E2006, false);
-            setTimeout(() => {
-              HideMethod(dispatch);
-              router.push("/auth/login");
-            }, 1000)
-            return;
-          }
         });
       }
     }
@@ -249,7 +295,7 @@ export default function Info() {
             });
           // setTimeout(() => {
           //   HideMethod(dispatch);
-            // alert(13);
+          // alert(13);
           //   router.push("event/countdown-checkin/" + currEvent.eventId);
           // }, 750);
           return
