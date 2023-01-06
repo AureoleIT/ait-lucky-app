@@ -49,6 +49,7 @@ const messEn = {
         E2003: "The code could not be scanned, please rescan the QR code",
         E2004: "Event does not exist or has been deleted",
         E2005: "Event has reached the maximun player",
+        E2006: "This event require login",
         E3001: "The event is not ready, you cannot join in!",
         E3002: "The event is currently in-game , you cannot join in!",
         E3003: "Event has ended!",

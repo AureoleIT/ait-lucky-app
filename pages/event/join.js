@@ -159,12 +159,19 @@ export default function Info() {
           }
           dispatch(incognitoEvent(event));
           if (globalUser.userId) {
-            dispatch(userCurrentEventPlaying(event))
+            dispatch(userCurrentEventPlaying(event));
+          }
+          if (event.publicFlag !== 1 && !globalUser.userId) {
+            ShowMethod(dispatch, TransMess().messagesError.E2006, false);
+            setTimeout(() => {
+              HideMethod(dispatch);
+              router.push("/auth/login");
+            }, 1000)
+            return;
           }
         });
       }
     }
-
   }, [
     // currEvent.eventId, currEvent.title, currPlayer.eventId, dispatch, globalUser.userId, pinCode
   ]);

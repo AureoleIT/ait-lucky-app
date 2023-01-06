@@ -49,6 +49,7 @@ const messVi = {
       E2003: "Không thể quét được mã, vui lòng quét lại mã QR",
       E2004: "Sự kiện không tồn tại hoặc đã bị xoá",
       E2005: "Sự kiện đã đạt giới hạn số người chơi",
+      E2006: "Sự kiện này yêu cầu đăng nhập",
       E3001: "Sự kiện chưa sẵn sàng, bạn không thể tham gia!",
       E3002: "Sự kiện đang diễn ra, bạn không thể tham gia!",
       E3003: "Sự kiện đã kết thúc!",
