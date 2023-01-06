@@ -58,7 +58,7 @@ export default function OverlayBlock({
         }}
         style={{ backgroundColor: backgroundColor, zIndex: zIndex }}>
             {manual ?
-                <div className="w-0 h-0" onClick={() => {
+                <div className="w-0 h-0" onClick={(e) => {
                     e.stopPropagation();
                 }}>
                     <div onClick={(e) => e.stopPropagation()}>
