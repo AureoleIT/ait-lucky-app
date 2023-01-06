@@ -220,7 +220,7 @@ export default function ChangePassword() {
 
   const renderOverlayBlock = useMemo(() => {
     return (
-      <OverlayBlock childDiv={popupNoti} id={"changeOverlay"} />
+      <OverlayBlock childDiv={popupNoti} id={"profileOverlay"} />
     )
   }, [])
 
