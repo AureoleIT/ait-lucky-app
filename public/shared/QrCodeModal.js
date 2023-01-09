@@ -22,11 +22,11 @@ export default function QrCodeModal() {
     return (
         <div className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 block">
             <QRCode 
-                value="https://google.com" //Đừng link tới Event !!! Phải có https://
+                value=""
                 renderAs="canvas" 
                 size={256}
                 id="qrCodeEl"
-                style={{ height: "auto", maxWidth: "100%", width: "100%" }} 
+                style={{ height: "100%", maxWidth: "100%", width: "100%" }} 
             />
             <div className="text-black mt-6 flex justify-end">
                 {downloadIcon}

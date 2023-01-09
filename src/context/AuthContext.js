@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { app, db } from "../firebase";
-import auth, { GoogleAuthProvider } from "firebase/auth";
+import { app, db, auth } from "../firebase";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const AuthContext = createContext();
 export { AuthContext };
-
 export const useAuth = () => {
   return useContext(AuthContext);
 };
@@ -27,11 +26,12 @@ export default function AuthProvider({ children }) {
   };
 
   const resetPassword = (email) => {
-    return auth.sendPasswordResetEmail(email);
+    return sendPasswordResetEmail(email);
   };
 
   const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
+    provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     return auth.signInWithPopup(provider);
   };
 

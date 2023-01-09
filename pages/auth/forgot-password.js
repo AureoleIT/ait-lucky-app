@@ -1,0 +1,341 @@
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
+import router from "next/router";
+import Trans from "public/trans/hooks/Trans";
+import TransMess from "public/trans/hooks/TransMess";
+//fiebase
+import {
+  ref,
+  get,
+  query,
+  orderByChild,
+  equalTo,
+  update,
+  onValue,
+} from "firebase/database";
+import { db } from "src/firebase";
+
+//util
+import { LEFT_COLOR, RIGHT_COLOR, FAIL_RIGHT_COLOR } from "public/util/colors";
+import { successIcon, failIcon } from "public/util/popup";
+import { isEmpty, hasWhiteSpaceAndValidLength, isEmail } from "public/util/functions";
+
+//component
+import { OverlayBlock, Input, Title, AuthFooter, Button, Line } from "public/shared";
+
+export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [newPass, setNew] = useState("");
+  const [repeatPass, setRepeat] = useState("");
+  const [flagReset, setFlagReset] = useState(false);
+
+  const forgotPassTrans = Trans().forgotPassword
+
+  //validation const
+  const [textState, setTextState] = useState("");
+  const [isHidden, setIsHidden] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(true);
+  const showMethod = useMemo(() => (message, isSuccess, isHidden) => {
+    setTextState(message);
+    setIsSuccess(isSuccess);
+    setIsHidden(isHidden);
+  }, [])
+
+  const handleCheck = (name, email) => {
+    // validation
+    if (hasWhiteSpaceAndValidLength(name)) {
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.username), false, false);
+      return;
+    }
+
+    if (isEmpty(name)) {
+      showMethod(TransMess().messagesError.E0001(forgotPassTrans.username), false, false);
+      return;
+    }
+
+    if (isEmpty(email)) {
+      showMethod(TransMess().messagesError.E0001("Email"), false, false);
+      return;
+    }
+
+    if (!isEmail(email)) {
+      showMethod(TransMess().messagesError.E0003("Email"), false, false);
+      return;
+    }
+
+    if (hasWhiteSpaceAndValidLength(email)) {
+      showMethod(TransMess().messagesError.E0005("Email"), false, false);
+      return;
+    }
+
+    try {
+      const que = query(ref(db, "users"), orderByChild("email"), equalTo(email));
+      onValue(que, (snapshot) => {
+        const record = snapshot.val() ?? [];
+        const values = Object.values(record);
+
+        if (values.length === 0) {
+          showMethod(TransMess().messagesError.E0009, false, false);
+          return;
+        }
+        if (values[0].name !== name) {
+          showMethod(TransMess().messagesError.E0011(forgotPassTrans.username), false, false);
+          return;
+        }
+        if (values[0].email !== email) {
+          showMethod(TransMess().messagesError.E0011(forgotPassTrans.username), false, false);
+          return;
+        } else {
+          setFlagReset(true);
+          return;
+        }
+      })
+    } catch (error) {
+      showMethod(TransMess().messagesError.E1002, false, false);
+      return;
+    }
+  };
+
+  const handleReset = () => {
+    if (isEmpty(newPass) || isEmpty(repeatPass)) {
+      showMethod(TransMess().messagesError.E0004, false, false);
+      return;
+    }
+
+    if (hasWhiteSpaceAndValidLength(newPass)) {
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.newPassword), false, false);
+      return;
+    }
+
+    if (hasWhiteSpaceAndValidLength(repeatPass)) {
+      showMethod(TransMess().messagesError.E0005(forgotPassTrans.againPassword), false, false);
+      return;
+    }
+
+    if (newPass != repeatPass) {
+      showMethod(TransMess().messagesError.E0021(forgotPassTrans.newPassword, forgotPassTrans.againPassword), false, false);
+      return;
+    }
+
+    const que = query(ref(db, "users"), orderByChild("email"), equalTo(email));
+    get(que).then((snapshot) => {
+      const record = snapshot.val() ?? [];
+      const values = Object.values(record);
+
+      update(ref(db, 'users/' + values[0].userId),
+        {
+          password: newPass
+        }).then(() => {
+          showMethod(TransMess().messagesSuccess.I0003, true, false);
+          setFlagReset(false);
+          router.push("auth/login")
+          return;
+        })
+        .catch((error) => {
+          showMethod(error, false, false);
+          return;
+        });
+
+    })
+  }
+
+  // show popup
+  useEffect(() => {
+    if (isHidden == false) {
+      isSuccess ? document.getElementById("imgPopup").src = successIcon : document.getElementById("imgPopup").src = failIcon;
+      document.getElementById("textState").innerHTML = textState;
+      document.getElementById("forgotOverlay").classList.toggle('hidden');
+      const timer = setTimeout(() => {
+        setIsHidden(true);
+      }, 1)
+      return () => { clearTimeout(timer) }
+    }
+  }, [isHidden])
+
+
+  //useCallback
+  const nameData = useCallback(
+    (e) => {
+      setName(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    }, [setName]
+  )
+
+  const emailData = useCallback(
+    (e) => {
+      setEmail(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    }, [setEmail]
+  )
+
+
+  const newPassData = useCallback(
+    (e) => {
+      setNew(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    },
+    [setNew]
+  )
+
+  const repeatPassData = useCallback(
+    (e) => {
+      setRepeat(e?.target?.value.replace(/^\s+|\s+$/gm, ''))
+    },
+    [setRepeat]
+  )
+
+  //useMemo
+  const popupNoti = useMemo(() => {
+    return (
+      <div className="flex flex-col items-center">
+        <div className="text-center text-[#004599]">
+          <p className="font-[900] text-lg" id="textState"></p>
+        </div>
+        <img
+          id="imgPopup"
+          alt="success"
+          src={failIcon}
+          className="self-center w-12"
+        ></img>
+      </div>
+    )
+  }, [])
+
+  const renderName = useMemo(() => {
+    return (
+      <Input
+        content={forgotPassTrans.username}
+        type={"text"}
+        isTextGradient={true}
+        onChange={nameData}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(name) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        value={name}
+        margin={4} />
+    )
+  }, [name, setName])
+
+  const renderEmailInput = useMemo(() => {
+    return (
+      <Input
+        content={"Email"}
+        type={"text"}
+        isTextGradient={true}
+        onChange={emailData}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={isEmail(email) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        value={email} 
+        margin={4}/>
+    )
+  }, [email, setEmail])
+
+  const renderNewPass = useMemo(() => {
+    return (
+      <Input
+        content={forgotPassTrans.newPassword}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(newPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={newPassData}
+        value={newPass} 
+        margin={4} />
+    )
+  }, [newPass, newPassData])
+
+  const renderRepeatPass = useMemo(() => {
+    return (
+      <Input
+        content={forgotPassTrans.confirmPassword}
+        type={"password"}
+        isTextGradient={true}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={!hasWhiteSpaceAndValidLength(repeatPass) ? RIGHT_COLOR : FAIL_RIGHT_COLOR}
+        onChange={repeatPassData}
+        value={repeatPass} 
+        margin={4} />
+    )
+  }, [repeatPass, repeatPassData]
+  )
+
+  const renderTitle = useMemo(() => {
+    return (
+      <Title title={forgotPassTrans.heading} />
+    )
+  }, [])
+
+  const renderButtonCheck = useMemo(() => {
+    return (
+      <Button
+        content={forgotPassTrans.send}
+        onClick={() => {
+          handleCheck(name, email);
+        }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+      />
+    )
+  }, [handleCheck])
+
+  const renderButtonReset = useMemo(() => {
+    return (
+      <Button
+        content={forgotPassTrans.heading}
+        onClick={() => {
+          handleReset();
+        }}
+        primaryColor={LEFT_COLOR}
+        secondaryColor={RIGHT_COLOR}
+      />
+    )
+  }, [handleReset])
+
+  const renderLine = useMemo(() => {
+    return (
+      <Line />
+    )
+  }, [])
+
+  const renderBackToLogin = useMemo(() => {
+    return (
+      <Link href={"/auth/login"} className="my-0">
+        <button className="w-full ">
+          <div className="font-[600] text-[16px] text-[#004599]">
+            {forgotPassTrans.backLogin}
+          </div>
+        </button>
+      </Link>
+    )
+  }, [])
+
+  const renderOverlayBlock = useMemo(() => {
+    return (
+      <OverlayBlock childDiv={popupNoti} id={"forgotOverlay"} />
+    )
+  }, [])
+  return (
+    <section className="h-screen overflow-y-hidden">
+      <div className="flex flex-col xl:justify-center lg:justify-center justify-center items-center mt-20">
+        <div className="relative mb-5">
+          {renderTitle}
+        </div>
+        {!flagReset ?
+
+          <div className="w-[90%] max-w-md mx-0">
+            {renderName}
+            {renderEmailInput}
+            {renderButtonCheck}
+          </div>
+          : <div className="w-[90%] max-w-md mx-0">
+            {renderNewPass}
+            {renderRepeatPass}
+            {renderButtonReset}
+          </div>
+        }
+        <div className="w-[90%] max-w-md mt-4">
+          {renderLine}
+          {renderBackToLogin}
+        </div>
+        {renderOverlayBlock}
+      </div>
+    </section>
+  );
+}
